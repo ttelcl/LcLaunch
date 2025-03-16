@@ -11,9 +11,7 @@ using System.Windows.Shapes;
 
 using MahApps.Metro.Controls;
 
-using LcLauncher.Main;
-
-namespace LcLauncher;
+namespace LcLauncher.Main;
 
 /// <summary>
 /// Interaction logic for MainWindow.xaml

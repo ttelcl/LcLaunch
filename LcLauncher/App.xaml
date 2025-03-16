@@ -2,7 +2,7 @@
     x:Class="LcLauncher.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:LcLauncher"
+    xmlns:local="clr-namespace:LcLauncher.Main"
     xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
     Startup="App_Startup"
     Exit="Application_Exit">
