@@ -13,7 +13,7 @@
     WindowStartupLocation="CenterScreen"
     ResizeMode="NoResize"
     Title="Luc's Application Launchpad"
-    Height="920" Width="1288">
+    Height="920" Width="1285">
     <ScrollViewer VerticalScrollBarVisibility="Visible">
         <Grid
         Background="{DynamicResource MahApps.Brushes.Gray10}">
