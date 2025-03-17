@@ -11,135 +11,146 @@
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance local:MainViewModel, IsDesignTimeCreatable=False}"
     WindowStartupLocation="CenterScreen"
+    ResizeMode="NoResize"
     Title="Luc's Application Launchpad"
-    Height="800" Width="1000">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <Border
-            Grid.Column="0"
-            Margin="4,4"
-            BorderThickness="1"
-            BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-            >
-            <Border.Resources>
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Dark.Amber.xaml" />
-            </Border.Resources>
-            <WrapPanel>
-                <Border
-                    Margin="2,2"
-                    BorderThickness="1"
-                    BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                    Background="{DynamicResource MahApps.Brushes.Accent4}"
-                    Width="100" Height="100"
-                    >
-                </Border>
-                <Border
-                    Margin="2,2"
-                    BorderThickness="1"
-                    BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                    Background="{DynamicResource MahApps.Brushes.Accent4}"
-                    Width="100" Height="100"
-                    >
-                </Border>
-                <Border
-                    Margin="2,2"
-                    BorderThickness="1"
-                    BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                    Background="{DynamicResource MahApps.Brushes.Accent4}"
-                    Width="100" Height="100"
-                    >
-                </Border>
-                <Border
-                    Margin="2,2"
-                    BorderThickness="1"
-                    BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                    Background="{DynamicResource MahApps.Brushes.Accent4}"
-                    Width="100" Height="100"
-                    >
-                </Border>
-            </WrapPanel>
-        </Border>
-        <Border
-            Grid.Column="1"
-            Margin="4,4"
-            BorderThickness="1"
-            BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-            >
-            <WrapPanel>
-                <Border
-                    Margin="2,2"
-                    BorderThickness="1"
-                    BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                    Background="{DynamicResource MahApps.Brushes.Accent4}"
-                    Width="100" Height="100"
-                    >
-                </Border>
-                <Border
-                    Margin="2,2"
-                    BorderThickness="1"
-                    BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                    Background="{DynamicResource MahApps.Brushes.Accent4}"
-                    Width="100" Height="100"
-                    >
-                </Border>
-                <Border
-                    Margin="2,2"
-                    BorderThickness="1"
-                    BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                    Background="{DynamicResource MahApps.Brushes.Accent4}"
-                    Width="100" Height="100"
-                    >
-                </Border>
-                <Border
-                    Margin="2,2"
-                    BorderThickness="1"
-                    BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                    Background="{DynamicResource MahApps.Brushes.Accent4}"
-                    Width="100" Height="100"
-                    >
-                </Border>
-            </WrapPanel>
-        </Border>
-        <Border
-            Grid.Column="2"
-            Margin="4,4"
-            BorderThickness="1"
-            BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-            >
-            <WrapPanel>
-                <Border
-                    Margin="2,2"
-                    BorderThickness="1"
-                    BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                    Width="100" Height="100"
-                    >
-                </Border>
-                <Border
-                    Margin="2,2"
-                    BorderThickness="1"
-                    BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                    Width="100" Height="100"
-                    >
-                </Border>
-                <Border
-                    Margin="2,2"
-                    BorderThickness="1"
-                    BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                    Width="100" Height="100"
-                    >
-                </Border>
-                <Border
-                    Margin="2,2"
-                    BorderThickness="1"
-                    BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                    Width="100" Height="100"
-                    >
-                </Border>
-            </WrapPanel>
-        </Border>
-    </Grid>
+    Height="920" Width="1288">
+    <ScrollViewer VerticalScrollBarVisibility="Visible">
+        <Grid
+        Background="{DynamicResource MahApps.Brushes.Gray10}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Border
+                Grid.Column="0"
+                Margin="3,3"
+                BorderThickness="0"
+                Background="{DynamicResource MahApps.Brushes.Control.Background}"
+                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+                >
+                <Border.Resources>
+                    <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Dark.Amber.xaml" />
+                </Border.Resources>
+                <WrapPanel>
+                    <Border
+                        Margin="2,2"
+                        BorderThickness="0"
+                        BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+                        Background="{DynamicResource MahApps.Brushes.Accent4}"
+                        Width="100" Height="100"
+                        >
+                    </Border>
+                    <Border
+                        Margin="2,2"
+                        BorderThickness="0"
+                        BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+                        Background="{DynamicResource MahApps.Brushes.Accent4}"
+                        Width="100" Height="100"
+                        >
+                    </Border>
+                    <Border
+                        Margin="2,2"
+                        BorderThickness="0"
+                        BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+                        Background="{DynamicResource MahApps.Brushes.Accent4}"
+                        Width="100" Height="100"
+                        >
+                    </Border>
+                    <Border
+                        Margin="2,2"
+                        BorderThickness="0"
+                        BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+                        Background="{DynamicResource MahApps.Brushes.Accent4}"
+                        Width="100" Height="100"
+                        >
+                    </Border>
+                </WrapPanel>
+            </Border>
+            <Border
+                Grid.Column="1"
+                Margin="3,3"
+                BorderThickness="0"
+                Background="{DynamicResource MahApps.Brushes.Control.Background}"
+                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+                >
+                <WrapPanel>
+                    <Border
+                        Margin="2,2"
+                        BorderThickness="0"
+                        BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+                        Background="{DynamicResource MahApps.Brushes.Accent4}"
+                        Width="100" Height="100"
+                        >
+                    </Border>
+                    <Border
+                        Margin="2,2"
+                        BorderThickness="0"
+                        BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+                        Background="{DynamicResource MahApps.Brushes.Accent4}"
+                        Width="100" Height="100"
+                        >
+                    </Border>
+                    <Border
+                        Margin="2,2"
+                        BorderThickness="0"
+                        BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+                        Background="{DynamicResource MahApps.Brushes.Accent4}"
+                        Width="100" Height="100"
+                        >
+                    </Border>
+                    <Border
+                        Margin="2,2"
+                        BorderThickness="0"
+                        BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+                        Background="{DynamicResource MahApps.Brushes.Accent4}"
+                        Width="100" Height="100"
+                        >
+                    </Border>
+                </WrapPanel>
+            </Border>
+            <Border
+                Grid.Column="2"
+                Margin="3,3"
+                BorderThickness="0"
+                Background="{DynamicResource MahApps.Brushes.Control.Background}"
+                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+                >
+                <WrapPanel>
+                    <Border
+                        Margin="2,2"
+                        BorderThickness="0"
+                        BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+                        Background="{DynamicResource MahApps.Brushes.Accent4}"
+                        Width="100" Height="100"
+                        >
+                    </Border>
+                    <Border
+                        Margin="2,2"
+                        BorderThickness="0"
+                        BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+                        Background="{DynamicResource MahApps.Brushes.Accent4}"
+                        Width="100" Height="100"
+                        >
+                    </Border>
+                    <Border
+                        Margin="2,2"
+                        BorderThickness="0"
+                        BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+                        Background="{DynamicResource MahApps.Brushes.Accent4}"
+                        Width="100" Height="100"
+                        >
+                    </Border>
+                    <Border
+                        Margin="2,2"
+                        BorderThickness="0"
+                        BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+                        Background="{DynamicResource MahApps.Brushes.Accent4}"
+                        Width="100" Height="100"
+                        >
+                    </Border>
+                </WrapPanel>
+            </Border>
+        </Grid>
+    </ScrollViewer>
 </mah:MetroWindow>

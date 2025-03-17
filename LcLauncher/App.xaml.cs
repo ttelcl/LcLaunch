@@ -24,10 +24,9 @@ public partial class App: Application
     MainModel = new MainViewModel();
     mainWindow.DataContext = MainModel;
 
-    // Todo: save and restore window size
-    mainWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-    mainWindow.Width = 1280;
-    mainWindow.Height = 1024;
+    //mainWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+    //mainWindow.Width = 1280;
+    //mainWindow.Height = 1024;
 
     Trace.TraceInformation($"App.App_Startup showing main window");
     mainWindow.Show();
