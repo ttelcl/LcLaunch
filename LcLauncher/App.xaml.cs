@@ -26,8 +26,8 @@ public partial class App: Application
 
     // Todo: save and restore window size
     mainWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-    mainWindow.Width = 1200;
-    mainWindow.Height = 1000;
+    mainWindow.Width = 1280;
+    mainWindow.Height = 1024;
 
     Trace.TraceInformation($"App.App_Startup showing main window");
     mainWindow.Show();
