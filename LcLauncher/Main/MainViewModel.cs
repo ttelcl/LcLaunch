@@ -17,7 +17,16 @@ public class MainViewModel: ViewModelBase
 {
   public MainViewModel()
   {
+    PageColumns.Add(new PageColumnViewModel());
+    PageColumns.Add(new PageColumnViewModel());
+    PageColumns.Add(new PageColumnViewModel());
   }
 
-  
+  public List<PageColumnViewModel> PageColumns { get; } = [];
+
+  public PageColumnViewModel ColumnA => PageColumns[0];
+
+  public PageColumnViewModel ColumnB => PageColumns[1];
+
+  public PageColumnViewModel ColumnC => PageColumns[2];
 }

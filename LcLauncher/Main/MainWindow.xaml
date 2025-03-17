@@ -22,135 +22,21 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Border
+            <local:PageColumn
                 Grid.Column="0"
                 Margin="3,3"
-                BorderThickness="0"
-                Background="{DynamicResource MahApps.Brushes.Control.Background}"
-                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                >
-                <Border.Resources>
-                    <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Dark.Amber.xaml" />
-                </Border.Resources>
-                <WrapPanel>
-                    <Border
-                        Margin="2,2"
-                        BorderThickness="0"
-                        BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                        Background="{DynamicResource MahApps.Brushes.Accent4}"
-                        Width="100" Height="100"
-                        >
-                    </Border>
-                    <Border
-                        Margin="2,2"
-                        BorderThickness="0"
-                        BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                        Background="{DynamicResource MahApps.Brushes.Accent4}"
-                        Width="100" Height="100"
-                        >
-                    </Border>
-                    <Border
-                        Margin="2,2"
-                        BorderThickness="0"
-                        BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                        Background="{DynamicResource MahApps.Brushes.Accent4}"
-                        Width="100" Height="100"
-                        >
-                    </Border>
-                    <Border
-                        Margin="2,2"
-                        BorderThickness="0"
-                        BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                        Background="{DynamicResource MahApps.Brushes.Accent4}"
-                        Width="100" Height="100"
-                        >
-                    </Border>
-                </WrapPanel>
-            </Border>
-            <Border
+                DataContext="{Binding ColumnA}"
+                />
+            <local:PageColumn
                 Grid.Column="1"
                 Margin="3,3"
-                BorderThickness="0"
-                Background="{DynamicResource MahApps.Brushes.Control.Background}"
-                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                >
-                <WrapPanel>
-                    <Border
-                        Margin="2,2"
-                        BorderThickness="0"
-                        BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                        Background="{DynamicResource MahApps.Brushes.Accent4}"
-                        Width="100" Height="100"
-                        >
-                    </Border>
-                    <Border
-                        Margin="2,2"
-                        BorderThickness="0"
-                        BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                        Background="{DynamicResource MahApps.Brushes.Accent4}"
-                        Width="100" Height="100"
-                        >
-                    </Border>
-                    <Border
-                        Margin="2,2"
-                        BorderThickness="0"
-                        BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                        Background="{DynamicResource MahApps.Brushes.Accent4}"
-                        Width="100" Height="100"
-                        >
-                    </Border>
-                    <Border
-                        Margin="2,2"
-                        BorderThickness="0"
-                        BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                        Background="{DynamicResource MahApps.Brushes.Accent4}"
-                        Width="100" Height="100"
-                        >
-                    </Border>
-                </WrapPanel>
-            </Border>
-            <Border
+                DataContext="{Binding ColumnB}"
+                />
+            <local:PageColumn
                 Grid.Column="2"
                 Margin="3,3"
-                BorderThickness="0"
-                Background="{DynamicResource MahApps.Brushes.Control.Background}"
-                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                >
-                <WrapPanel>
-                    <Border
-                        Margin="2,2"
-                        BorderThickness="0"
-                        BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                        Background="{DynamicResource MahApps.Brushes.Accent4}"
-                        Width="100" Height="100"
-                        >
-                    </Border>
-                    <Border
-                        Margin="2,2"
-                        BorderThickness="0"
-                        BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                        Background="{DynamicResource MahApps.Brushes.Accent4}"
-                        Width="100" Height="100"
-                        >
-                    </Border>
-                    <Border
-                        Margin="2,2"
-                        BorderThickness="0"
-                        BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                        Background="{DynamicResource MahApps.Brushes.Accent4}"
-                        Width="100" Height="100"
-                        >
-                    </Border>
-                    <Border
-                        Margin="2,2"
-                        BorderThickness="0"
-                        BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                        Background="{DynamicResource MahApps.Brushes.Accent4}"
-                        Width="100" Height="100"
-                        >
-                    </Border>
-                </WrapPanel>
-            </Border>
+                DataContext="{Binding ColumnC}"
+                />
         </Grid>
     </ScrollViewer>
 </mah:MetroWindow>
