@@ -17,9 +17,9 @@ public class MainViewModel: ViewModelBase
 {
   public MainViewModel()
   {
-    PageColumns.Add(new PageColumnViewModel());
-    PageColumns.Add(new PageColumnViewModel());
-    PageColumns.Add(new PageColumnViewModel());
+    PageColumns.Add(new PageColumnViewModel(this));
+    PageColumns.Add(new PageColumnViewModel(this));
+    PageColumns.Add(new PageColumnViewModel(this));
   }
 
   public List<PageColumnViewModel> PageColumns { get; } = [];

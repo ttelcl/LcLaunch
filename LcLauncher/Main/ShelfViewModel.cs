@@ -4,35 +4,54 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Input;
-
-using ControlzEx.Theming;
-
+using System.Diagnostics;
 using LcLauncher.WpfUtilities;
+using ControlzEx.Theming;
+using System.Windows.Input;
 
 namespace LcLauncher.Main;
 
-public class PageColumnViewModel: ViewModelBase
+public class ShelfViewModel: ViewModelBase
 {
-  public PageColumnViewModel(
-    MainViewModel rootModel)
+  public ShelfViewModel(
+    PageColumnViewModel columnModel)
   {
-    RootModel = rootModel;
-    DbgShelf = new ShelfViewModel(this);
+    ColumnModel = columnModel;
   }
 
-  public MainViewModel RootModel { get; }
+  public PageColumnViewModel ColumnModel { get; }
+
+  public MainViewModel RootModel => ColumnModel.RootModel;
 
   public ICommand SetThemeCommand => new DelegateCommand(
     p => SetTheme(p as string));
 
-  private PageColumn? Host { get; set; }
+  public bool IsExpanded {
+    get => _isExpanded;
+    set {
+      if(SetValueProperty(ref _isExpanded, value))
+      {
+      }
+    }
+  }
+  private bool _isExpanded = true;
 
-  public void UpdateHost(PageColumn? host)
+  public int RowCount {
+    get => _rowCount;
+    set {
+      if(SetValueProperty(ref _rowCount, value))
+      {
+      }
+    }
+  }
+  private int _rowCount = 1;
+
+  private Shelf? Host { get; set; }
+
+  public void UpdateHost(Shelf? host)
   {
     if(host == null)
     {
@@ -63,5 +82,4 @@ public class PageColumnViewModel: ViewModelBase
     ThemeManager.Current.ChangeTheme(Host, theme);
   }
 
-  public ShelfViewModel DbgShelf { get; }
 }
