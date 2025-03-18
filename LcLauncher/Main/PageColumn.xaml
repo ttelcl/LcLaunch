@@ -12,64 +12,8 @@
     d:DesignHeight="450" d:DesignWidth="800">
     <StackPanel
         Background="{DynamicResource MahApps.Brushes.Control.Background}">
-        <WrapPanel>
-            <Border
-                Margin="2,2"
-                BorderThickness="0"
-                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                Background="{DynamicResource MahApps.Brushes.Accent4}"
-                Width="100" Height="100"
-                >
-            </Border>
-            <Border
-                Margin="2,2"
-                BorderThickness="0"
-                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                Background="{DynamicResource MahApps.Brushes.Accent4}"
-                Width="100" Height="100"
-                >
-            </Border>
-            <Border
-                Margin="2,2"
-                BorderThickness="0"
-                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                Background="{DynamicResource MahApps.Brushes.Accent4}"
-                Width="100" Height="100"
-                >
-            </Border>
-            <Border
-                Margin="2,2"
-                BorderThickness="0"
-                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                Background="{DynamicResource MahApps.Brushes.Accent4}"
-                Width="100" Height="100"
-                >
-            </Border>
-            <Border
-                Margin="2,2"
-                BorderThickness="0"
-                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                Background="{DynamicResource MahApps.Brushes.Accent4}"
-                Width="100" Height="100"
-                >
-            </Border>
-            <Border
-                Margin="2,2"
-                BorderThickness="0"
-                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                Background="{DynamicResource MahApps.Brushes.Accent4}"
-                Width="100" Height="100"
-                >
-            </Border>
-        </WrapPanel>
-        <StackPanel Orientation="Horizontal">
-            <Button Command="{Binding SetThemeCommand}" CommandParameter="Dark.Amber">
-                Amber
-            </Button>
-            <Button Command="{Binding SetThemeCommand}" CommandParameter="Dark.Olive">
-                Olive
-            </Button>
-        </StackPanel>
-        <local:Shelf DataContext="{Binding DbgShelf}"/>
+        <local:Shelf DataContext="{Binding DbgShelfA}"/>
+        <local:Shelf DataContext="{Binding DbgShelfB}"/>
+        <local:Shelf DataContext="{Binding DbgShelfC}"/>
     </StackPanel>
 </UserControl>

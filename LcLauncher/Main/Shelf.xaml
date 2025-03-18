@@ -10,7 +10,17 @@
     d:DataContext="{d:DesignInstance local:ShelfViewModel, IsDesignTimeCreatable=False}"
     d:DesignHeight="450" d:DesignWidth="800" DataContextChanged="Shelf_DataContextChanged">
     <StackPanel Orientation="Vertical">
-        <Label>Shelf title</Label>
+        <!-- Shelf header -->
+        <DockPanel
+            Background="{DynamicResource MahApps.Brushes.Accent}"
+            Margin="2,10,2,2">
+            <Label
+                DockPanel.Dock="Left"
+                Padding="10,0">
+                Shelf title
+            </Label>
+            <Grid/> <!-- Spacer -->
+        </DockPanel>
         <WrapPanel>
             <Border
                 Margin="2,2"
@@ -62,11 +72,32 @@
             </Border>
         </WrapPanel>
         <StackPanel Orientation="Horizontal">
+            <Button Command="{Binding SetThemeCommand}" CommandParameter="Dark.Olive">
+                Olive
+            </Button>
+            <Button Command="{Binding SetThemeCommand}" CommandParameter="Dark.Indigo">
+                Indigo
+            </Button>
+            <Button Command="{Binding SetThemeCommand}" CommandParameter="Dark.Mauve">
+                Mauve
+            </Button>
+            <Button Command="{Binding SetThemeCommand}" CommandParameter="Dark.Sienna">
+                Sienna
+            </Button>
+            <Button Command="{Binding SetThemeCommand}" CommandParameter="Dark.Taupe">
+                Taupe
+            </Button>
             <Button Command="{Binding SetThemeCommand}" CommandParameter="Dark.Amber">
                 Amber
             </Button>
-            <Button Command="{Binding SetThemeCommand}" CommandParameter="Dark.Olive">
-                Olive
+            <Button Command="{Binding SetThemeCommand}" CommandParameter="Dark.Crimson">
+                Crimson
+            </Button>
+            <Button Command="{Binding SetThemeCommand}" CommandParameter="Dark.Brown">
+                Brown
+            </Button>
+            <Button Command="{Binding SetThemeCommand}" CommandParameter="Dark.Steel">
+                Steel
             </Button>
         </StackPanel>
     </StackPanel>
