@@ -14,6 +14,57 @@
         <DockPanel
             Background="{DynamicResource MahApps.Brushes.Accent}"
             Margin="2,10,2,2">
+            <DockPanel.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Color Theme">
+                        <MenuItem Header="Olive" Command="{Binding SetThemeCommand}"
+                                  CommandParameter="Olive"
+                                  IsChecked="{Binding Theme,
+                                              Converter={StaticResource ValueIs},
+                                              ConverterParameter=Olive}"/>
+                        <MenuItem Header="Indigo" Command="{Binding SetThemeCommand}"
+                                  CommandParameter="Indigo"
+                                  IsChecked="{Binding Theme,
+                                              Converter={StaticResource ValueIs},
+                                              ConverterParameter=Indigo}"/>
+                        <MenuItem Header="Mauve" Command="{Binding SetThemeCommand}"
+                                  CommandParameter="Mauve"
+                                  IsChecked="{Binding Theme,
+                                              Converter={StaticResource ValueIs},
+                                              ConverterParameter=Mauve}"/>
+                        <MenuItem Header="Sienna" Command="{Binding SetThemeCommand}"
+                                  CommandParameter="Sienna"
+                                  IsChecked="{Binding Theme,
+                                              Converter={StaticResource ValueIs},
+                                              ConverterParameter=Sienna}"/>
+                        <MenuItem Header="Taupe" Command="{Binding SetThemeCommand}"
+                                  CommandParameter="Taupe"
+                                  IsChecked="{Binding Theme,
+                                              Converter={StaticResource ValueIs},
+                                              ConverterParameter=Taupe}"/>
+                        <MenuItem Header="Amber" Command="{Binding SetThemeCommand}"
+                                  CommandParameter="Amber"
+                                  IsChecked="{Binding Theme,
+                                              Converter={StaticResource ValueIs},
+                                              ConverterParameter=Amber}"/>
+                        <MenuItem Header="Crimson" Command="{Binding SetThemeCommand}"
+                                  CommandParameter="Crimson"
+                                  IsChecked="{Binding Theme,
+                                              Converter={StaticResource ValueIs},
+                                              ConverterParameter=Crimson}"/>
+                        <MenuItem Header="Brown" Command="{Binding SetThemeCommand}"
+                                  CommandParameter="Brown"
+                                  IsChecked="{Binding Theme,
+                                              Converter={StaticResource ValueIs},
+                                              ConverterParameter=Brown}"/>
+                        <MenuItem Header="Steel" Command="{Binding SetThemeCommand}"
+                                  CommandParameter="Steel"
+                                  IsChecked="{Binding Theme,
+                                              Converter={StaticResource ValueIs},
+                                              ConverterParameter=Steel}"/>
+                    </MenuItem>
+                </ContextMenu>
+            </DockPanel.ContextMenu>
             <Label
                 DockPanel.Dock="Left"
                 Padding="10,0">
@@ -71,34 +122,5 @@
                 >
             </Border>
         </WrapPanel>
-        <StackPanel Orientation="Horizontal">
-            <Button Command="{Binding SetThemeCommand}" CommandParameter="Dark.Olive">
-                Olive
-            </Button>
-            <Button Command="{Binding SetThemeCommand}" CommandParameter="Dark.Indigo">
-                Indigo
-            </Button>
-            <Button Command="{Binding SetThemeCommand}" CommandParameter="Dark.Mauve">
-                Mauve
-            </Button>
-            <Button Command="{Binding SetThemeCommand}" CommandParameter="Dark.Sienna">
-                Sienna
-            </Button>
-            <Button Command="{Binding SetThemeCommand}" CommandParameter="Dark.Taupe">
-                Taupe
-            </Button>
-            <Button Command="{Binding SetThemeCommand}" CommandParameter="Dark.Amber">
-                Amber
-            </Button>
-            <Button Command="{Binding SetThemeCommand}" CommandParameter="Dark.Crimson">
-                Crimson
-            </Button>
-            <Button Command="{Binding SetThemeCommand}" CommandParameter="Dark.Brown">
-                Brown
-            </Button>
-            <Button Command="{Binding SetThemeCommand}" CommandParameter="Dark.Steel">
-                Steel
-            </Button>
-        </StackPanel>
     </StackPanel>
 </UserControl>

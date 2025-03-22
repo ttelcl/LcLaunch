@@ -42,6 +42,8 @@
                 MismatchValue="{x:Static Visibility.Visible}"/>
             <converters:StringMatchVisibilityConverter
                 x:Key="VisibleIfString"/>
+            <converters:ValueMatchConverter
+                x:Key="ValueIs"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

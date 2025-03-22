@@ -21,7 +21,7 @@ public class ShelfViewModel: ViewModelBase
   {
     ColumnModel = columnModel;
     SetThemeCommand = new DelegateCommand(
-      p => SetTheme(p as string));
+      p => Theme = (p as string) ?? "Olive");
     PrimaryContent = new ShelfContentViewModel(this, true);
   }
 
@@ -45,6 +45,17 @@ public class ShelfViewModel: ViewModelBase
   public bool HasSecondaryContent => SecondaryContent != null;
 
   public ICommand SetThemeCommand { get; }
+
+  public string Theme {
+    get => _theme;
+    set {
+      if(SetValueProperty(ref _theme, value))
+      {
+        SetTheme("Dark." + value);
+      }
+    }
+  }
+  private string _theme = "Olive";
 
   public bool IsExpanded {
     get => _isExpanded;
@@ -74,7 +85,7 @@ public class ShelfViewModel: ViewModelBase
     }
   }
 
-  public void SetTheme(string? theme)
+  private void SetTheme(string? theme)
   {
     if(Host == null)
     {
