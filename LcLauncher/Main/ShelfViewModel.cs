@@ -22,6 +22,8 @@ public class ShelfViewModel: ViewModelBase
     ColumnModel = columnModel;
     SetThemeCommand = new DelegateCommand(
       p => Theme = (p as string) ?? "Olive");
+    ToggleExpandedCommand = new DelegateCommand(
+      p => IsExpanded = !IsExpanded);
     PrimaryContent = new ShelfContentViewModel(this, true);
   }
 
@@ -36,15 +38,14 @@ public class ShelfViewModel: ViewModelBase
     set {
       if(SetNullableInstanceProperty(ref _secondaryContent, value))
       {
-        RaisePropertyChanged(nameof(HasSecondaryContent));
       }
     }
   }
   private ShelfContentViewModel? _secondaryContent;
 
-  public bool HasSecondaryContent => SecondaryContent != null;
-
   public ICommand SetThemeCommand { get; }
+
+  public ICommand ToggleExpandedCommand { get; }
 
   public string Theme {
     get => _theme;
@@ -72,10 +73,14 @@ public class ShelfViewModel: ViewModelBase
     set {
       if(SetValueProperty(ref _isExpanded, value))
       {
+        RaisePropertyChanged(nameof(ShelfExpandedIcon));
       }
     }
   }
   private bool _isExpanded = true;
+
+  public string ShelfExpandedIcon => 
+    IsExpanded ? "ChevronUpCircleOutline" : "ChevronDownCircleOutline";
 
   private Shelf? Host { get; set; }
 
