@@ -57,6 +57,16 @@ public class ShelfViewModel: ViewModelBase
   }
   private string _theme = "Olive";
 
+  public string Title {
+    get => _title;
+    set {
+      if(SetValueProperty(ref _title, value))
+      {
+      }
+    }
+  }
+  private string _title = "Shelf Title";
+
   public bool IsExpanded {
     get => _isExpanded;
     set {

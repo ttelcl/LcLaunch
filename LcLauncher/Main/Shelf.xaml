@@ -65,11 +65,12 @@
                     </MenuItem>
                 </ContextMenu>
             </DockPanel.ContextMenu>
-            <Label
+            <TextBlock
                 DockPanel.Dock="Left"
-                Padding="10,0">
-                Shelf title
-            </Label>
+                Padding="10,0"
+                Text="{Binding Title}"
+                >
+            </TextBlock>
             <Grid/> <!-- Spacer -->
         </DockPanel>
         <WrapPanel>
