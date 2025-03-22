@@ -37,4 +37,25 @@ public class TileSlotViewModel: ViewModelBase
 
   public int Column { get => Position % 4; }
 
+  public object? /* placeholder type */ Content {
+    get => _content;
+    set {
+      if(SetNullableInstanceProperty(ref _content, value))
+      {
+        IsEmpty = value == null;
+      }
+    }
+  }
+  private object? _content;
+
+  public bool IsEmpty {
+    get => _isEmpty; 
+    private set {
+      if(SetValueProperty(ref _isEmpty, value))
+      {
+      }
+    }
+  }
+  private bool _isEmpty = true;
+
 }

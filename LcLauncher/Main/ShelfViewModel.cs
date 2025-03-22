@@ -20,14 +20,31 @@ public class ShelfViewModel: ViewModelBase
     PageColumnViewModel columnModel)
   {
     ColumnModel = columnModel;
+    SetThemeCommand = new DelegateCommand(
+      p => SetTheme(p as string));
+    PrimaryContent = new ShelfContentViewModel(this, true);
   }
 
   public PageColumnViewModel ColumnModel { get; }
 
   public MainViewModel RootModel => ColumnModel.RootModel;
 
-  public ICommand SetThemeCommand => new DelegateCommand(
-    p => SetTheme(p as string));
+  public ShelfContentViewModel PrimaryContent { get; }
+
+  public ShelfContentViewModel? SecondaryContent {
+    get => _secondaryContent;
+    set {
+      if(SetNullableInstanceProperty(ref _secondaryContent, value))
+      {
+        RaisePropertyChanged(nameof(HasSecondaryContent));
+      }
+    }
+  }
+  private ShelfContentViewModel? _secondaryContent;
+
+  public bool HasSecondaryContent => SecondaryContent != null;
+
+  public ICommand SetThemeCommand { get; }
 
   public bool IsExpanded {
     get => _isExpanded;
@@ -38,16 +55,6 @@ public class ShelfViewModel: ViewModelBase
     }
   }
   private bool _isExpanded = true;
-
-  public int RowCount {
-    get => _rowCount;
-    set {
-      if(SetValueProperty(ref _rowCount, value))
-      {
-      }
-    }
-  }
-  private int _rowCount = 1;
 
   private Shelf? Host { get; set; }
 
