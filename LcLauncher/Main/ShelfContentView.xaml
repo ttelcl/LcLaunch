@@ -15,54 +15,12 @@
         BorderBrush="{DynamicResource MahApps.Brushes.Accent}"
         >
         <WrapPanel>
-            <Border
-                Margin="2,2"
-                BorderThickness="0"
-                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                Background="{DynamicResource MahApps.Brushes.Accent4}"
-                Width="100" Height="100"
-                >
-            </Border>
-            <Border
-                Margin="2,2"
-                BorderThickness="0"
-                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                Background="{DynamicResource MahApps.Brushes.Accent4}"
-                Width="100" Height="100"
-                >
-            </Border>
-            <Border
-                Margin="2,2"
-                BorderThickness="0"
-                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                Background="{DynamicResource MahApps.Brushes.Accent4}"
-                Width="100" Height="100"
-                >
-            </Border>
-            <Border
-                Margin="2,2"
-                BorderThickness="0"
-                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                Background="{DynamicResource MahApps.Brushes.Accent4}"
-                Width="100" Height="100"
-                >
-            </Border>
-            <Border
-                Margin="2,2"
-                BorderThickness="0"
-                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                Background="{DynamicResource MahApps.Brushes.Accent4}"
-                Width="100" Height="100"
-                >
-            </Border>
-            <Border
-                Margin="2,2"
-                BorderThickness="0"
-                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                Background="{DynamicResource MahApps.Brushes.Accent4}"
-                Width="100" Height="100"
-                >
-            </Border>
+            <local:TileSlotView/>
+            <local:TileSlotView/>
+            <local:TileSlotView/>
+            <local:TileSlotView/>
+            <local:TileSlotView/>
+            <local:TileSlotView/>
         </WrapPanel>
     </Border>
 </UserControl>
