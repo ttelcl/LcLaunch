@@ -14,13 +14,19 @@
         BorderThickness="0,0,0,1"
         BorderBrush="{DynamicResource MahApps.Brushes.Accent}"
         >
-        <WrapPanel>
-            <local:TileSlotView/>
-            <local:TileSlotView/>
-            <local:TileSlotView/>
-            <local:TileSlotView/>
-            <local:TileSlotView/>
-            <local:TileSlotView/>
-        </WrapPanel>
+        <ItemsControl
+            ItemsSource="{Binding Slots}"
+            >
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <local:TileSlotView DataContext="{Binding}"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
     </Border>
 </UserControl>

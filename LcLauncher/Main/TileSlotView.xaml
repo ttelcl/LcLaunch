@@ -17,6 +17,18 @@
             Background="{DynamicResource MahApps.Brushes.Accent4}"
             Width="100" Height="100"
             >
+            <StackPanel
+                VerticalAlignment="Center"
+                Orientation="Vertical">
+                <TextBlock
+                    Text="{Binding Position}"
+                    HorizontalAlignment="Center"
+                    FontSize="30"/>
+                <TextBlock
+                    Text="{Binding Owner.IsPrimary}"
+                    HorizontalAlignment="Center"
+                    FontSize="18"/>
+            </StackPanel>
         </Border>
         <Border
             Margin="1,1"
