@@ -25,6 +25,12 @@ public class ShelfViewModel: ViewModelBase
     ToggleExpandedCommand = new DelegateCommand(
       p => IsExpanded = !IsExpanded);
     PrimaryContent = new ShelfContentViewModel(this, true);
+
+    // Temporary test code to add a secondary content
+    if(Random.Shared.Next(2) == 0)
+    {
+      SecondaryContent = new ShelfContentViewModel(this, false);
+    }
   }
 
   public PageColumnViewModel ColumnModel { get; }

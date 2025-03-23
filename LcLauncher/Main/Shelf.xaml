@@ -8,12 +8,13 @@
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance local:ShelfViewModel, IsDesignTimeCreatable=False}"
-    d:DesignHeight="450" d:DesignWidth="800" DataContextChanged="Shelf_DataContextChanged">
+    d:DesignHeight="450" d:DesignWidth="800"
+    DataContextChanged="Shelf_DataContextChanged">
     <StackPanel Orientation="Vertical">
         <!-- Shelf header -->
         <DockPanel
             Background="{DynamicResource MahApps.Brushes.Accent}"
-            Margin="2,10,2,2">
+            Margin="2,4,2,0">
             <DockPanel.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Color Theme">
@@ -188,62 +189,20 @@
             </ToggleButton>
             <Grid/> <!-- Spacer -->
         </DockPanel>
-        <Border
-            Padding="0,0,0,2"
-            BorderThickness="0,0,0,1"
-            BorderBrush="{DynamicResource MahApps.Brushes.Accent}"
-            Visibility="{Binding IsExpanded, Converter={StaticResource VisibleIf}}"
-            Background="{DynamicResource MahApps.Brushes.Control.Background}">
-            <WrapPanel>
-                <Border
-                Margin="2,2"
-                BorderThickness="0"
-                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                Background="{DynamicResource MahApps.Brushes.Accent4}"
-                Width="100" Height="100"
-                >
-                </Border>
-                <Border
-                Margin="2,2"
-                BorderThickness="0"
-                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                Background="{DynamicResource MahApps.Brushes.Accent4}"
-                Width="100" Height="100"
-                >
-                </Border>
-                <Border
-                Margin="2,2"
-                BorderThickness="0"
-                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                Background="{DynamicResource MahApps.Brushes.Accent4}"
-                Width="100" Height="100"
-                >
-                </Border>
-                <Border
-                Margin="2,2"
-                BorderThickness="0"
-                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                Background="{DynamicResource MahApps.Brushes.Accent4}"
-                Width="100" Height="100"
-                >
-                </Border>
-                <Border
-                Margin="2,2"
-                BorderThickness="0"
-                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                Background="{DynamicResource MahApps.Brushes.Accent4}"
-                Width="100" Height="100"
-                >
-                </Border>
-                <Border
-                Margin="2,2"
-                BorderThickness="0"
-                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                Background="{DynamicResource MahApps.Brushes.Accent4}"
-                Width="100" Height="100"
-                >
-                </Border>
-            </WrapPanel>
-        </Border>
+        <!-- Content (both Primary and, if present, secondary) -->
+        <StackPanel
+            Orientation="Vertical"
+            Visibility="{Binding IsExpanded, Converter={StaticResource VisibleIf}}">
+            <local:ShelfContentView
+                DataContext="{Binding PrimaryContent}"
+                />
+            <local:ShelfContentView
+                Visibility="{Binding
+                    DataContext.SecondaryContent,
+                    RelativeSource={RelativeSource AncestorType=UserControl},
+                    Converter={StaticResource VisibleIfNotNull}}"
+                DataContext="{Binding SecondaryContent}"
+                />
+        </StackPanel>
     </StackPanel>
 </UserControl>
