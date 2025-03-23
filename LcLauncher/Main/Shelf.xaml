@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:local="clr-namespace:LcLauncher.Main"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-    mc:Ignorable="d" 
+    mc:Ignorable="d"
     d:DataContext="{d:DesignInstance local:ShelfViewModel, IsDesignTimeCreatable=False}"
     d:DesignHeight="450" d:DesignWidth="800" DataContextChanged="Shelf_DataContextChanged">
     <StackPanel Orientation="Vertical">
@@ -161,6 +161,15 @@
                               IsChecked="{Binding IsExpanded}"/>
                 </ContextMenu>
             </DockPanel.ContextMenu>
+            <DockPanel.InputBindings>
+                <!--
+                  Yes, you can handle a doubleclick on a dockpanel by a command :)
+                  https://stackoverflow.com/a/6882619/271323
+                -->
+                <MouseBinding
+                    Gesture="LeftDoubleClick"
+                    Command="{Binding ToggleExpandedCommand}"/>
+            </DockPanel.InputBindings>
             <TextBlock
                 DockPanel.Dock="Left"
                 Padding="10,5"
@@ -180,60 +189,61 @@
             <Grid/> <!-- Spacer -->
         </DockPanel>
         <Border
-            Margin="2"
+            Padding="0,0,0,2"
+            BorderThickness="0,0,0,1"
+            BorderBrush="{DynamicResource MahApps.Brushes.Accent}"
             Visibility="{Binding IsExpanded, Converter={StaticResource VisibleIf}}"
-            Background="{DynamicResource MahApps.Brushes.Accent4}">
-            <TextBlock Text="TEMP" Margin="42"/>
+            Background="{DynamicResource MahApps.Brushes.Control.Background}">
+            <WrapPanel>
+                <Border
+                Margin="2,2"
+                BorderThickness="0"
+                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+                Background="{DynamicResource MahApps.Brushes.Accent4}"
+                Width="100" Height="100"
+                >
+                </Border>
+                <Border
+                Margin="2,2"
+                BorderThickness="0"
+                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+                Background="{DynamicResource MahApps.Brushes.Accent4}"
+                Width="100" Height="100"
+                >
+                </Border>
+                <Border
+                Margin="2,2"
+                BorderThickness="0"
+                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+                Background="{DynamicResource MahApps.Brushes.Accent4}"
+                Width="100" Height="100"
+                >
+                </Border>
+                <Border
+                Margin="2,2"
+                BorderThickness="0"
+                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+                Background="{DynamicResource MahApps.Brushes.Accent4}"
+                Width="100" Height="100"
+                >
+                </Border>
+                <Border
+                Margin="2,2"
+                BorderThickness="0"
+                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+                Background="{DynamicResource MahApps.Brushes.Accent4}"
+                Width="100" Height="100"
+                >
+                </Border>
+                <Border
+                Margin="2,2"
+                BorderThickness="0"
+                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+                Background="{DynamicResource MahApps.Brushes.Accent4}"
+                Width="100" Height="100"
+                >
+                </Border>
+            </WrapPanel>
         </Border>
-        <WrapPanel>
-            <Border
-                Margin="2,2"
-                BorderThickness="0"
-                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                Background="{DynamicResource MahApps.Brushes.Accent4}"
-                Width="100" Height="100"
-                >
-            </Border>
-            <Border
-                Margin="2,2"
-                BorderThickness="0"
-                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                Background="{DynamicResource MahApps.Brushes.Accent4}"
-                Width="100" Height="100"
-                >
-            </Border>
-            <Border
-                Margin="2,2"
-                BorderThickness="0"
-                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                Background="{DynamicResource MahApps.Brushes.Accent4}"
-                Width="100" Height="100"
-                >
-            </Border>
-            <Border
-                Margin="2,2"
-                BorderThickness="0"
-                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                Background="{DynamicResource MahApps.Brushes.Accent4}"
-                Width="100" Height="100"
-                >
-            </Border>
-            <Border
-                Margin="2,2"
-                BorderThickness="0"
-                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                Background="{DynamicResource MahApps.Brushes.Accent4}"
-                Width="100" Height="100"
-                >
-            </Border>
-            <Border
-                Margin="2,2"
-                BorderThickness="0"
-                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                Background="{DynamicResource MahApps.Brushes.Accent4}"
-                Width="100" Height="100"
-                >
-            </Border>
-        </WrapPanel>
     </StackPanel>
 </UserControl>
