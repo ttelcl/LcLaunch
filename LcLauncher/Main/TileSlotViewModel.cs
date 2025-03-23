@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 
 using LcLauncher.WpfUtilities;
+using System.Windows.Input;
 
 namespace LcLauncher.Main;
 
@@ -27,6 +28,19 @@ public class TileSlotViewModel: ViewModelBase
   {
     Owner = owner;
     Position = position;
+
+    // Temporary test content
+    TestSecondaryCommand = new DelegateCommand(
+      p => {
+        if(Owner.IsPrimary)
+        {
+          Owner.Owner.ToggleSecondaryContent(_secondaryContent);
+        }
+      });
+    if(Owner.IsPrimary)
+    {
+      _secondaryContent = new ShelfContentViewModel(Owner.Owner, false);
+    }
   }
 
   public ShelfContentViewModel Owner { get; }
@@ -49,7 +63,7 @@ public class TileSlotViewModel: ViewModelBase
   private object? _content;
 
   public bool IsEmpty {
-    get => _isEmpty; 
+    get => _isEmpty;
     private set {
       if(SetValueProperty(ref _isEmpty, value))
       {
@@ -58,4 +72,7 @@ public class TileSlotViewModel: ViewModelBase
   }
   private bool _isEmpty = true;
 
+  /* Temporary test content */
+  public ICommand TestSecondaryCommand { get; }
+  private ShelfContentViewModel? _secondaryContent;
 }
