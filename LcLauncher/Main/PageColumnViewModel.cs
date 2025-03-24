@@ -23,8 +23,8 @@ public class PageColumnViewModel: ViewModelBase
   {
     RootModel = rootModel;
     DbgShelfA = new ShelfViewModel(this);
-    DbgShelfB = new ShelfViewModel(this);
-    DbgShelfC = new ShelfViewModel(this);
+    DbgShelfB = new ShelfViewModel(this, "Amber");
+    DbgShelfC = new ShelfViewModel(this, "Sienna");
   }
 
   public MainViewModel RootModel { get; }

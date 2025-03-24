@@ -17,7 +17,8 @@ namespace LcLauncher.Main;
 public class ShelfViewModel: ViewModelBase
 {
   public ShelfViewModel(
-    PageColumnViewModel columnModel)
+    PageColumnViewModel columnModel,
+    string? theme = null)
   {
     ColumnModel = columnModel;
     SetThemeCommand = new DelegateCommand(
@@ -25,6 +26,7 @@ public class ShelfViewModel: ViewModelBase
     ToggleExpandedCommand = new DelegateCommand(
       p => IsExpanded = !IsExpanded);
     PrimaryContent = new ShelfContentViewModel(this, true);
+    Theme = theme ?? "Olive";
   }
 
   public PageColumnViewModel ColumnModel { get; }
@@ -109,6 +111,7 @@ public class ShelfViewModel: ViewModelBase
       Trace.TraceInformation(
         "PageColumn_DataContextChanged: Setting host control");
       Host = host;
+      SetTheme("Dark." + Theme);
     }
   }
 
