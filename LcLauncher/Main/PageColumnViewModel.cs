@@ -22,7 +22,7 @@ public class PageColumnViewModel: ViewModelBase
     MainViewModel rootModel)
   {
     RootModel = rootModel;
-    DbgShelfA = new ShelfViewModel(this);
+    _dbgShelfA = new ShelfViewModel(this);
     DbgShelfB = new ShelfViewModel(this, "Amber");
     DbgShelfC = new ShelfViewModel(this, "Sienna");
   }
@@ -65,7 +65,15 @@ public class PageColumnViewModel: ViewModelBase
     ThemeManager.Current.ChangeTheme(Host, theme);
   }
 
-  public ShelfViewModel DbgShelfA { get; }
+  public ShelfViewModel DbgShelfA { 
+    get => _dbgShelfA;
+    set {
+      if(SetInstanceProperty(ref _dbgShelfA, value))
+      {
+      }
+    }
+  }
+  private ShelfViewModel _dbgShelfA;
 
   public ShelfViewModel DbgShelfB { get; }
 

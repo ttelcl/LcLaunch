@@ -20,6 +20,7 @@ public class MainViewModel: ViewModelBase
     PageColumns.Add(new PageColumnViewModel(this));
     PageColumns.Add(new PageColumnViewModel(this));
     PageColumns.Add(new PageColumnViewModel(this));
+    TestPane = new TestPaneViewModel(this);
   }
 
   public List<PageColumnViewModel> PageColumns { get; } = [];
@@ -29,4 +30,6 @@ public class MainViewModel: ViewModelBase
   public PageColumnViewModel ColumnB => PageColumns[1];
 
   public PageColumnViewModel ColumnC => PageColumns[2];
+
+  public TestPaneViewModel TestPane { get; }
 }

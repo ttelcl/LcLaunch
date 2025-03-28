@@ -1,0 +1,48 @@
+﻿<UserControl
+    x:Class="LcLauncher.Main.TestPane"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:local="clr-namespace:LcLauncher.Main"
+    xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    mc:Ignorable="d" 
+    d:DataContext="{d:DesignInstance local:TestPaneViewModel, IsDesignTimeCreatable=False}"
+    d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <TextBlock
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Text="Development Temporary Interface"
+            Foreground="#440000FF"
+            FontSize="48"
+            />
+        <Border
+            Height="130"
+            BorderThickness="1"
+            Margin="2" Padding="5"
+            BorderBrush="Blue">
+            <DockPanel>
+                <WrapPanel DockPanel.Dock="Left" Orientation="Vertical">
+                    <Button Content="Reset 1st Shelf"
+                            Command="{Binding ResetShelf1Command}"/>
+                    <Button Content="Load Shelf file..."
+                            Command="{Binding LoadShelfFileCommand}"/>
+                    <Button Content="Button 3" />
+                    <Button Content="Button 4" />
+                    <Button Content="Button 5" />
+                    <Button Content="Button 6" />
+                    <Button Content="Button 7" />
+                </WrapPanel>
+                <Border
+                    BorderThickness="1"
+                    BorderBrush="Blue"
+                    Margin="2" Padding="5">
+                    <!-- filler -->
+
+                </Border>
+            </DockPanel>
+        </Border>
+    </Grid>
+</UserControl>

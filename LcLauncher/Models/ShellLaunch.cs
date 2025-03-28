@@ -20,7 +20,7 @@ namespace LcLauncher.Models;
  * not so much executables. Although those work too.
  
 {
-  "target": "c:\\Windows\\System32\\@WLOGO_48x48.png",
+  "target": "C:\\Windows\\System32\\@WLOGO_48x48.png",
   "tooltip": "Windows logo",
   "title": "Logo image",
   "windowStyle": "Normal",
@@ -84,7 +84,8 @@ public class ShellLaunch
   /// Rarely used, but available for unusual cases. Valid values depend on the
   /// target's file type!
   /// </summary>
-  [JsonProperty("verb", DefaultValueHandling = DefaultValueHandling.Ignore)]
+  [JsonProperty("verb", DefaultValueHandling = DefaultValueHandling.Ignore,
+    NullValueHandling = NullValueHandling.Ignore)]
   [DefaultValue("")]
   public string Verb { get; set; }
 

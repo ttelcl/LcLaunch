@@ -14,29 +14,32 @@
     ResizeMode="NoResize"
     Title="Luc's Application Launchpad"
     Height="920" Width="1285">
-    <ScrollViewer VerticalScrollBarVisibility="Visible">
-        <Grid
-        Background="{DynamicResource MahApps.Brushes.Gray10}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <local:PageColumn
-                Grid.Column="0"
-                Margin="3,3"
-                DataContext="{Binding ColumnA}"
-                />
-            <local:PageColumn
-                Grid.Column="1"
-                Margin="3,3"
-                DataContext="{Binding ColumnB}"
-                />
-            <local:PageColumn
-                Grid.Column="2"
-                Margin="3,3"
-                DataContext="{Binding ColumnC}"
-                />
-        </Grid>
-    </ScrollViewer>
+    <DockPanel>
+        <local:TestPane DockPanel.Dock="Top" DataContext="{Binding TestPane}"/>
+        <ScrollViewer VerticalScrollBarVisibility="Visible">
+            <Grid
+            Background="{DynamicResource MahApps.Brushes.Gray10}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <local:PageColumn
+                    Grid.Column="0"
+                    Margin="3,3"
+                    DataContext="{Binding ColumnA}"
+                    />
+                <local:PageColumn
+                    Grid.Column="1"
+                    Margin="3,3"
+                    DataContext="{Binding ColumnB}"
+                    />
+                <local:PageColumn
+                    Grid.Column="2"
+                    Margin="3,3"
+                    DataContext="{Binding ColumnC}"
+                    />
+            </Grid>
+        </ScrollViewer>
+    </DockPanel>
 </mah:MetroWindow>

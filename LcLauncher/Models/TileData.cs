@@ -49,7 +49,7 @@ public class TileData: LaunchTile
     return new TileData(group: new TileGroup(tiles));
   }
 
-  [JsonProperty("group")]
+  [JsonProperty("group", NullValueHandling = NullValueHandling.Ignore)]
   public TileGroup? Group { get; set; }
 
 }

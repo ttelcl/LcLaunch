@@ -4,10 +4,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Diagnostics;
 
 using Newtonsoft.Json;
 
@@ -34,4 +35,9 @@ public class ShelfData
   [JsonProperty("theme", NullValueHandling = NullValueHandling.Ignore)]
   public string? Theme { get; set; }
 
+  public static ShelfData LoadFile(string path)
+  {
+    return JsonConvert.DeserializeObject<ShelfData>(File.ReadAllText(path))
+      ?? new ShelfData("Bad Shelf File", []);
+  }
 }

@@ -18,7 +18,8 @@ public class ShelfViewModel: ViewModelBase
 {
   public ShelfViewModel(
     PageColumnViewModel columnModel,
-    string? theme = null)
+    string? theme = null,
+    string? title = null)
   {
     ColumnModel = columnModel;
     SetThemeCommand = new DelegateCommand(
@@ -27,6 +28,7 @@ public class ShelfViewModel: ViewModelBase
       p => IsExpanded = !IsExpanded);
     PrimaryContent = new ShelfContentViewModel(this, true);
     Theme = theme ?? "Olive";
+    _title = String.IsNullOrEmpty(title) ? "Untitled Shelf" : title;
   }
 
   public PageColumnViewModel ColumnModel { get; }
@@ -103,13 +105,13 @@ public class ShelfViewModel: ViewModelBase
     if(host == null)
     {
       Trace.TraceInformation(
-        "PageColumn_DataContextChanged: Clearing host control");
+        "ShelfViewModel.UpdateHost: Clearing host control");
       Host = null;
     }
     else
     {
       Trace.TraceInformation(
-        "PageColumn_DataContextChanged: Setting host control");
+        "ShelfViewModel.UpdateHost: Setting host control");
       Host = host;
       SetTheme("Dark." + Theme);
     }
