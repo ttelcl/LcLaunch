@@ -19,6 +19,7 @@ using Microsoft.WindowsAPICodePack.Shell;
 
 using LcLauncher.Models;
 using LcLauncher.WpfUtilities;
+using System.Windows.Media.Imaging;
 
 namespace LcLauncher.Main;
 
@@ -40,16 +41,106 @@ public class TestPaneViewModel: ViewModelBase
   public string? IconFile {
     get => _iconFile;
     set {
-      if(_iconFile != null && _iconFile != value && value != null)
-      {
-        SetValueProperty(ref _iconFile, null);
-      }
       if(SetValueProperty(ref _iconFile, value))
       {
+        ProbeIconFile();
       }
     }
   }
   private string? _iconFile;
+
+  private void ProbeIconFile()
+  {
+    if(File.Exists(IconFile))
+    {
+      try
+      {
+        using(var iconShellFile = ShellFile.FromFilePath(IconFile))
+        {
+          Trace.TraceInformation(
+            $"Parsing Name: {iconShellFile.ParsingName}");
+          Trace.TraceInformation(
+            $"Display Name: {iconShellFile.Name}");
+          var thumbnail = iconShellFile.Thumbnail;
+          thumbnail.FormatOption = ShellThumbnailFormatOption.IconOnly;
+          IconMedium = thumbnail.MediumBitmapSource;
+          IconLarge = thumbnail.LargeBitmapSource;
+          IconExtraLarge = thumbnail.ExtraLargeBitmapSource;
+          IconNormal = thumbnail.BitmapSource;
+          IconSmall = thumbnail.SmallBitmapSource;
+        }
+      }
+      catch(Exception ex)
+      {
+        Trace.TraceError(
+          $"ProbeIconFile: Error probing icon file: {ex}");
+        ClearIcons();
+      }
+    }
+    else
+    {
+      ClearIcons();
+    }
+  }
+
+  private void ClearIcons()
+  {
+    IconMedium = null;
+    IconLarge = null;
+    IconExtraLarge = null;
+    IconSmall = null;
+    IconNormal = null;
+  }
+
+  public BitmapSource? IconMedium {
+    get => _iconMedium;
+    set {
+      if(SetNullableInstanceProperty(ref _iconMedium, value))
+      {
+      }
+    }
+  }
+  private BitmapSource? _iconMedium;
+
+  public BitmapSource? IconLarge {
+    get => _iconLarge;
+    set {
+      if(SetNullableInstanceProperty(ref _iconLarge, value))
+      {
+      }
+    }
+  }
+  private BitmapSource? _iconLarge;
+
+  public BitmapSource? IconExtraLarge {
+    get => _iconExtraLarge;
+    set {
+      if(SetNullableInstanceProperty(ref _iconExtraLarge, value))
+      {
+      }
+    }
+  }
+  private BitmapSource? _iconExtraLarge;
+
+  public BitmapSource? IconSmall {
+    get => _iconSmall;
+    set {
+      if(SetNullableInstanceProperty(ref _iconSmall, value))
+      {
+      }
+    }
+  }
+  private BitmapSource? _iconSmall;
+
+  public BitmapSource? IconNormal {
+    get => _iconNormal;
+    set {
+      if(SetNullableInstanceProperty(ref _iconNormal, value))
+      {
+      }
+    }
+  }
+  private BitmapSource? _iconNormal;
 
   public ICommand ResetShelf1Command { get; }
 
@@ -98,6 +189,7 @@ public class TestPaneViewModel: ViewModelBase
       CheckFileExists = true,
       CheckPathExists = true,
       Multiselect = false,
+      DereferenceLinks = false,
     };
     var result = ofd.ShowDialog();
     if(result == true)

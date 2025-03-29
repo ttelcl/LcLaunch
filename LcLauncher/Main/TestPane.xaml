@@ -21,7 +21,7 @@
             />
         <!-- Main Content -->
         <Border
-            Height="130"
+            Height="300"
             BorderThickness="1"
             Margin="2" Padding="5"
             BorderBrush="Blue">
@@ -46,11 +46,32 @@
                         Text="{Binding IconFile}"
                         IsReadOnly="True"/>
                 </DockPanel>
-                <!-- filler -->
                 <Border
                     BorderThickness="1"
                     BorderBrush="Blue"
                     Margin="2" Padding="5">
+                    <StackPanel Orientation="Horizontal">
+                        <Image
+                            Source="{Binding IconSmall}"
+                            Stretch="None"
+                            Margin="5"/>
+                        <Image
+                            Source="{Binding IconMedium}"
+                            Stretch="None"
+                            Margin="5"/>
+                        <Image
+                            Source="{Binding IconLarge}"
+                            Stretch="None"
+                            Margin="5"/>
+                        <Image
+                            Source="{Binding IconExtraLarge}"
+                            Stretch="None"
+                            Margin="5"/>
+                        <!--<Image
+                            Source="{Binding IconNormal}"
+                            Stretch="None"
+                            Margin="5"/>-->
+                    </StackPanel>
                 </Border>
             </DockPanel>
         </Border>
