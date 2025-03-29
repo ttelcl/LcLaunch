@@ -21,6 +21,7 @@ namespace LcLauncher.Models;
  
 {
   "target": "C:\\Windows\\System32\\@WLOGO_48x48.png",
+  "iconSource": null,
   "tooltip": "Windows logo",
   "title": "Logo image",
   "windowStyle": "Normal",
@@ -48,7 +49,8 @@ public class ShellLaunch
     string? title = null,
     ProcessWindowStyle windowStyle = ProcessWindowStyle.Normal,
     string verb = "",
-    IEnumerable<string>? arguments = null)
+    IEnumerable<string>? arguments = null,
+    string? iconSource = null)
   {
     TargetPath = target;
     Tooltip = tooltip;
@@ -56,6 +58,7 @@ public class ShellLaunch
     WindowStyle = windowStyle;
     Verb = verb;
     Arguments = arguments?.ToList() ?? [];
+    IconSource = iconSource;
   }
 
   [JsonProperty("target")]
@@ -91,6 +94,13 @@ public class ShellLaunch
 
   [JsonProperty("arguments")]
   public List<string> Arguments { get; set; }
+
+  /// <summary>
+  /// The file used to derive the icon for the tile.
+  /// Usually null, in which case the icon will be derived from the target.
+  /// </summary>
+  [JsonProperty("iconSource", NullValueHandling = NullValueHandling.Ignore)]
+  public string? IconSource { get; set; }
 
   public bool ShouldSerializeArguments()
   {
