@@ -55,19 +55,18 @@ public class TestPaneViewModel: ViewModelBase
     {
       try
       {
-        using(var iconShellFile = ShellFile.FromFilePath(IconFile))
+        using(var iconShell = ShellObject.FromParsingName(IconFile))
         {
           Trace.TraceInformation(
-            $"Parsing Name: {iconShellFile.ParsingName}");
+            $"Parsing Name: {iconShell.ParsingName}");
           Trace.TraceInformation(
-            $"Display Name: {iconShellFile.Name}");
-          var thumbnail = iconShellFile.Thumbnail;
+            $"Display Name: {iconShell.Name}");
+          var thumbnail = iconShell.Thumbnail;
           thumbnail.FormatOption = ShellThumbnailFormatOption.IconOnly;
+          IconSmall = thumbnail.SmallBitmapSource;
           IconMedium = thumbnail.MediumBitmapSource;
           IconLarge = thumbnail.LargeBitmapSource;
           IconExtraLarge = thumbnail.ExtraLargeBitmapSource;
-          IconNormal = thumbnail.BitmapSource;
-          IconSmall = thumbnail.SmallBitmapSource;
         }
       }
       catch(Exception ex)
@@ -85,43 +84,16 @@ public class TestPaneViewModel: ViewModelBase
 
   private void ClearIcons()
   {
+    IconSmall = null;
     IconMedium = null;
     IconLarge = null;
     IconExtraLarge = null;
-    IconSmall = null;
-    IconNormal = null;
   }
 
-  public BitmapSource? IconMedium {
-    get => _iconMedium;
-    set {
-      if(SetNullableInstanceProperty(ref _iconMedium, value))
-      {
-      }
-    }
-  }
-  private BitmapSource? _iconMedium;
-
-  public BitmapSource? IconLarge {
-    get => _iconLarge;
-    set {
-      if(SetNullableInstanceProperty(ref _iconLarge, value))
-      {
-      }
-    }
-  }
-  private BitmapSource? _iconLarge;
-
-  public BitmapSource? IconExtraLarge {
-    get => _iconExtraLarge;
-    set {
-      if(SetNullableInstanceProperty(ref _iconExtraLarge, value))
-      {
-      }
-    }
-  }
-  private BitmapSource? _iconExtraLarge;
-
+  /// <summary>
+  /// Smallest size, 16x16 pixels usually.
+  /// Too small for most purposes.
+  /// </summary>
   public BitmapSource? IconSmall {
     get => _iconSmall;
     set {
@@ -132,15 +104,46 @@ public class TestPaneViewModel: ViewModelBase
   }
   private BitmapSource? _iconSmall;
 
-  public BitmapSource? IconNormal {
-    get => _iconNormal;
+  /// <summary>
+  /// Smaller size but still readable, 32x32 pixels usually.
+  /// May be of use for group thumbnails.
+  /// </summary>
+  public BitmapSource? IconMedium {
+    get => _iconMedium;
     set {
-      if(SetNullableInstanceProperty(ref _iconNormal, value))
+      if(SetNullableInstanceProperty(ref _iconMedium, value))
       {
       }
     }
   }
-  private BitmapSource? _iconNormal;
+  private BitmapSource? _iconMedium;
+
+  /// <summary>
+  /// Most relevant size, 48x48 pixels usually.
+  /// </summary>
+  public BitmapSource? IconLarge {
+    get => _iconLarge;
+    set {
+      if(SetNullableInstanceProperty(ref _iconLarge, value))
+      {
+      }
+    }
+  }
+  private BitmapSource? _iconLarge;
+
+  /// <summary>
+  /// Huge icon, 256x256 pixels usually. May be of use as source
+  /// for scaling down to other sizes.
+  /// </summary>
+  public BitmapSource? IconExtraLarge {
+    get => _iconExtraLarge;
+    set {
+      if(SetNullableInstanceProperty(ref _iconExtraLarge, value))
+      {
+      }
+    }
+  }
+  private BitmapSource? _iconExtraLarge;
 
   public ICommand ResetShelf1Command { get; }
 

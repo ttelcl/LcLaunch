@@ -43,8 +43,9 @@
                         Content="Open Icon File..."
                         Command="{Binding OpenIconFileCommand}"/>
                     <TextBox
-                        Text="{Binding IconFile}"
-                        IsReadOnly="True"/>
+                        Text="{Binding IconFile, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                        IsReadOnly="False"
+                        />
                 </DockPanel>
                 <Border
                     BorderThickness="1"
@@ -67,10 +68,11 @@
                             Source="{Binding IconExtraLarge}"
                             Stretch="None"
                             Margin="5"/>
-                        <!--<Image
-                            Source="{Binding IconNormal}"
-                            Stretch="None"
-                            Margin="5"/>-->
+                        <Image
+                            Source="{Binding IconExtraLarge}"
+                            Stretch="UniformToFill"
+                            Height="96"
+                            Margin="5"/>
                     </StackPanel>
                 </Border>
             </DockPanel>
