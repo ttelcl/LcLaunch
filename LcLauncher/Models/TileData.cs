@@ -44,9 +44,10 @@ public class TileData: LaunchTile
     return new TileData(group: group);
   }
 
-  public static TileData GroupTile(IEnumerable<TileData> tiles)
+  public static TileData GroupTile(
+    string title, IEnumerable<TileData> tiles)
   {
-    return new TileData(group: new TileGroup(tiles));
+    return new TileData(group: new TileGroup(title, tiles));
   }
 
   [JsonProperty("group", NullValueHandling = NullValueHandling.Ignore)]

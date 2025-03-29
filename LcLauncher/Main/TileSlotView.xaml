@@ -22,18 +22,40 @@
                     Gesture="LeftClick"
                     Command="{Binding TestSecondaryCommand}"/>
             </Border.InputBindings>
-            <StackPanel
-                VerticalAlignment="Center"
-                Orientation="Vertical">
-                <TextBlock
-                    Text="{Binding Position}"
-                    HorizontalAlignment="Center"
-                    FontSize="30"/>
-                <TextBlock
-                    Text="{Binding Owner.IsPrimary}"
-                    HorizontalAlignment="Center"
-                    FontSize="18"/>
-            </StackPanel>
+            <Grid>
+                <StackPanel
+                    Visibility="{Binding Content, Converter={StaticResource VisibleIfNull}}"
+                    VerticalAlignment="Center"
+                    Orientation="Vertical">
+                    <TextBlock
+                        Text="{Binding Position}"
+                        HorizontalAlignment="Center"
+                        FontSize="24"/>
+                    <TextBlock
+                        Text="{Binding TileKind}"
+                        HorizontalAlignment="Center"
+                        FontSize="18"/>
+                    <TextBlock
+                        Text="{Binding Owner.IsPrimary}"
+                        HorizontalAlignment="Center"
+                        FontSize="18"/>
+                </StackPanel>
+                <ContentControl
+                    Visibility="{Binding Content, Converter={StaticResource VisibleIfNotNull}}"
+                    Content="{Binding Content}">
+                    <ContentControl.Resources>
+                        <DataTemplate DataType="{x:Type local:ShellTileViewModel}">
+                            <local:ShellTileView/>
+                        </DataTemplate>
+                        <DataTemplate DataType="{x:Type local:GroupTileViewModel}">
+                            <local:GroupTileView/>
+                        </DataTemplate>
+                        <DataTemplate DataType="{x:Type local:EmptyTileViewModel}">
+                            <local:EmptyTileView/>
+                        </DataTemplate>
+                    </ContentControl.Resources>
+                </ContentControl>
+            </Grid>
         </Border>
         <Border
             Margin="1,1"

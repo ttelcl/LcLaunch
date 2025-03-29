@@ -12,6 +12,7 @@ using System.Windows.Input;
 
 using ControlzEx.Theming;
 
+using LcLauncher.Models;
 using LcLauncher.WpfUtilities;
 
 namespace LcLauncher.Main;
@@ -22,9 +23,12 @@ public class PageColumnViewModel: ViewModelBase
     MainViewModel rootModel)
   {
     RootModel = rootModel;
-    _dbgShelfA = new ShelfViewModel(this);
-    DbgShelfB = new ShelfViewModel(this, "Amber");
-    DbgShelfC = new ShelfViewModel(this, "Sienna");
+    _dbgShelfA = new ShelfViewModel(this,
+      new ShelfData("Shelf A", [], theme: "Olive"));
+    DbgShelfB = new ShelfViewModel(this,
+      new ShelfData("Shelf B", [], theme: "Amber"));
+    DbgShelfC = new ShelfViewModel(this,
+      new ShelfData("Shelf C", [], theme: "Sienna"));
   }
 
   public MainViewModel RootModel { get; }

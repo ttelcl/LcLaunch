@@ -51,16 +51,17 @@ public class TileSlotViewModel: ViewModelBase
 
   public int Column { get => Position % 4; }
 
-  public object? /* placeholder type */ Content {
+  public TileViewModelBase? Content {
     get => _content;
     set {
       if(SetNullableInstanceProperty(ref _content, value))
       {
         IsEmpty = value == null;
+        RaisePropertyChanged(nameof(TileKind));
       }
     }
   }
-  private object? _content;
+  private TileViewModelBase? _content;
 
   public bool IsEmpty {
     get => _isEmpty;
@@ -71,6 +72,18 @@ public class TileSlotViewModel: ViewModelBase
     }
   }
   private bool _isEmpty = true;
+
+  public string TileKind { 
+    get {
+      var model = _content?.GetModel();
+      return model switch {
+        null => "Missing",
+        { ShellLaunch: { } shellLaunch } => "Shell",
+        { Group: { } group } => "Group",
+        _ => "Empty"
+      };
+    }
+  }
 
   /* Temporary test content */
   public ICommand TestSecondaryCommand { get; }

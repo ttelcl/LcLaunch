@@ -155,8 +155,7 @@ public class TestPaneViewModel: ViewModelBase
   {
     Host.ColumnA.DbgShelfA = new ShelfViewModel(
       Host.ColumnA,
-      theme: "Olive",
-      title: "Test Shelf");
+      new ShelfData("Test Shelf", [], theme: "Olive"));
   }
 
   private void LoadShelfFile()
@@ -178,8 +177,7 @@ public class TestPaneViewModel: ViewModelBase
 
       // using data is NYI - placeholder
       var shelf = Host.ColumnA.DbgShelfA;
-      shelf.Title = data.Title;
-      shelf.Theme = data.Theme ?? "Olive";
+      shelf.ShelfData = data;
 
     }
   }

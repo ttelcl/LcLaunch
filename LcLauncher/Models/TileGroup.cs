@@ -16,12 +16,17 @@ namespace LcLauncher.Models;
 public class TileGroup
 {
   public TileGroup(
+    string? title,
     IEnumerable<TileData?>? tiles = null)
   {
+    Title = String.IsNullOrEmpty(title) ? "Untitled Group" : title;
     Tiles = tiles?.ToList() ?? [];
   }
 
   [JsonProperty("tiles")]
   public List<TileData?> Tiles { get; }
+
+  [JsonProperty("title")]
+  public string Title { get; set; }
 
 }

@@ -41,6 +41,27 @@ public class ShelfContentViewModel: ViewModelBase
     }
   }
 
+  public void MapTiles()
+  {
+    if(IsPrimary) // Secondary NYI
+    {
+      var sourceTiles = Owner.ShelfData.Tiles;
+      TrySetRowCount((sourceTiles.Count+3) / 4);
+      var paddedTileCount = RowCount * 4;
+      for(var i = 0; i < paddedTileCount; i++)
+      {
+        if(i < sourceTiles.Count)
+        {
+          Slots[i].Content = TileViewModelBase.Create(sourceTiles[i]);
+        }
+        else
+        {
+          Slots[i].Content = TileViewModelBase.Create(null);
+        }
+      }
+    }
+  }
+
   private bool TrySetRowCount(int rowCount)
   {
     var result = true;

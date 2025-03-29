@@ -11,6 +11,7 @@ using System.Diagnostics;
 using LcLauncher.WpfUtilities;
 using ControlzEx.Theming;
 using System.Windows.Input;
+using LcLauncher.Models;
 
 namespace LcLauncher.Main;
 
@@ -18,8 +19,7 @@ public class ShelfViewModel: ViewModelBase
 {
   public ShelfViewModel(
     PageColumnViewModel columnModel,
-    string? theme = null,
-    string? title = null)
+    ShelfData shelfData)
   {
     ColumnModel = columnModel;
     SetThemeCommand = new DelegateCommand(
@@ -27,8 +27,13 @@ public class ShelfViewModel: ViewModelBase
     ToggleExpandedCommand = new DelegateCommand(
       p => IsExpanded = !IsExpanded);
     PrimaryContent = new ShelfContentViewModel(this, true);
-    Theme = theme ?? "Olive";
-    _title = String.IsNullOrEmpty(title) ? "Untitled Shelf" : title;
+    ShelfData = shelfData;
+    _shelfData = shelfData; // make the compiler shut up
+    //Theme = theme ?? "Olive";
+    _title = String.IsNullOrEmpty(ShelfData.Title)
+      ? "Untitled Shelf"
+      : ShelfData.Title;
+    PrimaryContent.MapTiles();
   }
 
   public PageColumnViewModel ColumnModel { get; }
@@ -63,11 +68,28 @@ public class ShelfViewModel: ViewModelBase
 
   public ICommand ToggleExpandedCommand { get; }
 
+  public ShelfData ShelfData {
+    get => _shelfData;
+    set {
+      if(SetInstanceProperty(ref _shelfData, value))
+      {
+        Title = value.Title;
+        Theme = value.Theme ?? "Olive";
+        PrimaryContent.MapTiles();
+      }
+    }
+  }
+  private ShelfData _shelfData;
+
   public string Theme {
     get => _theme;
     set {
       if(SetValueProperty(ref _theme, value))
       {
+        if(_shelfData.Theme != value)
+        {
+          _shelfData.Theme = value;
+        }
         SetTheme("Dark." + value);
       }
     }
@@ -79,6 +101,10 @@ public class ShelfViewModel: ViewModelBase
     set {
       if(SetValueProperty(ref _title, value))
       {
+        if(_shelfData.Title != value)
+        {
+          _shelfData.Title = value;
+        }
       }
     }
   }
@@ -95,7 +121,7 @@ public class ShelfViewModel: ViewModelBase
   }
   private bool _isExpanded = true;
 
-  public string ShelfExpandedIcon => 
+  public string ShelfExpandedIcon =>
     IsExpanded ? "ChevronUpCircleOutline" : "ChevronDownCircleOutline";
 
   private Shelf? Host { get; set; }
