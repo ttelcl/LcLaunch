@@ -11,6 +11,7 @@
     d:DataContext="{d:DesignInstance local:TestPaneViewModel, IsDesignTimeCreatable=False}"
     d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
+        <!-- Underlay text -->
         <TextBlock
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
@@ -18,6 +19,7 @@
             Foreground="#440000FF"
             FontSize="48"
             />
+        <!-- Main Content -->
         <Border
             Height="130"
             BorderThickness="1"
@@ -35,12 +37,20 @@
                     <Button Content="Button 6" />
                     <Button Content="Button 7" />
                 </WrapPanel>
+                <DockPanel DockPanel.Dock="Top">
+                    <Button
+                        DockPanel.Dock="Left"
+                        Content="Open Icon File..."
+                        Command="{Binding OpenIconFileCommand}"/>
+                    <TextBox
+                        Text="{Binding IconFile}"
+                        IsReadOnly="True"/>
+                </DockPanel>
+                <!-- filler -->
                 <Border
                     BorderThickness="1"
                     BorderBrush="Blue"
                     Margin="2" Padding="5">
-                    <!-- filler -->
-
                 </Border>
             </DockPanel>
         </Border>

@@ -15,6 +15,8 @@ using Microsoft.Win32;
 
 using Newtonsoft.Json;
 
+using Microsoft.WindowsAPICodePack.Shell;
+
 using LcLauncher.Models;
 using LcLauncher.WpfUtilities;
 
@@ -30,13 +32,30 @@ public class TestPaneViewModel: ViewModelBase
     Host = host;
     ResetShelf1Command = new DelegateCommand(p => ResetShelf1());
     LoadShelfFileCommand = new DelegateCommand(p => LoadShelfFile());
+    OpenIconFileCommand = new DelegateCommand(p => OpenIconFile());
   }
 
   public MainViewModel Host { get; }
 
+  public string? IconFile {
+    get => _iconFile;
+    set {
+      if(_iconFile != null && _iconFile != value && value != null)
+      {
+        SetValueProperty(ref _iconFile, null);
+      }
+      if(SetValueProperty(ref _iconFile, value))
+      {
+      }
+    }
+  }
+  private string? _iconFile;
+
   public ICommand ResetShelf1Command { get; }
 
   public ICommand LoadShelfFileCommand { get; }
+
+  public ICommand OpenIconFileCommand { get; }
 
   private void ResetShelf1()
   {
@@ -68,6 +87,22 @@ public class TestPaneViewModel: ViewModelBase
       shelf.Title = data.Title;
       shelf.Theme = data.Theme ?? "Olive";
 
+    }
+  }
+
+  private void OpenIconFile()
+  {
+    var ofd = new OpenFileDialog() {
+      Filter = "Any file (*.*)|*.*",
+      Title = "Open Icon File",
+      CheckFileExists = true,
+      CheckPathExists = true,
+      Multiselect = false,
+    };
+    var result = ofd.ShowDialog();
+    if(result == true)
+    {
+      IconFile = ofd.FileName;
     }
   }
 }
