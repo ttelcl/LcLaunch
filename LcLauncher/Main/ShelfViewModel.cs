@@ -12,6 +12,7 @@ using LcLauncher.WpfUtilities;
 using ControlzEx.Theming;
 using System.Windows.Input;
 using LcLauncher.Models;
+using LcLauncher.Storage;
 
 namespace LcLauncher.Main;
 
@@ -39,6 +40,8 @@ public class ShelfViewModel: ViewModelBase
   public PageColumnViewModel ColumnModel { get; }
 
   public MainViewModel RootModel => ColumnModel.RootModel;
+
+  public LcLaunchDataStore Store => RootModel.Store;
 
   public ShelfContentViewModel PrimaryContent { get; }
 

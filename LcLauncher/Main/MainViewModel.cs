@@ -9,19 +9,24 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 
+using LcLauncher.Storage;
 using LcLauncher.WpfUtilities;
 
 namespace LcLauncher.Main;
 
 public class MainViewModel: ViewModelBase
 {
-  public MainViewModel()
+  public MainViewModel(
+    LcLaunchDataStore? store = null)
   {
+    Store = store ?? new LcLaunchDataStore();
     PageColumns.Add(new PageColumnViewModel(this));
     PageColumns.Add(new PageColumnViewModel(this));
     PageColumns.Add(new PageColumnViewModel(this));
     TestPane = new TestPaneViewModel(this);
   }
+
+  public LcLaunchDataStore Store { get; }
 
   public List<PageColumnViewModel> PageColumns { get; } = [];
 

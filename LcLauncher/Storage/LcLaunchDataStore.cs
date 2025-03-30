@@ -38,7 +38,8 @@ public class LcLaunchDataStore
 
   public static string DefaultFolder { get; } = Path.Combine(
     Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-    "LcLauncher");
+    "Lcl",
+    "launcher");
 
   public T? LoadData<T>(
     string tag,
