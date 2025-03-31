@@ -44,11 +44,11 @@ public class BlobStorage
     }
     BlobsFileName = Path.GetFullPath(blobsFileName);
     IndexFileName = Path.ChangeExtension(BlobsFileName, ".blob-idx");
-    BlobsFile = new BlobsFile(this);
+    BlobContainerFile = new BlobsFile(this);
     IndexFile = new BlobIndexFile(this);
     if(initialize)
     {
-      Initialize();
+      Initialize(true);
     }
   }
 
@@ -56,9 +56,11 @@ public class BlobStorage
 
   public string IndexFileName { get; }
 
-  public BlobsFile BlobsFile { get; }
+  public BlobsFile BlobContainerFile { get; }
 
   public BlobIndexFile IndexFile { get; }
+
+  public bool IsInitialized { get; private set; }
 
   public void Delete()
   {
@@ -74,12 +76,29 @@ public class BlobStorage
     }
   }
 
-  public void Initialize()
+  public void Initialize(bool force)
   {
-    BlobsFile.OpenAppend().Dispose();
-    IndexFile.Update();
+    if(!IsInitialized || force)
+    {
+      BlobContainerFile.OpenAppend().Dispose();
+      IndexFile.Update();
+    }
+    IsInitialized = true;
   }
 
+  /// <summary>
+  /// Append a blob to the storage, or retrieve an existing blob
+  /// </summary>
+  /// <param name="blob">
+  /// The blob to add. If the blob already exists in the storage
+  /// (as determined by its hash), it is not added again.
+  /// </param>
+  /// <param name="entry">
+  /// The Blob Index Entry for the blob that was added or retrieved.
+  /// </param>
+  /// <returns>
+  /// True if the blob was added, false if it already existed.
+  /// </returns>
   public bool AppendOrRetrieveBlob(
     byte[] blob, out BlobEntry entry)
   {
@@ -95,7 +114,7 @@ public class BlobStorage
       entry = existing;
       return false;
     }
-    entry = BlobsFile.AppendBlob(blob, hashBuffer);
+    entry = BlobContainerFile.AppendBlob(blob, hashBuffer);
     IndexFile.Update();
     return true;
   }
@@ -103,21 +122,40 @@ public class BlobStorage
   /// <summary>
   /// Returns the first blob entry with the given prefix.
   /// </summary>
-  public BlobEntry? this[string prefix]
-  {
+  public BlobEntry? this[string prefix] {
     get => IndexFile.FindAllByPrefix(prefix).FirstOrDefault();
   }
 
+  /// <summary>
+  /// Get the data for the given blob entry as a stream.
+  /// The current implementation returns a MemoryStream.
+  /// </summary>
+  /// <param name="entry"></param>
+  /// <returns></returns>
   public Stream OpenBlobStream(
     BlobEntry entry)
   {
     // for now, use a MemoryStream because we don't have SubStreams yet
-    var blob = BlobsFile.ReadBlob(entry);
+    var blob = BlobContainerFile.ReadBlob(entry);
     return new MemoryStream(blob);
   }
 
+  /// <summary>
+  /// Get the blob data for the given entry.
+  /// Alias for indexer this[BlobEntry].
+  /// </summary>
   public byte[] ReadBlob(BlobEntry entry)
   {
-    return BlobsFile.ReadBlob(entry);
+    return BlobContainerFile.ReadBlob(entry);
+  }
+
+  /// <summary>
+  /// Get the blob data for the given entry.
+  /// Alias for <see cref="ReadBlob(BlobEntry)"/>
+  /// </summary>
+  /// <param name="entry"></param>
+  /// <returns></returns>
+  public byte[] this[BlobEntry entry] {
+    get => ReadBlob(entry);
   }
 }

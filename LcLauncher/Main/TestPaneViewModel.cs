@@ -68,9 +68,17 @@ public class TestPaneViewModel: ViewModelBase
           var thumbnail = iconShell.Thumbnail;
           thumbnail.FormatOption = ShellThumbnailFormatOption.IconOnly;
           IconSmall = thumbnail.SmallBitmapSource;
+          Trace.TraceInformation(
+            $"Small Icon: {IconSmall.Width}"); // 16
           IconMedium = thumbnail.MediumBitmapSource;
+          Trace.TraceInformation(
+            $"Medium Icon: {IconMedium.Width}"); // 32
           IconLarge = thumbnail.LargeBitmapSource;
+          Trace.TraceInformation(
+            $"Large Icon: {IconLarge.Width}"); // 48
           IconExtraLarge = thumbnail.ExtraLargeBitmapSource;
+          Trace.TraceInformation(
+            $"Extra Large Icon: {IconExtraLarge.Width}"); // 256
         }
       }
       catch(Exception ex)
@@ -220,16 +228,7 @@ public class TestPaneViewModel: ViewModelBase
         $"No tiles found for ID {TileTestGuid}");
       return;
     }
-    foreach(var tileBase in tiles.Tiles ?? [])
-    {
-      var shellLaunch = tileBase?.ShellLaunch;
-      if(shellLaunch != null)
-      {
-        Trace.TraceInformation(
-          $"Shell Launch Target: {shellLaunch.TargetPath}");
-      }
-    }
-    var storage = tiles.GetIconCache(Host.Store, true);
+    var storage = tiles.GetIconCache();
     Trace.TraceInformation(
       $"Retrieved Icon Cache. {storage.BlobsFileName} & {storage.IndexFileName}");
     // add an empty blob to the cache
@@ -270,6 +269,36 @@ public class TestPaneViewModel: ViewModelBase
     {
       Trace.TraceError(
         $"Failed to read back the tiny blob: {myblob}");
+    }
+    foreach(var tileBase in tiles.Tiles ?? [])
+    {
+      var shellLaunch = tileBase?.ShellLaunch;
+      if(shellLaunch != null)
+      {
+        var iconSource = shellLaunch.GetIconSource();
+        Trace.TraceInformation(
+          $"Shell Launch Icon source: {iconSource}");
+        var icon = TileList.IconForFile(iconSource, 48);
+        if(icon != null)
+        {
+          var added3 = tiles.CacheIcon(icon, out var blobEntry);
+          if(added3)
+          {
+            Trace.TraceInformation(
+              $"Cached icon {blobEntry.Hash} ({blobEntry.Length}) for {iconSource}");
+          }
+          else
+          {
+            Trace.TraceInformation(
+              $"Reused cached icon {blobEntry.Hash} ({blobEntry.Length}) for {iconSource}");
+          }
+        }
+        else
+        {
+          Trace.TraceError(
+            $"Failed to load icon for {iconSource}");
+        }
+      }
     }
   }
 }
