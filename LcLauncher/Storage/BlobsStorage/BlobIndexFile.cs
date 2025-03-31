@@ -56,23 +56,25 @@ public class BlobIndexFile
     {
       ClearEntries();
     }
-    using var file = File.OpenWrite(FileName);
-    if(file.Length < 8)
+    using var indexFile = File.Open(
+      FileName, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+    if(indexFile.Length < BlobIndexFile.HeaderSize)
     {
-      file.Write(BitConverter.GetBytes(Signature), 0, 8);
+      indexFile.Write(BitConverter.GetBytes(Signature), 0, 8);
     }
-    var expectedLength = 8 + _entries.Count*32;
-    if(file.Length > expectedLength)
+    var expectedLength =
+      BlobIndexFile.HeaderSize + _entries.Count*BlobIndexFile.EntrySize;
+    if(indexFile.Length > expectedLength)
     {
       // There are more entries in the index file than we have in memory
-      file.Seek(expectedLength, SeekOrigin.Begin);
-      while(file.Position < file.Length)
+      indexFile.Seek(expectedLength, SeekOrigin.Begin);
+      while(indexFile.Position < indexFile.Length)
       {
         // New entries appeared in the index file
         // This can happen if the BlobStorage was used by multiple
         // code paths or processes.
         // Or it can (will!) happen at startup.
-        var entry = BlobEntry.TryRead(file);
+        var entry = BlobEntry.TryRead(indexFile);
         if(entry == null)
         {
           break;
@@ -80,29 +82,35 @@ public class BlobIndexFile
         _AppendEntry(entry);
       }
     }
-    else if(file.Length < expectedLength)
+    else if(indexFile.Length < expectedLength)
     {
       // The index file does not contain all entries from memory
       // This is a logic error, indicating that something other
       // than Update() called _AppendEntry().
+      throw new InvalidOperationException(
+        $"Index file is missing entries. Expected {expectedLength} bytes, got {indexFile.Length}");
     }
-    var blobTail = (long)(_entries.LastOrDefault()?.Tail ?? 8);
-    if(blobTail > new FileInfo(Owner.BlobsFileName).Length)
-    {
-      // Desynced! Reset, prepare for full reload
-      ClearEntries();
-      file.Seek(8, SeekOrigin.Begin);
-      file.SetLength(8);
-      blobTail = 8;
-    }
+    var blobTail = (long)(_entries.LastOrDefault()?.Tail ?? BlobsFile.HeaderSize);
     // add new entries found in the blobs file
     using var blobsFile = File.OpenRead(Owner.BlobsFileName);
+    if(blobTail > blobsFile.Length)
+    {
+      // Desynced! Reset index, prepare for full reload
+      Trace.TraceWarning(
+        "Blob index desynced with blobs file. Resetting index.");
+      ClearEntries();
+      expectedLength = BlobIndexFile.HeaderSize;
+      indexFile.Seek(expectedLength, SeekOrigin.Begin);
+      indexFile.SetLength(expectedLength);
+      blobTail = BlobsFile.HeaderSize; 
+    }
     blobsFile.Seek(blobTail, SeekOrigin.Begin);
+    indexFile.Seek(0, SeekOrigin.End);
     BlobEntry? blobEntry;
     while((blobEntry = BlobsFile.ReadAsBlobEntry(blobsFile))!=null)
     {
       _AppendEntry(blobEntry);
-      blobEntry.Write(file);
+      blobEntry.Write(indexFile);
     }
     return true;
   }
@@ -175,4 +183,6 @@ public class BlobIndexFile
 
   public const ulong Signature = 0x58444E49424F4C42; // BLOBINDX
 
+  public const int EntrySize = 32;
+  public const int HeaderSize = 8;
 }

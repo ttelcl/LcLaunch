@@ -21,7 +21,7 @@ public class BlobEntry
   /// <summary>
   /// Create a new BlobEntry
   /// </summary>
-  public BlobEntry(
+  private BlobEntry(
     ulong offset,
     uint length,
     ReadOnlySpan<byte> hashSpan)
@@ -45,15 +45,24 @@ public class BlobEntry
 
   /// <summary>
   /// The offset of the blob in the blobs file
+  /// (the offset of the length field)
   /// </summary>
   public ulong Offset { get; }
+
+  /// <summary>
+  /// The offset of the blob content in the blobs file
+  /// </summary>
+  public ulong ContentOffset => Offset + 4;
 
   /// <summary>
   /// The length of the blob in the blobs file
   /// </summary>
   public uint Length { get; }
 
-  public ulong Tail => Offset + Length;
+  /// <summary>
+  /// The offset of the next blob in the blobs file
+  /// </summary>
+  public ulong Tail => Offset + Length + 4;
 
   /// <summary>
   /// The SHA1 hash of the blob, as a lower case hex string of

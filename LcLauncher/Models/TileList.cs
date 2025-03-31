@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using LcLauncher.Storage;
+using LcLauncher.Storage.BlobsStorage;
 
 using Newtonsoft.Json;
 
@@ -75,6 +76,13 @@ public class TileList
     LcLaunchDataStore store)
   {
     store.SaveData(Id.ToString(), ".tile-list", Tiles);
+  }
+
+  public BlobStorage GetIconCache(
+    LcLaunchDataStore store,
+    bool initialize)
+  {
+    return store.GetBlobs(Id.ToString() + ".icon-cache", initialize);
   }
 
   public Guid Id { get; }

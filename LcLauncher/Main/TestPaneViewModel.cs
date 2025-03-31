@@ -34,9 +34,13 @@ public class TestPaneViewModel: ViewModelBase
     ResetShelf1Command = new DelegateCommand(p => ResetShelf1());
     LoadShelfFileCommand = new DelegateCommand(p => LoadShelfFile());
     OpenIconFileCommand = new DelegateCommand(p => OpenIconFile());
+    TestTestTilesCommand = new DelegateCommand(p => ScanTestTiles());
   }
 
   public MainViewModel Host { get; }
+
+  public static Guid TileTestGuid { get; } =
+    new Guid("61bd78c5-43e7-4627-bbd3-74e772abb123");
 
   public string? IconFile {
     get => _iconFile;
@@ -151,6 +155,8 @@ public class TestPaneViewModel: ViewModelBase
 
   public ICommand OpenIconFileCommand { get; }
 
+  public ICommand TestTestTilesCommand { get; }
+
   private void ResetShelf1()
   {
     Host.ColumnA.DbgShelfA = new ShelfViewModel(
@@ -196,6 +202,74 @@ public class TestPaneViewModel: ViewModelBase
     if(result == true)
     {
       IconFile = ofd.FileName;
+    }
+  }
+
+  private TileList? LoadTestTiles()
+  {
+    var tiles = TileList.Load(Host.Store, TileTestGuid);
+    return tiles;
+  }
+
+  private void ScanTestTiles()
+  {
+    var tiles = LoadTestTiles();
+    if(tiles == null)
+    {
+      Trace.TraceInformation(
+        $"No tiles found for ID {TileTestGuid}");
+      return;
+    }
+    foreach(var tileBase in tiles.Tiles ?? [])
+    {
+      var shellLaunch = tileBase?.ShellLaunch;
+      if(shellLaunch != null)
+      {
+        Trace.TraceInformation(
+          $"Shell Launch Target: {shellLaunch.TargetPath}");
+      }
+    }
+    var storage = tiles.GetIconCache(Host.Store, true);
+    Trace.TraceInformation(
+      $"Retrieved Icon Cache. {storage.BlobsFileName} & {storage.IndexFileName}");
+    // add an empty blob to the cache
+    var added = storage.AppendOrRetrieveBlob([], out var entry);
+    if(added)
+    {
+      Trace.TraceInformation(
+        $"Appended empty blob: Offset = {entry.Offset:X6}, " +
+        $"ID = {entry.Hash}");
+    }
+    else
+    {
+      Trace.TraceInformation(
+        $"Not re-adding existing blob: Offset = {entry.Offset:X6}, " +
+        $"ID = {entry.Hash}");
+    }
+    // add a test blob to the cache
+    var added2 = storage.AppendOrRetrieveBlob([42], out var entry2);
+    if(added2)
+    {
+      Trace.TraceInformation(
+        $"Appended tiny blob: Offset = {entry2.Offset:X6}, " +
+        $"ID = {entry2.Hash}");
+    }
+    else
+    {
+      Trace.TraceInformation(
+        $"Not re-adding existing blob: Offset = {entry2.Offset:X6}, " +
+        $"ID = {entry2.Hash}");
+    }
+    var myblob = storage.ReadBlob(entry2);
+    if(myblob.Length == 1 && myblob[0] == 42)
+    {
+      Trace.TraceInformation(
+        $"Read back the tiny blob: {myblob[0]}");
+    }
+    else
+    {
+      Trace.TraceError(
+        $"Failed to read back the tiny blob: {myblob}");
     }
   }
 }

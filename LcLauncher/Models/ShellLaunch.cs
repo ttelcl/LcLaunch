@@ -102,6 +102,16 @@ public class ShellLaunch
   [JsonProperty("iconSource", NullValueHandling = NullValueHandling.Ignore)]
   public string? IconSource { get; set; }
 
+  /// <summary>
+  /// Get the effective icon source, based on <see cref="IconSource"/> and
+  /// <see cref="TargetPath"/>.
+  /// </summary>
+  /// <returns></returns>
+  public string GetIconSource()
+  {
+    return String.IsNullOrEmpty(IconSource) ? TargetPath : IconSource;
+  }
+
   public bool ShouldSerializeArguments()
   {
     return Arguments.Count > 0;

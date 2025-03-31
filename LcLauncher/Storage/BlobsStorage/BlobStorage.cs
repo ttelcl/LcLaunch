@@ -43,7 +43,7 @@ public class BlobStorage
         "Blobs file name must end with '.blobs'");
     }
     BlobsFileName = Path.GetFullPath(blobsFileName);
-    IndexFileName = Path.ChangeExtension(BlobsFileName, ".blobs-index");
+    IndexFileName = Path.ChangeExtension(BlobsFileName, ".blob-idx");
     BlobsFile = new BlobsFile(this);
     IndexFile = new BlobIndexFile(this);
     if(initialize)
@@ -80,8 +80,8 @@ public class BlobStorage
     IndexFile.Update();
   }
 
-  public BlobEntry AppendOrRetrieveBlob(
-    byte[] blob)
+  public bool AppendOrRetrieveBlob(
+    byte[] blob, out BlobEntry entry)
   {
     Span<byte> hashBuffer = stackalloc byte[20];
     SHA1.HashData(blob, hashBuffer);
@@ -90,10 +90,34 @@ public class BlobStorage
     if(existing != null)
     {
       // Blob already exists - avoid adding a duplicate!
-      return existing;
+      Trace.TraceInformation(
+        $"Blob already exists, not adding it again: {hashString}");
+      entry = existing;
+      return false;
     }
-    var entry = BlobsFile.AppendBlob(blob, hashBuffer);
+    entry = BlobsFile.AppendBlob(blob, hashBuffer);
     IndexFile.Update();
-    return entry;
+    return true;
+  }
+
+  /// <summary>
+  /// Returns the first blob entry with the given prefix.
+  /// </summary>
+  public BlobEntry? this[string prefix]
+  {
+    get => IndexFile.FindAllByPrefix(prefix).FirstOrDefault();
+  }
+
+  public Stream OpenBlobStream(
+    BlobEntry entry)
+  {
+    // for now, use a MemoryStream because we don't have SubStreams yet
+    var blob = BlobsFile.ReadBlob(entry);
+    return new MemoryStream(blob);
+  }
+
+  public byte[] ReadBlob(BlobEntry entry)
+  {
+    return BlobsFile.ReadBlob(entry);
   }
 }

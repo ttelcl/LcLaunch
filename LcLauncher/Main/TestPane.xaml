@@ -31,7 +31,8 @@
                             Command="{Binding ResetShelf1Command}"/>
                     <Button Content="Load Shelf file..."
                             Command="{Binding LoadShelfFileCommand}"/>
-                    <Button Content="Button 3" />
+                    <Button Content="Scan Test Tiles"
+                            Command="{Binding TestTestTilesCommand}"/>
                     <Button Content="Button 4" />
                     <Button Content="Button 5" />
                     <Button Content="Button 6" />

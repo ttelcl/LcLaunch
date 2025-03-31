@@ -54,6 +54,7 @@ public class BlobsFile
   }
 
   public const ulong Signature = 0x524F5453424F4C42; // BLOBSTOR
+  public const int HeaderSize = 8;
 
   public static BlobEntry? ReadAsBlobEntry(Stream file)
   {
@@ -152,7 +153,7 @@ public class BlobsFile
 
   public static byte[] ReadBlob(Stream file, BlobEntry entry)
   {
-    return ReadBlob(file, (long)entry.Offset, (int)entry.Length);
+    return ReadBlob(file, (long)entry.ContentOffset, (int)entry.Length);
   }
 
   public static byte[] ReadBlob(Stream file, long offset)
