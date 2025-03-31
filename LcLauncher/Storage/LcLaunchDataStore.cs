@@ -12,6 +12,8 @@ using System.Threading.Tasks;
 
 using Newtonsoft.Json;
 
+using LcLauncher.Storage.BlobsStorage;
+
 namespace LcLauncher.Storage;
 
 /// <summary>
@@ -107,4 +109,21 @@ public class LcLaunchDataStore
     return Path.Combine(DataFolder, tag + extension);
   }
 
+  /// <summary>
+  /// Get the blobs storage for the given tag.
+  /// </summary>
+  /// <param name="tag">
+  /// The file name prefix
+  /// </param>
+  /// <param name="initialize">
+  /// If true, the storage is initialized, i.e. the blobs file
+  /// and index are created if they did not exist.
+  /// </param>
+  /// <returns></returns>
+  public BlobStorage GetBlobs(
+    string tag,
+    bool initialize)
+  {
+    return new BlobStorage(GetDataFileName(tag, ".blobs"), initialize);
+  }
 }
