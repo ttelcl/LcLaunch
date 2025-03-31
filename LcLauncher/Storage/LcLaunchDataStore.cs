@@ -126,4 +126,10 @@ public class LcLaunchDataStore
   {
     return new BlobStorage(GetDataFileName(tag, ".blobs"), initialize);
   }
+
+  public IconCache GetIconCache(
+    Guid cacheId)
+  {
+    return new IconCache(this, cacheId);
+  }
 }

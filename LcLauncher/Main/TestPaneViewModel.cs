@@ -10,16 +10,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 
 using Microsoft.Win32;
+using Microsoft.WindowsAPICodePack.Shell;
 
 using Newtonsoft.Json;
 
-using Microsoft.WindowsAPICodePack.Shell;
-
 using LcLauncher.Models;
 using LcLauncher.WpfUtilities;
-using System.Windows.Media.Imaging;
 
 namespace LcLauncher.Main;
 
@@ -228,75 +227,23 @@ public class TestPaneViewModel: ViewModelBase
         $"No tiles found for ID {TileTestGuid}");
       return;
     }
-    var storage = tiles.GetIconCache();
-    Trace.TraceInformation(
-      $"Retrieved Icon Cache. {storage.BlobsFileName} & {storage.IndexFileName}");
-    // add an empty blob to the cache
-    var added = storage.AppendOrRetrieveBlob([], out var entry);
-    if(added)
-    {
-      Trace.TraceInformation(
-        $"Appended empty blob: Offset = {entry.Offset:X6}, " +
-        $"ID = {entry.Hash}");
-    }
-    else
-    {
-      Trace.TraceInformation(
-        $"Not re-adding existing blob: Offset = {entry.Offset:X6}, " +
-        $"ID = {entry.Hash}");
-    }
-    // add a test blob to the cache
-    var added2 = storage.AppendOrRetrieveBlob([42], out var entry2);
-    if(added2)
-    {
-      Trace.TraceInformation(
-        $"Appended tiny blob: Offset = {entry2.Offset:X6}, " +
-        $"ID = {entry2.Hash}");
-    }
-    else
-    {
-      Trace.TraceInformation(
-        $"Not re-adding existing blob: Offset = {entry2.Offset:X6}, " +
-        $"ID = {entry2.Hash}");
-    }
-    var myblob = storage.ReadBlob(entry2);
-    if(myblob.Length == 1 && myblob[0] == 42)
-    {
-      Trace.TraceInformation(
-        $"Read back the tiny blob: {myblob[0]}");
-    }
-    else
-    {
-      Trace.TraceError(
-        $"Failed to read back the tiny blob: {myblob}");
-    }
+    var cache = Host.Store.GetIconCache(tiles.Id);
     foreach(var tileBase in tiles.Tiles ?? [])
     {
       var shellLaunch = tileBase?.ShellLaunch;
       if(shellLaunch != null)
       {
         var iconSource = shellLaunch.GetIconSource();
-        Trace.TraceInformation(
-          $"Shell Launch Icon source: {iconSource}");
-        var icon = TileList.IconForFile(iconSource, 48);
-        if(icon != null)
+        var hash = cache.CacheIcon(iconSource, 48, out var icon);
+        if(hash == null)
         {
-          var added3 = tiles.CacheIcon(icon, out var blobEntry);
-          if(added3)
-          {
-            Trace.TraceInformation(
-              $"Cached icon {blobEntry.Hash} ({blobEntry.Length}) for {iconSource}");
-          }
-          else
-          {
-            Trace.TraceInformation(
-              $"Reused cached icon {blobEntry.Hash} ({blobEntry.Length}) for {iconSource}");
-          }
+          Trace.TraceError(
+            $"Failed to extract and cache icon for {iconSource}");
         }
         else
         {
-          Trace.TraceError(
-            $"Failed to load icon for {iconSource}");
+          Trace.TraceInformation(
+            $"ID {hash}: {iconSource}");
         }
       }
     }

@@ -86,13 +86,6 @@ public class TileList
     Store.SaveData(Id.ToString(), ".tile-list", Tiles);
   }
 
-  public BlobStorage GetIconCache(
-    bool reInitialize = false)
-  {
-    _iconCache.Initialize(reInitialize);
-    return _iconCache;
-  }
-
   public Guid Id { get; }
 
   public List<TileData?> Tiles { get; }
@@ -101,74 +94,5 @@ public class TileList
   /// The store in which this list is saved and its icons are cached.
   /// </summary>
   public LcLaunchDataStore Store { get; }
-
-  public bool CacheIcon(BitmapSource icon, out BlobEntry blobEntry)
-  {
-    var iconCache = GetIconCache();
-    var encoder = new PngBitmapEncoder();
-    using var stream = new MemoryStream(0x4000);
-    encoder.Frames.Add(BitmapFrame.Create(icon));
-    encoder.Save(stream);
-    var iconBytes = stream.ToArray();
-    var added = iconCache.AppendOrRetrieveBlob(
-      iconBytes, out blobEntry);
-    return added;
-  }
-
-  public BitmapSource? LoadCachedIcon(BlobEntry entry)
-  {
-    var iconCache = GetIconCache();
-    try
-    {
-      using var iconStream = iconCache.OpenBlobStream(entry);
-      return BitmapFrame.Create(iconStream);
-    }
-    catch(Exception ex)
-    {
-      Trace.TraceError(
-        $"Failed to decode icon {entry.Hash} from cache for tile list {Id}: {ex}");
-      return null;
-    }
-  }
-
-  public BitmapSource? LoadCachedIcon(string hashPrefix)
-  {
-    var entry = GetIconCache()[hashPrefix];
-    return entry == null ? null : LoadCachedIcon(entry);
-  }
-
-  /// <summary>
-  /// Try to get the icon for a file, using the shell.
-  /// </summary>
-  /// <param name="path">
-  /// The full path to the file.
-  /// </param>
-  /// <param name="size">
-  /// The size of the icon to get. Supported sizes are 16, 32, 48, 256.
-  /// The actual returned size may vary.
-  /// </param>
-  /// <returns></returns>
-  public static BitmapSource? IconForFile(string path, int size)
-  {
-    try
-    {
-      using var iconShell = ShellObject.FromParsingName(path);
-      var thumbnail = iconShell.Thumbnail;
-      thumbnail.FormatOption = ShellThumbnailFormatOption.IconOnly;
-      return size switch {
-        16 => thumbnail.SmallBitmapSource,
-        32 => thumbnail.MediumBitmapSource,
-        48 => thumbnail.LargeBitmapSource,
-        256 => thumbnail.ExtraLargeBitmapSource,
-        _ => null,
-      };
-    }
-    catch(ShellException ex)
-    {
-      Trace.TraceError(
-        $"IconForFile: Error probing icon file {path}: {ex}");
-      return null;
-    }
-  }
 
 }
