@@ -227,6 +227,7 @@ public class TestPaneViewModel: ViewModelBase
         $"No tiles found for ID {TileTestGuid}");
       return;
     }
+    var icons = new List<BitmapSource>();
     var cache = Host.Store.GetIconCache(tiles.Id);
     foreach(var tileBase in tiles.Tiles ?? [])
     {
@@ -234,18 +235,52 @@ public class TestPaneViewModel: ViewModelBase
       if(shellLaunch != null)
       {
         var iconSource = shellLaunch.GetIconSource();
+        if(!String.IsNullOrEmpty(shellLaunch.IconId))
+        {
+          var cachedIcon = cache.LoadCachedIcon(shellLaunch.IconId);
+          if(cachedIcon != null)
+          {
+            icons.Add(cachedIcon);
+            Trace.TraceInformation(
+              $"Found in cache: {shellLaunch.IconId}: {iconSource}");
+            continue;
+          }
+        }
         var hash = cache.CacheIcon(iconSource, 48, out var icon);
         if(hash == null)
         {
           Trace.TraceError(
             $"Failed to extract and cache icon for {iconSource}");
         }
+        else if(icon != null)
+        {
+          icons.Add(icon);
+          Trace.TraceInformation(
+            $"Added to cache {hash}: {iconSource}");
+        }
         else
         {
-          Trace.TraceInformation(
-            $"ID {hash}: {iconSource}");
+          Trace.TraceError(
+            $"Confusing result for icon for {iconSource}");
         }
       }
+    }
+    icons.Reverse();
+    if(icons.Count > 0)
+    {
+      IconSmall = icons[0];
+    }
+    if(icons.Count > 1)
+    {
+      IconMedium = icons[1];
+    }
+    if(icons.Count > 2)
+    {
+      IconLarge = icons[2];
+    }
+    if(icons.Count > 3)
+    {
+      IconExtraLarge = icons[3];
     }
   }
 }

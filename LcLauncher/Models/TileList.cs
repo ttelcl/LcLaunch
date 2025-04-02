@@ -14,8 +14,6 @@ using System.Windows.Media.Imaging;
 using LcLauncher.Storage;
 using LcLauncher.Storage.BlobsStorage;
 
-using Microsoft.WindowsAPICodePack.Shell;
-
 using Newtonsoft.Json;
 
 namespace LcLauncher.Models;
@@ -27,8 +25,6 @@ namespace LcLauncher.Models;
 /// </summary>
 public class TileList
 {
-  private BlobStorage _iconCache;
-
   /// <summary>
   /// Create a new TileList. Use <see cref="Load"/> or
   /// <see cref="Create(Guid?)"/> to call this constructor.
@@ -41,7 +37,6 @@ public class TileList
     Id = id;
     Tiles = tiles.ToList();
     Store = store;
-    _iconCache = store.GetBlobs(Id.ToString() + ".icon-cache", false);
   }
 
   /// <summary>

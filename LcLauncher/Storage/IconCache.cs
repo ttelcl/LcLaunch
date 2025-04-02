@@ -20,6 +20,9 @@ namespace LcLauncher.Storage;
 /// </summary>
 public class IconCache
 {
+  /// <summary>
+  /// Do not access directly, only through <see cref="GetIconStorage"/>.
+  /// </summary>
   private readonly BlobStorage _iconCache;
 
   /// <summary>
@@ -49,15 +52,25 @@ public class IconCache
 
   public Guid CacheId { get; }
 
-  public BlobStorage GetIconCache(
-    bool reInitialize = false)
+  /// <summary>
+  /// Try to find the icon by ID in this cache.
+  /// </summary>
+  /// <param name="hashPrefix">
+  /// The hash of the icon to load. A unique prefix
+  /// is sufficient.
+  /// </param>
+  /// <returns>
+  /// The icon, if found.
+  /// </returns>
+  public BitmapSource? LoadCachedIcon(string hashPrefix)
   {
-    _iconCache.Initialize(reInitialize);
-    return _iconCache;
+    var entry = GetIconStorage()[hashPrefix];
+    return entry == null ? null : LoadCachedIconEntry(entry);
   }
 
   /// <summary>
-  /// Put an icon in the cache, and return the hash.
+  /// Create an icon, put it in the cache, and return the hash.
+  /// Expect this to be slow.
   /// </summary>
   /// <param name="iconSource">
   /// The file for which to retrieve the icon.
@@ -74,8 +87,7 @@ public class IconCache
   public string? CacheIcon(
     string iconSource, int size, out BitmapSource? icon)
   {
-    var iconCache = GetIconCache();
-    icon = IconForFile(iconSource, size);
+    icon = IconCache.IconForFile(iconSource, size);
     if(icon == null)
     {
       return null;
@@ -84,25 +96,9 @@ public class IconCache
     return blobEntry.Hash;
   }
 
-  /// <summary>
-  /// Try to find the icon by ID in the cache.
-  /// </summary>
-  /// <param name="hashPrefix">
-  /// The hash of the icon to load. A unique prefix
-  /// is sufficient.
-  /// </param>
-  /// <returns>
-  /// The icon, if found.
-  /// </returns>
-  public BitmapSource? LoadCachedIcon(string hashPrefix)
-  {
-    var entry = GetIconCache()[hashPrefix];
-    return entry == null ? null : LoadCachedIcon(entry);
-  }
-
   private bool CacheIcon(BitmapSource icon, out BlobEntry blobEntry)
   {
-    var iconCache = GetIconCache();
+    var iconCache = GetIconStorage();
     var encoder = new PngBitmapEncoder();
     using var stream = new MemoryStream(0x4000);
     encoder.Frames.Add(BitmapFrame.Create(icon));
@@ -113,9 +109,9 @@ public class IconCache
     return added;
   }
 
-  internal BitmapSource? LoadCachedIcon(BlobEntry entry)
+  internal BitmapSource? LoadCachedIconEntry(BlobEntry entry)
   {
-    var iconCache = GetIconCache();
+    var iconCache = GetIconStorage();
     try
     {
       using var iconStream = iconCache.OpenBlobStream(entry);
@@ -127,6 +123,13 @@ public class IconCache
         $"Failed to decode icon {entry.Hash} from cache: {ex}");
       return null;
     }
+  }
+
+  private BlobStorage GetIconStorage(
+    bool reInitialize = false)
+  {
+    _iconCache.Initialize(reInitialize);
+    return _iconCache;
   }
 
   /// <summary>

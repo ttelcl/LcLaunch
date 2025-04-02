@@ -103,6 +103,12 @@ public class ShellLaunch
   public string? IconSource { get; set; }
 
   /// <summary>
+  /// The icon ID, if the icon is cached.
+  /// </summary>
+  [JsonProperty("iconId", NullValueHandling = NullValueHandling.Ignore)]
+  public string? IconId { get; set; }
+
+  /// <summary>
   /// Get the effective icon source, based on <see cref="IconSource"/> and
   /// <see cref="TargetPath"/>.
   /// </summary>

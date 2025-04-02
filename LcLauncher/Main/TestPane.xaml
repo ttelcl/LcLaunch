@@ -69,11 +69,11 @@
                             Source="{Binding IconExtraLarge}"
                             Stretch="None"
                             Margin="5"/>
-                        <Image
+                        <!--<Image
                             Source="{Binding IconExtraLarge}"
                             Stretch="UniformToFill"
                             Height="72" Width="72"
-                            Margin="5"/>
+                            Margin="5"/>-->
                     </StackPanel>
                 </Border>
             </DockPanel>
