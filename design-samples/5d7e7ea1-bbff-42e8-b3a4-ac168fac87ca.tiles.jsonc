@@ -18,6 +18,7 @@
       "target": "<path to document or application>", // The fully qualified path to the document or application to launch.
       "title": "<title>", // The title of the tile, displayed in the UI. If missing, the short file name of the target is used.
       "tooltip": "tooltip text", // (optional) The tooltip text to display when hovering over the tile.
+      "iconSource": "<path to file used as source for the icon>", // (optional) The fully qualified path to the file used as source for the icon. If missing, the target is used.
       "icon48": "<sha1>", // the ID (or a prefix) of the 48x48 icon in the sidecar file. Null or missing if not cached.
       "icon32": "<sha1>", // the ID (or a prefix) of the 32x32 icon in the sidecar file. Null or missing if not cached.
       "icon16": "<sha1>", // the ID (or a prefix) of the 16x16 icon in the sidecar file. Null or missing if not cached.
@@ -33,6 +34,7 @@
       "target": "<path to executable>", // The fully qualified path to the executable to launch.
       "title": "<title>", // The title of the tile, displayed in the UI. If missing, the short file name of the target is used.
       "tooltip": "tooltip text", // (optional) The tooltip text to display when hovering over the tile.
+      "iconSource": "<path to file used as source for the icon>", // (optional) The fully qualified path to the file used as source for the icon. If missing, the target is used.
       "icon48": "<sha1>", // the ID (or a prefix) of the 48x48 icon in the sidecar file. Null or missing if not cached.
       "icon32": "<sha1>", // the ID (or a prefix) of the 32x32 icon in the sidecar file. Null or missing if not cached.
       "icon16": "<sha1>", // the ID (or a prefix) of the 16x16 icon in the sidecar file. Null or missing if not cached.
