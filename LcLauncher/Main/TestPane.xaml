@@ -33,7 +33,8 @@
                             Command="{Binding LoadShelfFileCommand}"/>
                     <Button Content="Scan Test Tiles"
                             Command="{Binding TestTestTilesCommand}"/>
-                    <Button Content="Button 4" />
+                    <Button Content="Load Rack"
+                            Command="{Binding LoadDemoRackCommand}"/>
                     <Button Content="Button 5" />
                     <Button Content="Button 6" />
                     <Button Content="Button 7" />

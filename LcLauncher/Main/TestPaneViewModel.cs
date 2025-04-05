@@ -34,6 +34,7 @@ public class TestPaneViewModel: ViewModelBase
     LoadShelfFileCommand = new DelegateCommand(p => LoadShelfFile());
     OpenIconFileCommand = new DelegateCommand(p => OpenIconFile());
     TestTestTilesCommand = new DelegateCommand(p => ScanTestTiles());
+    LoadDemoRackCommand = new DelegateCommand(p => LoadDemoRack());
   }
 
   public MainViewModel Host { get; }
@@ -164,6 +165,8 @@ public class TestPaneViewModel: ViewModelBase
 
   public ICommand TestTestTilesCommand { get; }
 
+  public ICommand LoadDemoRackCommand { get; }
+
   private void ResetShelf1()
   {
     Host.ColumnA.DbgShelfA = new ShelfViewModel(
@@ -235,14 +238,14 @@ public class TestPaneViewModel: ViewModelBase
       if(shellLaunch != null)
       {
         var iconSource = shellLaunch.GetIconSource();
-        if(!String.IsNullOrEmpty(shellLaunch.IconId))
+        if(!String.IsNullOrEmpty(shellLaunch.Icon48))
         {
-          var cachedIcon = cache.LoadCachedIcon(shellLaunch.IconId);
+          var cachedIcon = cache.LoadCachedIcon(shellLaunch.Icon48);
           if(cachedIcon != null)
           {
             icons.Add(cachedIcon);
             Trace.TraceInformation(
-              $"Found in cache: {shellLaunch.IconId}: {iconSource}");
+              $"Found in cache: {shellLaunch.Icon48}: {iconSource}");
             continue;
           }
         }
@@ -282,5 +285,23 @@ public class TestPaneViewModel: ViewModelBase
     {
       IconExtraLarge = icons[3];
     }
+  }
+
+  private void LoadDemoRack()
+  {
+    var store = Host.Store;
+    var rackName = "rack-demo";
+    var rack = new RackModel(store, rackName);
+    var dbgModel = new Dictionary<string, ShelfData>();
+    foreach(var kvp in rack.ShelfMap)
+    {
+      var shelfKey = kvp.Key.ToString();
+      var shelf = kvp.Value;
+      var shelfData = shelf.Shelf;
+      dbgModel[shelfKey] = shelfData;
+    }
+    Trace.TraceInformation(
+      $"Rack {rackName} loaded with {dbgModel.Count} distinct shelves: " +
+      JsonConvert.SerializeObject(dbgModel, Formatting.Indented));
   }
 }

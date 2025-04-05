@@ -14,6 +14,23 @@ using Newtonsoft.Json;
 
 namespace LcLauncher.Models;
 
+public class ShelfData
+{
+  public ShelfData(
+    string? title,
+    string? theme = null)
+  {
+    Title = title ?? "";
+    Theme = theme;
+  }
+
+  [JsonProperty("title")]
+  public string Title { get; set; }
+
+  [JsonProperty("theme", NullValueHandling = NullValueHandling.Ignore)]
+  public string? Theme { get; set; }
+}
+
 public class ShelfData0
 {
   public ShelfData0(
