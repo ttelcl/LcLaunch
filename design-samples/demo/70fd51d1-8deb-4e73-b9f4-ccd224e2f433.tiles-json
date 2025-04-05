@@ -1,0 +1,21 @@
+[
+  {
+    "shellLaunch": {
+      "target": "C:\\Windows\\System32\\calc.exe",
+      "title": "Calculator",
+      "icon48": null,
+      "icon32": null,
+      "icon16": null
+    }
+  },
+  {
+    "shellLaunch": {
+      "target": "C:\\Windows\\System32\\@WLOGO_48x48.png",
+      "title": "Windows Logo",
+      "tooltip": "Windows Logo (PNG)",
+      "icon48": null,
+      "icon32": null,
+      "icon16": null
+    }
+  }
+]
