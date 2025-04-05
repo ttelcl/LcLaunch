@@ -1,0 +1,9 @@
+// An LcLaunch "shelf" configuration file that describes a single shelf.
+// For documentation purposes this example has the extension .shelf.jsonc,
+// but normally it would have the extension .shelf-json.
+{
+  "title": "Example shelf", // The title of the shelf, displayed in the UI.
+  "theme": "Olive" // The theme color of the shelf, displayed in the UI. Optional; default is "Olive".
+  // Note that the tile list is not mentioned explicitly, but is implied by the
+  // ID of the shelf itself. The tiles are configured in <id>.tiles-json files.
+}
