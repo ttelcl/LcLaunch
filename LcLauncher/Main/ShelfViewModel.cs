@@ -20,7 +20,7 @@ public class ShelfViewModel: ViewModelBase
 {
   public ShelfViewModel(
     PageColumnViewModel columnModel,
-    ShelfData shelfData)
+    ShelfData0 shelfData)
   {
     ColumnModel = columnModel;
     SetThemeCommand = new DelegateCommand(
@@ -71,7 +71,7 @@ public class ShelfViewModel: ViewModelBase
 
   public ICommand ToggleExpandedCommand { get; }
 
-  public ShelfData ShelfData {
+  public ShelfData0 ShelfData {
     get => _shelfData;
     set {
       if(SetInstanceProperty(ref _shelfData, value))
@@ -82,7 +82,7 @@ public class ShelfViewModel: ViewModelBase
       }
     }
   }
-  private ShelfData _shelfData;
+  private ShelfData0 _shelfData;
 
   public string Theme {
     get => _theme;

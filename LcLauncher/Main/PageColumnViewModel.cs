@@ -24,11 +24,11 @@ public class PageColumnViewModel: ViewModelBase
   {
     RootModel = rootModel;
     _dbgShelfA = new ShelfViewModel(this,
-      new ShelfData("Shelf A", [], theme: "Olive"));
+      new ShelfData0("Shelf A", [], theme: "Olive"));
     DbgShelfB = new ShelfViewModel(this,
-      new ShelfData("Shelf B", [], theme: "Amber"));
+      new ShelfData0("Shelf B", [], theme: "Amber"));
     DbgShelfC = new ShelfViewModel(this,
-      new ShelfData("Shelf C", [], theme: "Sienna"));
+      new ShelfData0("Shelf C", [], theme: "Sienna"));
   }
 
   public MainViewModel RootModel { get; }

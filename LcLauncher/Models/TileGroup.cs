@@ -13,18 +13,18 @@ using Newtonsoft.Json;
 
 namespace LcLauncher.Models;
 
-public class TileGroup
+public class TileGroup0
 {
-  public TileGroup(
+  public TileGroup0(
     string? title,
-    IEnumerable<TileData?>? tiles = null)
+    IEnumerable<TileData0?>? tiles = null)
   {
     Title = String.IsNullOrEmpty(title) ? "Untitled Group" : title;
     Tiles = tiles?.ToList() ?? [];
   }
 
   [JsonProperty("tiles")]
-  public List<TileData?> Tiles { get; }
+  public List<TileData0?> Tiles { get; }
 
   [JsonProperty("title")]
   public string Title { get; set; }

@@ -19,38 +19,38 @@ namespace LcLauncher.Models;
 /// a few possible kinds of tile content. Only one of the
 /// fields will be non-null.
 /// </summary>
-public class TileData: LaunchTile
+public class TileData0: LaunchTile0
 {
-  public TileData(
-    TileGroup? group = null,
+  public TileData0(
+    TileGroup0? group = null,
     ShellLaunch? shellLaunch = null)
     : base(shellLaunch)
   {
     Group = group;
   }
 
-  public static TileData EmptyTile()
+  public static TileData0 EmptyTile()
   {
-    return new TileData();
+    return new TileData0();
   }
 
-  public static TileData ShellTile(ShellLaunch shellLaunch)
+  public static TileData0 ShellTile(ShellLaunch shellLaunch)
   {
-    return new TileData(shellLaunch: shellLaunch);
+    return new TileData0(shellLaunch: shellLaunch);
   }
 
-  public static TileData GroupTile(TileGroup group)
+  public static TileData0 GroupTile(TileGroup0 group)
   {
-    return new TileData(group: group);
+    return new TileData0(group: group);
   }
 
-  public static TileData GroupTile(
-    string title, IEnumerable<TileData> tiles)
+  public static TileData0 GroupTile(
+    string title, IEnumerable<TileData0> tiles)
   {
-    return new TileData(group: new TileGroup(title, tiles));
+    return new TileData0(group: new TileGroup0(title, tiles));
   }
 
   [JsonProperty("group", NullValueHandling = NullValueHandling.Ignore)]
-  public TileGroup? Group { get; set; }
+  public TileGroup0? Group { get; set; }
 
 }

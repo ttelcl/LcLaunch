@@ -14,11 +14,11 @@ using Newtonsoft.Json;
 
 namespace LcLauncher.Models;
 
-public class ShelfData
+public class ShelfData0
 {
-  public ShelfData(
+  public ShelfData0(
     string? title,
-    IEnumerable<TileData?> tiles,
+    IEnumerable<TileData0?> tiles,
     string? theme = null)
   {
     Title = String.IsNullOrEmpty(title) ? "Untitled Shelf" : title;
@@ -30,14 +30,14 @@ public class ShelfData
   public string Title { get; set; }
 
   [JsonProperty("tiles")]
-  public List<TileData?> Tiles { get; }
+  public List<TileData0?> Tiles { get; }
 
   [JsonProperty("theme", NullValueHandling = NullValueHandling.Ignore)]
   public string? Theme { get; set; }
 
-  public static ShelfData LoadFile(string path)
+  public static ShelfData0 LoadFile(string path)
   {
-    return JsonConvert.DeserializeObject<ShelfData>(File.ReadAllText(path))
-      ?? new ShelfData("Bad Shelf File", []);
+    return JsonConvert.DeserializeObject<ShelfData0>(File.ReadAllText(path))
+      ?? new ShelfData0("Bad Shelf File", []);
   }
 }

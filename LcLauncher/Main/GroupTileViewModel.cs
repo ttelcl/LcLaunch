@@ -15,12 +15,12 @@ namespace LcLauncher.Main;
 public class GroupTileViewModel: TileViewModelBase
 {
   public GroupTileViewModel(
-    TileGroup model)
+    TileGroup0 model)
   {
     _model = model;
   }
 
-  public TileGroup Model {
+  public TileGroup0 Model {
     get => _model;
     set {
       if(SetInstanceProperty(ref _model, value))
@@ -30,13 +30,13 @@ public class GroupTileViewModel: TileViewModelBase
       }
     }
   }
-  private TileGroup _model;
+  private TileGroup0 _model;
 
   public string Title => Model.Title;
 
-  public IList<TileData?> Tiles => Model.Tiles;
+  public IList<TileData0?> Tiles => Model.Tiles;
 
-  public override TileData GetModel()
+  public override TileData0 GetModel()
   {
     throw new NotImplementedException();
   }

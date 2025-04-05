@@ -31,7 +31,7 @@ public class TileList
   /// </summary>
   private TileList(
     Guid id,
-    IEnumerable<TileData?> tiles,
+    IEnumerable<TileData0?> tiles,
     LcLaunchDataStore store)
   {
     Id = id;
@@ -71,7 +71,7 @@ public class TileList
     LcLaunchDataStore store,
     Guid id)
   {
-    var list = store.LoadData<TileData?[]>(
+    var list = store.LoadData<TileData0?[]>(
       id, ".tile-list");
     return list == null ? null : new TileList(id, list, store);
   }
@@ -83,7 +83,7 @@ public class TileList
 
   public Guid Id { get; }
 
-  public List<TileData?> Tiles { get; }
+  public List<TileData0?> Tiles { get; }
 
   /// <summary>
   /// The store in which this list is saved and its icons are cached.

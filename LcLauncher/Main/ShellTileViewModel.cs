@@ -77,9 +77,9 @@ public class ShellTileViewModel: TileViewModelBase
 
   public string? IconSource => Model.IconSource;
 
-  public override TileData GetModel()
+  public override TileData0 GetModel()
   {
-    return TileData.ShellTile(Model);
+    return TileData0.ShellTile(Model);
   }
 
   public BitmapSource? IconLarge {

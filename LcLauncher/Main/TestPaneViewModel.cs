@@ -168,7 +168,7 @@ public class TestPaneViewModel: ViewModelBase
   {
     Host.ColumnA.DbgShelfA = new ShelfViewModel(
       Host.ColumnA,
-      new ShelfData("Test Shelf", [], theme: "Olive"));
+      new ShelfData0("Test Shelf", [], theme: "Olive"));
   }
 
   private void LoadShelfFile()
@@ -183,7 +183,7 @@ public class TestPaneViewModel: ViewModelBase
     var result = ofd.ShowDialog();
     if(result == true)
     {
-      var data = ShelfData.LoadFile(ofd.FileName);
+      var data = ShelfData0.LoadFile(ofd.FileName);
       var reserialized = JsonConvert.SerializeObject(data, Formatting.Indented);
       Trace.TraceInformation(
         $"Shelf content: {reserialized}");

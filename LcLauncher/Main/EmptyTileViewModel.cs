@@ -21,8 +21,8 @@ public class EmptyTileViewModel: TileViewModelBase
   {
   }
 
-  public override TileData GetModel()
+  public override TileData0 GetModel()
   {
-    return TileData.EmptyTile();
+    return TileData0.EmptyTile();
   }
 }

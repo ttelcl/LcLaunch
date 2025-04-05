@@ -17,9 +17,9 @@ namespace LcLauncher.Models;
 /// Tile data for either kind of launch tile.
 /// Only one of the fields will be non-null.
 /// </summary>
-public class LaunchTile
+public class LaunchTile0
 {
-  public LaunchTile(
+  public LaunchTile0(
     ShellLaunch? shellLaunch = null)
   {
     ShellLaunch = shellLaunch;
