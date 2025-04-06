@@ -70,9 +70,9 @@ public class ShellTileViewModel: TileViewModelBase
 
   public ProcessWindowStyle WindowStyle => Model.WindowStyle;
 
-  public string? Verb => Model.Verb;
-
   public string? IconSource => Model.IconSource;
+
+  public string? Verb => Model.Verb;
 
   public override TileData GetModel()
   {

@@ -47,8 +47,14 @@
                         <DataTemplate DataType="{x:Type local:ShellTileViewModel}">
                             <local:ShellTileView/>
                         </DataTemplate>
+                        <DataTemplate DataType="{x:Type local:RawTileViewModel}">
+                            <local:RawTileView/>
+                        </DataTemplate>
                         <DataTemplate DataType="{x:Type local:GroupTileViewModel}">
                             <local:GroupTileView/>
+                        </DataTemplate>
+                        <DataTemplate DataType="{x:Type local:QuadTileViewModel}">
+                            <local:QuadTileView/>
                         </DataTemplate>
                         <DataTemplate DataType="{x:Type local:EmptyTileViewModel}">
                             <local:EmptyTileView/>
