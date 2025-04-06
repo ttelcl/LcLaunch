@@ -17,12 +17,14 @@ namespace LcLauncher.Models;
 /// Tile data for either kind of launch tile.
 /// Only one of the fields will be non-null.
 /// </summary>
-public class LaunchTile0
+public class LaunchTile
 {
-  public LaunchTile0(
-    ShellLaunch? shellLaunch = null)
+  public LaunchTile(
+    ShellLaunch? shellLaunch = null,
+    RawLaunch? rawLaunch = null)
   {
     ShellLaunch = shellLaunch;
+    RawLaunch = rawLaunch;
   }
 
   /// <summary>
@@ -31,5 +33,6 @@ public class LaunchTile0
   [JsonProperty("shellLaunch", NullValueHandling = NullValueHandling.Ignore)]
   public ShellLaunch? ShellLaunch { get; set; }
 
-  // Non-shell launch tile field will be added here.
+  [JsonProperty("rawLaunch", NullValueHandling = NullValueHandling.Ignore)]
+  public RawLaunch? RawLaunch { get; set; }
 }

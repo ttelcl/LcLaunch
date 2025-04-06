@@ -25,6 +25,8 @@ public abstract class TileViewModelBase: ViewModelBase
     return model switch {
       null => new EmptyTileViewModel(),
       { ShellLaunch: { } shellLaunch } => new ShellTileViewModel(shellLaunch),
+      { RawLaunch: { } rawLaunch } => new RawTileViewModel(rawLaunch),
+      { Quad: { } quadTile } => new QuadTileViewModel(quadTile),
       { Group: { } group } => new GroupTileViewModel(group),
       _ => new EmptyTileViewModel()
     };

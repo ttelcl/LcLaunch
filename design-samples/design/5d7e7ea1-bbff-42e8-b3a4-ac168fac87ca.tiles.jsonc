@@ -23,8 +23,8 @@
       "icon32": "<sha1>", // the ID (or a prefix) of the 32x32 icon in the sidecar file. Null or missing if not cached.
       "icon16": "<sha1>", // the ID (or a prefix) of the 16x16 icon in the sidecar file. Null or missing if not cached.
       "windowStyle": "Normal", // (optional) The window style to use when launching the target. Default is "Normal".
-      "verb": "", // (optional) The verb to use when launching the target. Normally omitted.
-      "arguments": [] // (optional, uncommon for shellLaunch)
+      "verb": "" // (optional) The verb to use when launching the target. Normally omitted.
+      // "arguments": [] // (optional, uncommon for shellLaunch - not sure if we should support this at all)
     }
   },
   {
@@ -66,11 +66,32 @@
     }
   },
   {
-    "quad": {
+    "quad": [
       // A tile that has space for four sub-tiles. The sub-tiles are "shellLaunch", 
       // "rawLaunch", or "empty" tiles, displayed using smaller icons than full-size tiles.
-      // TBD
-    }
+      {
+        "shellLaunch": {
+          "target": "<path to document or application>", // The fully qualified path to the document or application to launch.
+          "title": "<title>", // The title of the tile, displayed in the UI. If missing, the short file name of the target is used.
+          "tooltip": "tooltip text", // (optional) The tooltip text to display when hovering over the tile.
+          "iconSource": "<path to file used as source for the icon>", // (optional) The fully qualified path to the file used as source for the icon. If missing, the target is used.
+          "icon32": "<sha1>", // the ID (or a prefix) of the 32x32 icon in the sidecar file. Null or missing if not cached.
+          "icon16": "<sha1>" // the ID (or a prefix) of the 16x16 icon in the sidecar file. Null or missing if not cached.
+        }
+      },
+      {
+        "rawLaunch": {
+          "target": "<path to executable>", // The fully qualified path to the executable to launch.
+          "title": "<title>", // The title of the tile, displayed in the UI. If missing, the short file name of the target is used.
+          "tooltip": "tooltip text", // (optional) The tooltip text to display when hovering over the tile.
+          "iconSource": "<path to file used as source for the icon>", // (optional) The fully qualified path to the file used as source for the icon. If missing, the target is used.
+          "icon32": "<sha1>", // the ID (or a prefix) of the 32x32 icon in the sidecar file. Null or missing if not cached.
+          "icon16": "<sha1>" // the ID (or a prefix) of the 16x16 icon in the sidecar file. Null or missing if not cached.
+        }
+      },
+      {},
+      {}
+    ]
   },
   {
     // A tile can be completely empty, in which case it is an "empty" tile.

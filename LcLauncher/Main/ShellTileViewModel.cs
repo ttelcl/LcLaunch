@@ -39,7 +39,6 @@ public class ShellTileViewModel: TileViewModelBase
         RaisePropertyChanged(nameof(Tooltip));
         RaisePropertyChanged(nameof(WindowStyle));
         RaisePropertyChanged(nameof(Verb));
-        RaisePropertyChanged(nameof(Arguments));
         RaisePropertyChanged(nameof(IconSource));
         if(String.IsNullOrEmpty(_model.Title))
         {
@@ -72,8 +71,6 @@ public class ShellTileViewModel: TileViewModelBase
   public ProcessWindowStyle WindowStyle => Model.WindowStyle;
 
   public string? Verb => Model.Verb;
-
-  public IList<string> Arguments => Model.Arguments;
 
   public string? IconSource => Model.IconSource;
 

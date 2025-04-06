@@ -76,10 +76,13 @@ public class TileSlotViewModel: ViewModelBase
   public string TileKind { 
     get {
       var model = _content?.GetModel();
+
       return model switch {
         null => "Missing",
-        { ShellLaunch: { } shellLaunch } => "Shell",
-        { Group: { } group } => "Group",
+        { ShellLaunch: { } } => "Shell",
+        { RawLaunch: { } } => "Raw",
+        { Group: { } } => "Group",
+        { Quad: { Count: > 0 } } => "Quad",
         _ => "Empty"
       };
     }
