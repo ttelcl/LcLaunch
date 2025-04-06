@@ -38,17 +38,14 @@ public class IconCache
   /// the cache file names.
   /// </param>
   public IconCache(
-    LcLaunchDataStore store,
+    JsonDataStore store,
     Guid cacheId)
   {
-    Store = store;
     CacheId = cacheId;
     // Do not pre-initialize the storage; only initialize it
     // when it is actually used.
     _iconCache = store.GetBlobs(cacheId.ToString() + ".icon-cache", false);
   }
-
-  public LcLaunchDataStore Store { get; }
 
   public Guid CacheId { get; }
 

@@ -27,7 +27,7 @@ public class RackModel
   /// Create a new RackDb
   /// </summary>
   public RackModel(
-    LcLaunchDataStore store,
+    JsonDataStore store,
     string rackName)
   {
     Store = store;
@@ -60,7 +60,7 @@ public class RackModel
     // TODO: create columns and tile lists
   }
 
-  public LcLaunchDataStore Store { get; }
+  public JsonDataStore Store { get; }
 
   /// <summary>
   /// The name of the rack (file name without path nor extension).

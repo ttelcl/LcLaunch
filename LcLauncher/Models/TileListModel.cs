@@ -55,7 +55,7 @@ public class TileListModel
   private TileListModel(
     Guid id,
     IEnumerable<TileData0?> tiles,
-    LcLaunchDataStore store)
+    JsonDataStore store)
   {
     Id = id;
     Tiles = tiles.ToList();
@@ -71,7 +71,7 @@ public class TileListModel
   /// </param>
   /// <returns></returns>
   public static TileListModel Create(
-    LcLaunchDataStore store,
+    JsonDataStore store,
     Guid? id = null)
   {
     return new TileListModel(id ?? Guid.NewGuid(), [], store);
@@ -91,7 +91,7 @@ public class TileListModel
   /// did not exist.
   /// </returns>
   public static TileListModel? Load(
-    LcLaunchDataStore store,
+    JsonDataStore store,
     Guid id)
   {
     var list = store.LoadData<TileData0?[]>(
@@ -111,6 +111,6 @@ public class TileListModel
   /// <summary>
   /// The store in which this list is saved and its icons are cached.
   /// </summary>
-  public LcLaunchDataStore Store { get; }
+  public JsonDataStore Store { get; }
 
 }

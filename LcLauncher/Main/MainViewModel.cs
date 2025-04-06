@@ -17,16 +17,16 @@ namespace LcLauncher.Main;
 public class MainViewModel: ViewModelBase
 {
   public MainViewModel(
-    LcLaunchDataStore? store = null)
+    JsonDataStore? store = null)
   {
-    Store = store ?? new LcLaunchDataStore();
+    Store = store ?? new JsonDataStore();
     PageColumns.Add(new PageColumnViewModel(this));
     PageColumns.Add(new PageColumnViewModel(this));
     PageColumns.Add(new PageColumnViewModel(this));
     TestPane = new TestPaneViewModel(this);
   }
 
-  public LcLaunchDataStore Store { get; }
+  public JsonDataStore Store { get; }
 
   public List<PageColumnViewModel> PageColumns { get; } = [];
 

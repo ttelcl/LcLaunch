@@ -20,12 +20,12 @@ namespace LcLauncher.Storage;
 /// Database for persisting data for the Launcher (low level,
 /// not storage neutral)
 /// </summary>
-public class LcLaunchDataStore
+public class JsonDataStore
 {
   /// <summary>
   /// Create a new LcLaunchDataStore and ensure the data folder exists.
   /// </summary>
-  public LcLaunchDataStore(
+  public JsonDataStore(
     string? dataFolder = null)
   {
     DataFolder = String.IsNullOrEmpty(dataFolder)

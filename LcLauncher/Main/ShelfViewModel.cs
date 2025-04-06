@@ -41,7 +41,7 @@ public class ShelfViewModel: ViewModelBase
 
   public MainViewModel RootModel => ColumnModel.RootModel;
 
-  public LcLaunchDataStore Store => RootModel.Store;
+  public JsonDataStore Store => RootModel.Store;
 
   public ShelfContentViewModel PrimaryContent { get; }
 
