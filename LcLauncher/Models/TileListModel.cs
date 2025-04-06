@@ -23,13 +23,13 @@ namespace LcLauncher.Models;
 /// This is not serialized direcly, but wraps the
 /// result or source of serialization.
 /// </summary>
-public class TileList
+public class TileListModel
 {
   /// <summary>
   /// Create a new TileList. Use <see cref="Load"/> or
   /// <see cref="Create(Guid?)"/> to call this constructor.
   /// </summary>
-  private TileList(
+  private TileListModel(
     Guid id,
     IEnumerable<TileData0?> tiles,
     LcLaunchDataStore store)
@@ -47,11 +47,11 @@ public class TileList
   /// The optional ID to use. If null, a new ID is generated.
   /// </param>
   /// <returns></returns>
-  public static TileList Create(
+  public static TileListModel Create(
     LcLaunchDataStore store,
     Guid? id = null)
   {
-    return new TileList(id ?? Guid.NewGuid(), [], store);
+    return new TileListModel(id ?? Guid.NewGuid(), [], store);
   }
 
   /// <summary>
@@ -67,13 +67,13 @@ public class TileList
   /// Returns the list that was loaded, or null if the file
   /// did not exist.
   /// </returns>
-  public static TileList? Load(
+  public static TileListModel? Load(
     LcLaunchDataStore store,
     Guid id)
   {
     var list = store.LoadData<TileData0?[]>(
       id, ".tile-list");
-    return list == null ? null : new TileList(id, list, store);
+    return list == null ? null : new TileListModel(id, list, store);
   }
 
   public void Save()

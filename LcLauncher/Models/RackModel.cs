@@ -34,7 +34,7 @@ public class RackModel
     RackName = rackName;
     _shelves = [];
     var fullPath = Path.Combine(
-      store.DataFolder,
+      Store.DataFolder,
       RackName + ".rack-json");
     if(!File.Exists(fullPath))
     {
@@ -42,7 +42,7 @@ public class RackModel
         "Rack file not found",
         fullPath);
     }
-    var rackData = store.LoadData<RackData>(
+    var rackData = Store.LoadData<RackData>(
       RackName,
       ".rack-json") ?? throw new InvalidDataException(
         "Failed to load rack data file");

@@ -17,7 +17,8 @@ using LcLauncher.Storage.BlobsStorage;
 namespace LcLauncher.Storage;
 
 /// <summary>
-/// Database for persisting data for the Launcher.
+/// Database for persisting data for the Launcher (low level,
+/// not storage neutral)
 /// </summary>
 public class LcLaunchDataStore
 {

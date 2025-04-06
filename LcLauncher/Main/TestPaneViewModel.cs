@@ -215,9 +215,9 @@ public class TestPaneViewModel: ViewModelBase
     }
   }
 
-  private TileList? LoadTestTiles()
+  private TileListModel? LoadTestTiles()
   {
-    var tiles = TileList.Load(Host.Store, TileTestGuid);
+    var tiles = TileListModel.Load(Host.Store, TileTestGuid);
     return tiles;
   }
 
