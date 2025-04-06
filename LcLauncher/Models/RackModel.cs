@@ -27,25 +27,13 @@ public class RackModel
   /// Create a new RackDb
   /// </summary>
   public RackModel(
-    JsonDataStore store,
+    ILcLaunchStore store,
     string rackName)
   {
     Store = store;
     RackName = rackName;
     _shelves = [];
-    var fullPath = Path.Combine(
-      Store.DataFolder,
-      RackName + ".rack-json");
-    if(!File.Exists(fullPath))
-    {
-      throw new FileNotFoundException(
-        "Rack file not found",
-        fullPath);
-    }
-    var rackData = Store.LoadData<RackData>(
-      RackName,
-      ".rack-json") ?? throw new InvalidDataException(
-        "Failed to load rack data file");
+    var rackData = Store.LoadRack(RackName);
     RackData = rackData;
     // populate shelves in the lookup
     foreach(var column in rackData.Columns)
@@ -60,7 +48,7 @@ public class RackModel
     // TODO: create columns and tile lists
   }
 
-  public JsonDataStore Store { get; }
+  public ILcLaunchStore Store { get; }
 
   /// <summary>
   /// The name of the rack (file name without path nor extension).

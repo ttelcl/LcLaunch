@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 
+using LcLauncher.Models;
 using LcLauncher.Storage;
 using LcLauncher.WpfUtilities;
 
@@ -16,17 +17,24 @@ namespace LcLauncher.Main;
 
 public class MainViewModel: ViewModelBase
 {
-  public MainViewModel(
-    JsonDataStore? store = null)
+  public MainViewModel()
   {
-    Store = store ?? new JsonDataStore();
+    var fileStore = new JsonDataStore();
+    var storeImplementation = new JsonLcLaunchStore(fileStore);
+    StoreImplementation = storeImplementation;
+
+
     PageColumns.Add(new PageColumnViewModel(this));
     PageColumns.Add(new PageColumnViewModel(this));
     PageColumns.Add(new PageColumnViewModel(this));
     TestPane = new TestPaneViewModel(this);
   }
 
-  public JsonDataStore Store { get; }
+  public ILcLaunchStore Store => StoreImplementation;
+
+  public JsonLcLaunchStore StoreImplementation { get; }
+
+  public JsonDataStore FileStore { get => StoreImplementation.Provider; }
 
   public List<PageColumnViewModel> PageColumns { get; } = [];
 

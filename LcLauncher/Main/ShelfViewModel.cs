@@ -41,8 +41,6 @@ public class ShelfViewModel: ViewModelBase
 
   public MainViewModel RootModel => ColumnModel.RootModel;
 
-  public JsonDataStore Store => RootModel.Store;
-
   public ShelfContentViewModel PrimaryContent { get; }
 
   public ShelfContentViewModel? SecondaryContent {

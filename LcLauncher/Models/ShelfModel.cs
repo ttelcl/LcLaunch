@@ -31,13 +31,10 @@ public class ShelfModel
     Guid id)
   {
     var shelf =
-      owner.Store.LoadData<ShelfData>(id, ".shelf-json");
-    if(shelf == null)
-    {
-      shelf = new ShelfData(
+      owner.Store.LoadShelf(id)
+      ?? new ShelfData(
         "MISSING Shelf " + id.ToString(),
         "Cobalt");
-    }
     if(String.IsNullOrEmpty(shelf.Title))
     {
       shelf.Title = "Untitled Shelf " + id.ToString();

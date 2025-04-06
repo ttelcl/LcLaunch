@@ -27,12 +27,12 @@ public interface ILcLaunchStore
   /// <summary>
   /// Save a rack to the store.
   /// </summary>
-  void SaveRack(RackData rack);
+  void SaveRack(string rackName, RackData rack);
 
   /// <summary>
   /// Load a shelf by ID.
   /// </summary>
-  IdWrapped<ShelfData> LoadShelf(Guid shelfId);
+  ShelfData? LoadShelf(Guid shelfId);
 
   /// <summary>
   /// Save a shelf to the store.
@@ -42,12 +42,12 @@ public interface ILcLaunchStore
   /// <summary>
   /// Load a tile list by ID.
   /// </summary>
-  TileList LoadTiles(Guid tileId);
+  List<TileData0?>? LoadTiles(Guid tileId);
 
   /// <summary>
   /// Save a tile list to the store.
   /// </summary>
-  void SaveTiles(TileList tileList);
+  void SaveTiles(Guid id, IEnumerable<TileData0?> tiles);
 
   /// <summary>
   /// Enumerate all existing shelves in the store.

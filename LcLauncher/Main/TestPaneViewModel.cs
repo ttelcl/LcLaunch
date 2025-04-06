@@ -231,7 +231,7 @@ public class TestPaneViewModel: ViewModelBase
       return;
     }
     var icons = new List<BitmapSource>();
-    var cache = Host.Store.GetIconCache(tiles.Id);
+    var cache = Host.FileStore.GetIconCache(tiles.Id);
     foreach(var tileBase in tiles.Tiles ?? [])
     {
       var shellLaunch = tileBase?.ShellLaunch;

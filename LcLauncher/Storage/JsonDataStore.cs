@@ -133,4 +133,26 @@ public class JsonDataStore
   {
     return new IconCache(this, cacheId);
   }
+
+  /// <summary>
+  /// Enumerate the tags of all data files with the given extension
+  /// (the 'tag' being the part of the filename without that extension)
+  /// </summary>
+  public IEnumerable<string> EnumDataTags(string extension)
+  {
+    if(!extension.StartsWith('.'))
+    {
+      throw new ArgumentException("Extension must start with a period.");
+    }
+    var files = Directory.EnumerateFiles(DataFolder, "*" + extension);
+    foreach(var file in files)
+    {
+      var fileName = Path.GetFileName(file);
+      if(fileName != null)
+      {
+        var tag = fileName[..^extension.Length];
+        yield return tag;
+      }
+    }
+  }
 }
