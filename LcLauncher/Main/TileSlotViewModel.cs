@@ -88,6 +88,17 @@ public class TileSlotViewModel: ViewModelBase
     }
   }
 
+  public bool Hovering {
+    get => _hovering;
+    set {
+      if(SetValueProperty(ref _hovering, value))
+      {
+        RaisePropertyChanged(nameof(Hovering));
+      }
+    }
+  }
+  private bool _hovering = false;
+
   /* Temporary test content */
   public ICommand TestSecondaryCommand { get; }
   private ShelfContentViewModel? _secondaryContent;

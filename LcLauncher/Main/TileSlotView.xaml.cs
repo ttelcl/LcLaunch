@@ -24,4 +24,20 @@ public partial class TileSlotView: UserControl
   {
     InitializeComponent();
   }
+
+  private void TileSlot_MouseEnter(object sender, MouseEventArgs e)
+  {
+    if(DataContext is TileSlotViewModel vm)
+    {
+      vm.Hovering = true;
+    }
+  }
+
+  private void TileSlot_MouseLeave(object sender, MouseEventArgs e)
+  {
+    if(DataContext is TileSlotViewModel vm)
+    {
+      vm.Hovering = false;
+    }
+  }
 }

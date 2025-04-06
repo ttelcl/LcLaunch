@@ -6,6 +6,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:local="clr-namespace:LcLauncher.Main"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    MouseEnter="TileSlot_MouseEnter"
+    MouseLeave="TileSlot_MouseLeave"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance local:TileSlotViewModel, IsDesignTimeCreatable=False}"
     d:DesignHeight="100" d:DesignWidth="100">
@@ -16,7 +18,16 @@
             BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
             Background="{DynamicResource MahApps.Brushes.Accent4}"
             Width="100" Height="100"
+            Visibility="{Binding Hovering, Converter={StaticResource VisibleIf}}">
+        </Border>
+        <Border
+            Margin="2,2"
+            BorderThickness="0"
+            BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+            Background="#00000000"
+            Width="100" Height="100"
             >
+            <!-- "#00000000" is transparent for display, but opaque for mouse -->
             <Border.InputBindings>
                 <MouseBinding
                     Gesture="LeftClick"
@@ -68,7 +79,7 @@
             BorderThickness="1"
             BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
             Width="100" Height="100"
-            >
+            Visibility="{Binding Hovering, Converter={StaticResource VisibleIf}}">
         </Border>
     </Grid>
 </UserControl>
