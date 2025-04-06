@@ -35,7 +35,7 @@ public class ShelfData0
 {
   public ShelfData0(
     string? title,
-    IEnumerable<TileData0?> tiles,
+    IEnumerable<TileData?> tiles,
     string? theme = null)
   {
     Title = String.IsNullOrEmpty(title) ? "Untitled Shelf" : title;
@@ -47,7 +47,7 @@ public class ShelfData0
   public string Title { get; set; }
 
   [JsonProperty("tiles")]
-  public List<TileData0?> Tiles { get; }
+  public List<TileData?> Tiles { get; }
 
   [JsonProperty("theme", NullValueHandling = NullValueHandling.Ignore)]
   public string? Theme { get; set; }

@@ -20,7 +20,7 @@ public abstract class TileViewModelBase: ViewModelBase
   {
   }
 
-  public static TileViewModelBase Create(TileData0? model)
+  public static TileViewModelBase Create(TileData? model)
   {
     return model switch {
       null => new EmptyTileViewModel(),
@@ -36,5 +36,5 @@ public abstract class TileViewModelBase: ViewModelBase
   /// Get the JSON-serializable model for this tile
   /// view model.
   /// </summary>
-  public abstract TileData0 GetModel();
+  public abstract TileData GetModel();
 }

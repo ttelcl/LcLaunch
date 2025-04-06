@@ -42,12 +42,12 @@ public interface ILcLaunchStore
   /// <summary>
   /// Load a tile list by ID.
   /// </summary>
-  List<TileData0?>? LoadTiles(Guid tileId);
+  List<TileData?>? LoadTiles(Guid tileId);
 
   /// <summary>
   /// Save a tile list to the store.
   /// </summary>
-  void SaveTiles(Guid id, IEnumerable<TileData0?> tiles);
+  void SaveTiles(Guid id, IEnumerable<TileData?> tiles);
 
   /// <summary>
   /// Enumerate all existing shelves in the store.

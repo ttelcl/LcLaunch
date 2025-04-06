@@ -52,8 +52,8 @@ public class RawTileViewModel: TileViewModelBase
   }
   private RawLaunch _model;
 
-  public override TileData0 GetModel()
+  public override TileData GetModel()
   {
-    return TileData0.RawTile(Model);
+    return TileData.RawTile(Model);
   }
 }

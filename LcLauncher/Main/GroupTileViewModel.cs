@@ -15,29 +15,32 @@ namespace LcLauncher.Main;
 public class GroupTileViewModel: TileViewModelBase
 {
   public GroupTileViewModel(
-    TileGroup0 model)
+    TileGroup model)
   {
     _model = model;
   }
 
-  public TileGroup0 Model {
+  public TileGroup Model {
     get => _model;
     set {
       if(SetInstanceProperty(ref _model, value))
       {
         RaisePropertyChanged(nameof(Title));
-        RaisePropertyChanged(nameof(Tiles));
+        RaisePropertyChanged(nameof(Tooltip));
+        RaisePropertyChanged(nameof(TileList));
       }
     }
   }
-  private TileGroup0 _model;
+  private TileGroup _model;
 
   public string Title => Model.Title;
 
-  public IList<TileData0?> Tiles => Model.Tiles;
+  public string? Tooltip => Model.Tooltip;
 
-  public override TileData0 GetModel()
+  public Guid TileList => Model.TileList;
+
+  public override TileData GetModel()
   {
-    throw new NotImplementedException();
+    return TileData.GroupTile(Model);
   }
 }

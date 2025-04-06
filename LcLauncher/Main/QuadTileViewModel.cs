@@ -38,9 +38,9 @@ public class QuadTileViewModel: TileViewModelBase
   }
   private List<LaunchTile> _model;
 
-  public override TileData0 GetModel()
+  public override TileData GetModel()
   {
-    return TileData0.QuadTile(
+    return TileData.QuadTile(
       Model);
   }
 }

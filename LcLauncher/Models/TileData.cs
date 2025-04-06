@@ -17,14 +17,15 @@ namespace LcLauncher.Models;
 /// <summary>
 /// Polymorphic data for tile content, containing one of
 /// a few possible kinds of tile content. Only one of the
-/// fields will be non-null.
+/// fields will be non-null (except for the quad field, which
+/// can be an empty list as equivalent).
 /// </summary>
-public class TileData0: LaunchTile
+public class TileData: LaunchTile
 {
-  public TileData0(
+  public TileData(
     ShellLaunch? shellLaunch = null,
     RawLaunch? rawLaunch = null,
-    TileGroup0? group = null,
+    TileGroup? group = null,
     IEnumerable<LaunchTile>? quad = null)
     : base(shellLaunch, rawLaunch)
   {
@@ -32,43 +33,45 @@ public class TileData0: LaunchTile
     Quad = new(quad ?? new List<LaunchTile>());
   }
 
-  public static TileData0 EmptyTile()
+  public static TileData EmptyTile()
   {
-    return new TileData0();
+    return new TileData();
   }
 
-  public static TileData0 ShellTile(ShellLaunch shellLaunch)
+  public static TileData ShellTile(ShellLaunch shellLaunch)
   {
-    return new TileData0(shellLaunch: shellLaunch);
+    return new TileData(shellLaunch: shellLaunch);
   }
 
-  public static TileData0 RawTile(RawLaunch rawLaunch)
+  public static TileData RawTile(RawLaunch rawLaunch)
   {
-    return new TileData0(rawLaunch: rawLaunch);
+    return new TileData(rawLaunch: rawLaunch);
   }
 
-  public static TileData0 GroupTile(TileGroup0 group)
+  public static TileData GroupTile(TileGroup group)
   {
-    return new TileData0(group: group);
+    return new TileData(group: group);
   }
 
-  public static TileData0 GroupTile(
-    string title, IEnumerable<TileData0> tiles)
+  public static TileData GroupTile(
+    Guid tilelist,
+    string? title = null,
+    string? tooltip = null)
   {
-    return new TileData0(group: new TileGroup0(title, tiles));
+    return new TileData(group: new TileGroup(tilelist, title, tooltip));
   }
 
-  public static TileData0 QuadTile(IEnumerable<LaunchTile> quad)
+  public static TileData QuadTile(IEnumerable<LaunchTile> quad)
   {
-    return new TileData0(quad: quad);
+    return new TileData(quad: quad);
   }
 
   [JsonProperty("group", NullValueHandling = NullValueHandling.Ignore)]
-  public TileGroup0? Group { get; set; }
+  public TileGroup? Group { get; set; }
 
   [JsonProperty("quad")]
   public List<LaunchTile> Quad { get; }
 
-  public bool ShouldSerializeQuadTile => Quad.Count > 0;
+  public bool ShouldSerializeQuad() => Quad.Count > 0;
 
 }

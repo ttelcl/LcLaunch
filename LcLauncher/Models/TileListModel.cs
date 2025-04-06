@@ -25,11 +25,11 @@ namespace LcLauncher.Models;
 /// </summary>
 public class TileList 
 {
-  private readonly List<TileData0?> _tiles;
+  private readonly List<TileData?> _tiles;
 
   public TileList(
     Guid id,
-    IEnumerable<TileData0?> tiles)
+    IEnumerable<TileData?> tiles)
   {
     _tiles = tiles.ToList();
     Id = id;
@@ -38,7 +38,7 @@ public class TileList
 
   public Guid Id { get; }
 
-  public IReadOnlyList<TileData0?> Tiles { get; }
+  public IReadOnlyList<TileData?> Tiles { get; }
 }
 
 /// <summary>
@@ -54,7 +54,7 @@ public class TileListModel
   /// </summary>
   private TileListModel(
     Guid id,
-    IEnumerable<TileData0?> tiles,
+    IEnumerable<TileData?> tiles,
     ILcLaunchStore store)
   {
     Id = id;
@@ -105,7 +105,7 @@ public class TileListModel
 
   public Guid Id { get; }
 
-  public List<TileData0?> Tiles { get; }
+  public List<TileData?> Tiles { get; }
 
   /// <summary>
   /// The store in which this list is saved and its icons are cached.

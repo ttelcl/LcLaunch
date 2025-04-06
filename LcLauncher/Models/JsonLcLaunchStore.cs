@@ -69,15 +69,15 @@ public class JsonLcLaunchStore: ILcLaunchStore
       shelf);
   }
 
-  public List<TileData0?>? LoadTiles(Guid tileId)
+  public List<TileData?>? LoadTiles(Guid tileId)
   {
-    var listData = Provider.LoadData<List<TileData0?>>(
+    var listData = Provider.LoadData<List<TileData?>>(
       tileId,
       ".tiles-json");
     return listData;
   }
 
-  public void SaveTiles(Guid id, IEnumerable<TileData0?> tiles)
+  public void SaveTiles(Guid id, IEnumerable<TileData?> tiles)
   {
     Provider.SaveData(
       id,
