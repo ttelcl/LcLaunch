@@ -49,17 +49,17 @@ public class RawLaunch: LaunchData
   [JsonProperty("arguments")]
   public List<string> Arguments { get; }
 
-  public bool ShouldSerializeArguments => Arguments.Count > 0;
+  public bool ShouldSerializeArguments() => Arguments.Count > 0;
 
   [JsonProperty("env")]
   public Dictionary<string, string?> Environment { get; }
 
-  public bool ShouldSerializeEnvironment => Environment.Count > 0;
+  public bool ShouldSerializeEnvironment() => Environment.Count > 0;
 
   [JsonProperty("pathenv")]
   public Dictionary<string, PathEdit> PathEnvironment { get; }
 
-  public bool ShouldSerializePathEnvironment => PathEnvironment.Count > 0;
+  public bool ShouldSerializePathEnvironment() => PathEnvironment.Count > 0;
 }
 
 public class PathEdit
@@ -75,10 +75,10 @@ public class PathEdit
   [JsonProperty("prepend")]
   public List<string> Prepend { get; }
 
-  public bool ShouldSerializePrepend => Prepend.Count > 0;
+  public bool ShouldSerializePrepend() => Prepend.Count > 0;
 
   [JsonProperty("append")]
   public List<string> Append { get; }
 
-  public bool ShouldSerializeAppend => Append.Count > 0;
+  public bool ShouldSerializeAppend() => Append.Count > 0;
 }
