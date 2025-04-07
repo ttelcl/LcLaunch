@@ -77,9 +77,26 @@
     }
   },
   {
-    "quad": {
-    }
+    "quad": [
+      {
+        "shellLaunch": {
+          "target": "C:\\Windows\\System32\\calc.exe",
+          "title": "Calculator"
+        }
+      },
+      {
+        "shellLaunch": {
+          "target": "C:\\Windows\\System32\\@WLOGO_48x48.png",
+          "title": "Windows Logo"
+        }
+      },
+      {
+        "shellLaunch": {
+          "target": "C:\\Windows\\regedit.exe",
+          "title": "RegEdit"
+        }
+      }
+    ]
   },
-  {
-  }
+  {}
 ]
