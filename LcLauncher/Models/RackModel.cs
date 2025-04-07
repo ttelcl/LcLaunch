@@ -33,19 +33,24 @@ public class RackModel
     Store = store;
     RackName = rackName;
     _shelves = [];
+    Columns = new List<ShelfModel>[3];
     var rackData = Store.LoadRack(RackName);
     RackData = rackData;
-    // populate shelves in the lookup
-    foreach(var column in rackData.Columns)
+    // populate shelves in the lookup and the columns
+    for(var icol=0; icol<3; icol++)
+    {
+      Columns[icol] = [];
+      var column = rackData.Columns[icol];
       foreach(var shelfId in column)
       {
-        if(!_shelves.ContainsKey(shelfId))
+        if(!_shelves.TryGetValue(shelfId, out var shelf))
         {
-          var shelf = ShelfModel.Load(this, shelfId);
+          shelf = ShelfModel.Load(this, shelfId);
           _shelves.Add(shelfId, shelf);
         }
+        Columns[icol].Add(shelf);
       }
-    // TODO: create columns and tile lists
+    }
   }
 
   public ILcLaunchStore Store { get; }
@@ -59,4 +64,5 @@ public class RackModel
 
   public IReadOnlyDictionary<Guid, ShelfModel> ShelfMap => _shelves;
 
+  public List<ShelfModel>[] Columns { get; }
 }

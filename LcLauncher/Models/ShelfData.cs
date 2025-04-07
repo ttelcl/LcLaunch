@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -18,10 +19,12 @@ public class ShelfData
 {
   public ShelfData(
     string? title,
+    bool collapsed = false,
     string? theme = null)
   {
     Title = title ?? "";
     Theme = theme;
+    Collapsed = collapsed;
   }
 
   [JsonProperty("title")]
@@ -29,6 +32,9 @@ public class ShelfData
 
   [JsonProperty("theme", NullValueHandling = NullValueHandling.Ignore)]
   public string? Theme { get; set; }
+
+  [JsonProperty("collapsed")]
+  public bool Collapsed { get; set; }
 }
 
 public class ShelfData0

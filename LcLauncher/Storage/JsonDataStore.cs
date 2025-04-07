@@ -51,8 +51,12 @@ public class JsonDataStore
     var path = GetDataFileName(tag, extension);
     if(!File.Exists(path))
     {
+      Trace.TraceWarning(
+        $"Warning: Data file {path} does not exist. Returning null.");
       return null;
     }
+    Trace.TraceInformation(
+      $"Loading data from {path} as type {typeof(T).FullName}");
     return JsonConvert.DeserializeObject<T>(File.ReadAllText(path));
   }
 

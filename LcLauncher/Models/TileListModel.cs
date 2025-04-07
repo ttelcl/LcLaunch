@@ -23,29 +23,6 @@ namespace LcLauncher.Models;
 /// This is not serialized direcly, but wraps the
 /// result or source of serialization.
 /// </summary>
-public class TileList 
-{
-  private readonly List<TileData?> _tiles;
-
-  public TileList(
-    Guid id,
-    IEnumerable<TileData?> tiles)
-  {
-    _tiles = tiles.ToList();
-    Id = id;
-    Tiles = _tiles.AsReadOnly();
-  }
-
-  public Guid Id { get; }
-
-  public IReadOnlyList<TileData?> Tiles { get; }
-}
-
-/// <summary>
-/// An ordered list of tiles, together with an ID.
-/// This is not serialized direcly, but wraps the
-/// result or source of serialization.
-/// </summary>
 public class TileListModel
 {
   /// <summary>
