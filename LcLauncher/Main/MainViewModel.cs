@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 
+using LcLauncher.Main.Rack;
 using LcLauncher.Models;
 using LcLauncher.Storage;
 using LcLauncher.WpfUtilities;
@@ -45,4 +46,14 @@ public class MainViewModel: ViewModelBase
   public PageColumnViewModel ColumnC => PageColumns[2];
 
   public TestPaneViewModel TestPane { get; }
+
+  public RackViewModel? CurrentRack {
+    get => _currentRack;
+    set {
+      if(SetNullableInstanceProperty(ref _currentRack, value))
+      {
+      }
+    }
+  }
+  private RackViewModel? _currentRack;
 }
