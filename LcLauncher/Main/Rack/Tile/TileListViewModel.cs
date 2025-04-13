@@ -50,7 +50,46 @@ public class TileListViewModel: ViewModelBase
 
   public TileListModel Model { get; }
 
+  public ILauncherIconCache IconCache => Model.IconCache;
+
   public bool IsPrimary { get => Model.Id == Shelf.Model.Id; }
 
   public ObservableCollection<TileHostViewModel> Tiles { get; }
+
+  /// <summary>
+  /// Rebuild the persisted model from the viewmodels
+  /// </summary>
+  public void RebuildModel()
+  {
+    var newTiles = new List<TileData?>();
+    foreach(var tile in Tiles)
+    {
+      newTiles.Add(tile?.Tile?.GetModel());
+    }
+    Model.Tiles.Clear();
+    Model.Tiles.AddRange(newTiles);
+    Model.MarkDirty();
+  }
+
+  public void Save()
+  {
+    Model.Save();
+    RaisePropertyChanged(nameof(IsDirty));
+  }
+
+  public void MarkDirty()
+  {
+    Model.MarkDirty();
+    RaisePropertyChanged(nameof(IsDirty));
+  }
+
+  public void SaveIfDirty()
+  {
+    if(IsDirty)
+    {
+      Save();
+    }
+  }
+
+  public bool IsDirty => Model.IsDirty;
 }

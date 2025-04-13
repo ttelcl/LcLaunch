@@ -79,6 +79,14 @@ public class TileListModel
   public void Save()
   {
     Store.SaveTiles(Id, Tiles);
+    IsDirty = false;
+  }
+
+  public bool IsDirty { get; private set; }
+
+  public void MarkDirty()
+  {
+    IsDirty = true;
   }
 
   public Guid Id { get; }

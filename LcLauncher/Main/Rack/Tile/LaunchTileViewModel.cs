@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 
 using LcLauncher.Models;
 
@@ -26,6 +27,7 @@ public class LaunchTileViewModel: TileViewModel
     Model = model;
     _title = Model.GetEffectiveTitle();
     _tooltip = Model.GetEffectiveTooltip();
+    LoadIcon(IconLoadLevel.FromCache);
   }
 
   public static LaunchTileViewModel FromShell(
@@ -95,6 +97,101 @@ public class LaunchTileViewModel: TileViewModel
       _ => throw new InvalidOperationException(
         $"Invalid launch data type {Model.GetType().FullName}")
     };
+  }
+
+  public BitmapSource? Icon {
+    get => _icon;
+    set {
+      if(SetNullableInstanceProperty(ref _icon, value))
+      {
+      }
+    }
+  }
+  private BitmapSource? _icon;
+
+  public void LoadIcon(IconLoadLevel level)
+  {
+    var hasIcon = Icon != null;
+    var hasHash = Model.Icon48 != null;
+    var iconCache = OwnerList.IconCache;
+    switch(level)
+    {
+      case IconLoadLevel.FromCache:
+        {
+          if(hasIcon || !hasHash)
+          {
+            return;
+          }
+          var icon = iconCache.LoadCachedIcon(Model.Icon48);
+          Icon = icon;
+          return;
+        }
+      case IconLoadLevel.LoadIfMissing:
+        {
+          if(hasIcon)
+          {
+            return;
+          }
+          if(hasHash)
+          {
+            var icon = iconCache.LoadCachedIcon(Model.Icon48);
+            if(icon != null)
+            {
+              Icon = icon;
+              return;
+            }
+          }
+          HardLoadIcon();
+          return;
+        }
+      case IconLoadLevel.LoadAlways:
+        {
+          HardLoadIcon();
+          return;
+        }
+      default:
+        throw new ArgumentOutOfRangeException(
+          nameof(level), level, "Invalid icon load level");
+    }
+  }
+
+  private void HardLoadIcon()
+  {
+    var iconCache = OwnerList.IconCache;
+    var iconSource = Model.GetIconSource();
+    var hashes = iconCache.CacheIcons(iconSource, IconSize.Normal);
+    if(hashes == null)
+    {
+      // Clear all icons - they are no longer valid
+      if(!String.IsNullOrEmpty(Model.Icon16)
+        || !String.IsNullOrEmpty(Model.Icon32)
+        || !String.IsNullOrEmpty(Model.Icon48))
+      {
+        OwnerList.MarkDirty();
+      }
+      Model.Icon48 = null;
+      Model.Icon32 = null;
+      Model.Icon16 = null;
+      Trace.TraceError(
+        $"Failed to load icon for {iconSource}");
+      Icon = null;
+      return;
+    }
+    if(Model.Icon48 != hashes.Large)
+    {
+      Model.Icon48 = hashes.Large;
+      OwnerList.MarkDirty();
+    }
+    if(Model.Icon32 != hashes.Medium)
+    {
+      Model.Icon32 = hashes.Medium;
+      OwnerList.MarkDirty();
+    }
+    if(Model.Icon16 != hashes.Small)
+    {
+      Model.Icon16 = hashes.Small;
+      OwnerList.MarkDirty();
+    }
   }
 
   public string FallbackIcon => Model switch {

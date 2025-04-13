@@ -104,3 +104,22 @@ public class IconHashes
   public string? Large { get; init; }
   public string? ExtraLarge { get; init; }
 }
+
+/// <summary>
+/// How hard to look for an icon
+/// </summary>
+public enum IconLoadLevel { 
+  /// <summary>
+  /// Only get the icon if it is already in the cache
+  /// </summary>
+  FromCache,
+  /// <summary>
+  /// Load the icon if it is in the cache, put it in the cache
+  /// otherwise.
+  /// </summary>
+  LoadIfMissing,
+  /// <summary>
+  /// Put the icon in the cache, even if it was already there.
+  /// </summary>
+  LoadAlways
+}
