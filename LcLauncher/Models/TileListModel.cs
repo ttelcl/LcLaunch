@@ -37,7 +37,7 @@ public class TileListModel
     Id = id;
     Tiles = tiles.ToList();
     Store = store;
-    IconCache = store.GetIconCache(id, true /* could be false too */);
+    IconCache = store.GetIconCache(id, false /* create cache on first use */);
   }
 
   /// <summary>
