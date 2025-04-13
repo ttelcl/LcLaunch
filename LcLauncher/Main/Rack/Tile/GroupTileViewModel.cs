@@ -18,12 +18,23 @@ namespace LcLauncher.Main.Rack.Tile;
 public class GroupTileViewModel: TileViewModel
 {
   public GroupTileViewModel(
+    TileListViewModel ownerList,
     TileGroup model)
+    : base(ownerList)
   {
     Model = model;
     ToggleGroupCommand = new DelegateCommand(
-      p => IsActive = !IsActive,
-      p => CanToggleActive);
+      p => IsActive = !IsActive);
+    var childModel = TileListModel.Load(ownerList.Shelf.Store, model.TileList);
+    if(childModel == null)
+    {
+      Trace.TraceWarning(
+        $"Creating missing tile list {model.TileList}");
+      childModel = TileListModel.Create(
+        ownerList.Shelf.Store,
+        model.TileList);
+    }
+    ChildTiles = new TileListViewModel(ownerList.Shelf, childModel);
   }
 
   public ICommand ToggleGroupCommand { get; }
@@ -76,87 +87,23 @@ public class GroupTileViewModel: TileViewModel
   public bool IsActive {
     get => _isActive;
     set {
-      var wasActive = TrueActive;
-      var newValue = value && CanToggleActive;
-      if(SetValueProperty(ref _isActive, newValue))
+      var wasActive = OwnerList.Shelf.ActiveSecondaryTile == this;
+      if(SetValueProperty(ref _isActive, value))
       {
-        if(Host == null)
+        if(!wasActive && _isActive)
         {
-          // Implies CanToggleActive is false -> _isActive is false
-          return;
+          // activate this group
+          OwnerList.Shelf.ActiveSecondaryTile = this;
         }
-        if(!_isActive && wasActive)
+        else if(wasActive && !_isActive)
         {
-          Host.TileList.Shelf.ActiveSecondaryTile = null;
-        }
-        else if(_isActive && !wasActive)
-        {
-          Host.TileList.Shelf.ActiveSecondaryTile = this;
+          // deactivate this group
+          OwnerList.Shelf.ActiveSecondaryTile = null;
         }
       }
     }
   }
   private bool _isActive = false;
 
-  public bool TrueActive {
-    get {
-      if(ChildTiles == null || Host == null)
-      {
-        return false;
-      }
-      else
-      {
-        return Host.TileList.Shelf.SecondaryTiles == ChildTiles;
-      }
-    }
-  }
-
-  public bool CanToggleActive {
-    get => ChildTiles != null && Host != null;
-  }
-
-  public TileListViewModel? ChildTiles {
-    get => _childTiles;
-    set {
-      if(SetNullableInstanceProperty(ref _childTiles, value))
-      {
-        RaisePropertyChanged(nameof(CanToggleActive));
-        if(value == null)
-        {
-          IsActive = false;
-        }
-      }
-    }
-  }
-  private TileListViewModel? _childTiles;
-
-  public override void OnHostChanged(
-    TileHostViewModel? oldHost, TileHostViewModel? newHost)
-  {
-    if(ChildTiles == null && newHost != null)
-    {
-      var shelf = newHost.TileList.Shelf;
-      var store = shelf.Store;
-      var tiles = TileListModel.Load(store, Model.TileList);
-      if(tiles != null)
-      {
-        Trace.TraceInformation(
-          "Loaded secondary tile list {0} (for tile '{1}')",
-          Model.TileList, Model.Title);
-        var vm = new TileListViewModel(shelf, tiles);
-        ChildTiles = vm;
-      }
-      else
-      {
-        Trace.TraceError(
-          "Failed to load secondary tile list {0} (for tile '{1}')",
-          Model.TileList, Model.Title);
-        ChildTiles = null;
-      }
-    }
-    else if(newHost == null)
-    {
-      ChildTiles = null;
-    }
-  }
+  public TileListViewModel ChildTiles { get; }
 }

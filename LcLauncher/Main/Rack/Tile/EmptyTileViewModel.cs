@@ -15,7 +15,10 @@ namespace LcLauncher.Main.Rack.Tile;
 public class EmptyTileViewModel: TileViewModel
 {
   public EmptyTileViewModel(
-    TileData? model, string? icon = null)
+    TileListViewModel ownerList,
+    TileData? model,
+    string? icon = null)
+    : base(ownerList)
   {
     Model = model;
     Icon = icon ?? FindIcon();

@@ -16,21 +16,30 @@ namespace LcLauncher.Main.Rack.Tile;
 
 public abstract class TileViewModel: ViewModelBase
 {
-  protected TileViewModel()
+  protected TileViewModel(
+    TileListViewModel ownerList)
   {
+    OwnerList=ownerList;
   }
 
-  public static TileViewModel Create(TileData? model)
+  public static TileViewModel Create(
+    TileListViewModel ownerList,
+    TileData? model)
   {
     return model switch {
-      null => new EmptyTileViewModel(null),
-      { ShellLaunch: { } shellLaunch } => LaunchTileViewModel.FromShell(shellLaunch),
-      { RawLaunch: { } rawLaunch } => LaunchTileViewModel.FromRaw(rawLaunch),
-      { Group: { } group } => new GroupTileViewModel(group),
+      null => new EmptyTileViewModel(ownerList, null),
+      { ShellLaunch: { } shellLaunch } =>
+        LaunchTileViewModel.FromShell(ownerList, shellLaunch),
+      { RawLaunch: { } rawLaunch } =>
+        LaunchTileViewModel.FromRaw(ownerList, rawLaunch),
+      { Group: { } group } =>
+        new GroupTileViewModel(ownerList, group),
       //{ Quad: { } quadTile } => new QuadTileViewModel(quadTile),
-      _ => new EmptyTileViewModel(model)
+      _ => new EmptyTileViewModel(ownerList, model)
     };
   }
+
+  public TileListViewModel OwnerList { get; }
 
   public TileHostViewModel? Host {
     get => _host;

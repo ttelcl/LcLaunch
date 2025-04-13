@@ -19,7 +19,9 @@ namespace LcLauncher.Main.Rack.Tile;
 public class LaunchTileViewModel: TileViewModel
 {
   private LaunchTileViewModel(
+    TileListViewModel ownerList,
     LaunchData model)
+    : base(ownerList)
   {
     Model = model;
     _title = Model.GetEffectiveTitle();
@@ -27,15 +29,17 @@ public class LaunchTileViewModel: TileViewModel
   }
 
   public static LaunchTileViewModel FromShell(
+    TileListViewModel ownerList,
     ShellLaunch model)
   {
-    return new LaunchTileViewModel(model);
+    return new LaunchTileViewModel(ownerList, model);
   }
 
   public static LaunchTileViewModel FromRaw(
+    TileListViewModel ownerList,
     RawLaunch model)
   {
-    return new LaunchTileViewModel(model);
+    return new LaunchTileViewModel(ownerList, model);
   }
 
   /// <summary>

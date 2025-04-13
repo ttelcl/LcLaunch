@@ -65,7 +65,7 @@ public class ShelfViewModel: ViewModelBase
 
   public TileListViewModel? SecondaryTiles {
     get => _secondaryTiles;
-    set {
+    private set {
       if(SetNullableInstanceProperty(ref _secondaryTiles, value))
       {
         RaisePropertyChanged(nameof(HasSecondaryTiles));
@@ -77,12 +77,6 @@ public class ShelfViewModel: ViewModelBase
   public GroupTileViewModel? ActiveSecondaryTile {
     get => _groupTileViewModel;
     set {
-      var newValue = value;
-      if(value != null && value.ChildTiles == null)
-      {
-        // reject disconnected group tile
-        newValue = null;
-      }
       var oldGroup = _groupTileViewModel;
       if(SetNullableInstanceProperty(ref _groupTileViewModel, value))
       {

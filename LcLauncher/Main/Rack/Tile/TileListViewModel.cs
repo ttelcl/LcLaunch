@@ -27,7 +27,7 @@ public class TileListViewModel: ViewModelBase
     foreach(var tile in model.Tiles)
     {
       var host = new TileHostViewModel(this);
-      var tileVm = TileViewModel.Create(tile);
+      var tileVm = TileViewModel.Create(this, tile);
       host.Tile = tileVm;
       Tiles.Add(host);
     }
@@ -41,7 +41,7 @@ public class TileListViewModel: ViewModelBase
     while(Tiles.Count < expectedTileCount)
     {
       var host = new TileHostViewModel(this);
-      host.Tile = new EmptyTileViewModel(null);
+      host.Tile = new EmptyTileViewModel(this, null);
       Tiles.Add(host);
     }
   }
