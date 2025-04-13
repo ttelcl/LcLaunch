@@ -22,6 +22,9 @@ public class RackViewModel: ViewModelBase
   {
     Owner = owner;
     Model = model;
+    ColumnLeft = new ColumnViewModel(this, Model.Columns[0]);
+    ColumnMiddle = new ColumnViewModel(this, Model.Columns[1]);
+    ColumnRight = new ColumnViewModel(this, Model.Columns[2]);
   }
 
   public MainViewModel Owner { get; }
@@ -31,4 +34,10 @@ public class RackViewModel: ViewModelBase
   public ILcLaunchStore Store => Model.Store;
 
   public string Name => Model.RackName;
+
+  public ColumnViewModel ColumnLeft { get; }
+
+  public ColumnViewModel ColumnMiddle { get; }
+
+  public ColumnViewModel ColumnRight { get; }
 }
