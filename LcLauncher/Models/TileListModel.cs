@@ -37,6 +37,7 @@ public class TileListModel
     Id = id;
     Tiles = tiles.ToList();
     Store = store;
+    IconCache = store.GetIconCache(id, true /* could be false too */);
   }
 
   /// <summary>
@@ -89,4 +90,5 @@ public class TileListModel
   /// </summary>
   public ILcLaunchStore Store { get; }
 
+  public ILauncherIconCache IconCache { get; }
 }

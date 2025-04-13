@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 
+using LcLauncher.Main.Rack;
 using LcLauncher.Models;
 using LcLauncher.Storage;
 using LcLauncher.WpfUtilities;
@@ -22,6 +23,9 @@ public class MainViewModel: ViewModelBase
     var fileStore = new JsonDataStore();
     var storeImplementation = new JsonLcLaunchStore(fileStore);
     StoreImplementation = storeImplementation;
+    // Make sure there is at least one rack (named "default")
+    Store.LoadOrCreateRack("default");
+    RackList = new RackListViewModel(this);
 
 
     PageColumns.Add(new PageColumnViewModel(this));
@@ -45,4 +49,20 @@ public class MainViewModel: ViewModelBase
   public PageColumnViewModel ColumnC => PageColumns[2];
 
   public TestPaneViewModel TestPane { get; }
+
+  public RackViewModel? CurrentRack {
+    get => _currentRack;
+    set {
+      if(SetNullableInstanceProperty(ref _currentRack, value))
+      {
+        var rackLabel = value?.Name ?? "<NONE>";
+        Trace.TraceInformation(
+          $"Switched to rack '{rackLabel}'");
+      }
+    }
+  }
+  private RackViewModel? _currentRack;
+
+  public RackListViewModel RackList { get; }
+
 }

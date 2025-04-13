@@ -14,6 +14,20 @@
     ResizeMode="NoResize"
     Title="Luc's Application Launchpad"
     Height="920" Width="1285">
+    <mah:MetroWindow.RightWindowCommands>
+        <mah:WindowCommands>
+            <mah:SplitButton
+                ItemsSource="{Binding RackList.Racks}"
+                SelectedItem="{Binding RackList.SelectedRack, Mode=TwoWay}"
+                HorizontalContentAlignment="Left"
+                HorizontalAlignment="Center"
+                MinWidth="150">
+                <mah:SplitButton.Icon>
+                    <iconPacks:PackIconMaterial Kind="ViewGridPlusOutline" />
+                </mah:SplitButton.Icon>
+            </mah:SplitButton>
+        </mah:WindowCommands>
+    </mah:MetroWindow.RightWindowCommands>
     <DockPanel>
         <local:TestPane DockPanel.Dock="Top" DataContext="{Binding TestPane}"/>
         <ScrollViewer VerticalScrollBarVisibility="Visible">

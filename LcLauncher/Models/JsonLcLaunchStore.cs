@@ -32,21 +32,24 @@ public class JsonLcLaunchStore: ILcLaunchStore
 
   public IEnumerable<string> EnumRacks()
   {
-    return Provider.EnumDataTags(".rack-json").ToList();
+    return 
+      Provider.EnumDataTags(".rack-json")
+      .Where(tag => LcLaunchStore.TestValidRackName(tag) == null)
+      .ToList();
   }
 
-  public RackData LoadRack(string rackName)
+  public RackData? LoadRack(string rackName)
   {
+    LcLaunchStore.ValidateRackName(rackName);
     var rackdata = Provider.LoadData<RackData>(
       rackName,
       ".rack-json");
-    return rackdata ?? throw new FileNotFoundException(
-      "Rack file not found",
-      rackName);
+    return rackdata;
   }
 
   public void SaveRack(string rackName, RackData rack)
   {
+    LcLaunchStore.ValidateRackName(rackName);
     Provider.SaveData(
       rackName,
       ".rack-json",
@@ -106,4 +109,16 @@ public class JsonLcLaunchStore: ILcLaunchStore
       }
     }
   }
+
+  /// <inheritdoc/>
+  public ILauncherIconCache GetIconCache(Guid cacheId, bool initialize)
+  {
+    var host = Provider.GetIconCache(cacheId);
+    if(initialize)
+    {
+      host.Initialize();
+    }
+    return new FileBasedIconCache(host);
+  }
+
 }

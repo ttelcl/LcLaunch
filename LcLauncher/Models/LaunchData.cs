@@ -17,7 +17,7 @@ namespace LcLauncher.Models;
 
 /// <summary>
 /// Abstract base class for both variants of launch tile
-/// conmfiguration data.
+/// configuration data.
 /// </summary>
 public abstract class LaunchData
 {

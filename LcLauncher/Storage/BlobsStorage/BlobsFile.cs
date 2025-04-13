@@ -38,7 +38,7 @@ public class BlobsFile
   }
 
   /// <summary>
-  /// Oppen the file for writing (creating it if necessary)
+  /// Open the file for writing (creating it if necessary)
   /// and seek to the end of the file, ready for appending.
   /// </summary>
   /// <returns></returns>

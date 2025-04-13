@@ -21,7 +21,7 @@
             />
         <!-- Main Content -->
         <Border
-            Height="320"
+            Height="200"
             BorderThickness="1"
             Margin="2" Padding="5"
             BorderBrush="Blue">
