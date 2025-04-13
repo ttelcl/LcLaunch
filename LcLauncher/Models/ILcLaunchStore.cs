@@ -22,7 +22,7 @@ public interface ILcLaunchStore
   /// <summary>
   /// Load a rack by name.
   /// </summary>
-  RackData LoadRack(string rackName);
+  RackData? LoadRack(string rackName);
 
   /// <summary>
   /// Save a rack to the store.

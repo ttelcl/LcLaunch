@@ -23,6 +23,8 @@ public class MainViewModel: ViewModelBase
     var fileStore = new JsonDataStore();
     var storeImplementation = new JsonLcLaunchStore(fileStore);
     StoreImplementation = storeImplementation;
+    // Make sure there is at least one rack (named "default")
+    Store.LoadOrCreateRack("default");
     RackList = new RackListViewModel(this);
 
 

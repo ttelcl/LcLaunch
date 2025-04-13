@@ -24,17 +24,18 @@ public class RackModel
   private Dictionary<Guid, ShelfModel> _shelves;
 
   /// <summary>
-  /// Create a new RackDb
+  /// Create a new RackModel. If the name is unknown, it will be created.
   /// </summary>
   public RackModel(
     ILcLaunchStore store,
     string rackName)
   {
+    LcLaunchStore.ValidateRackName(rackName);
     Store = store;
     RackName = rackName;
     _shelves = [];
     Columns = new List<ShelfModel>[3];
-    var rackData = Store.LoadRack(RackName);
+    var rackData = Store.LoadOrCreateRack(RackName);
     RackData = rackData;
     // populate shelves in the lookup and the columns
     for(var icol=0; icol<3; icol++)
