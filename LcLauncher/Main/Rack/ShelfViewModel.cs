@@ -16,6 +16,8 @@ using LcLauncher.Main.Rack.Tile;
 using LcLauncher.Models;
 using LcLauncher.WpfUtilities;
 
+using GroupTileViewModel = LcLauncher.Main.Rack.Tile.GroupTileViewModel;
+
 namespace LcLauncher.Main.Rack;
 
 public class ShelfViewModel: ViewModelBase
@@ -71,6 +73,32 @@ public class ShelfViewModel: ViewModelBase
     }
   }
   private TileListViewModel? _secondaryTiles;
+
+  public GroupTileViewModel? ActiveSecondaryTile {
+    get => _groupTileViewModel;
+    set {
+      var newValue = value;
+      if(value != null && value.ChildTiles == null)
+      {
+        // reject disconnected group tile
+        newValue = null;
+      }
+      var oldGroup = _groupTileViewModel;
+      if(SetNullableInstanceProperty(ref _groupTileViewModel, value))
+      {
+        SecondaryTiles = null;
+        if(oldGroup != null)
+        {
+          oldGroup.IsActive = false;
+        }
+        if(_groupTileViewModel != null)
+        {
+          SecondaryTiles = _groupTileViewModel.ChildTiles;
+        }
+      }
+    }
+  }
+  private GroupTileViewModel? _groupTileViewModel;
 
   public bool HasSecondaryTiles {
     get => _secondaryTiles != null;

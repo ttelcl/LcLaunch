@@ -27,7 +27,7 @@ public abstract class TileViewModelBase: ViewModelBase
       { ShellLaunch: { } shellLaunch } => new ShellTileViewModel(shellLaunch),
       { RawLaunch: { } rawLaunch } => new RawTileViewModel(rawLaunch),
       { Quad: { } quadTile } => new QuadTileViewModel(quadTile),
-      { Group: { } group } => new GroupTileViewModel(group),
+      { Group: { } group } => new GroupTileViewModel0(group),
       _ => new EmptyTileViewModel()
     };
   }

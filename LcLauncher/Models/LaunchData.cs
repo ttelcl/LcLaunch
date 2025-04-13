@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -61,6 +62,29 @@ public abstract class LaunchData
   /// </summary>
   [JsonProperty("title", NullValueHandling = NullValueHandling.Ignore)]
   public string? Title { get; set; }
+
+  public string GetEffectiveTitle()
+  {
+    if(!String.IsNullOrEmpty(Title))
+    {
+      return Title;
+    }
+    return Path.GetFileNameWithoutExtension(TargetPath);
+  }
+
+  public string GetEffectiveTooltip()
+  {
+    if(!String.IsNullOrEmpty(Tooltip))
+    {
+      return Tooltip;
+    }
+    if(!String.IsNullOrEmpty(Title))
+    {
+      return Title;
+    }
+    return Path.GetFileName(TargetPath);
+    //return null;
+  }
 
   /// <summary>
   /// The startup window style. Default is Normal. Other options are

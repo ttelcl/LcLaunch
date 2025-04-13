@@ -26,8 +26,8 @@ public abstract class TileViewModel: ViewModelBase
       null => new EmptyTileViewModel(null),
       { ShellLaunch: { } shellLaunch } => LaunchTileViewModel.FromShell(shellLaunch),
       { RawLaunch: { } rawLaunch } => LaunchTileViewModel.FromRaw(rawLaunch),
+      { Group: { } group } => new GroupTileViewModel(group),
       //{ Quad: { } quadTile } => new QuadTileViewModel(quadTile),
-      //{ Group: { } group } => new GroupTileViewModel(group),
       _ => new EmptyTileViewModel(model)
     };
   }
@@ -35,8 +35,10 @@ public abstract class TileViewModel: ViewModelBase
   public TileHostViewModel? Host {
     get => _host;
     internal set {
+      var oldHost = _host;
       if(SetNullableInstanceProperty(ref _host, value))
       {
+        OnHostChanged(oldHost, _host);
       }
     }
   }
@@ -49,4 +51,11 @@ public abstract class TileViewModel: ViewModelBase
   /// In the case of an empty tile, this may be null.
   /// </summary>
   public abstract TileData? GetModel();
+
+  public virtual void OnHostChanged(
+    TileHostViewModel? oldHost,
+    TileHostViewModel? newHost)
+  {
+    // do nothing
+  }
 }

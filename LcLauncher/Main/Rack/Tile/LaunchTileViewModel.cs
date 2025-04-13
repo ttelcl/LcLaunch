@@ -22,21 +22,8 @@ public class LaunchTileViewModel: TileViewModel
     LaunchData model)
   {
     Model = model;
-    if(model is ShellLaunch shell)
-    {
-      ShellModel = shell;
-      RawModel = null;
-    }
-    else if(model is RawLaunch raw)
-    {
-      ShellModel = null;
-      RawModel = raw;
-    }
-    else
-    {
-      throw new InvalidOperationException(
-        $"Invalid launch data type {model.GetType().FullName}");
-    }
+    _title = Model.GetEffectiveTitle();
+    _tooltip = Model.GetEffectiveTooltip();
   }
 
   public static LaunchTileViewModel FromShell(
@@ -63,14 +50,38 @@ public class LaunchTileViewModel: TileViewModel
   /// Exactly one of <see cref="ShellModel"/> or 
   /// <see cref="RawModel"/> is not null.
   /// </summary>
-  public ShellLaunch? ShellModel { get; }
+  public ShellLaunch? ShellModel { get => Model as ShellLaunch; }
 
   /// <summary>
   /// The model for this tile, if it is a raw launch.
   /// Exactly one of <see cref="ShellModel"/> or
   /// <see cref="RawModel"/> is not null.
   /// </summary>
-  public RawLaunch? RawModel { get; }
+  public RawLaunch? RawModel { get => Model as RawLaunch; }
+
+  public string Title {
+    get => _title;
+    set {
+      if(SetValueProperty(ref _title, value))
+      {
+        // TODO: feed back to original and save
+        Model.Title = value;
+      }
+    }
+  }
+  private string _title;
+
+  public string Tooltip {
+    get => _tooltip;
+    set {
+      if(SetValueProperty(ref _tooltip, value))
+      {
+        // TODO: feed back to original and save
+        Model.Tooltip = value;
+      }
+    }
+  }
+  private string _tooltip;
 
   public override TileData? GetModel()
   {
@@ -81,4 +92,10 @@ public class LaunchTileViewModel: TileViewModel
         $"Invalid launch data type {Model.GetType().FullName}")
     };
   }
+
+  public string FallbackIcon => Model switch {
+    ShellLaunch => "RocketLaunch",
+    RawLaunch => "RocketLaunchOutline",
+    _ => "Help"
+  };
 }

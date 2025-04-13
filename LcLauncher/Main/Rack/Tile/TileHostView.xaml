@@ -11,7 +11,8 @@
     MouseEnter="TileHost_MouseEnter"
     MouseLeave="TileHost_MouseLeave"
     d:DataContext="{d:DesignInstance local:TileHostViewModel, IsDesignTimeCreatable=False}"
-    d:DesignHeight="450" d:DesignWidth="800">
+    d:DesignHeight="450" d:DesignWidth="800"
+    >
     <Grid>
         <Border
             Margin="2,2"
@@ -19,7 +20,7 @@
             BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
             Background="{DynamicResource MahApps.Brushes.Accent4}"
             Width="100" Height="100"
-            >
+            Visibility="{Binding Hovering, Converter={StaticResource VisibleIf}}">
             <!-- Visibility="{Binding Hovering, Converter={StaticResource VisibleIf}}" -->
         </Border>
         <Border
@@ -30,7 +31,24 @@
             Width="100" Height="100"
             >
             <!-- "#00000000" is transparent for display, but opaque for mouse -->
-            <!-- TBD -->
+            <ContentControl
+                    Visibility="{Binding Tile, Converter={StaticResource VisibleIfNotNull}}"
+                    Content="{Binding Tile}">
+                <ContentControl.Resources>
+                    <DataTemplate DataType="{x:Type local:LaunchTileViewModel}">
+                        <local:LaunchTileView/>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type local:GroupTileViewModel}">
+                        <local:GroupTileView/>
+                    </DataTemplate>
+                    <!--<DataTemplate DataType="{x:Type local:QuadTileViewModel}">
+                        <local:QuadTileView/>
+                    </DataTemplate>-->
+                    <DataTemplate DataType="{x:Type local:EmptyTileViewModel}">
+                        <local:EmptyTileView/>
+                    </DataTemplate>
+                </ContentControl.Resources>
+            </ContentControl>
         </Border>
         <Border
             Margin="1,1"

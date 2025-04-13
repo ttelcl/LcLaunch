@@ -61,7 +61,7 @@
                         <DataTemplate DataType="{x:Type local:RawTileViewModel}">
                             <local:RawTileView/>
                         </DataTemplate>
-                        <DataTemplate DataType="{x:Type local:GroupTileViewModel}">
+                        <DataTemplate DataType="{x:Type local:GroupTileViewModel0}">
                             <local:GroupTileView/>
                         </DataTemplate>
                         <DataTemplate DataType="{x:Type local:QuadTileViewModel}">
