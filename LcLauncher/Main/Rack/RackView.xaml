@@ -19,17 +19,17 @@
         </Grid.ColumnDefinitions>
         <local:ColumnView
             Grid.Column="0"
-            Margin="3,3"
+            Margin="4,3"
             DataContext="{Binding ColumnLeft}"
             />
         <local:ColumnView
             Grid.Column="1"
-            Margin="3,3"
+            Margin="4,3"
             DataContext="{Binding ColumnMiddle}"
             />
         <local:ColumnView
             Grid.Column="2"
-            Margin="3,3"
+            Margin="4,3"
             DataContext="{Binding ColumnRight}"
             />
     </Grid>

@@ -46,4 +46,16 @@ public class TileHostViewModel: ViewModelBase
   public bool HasTile {
     get => _tile != null;
   }
+
+  public bool Hovering {
+    get => _hovering;
+    set {
+      if(SetValueProperty(ref _hovering, value))
+      {
+        RaisePropertyChanged(nameof(Hovering));
+      }
+    }
+  }
+  private bool _hovering = false;
+
 }

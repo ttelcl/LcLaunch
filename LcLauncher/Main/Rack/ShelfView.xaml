@@ -5,6 +5,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:local="clr-namespace:LcLauncher.Main.Rack"
+    xmlns:tile="clr-namespace:LcLauncher.Main.Rack.Tile"
     mc:Ignorable="d" 
     xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
@@ -192,11 +193,21 @@
             <Grid/>
             <!-- Spacer -->
         </DockPanel>
+        <!-- Content (both Primary and, if present, secondary) -->
         <StackPanel
             Orientation="Vertical"
             Visibility="{Binding IsExpanded, Converter={StaticResource VisibleIf}}"
-            MinHeight="42" Background="Blue">
-            
+            MinHeight="42">
+            <tile:TileListView
+                DataContext="{Binding PrimaryTiles}"
+                />
+            <tile:TileListView
+                Visibility="{Binding
+                    DataContext.SecondaryTiles,
+                    RelativeSource={RelativeSource AncestorType=UserControl},
+                    Converter={StaticResource VisibleIfNotNull}}"
+                DataContext="{Binding SecondaryTiles}"
+                />
         </StackPanel>
     </StackPanel>
 </UserControl>
