@@ -58,5 +58,19 @@ public interface ILcLaunchStore
   /// Enumerate all existing tile lists in the store.
   /// </summary>
   IEnumerable<Guid> EnumTiles();
+
+  /// <summary>
+  /// Get the icon cache for the given ID.
+  /// </summary>
+  /// <param name="cacheId">
+  /// The ID of the cache to load.
+  /// </param>
+  /// <param name="initialize">
+  /// If true, initialize the cache if it does not exist yet.
+  /// Otherwise, the cache is not initialized and the returned
+  /// instance will be initialized when it is first used.
+  /// </param>
+  /// <returns></returns>
+  ILauncherIconCache GetIconCache(Guid cacheId, bool initialize);
 }
 

@@ -12,6 +12,7 @@ using LcLauncher.Storage.BlobsStorage;
 using Microsoft.WindowsAPICodePack.Shell;
 using System.IO;
 using System.Windows.Media.Imaging;
+using LcLauncher.Models;
 
 namespace LcLauncher.Storage;
 
@@ -93,6 +94,60 @@ public class IconCache
     return blobEntry.Hash;
   }
 
+  public IconHashes? CacheIcons(
+    string iconSource, IconSize sizes)
+  {
+    var icons = IconCache.IconsForFile(iconSource, sizes);
+    if(icons == null)
+    {
+      return null;
+    }
+    string? hash16 = null;
+    string? hash32 = null;
+    string? hash48 = null;
+    string? hash256 = null;
+    var icon16 = icons[0];
+    var icon32 = icons[1];
+    var icon48 = icons[2];
+    var icon256 = icons[3];
+    if(icon16 != null)
+    {
+      CacheIcon(icon16, out var be);
+      hash16 = be.Hash;
+    }
+    if(icon32 != null)
+    {
+      CacheIcon(icon32, out var be);
+      hash32 = be.Hash;
+    }
+    if(icon48 != null)
+    {
+      CacheIcon(icon48, out var be);
+      hash48 = be.Hash;
+    }
+    if(icon256 != null)
+    {
+      CacheIcon(icon256, out var be);
+      hash256 = be.Hash;
+    }
+    if(hash16 == null && hash32 == null && hash48 == null && hash256 == null)
+    {
+      return null;
+    }
+    return new IconHashes() {
+      Small = hash16,
+      Medium = hash32,
+      Large = hash48,
+      ExtraLarge = hash256,
+    };
+  }
+
+  public void Initialize(
+    bool reInitialize = false)
+  {
+    GetIconStorage(reInitialize);
+  }
+
   private bool CacheIcon(BitmapSource icon, out BlobEntry blobEntry)
   {
     var iconCache = GetIconStorage();
@@ -106,7 +161,7 @@ public class IconCache
     return added;
   }
 
-  internal BitmapSource? LoadCachedIconEntry(BlobEntry entry)
+  private BitmapSource? LoadCachedIconEntry(BlobEntry entry)
   {
     var iconCache = GetIconStorage();
     try
@@ -140,7 +195,7 @@ public class IconCache
   /// The actual returned size may vary.
   /// </param>
   /// <returns></returns>
-  public static BitmapSource? IconForFile(string path, int size)
+  private static BitmapSource? IconForFile(string path, int size)
   {
     try
     {
@@ -154,6 +209,41 @@ public class IconCache
         256 => thumbnail.ExtraLargeBitmapSource,
         _ => null,
       };
+    }
+    catch(ShellException ex)
+    {
+      Trace.TraceError(
+        $"IconForFile: Error probing icon file {path}: {ex}");
+      return null;
+    }
+  }
+
+  private static BitmapSource?[]? IconsForFile(
+    string path, IconSize sizes)
+  {
+    try
+    {
+      var icons = new BitmapSource?[4];
+      using var iconShell = ShellObject.FromParsingName(path);
+      var thumbnail = iconShell.Thumbnail;
+      thumbnail.FormatOption = ShellThumbnailFormatOption.IconOnly;
+      if(sizes.HasFlag(IconSize.Small))
+      {
+        icons[0] = thumbnail.SmallBitmapSource;
+      }
+      if(sizes.HasFlag(IconSize.Medium))
+      {
+        icons[1] = thumbnail.MediumBitmapSource;
+      }
+      if(sizes.HasFlag(IconSize.Large))
+      {
+        icons[2] = thumbnail.LargeBitmapSource;
+      }
+      if(sizes.HasFlag(IconSize.ExtraLarge))
+      {
+        icons[3] = thumbnail.ExtraLargeBitmapSource;
+      }
+      return icons;
     }
     catch(ShellException ex)
     {

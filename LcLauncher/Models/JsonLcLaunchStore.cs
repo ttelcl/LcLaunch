@@ -109,4 +109,16 @@ public class JsonLcLaunchStore: ILcLaunchStore
       }
     }
   }
+
+  /// <inheritdoc/>
+  public ILauncherIconCache GetIconCache(Guid cacheId, bool initialize)
+  {
+    var host = Provider.GetIconCache(cacheId);
+    if(initialize)
+    {
+      host.Initialize();
+    }
+    return new FileBasedIconCache(host);
+  }
+
 }
