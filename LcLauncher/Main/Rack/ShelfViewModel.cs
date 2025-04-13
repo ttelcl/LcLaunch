@@ -29,6 +29,8 @@ public class ShelfViewModel: ViewModelBase
 
   public ShelfModel Model { get; }
 
+  public ILcLaunchStore Store => Model.Store;
+
   public TileListViewModel PrimaryTiles { get; }
 
   public TileListViewModel? SecondaryTiles {

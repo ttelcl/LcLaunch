@@ -28,4 +28,7 @@ public class RackViewModel: ViewModelBase
 
   public RackModel Model { get; }
 
+  public ILcLaunchStore Store => Model.Store;
+
+  public string Name => Model.RackName;
 }

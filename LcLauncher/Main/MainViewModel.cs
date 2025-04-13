@@ -23,6 +23,7 @@ public class MainViewModel: ViewModelBase
     var fileStore = new JsonDataStore();
     var storeImplementation = new JsonLcLaunchStore(fileStore);
     StoreImplementation = storeImplementation;
+    RackList = new RackListViewModel(this);
 
 
     PageColumns.Add(new PageColumnViewModel(this));
@@ -52,8 +53,14 @@ public class MainViewModel: ViewModelBase
     set {
       if(SetNullableInstanceProperty(ref _currentRack, value))
       {
+        var rackLabel = value?.Name ?? "<NONE>";
+        Trace.TraceInformation(
+          $"Switched to rack '{rackLabel}'");
       }
     }
   }
   private RackViewModel? _currentRack;
+
+  public RackListViewModel RackList { get; }
+
 }
