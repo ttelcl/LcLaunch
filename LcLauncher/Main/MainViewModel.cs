@@ -19,6 +19,8 @@ namespace LcLauncher.Main;
 
 public class MainViewModel: ViewModelBase
 {
+  private readonly DispatcherTimer _iconJobTimer;
+
   public MainViewModel()
   {
     var fileStore = new JsonDataStore();
@@ -31,6 +33,19 @@ public class MainViewModel: ViewModelBase
     ProcessNextIconJobCommand = new DelegateCommand(
       p => ProcessNextIconJob(),
       p => CanProcessNextIconJob());
+    _iconJobTimer = new DispatcherTimer(
+      DispatcherPriority.ApplicationIdle) {
+      Interval = TimeSpan.FromMilliseconds(30),
+      IsEnabled = false,
+    };
+    _iconJobTimer.Tick += (s, e) => {
+      if(!ProcessNextIconJob())
+      {
+        _iconJobTimer.Stop();
+        Trace.TraceInformation(
+          $"Rack Queue is now stopped");
+      }
+    };
   }
 
   public ICommand ProcessNextIconJobCommand { get; }
@@ -62,6 +77,7 @@ public class MainViewModel: ViewModelBase
   {
     Trace.TraceInformation(
       $"Rack Queue is now active");
+    _iconJobTimer.IsEnabled = true;
   }
 
   public bool ProcessNextIconJob()
