@@ -144,11 +144,13 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
             }
           }
           HardLoadIcon();
+          LoadIcon(IconLoadLevel.FromCache);
           return;
         }
       case IconLoadLevel.LoadAlways:
         {
           HardLoadIcon();
+          LoadIcon(IconLoadLevel.FromCache);
           return;
         }
       default:
