@@ -35,7 +35,8 @@
                             Command="{Binding TestTestTilesCommand}"/>
                     <Button Content="Load Rack"
                             Command="{Binding LoadDemoRackCommand}"/>
-                    <Button Content="Button 5" />
+                    <Button Content="Test Rebuild/Save" 
+                            Command="{Binding TestRebuildCommand}"/>
                     <Button Content="Button 6" />
                     <Button Content="Button 7" />
                 </WrapPanel>

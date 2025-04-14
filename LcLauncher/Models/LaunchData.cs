@@ -27,8 +27,8 @@ public abstract class LaunchData
   /// </summary>
   protected LaunchData(
     string target,
-    string? tooltip = null,
     string? title = null,
+    string? tooltip = null,
     ProcessWindowStyle windowStyle = ProcessWindowStyle.Normal,
     string? iconSource = null,
     string? icon48 = null,
@@ -54,14 +54,14 @@ public abstract class LaunchData
   [JsonProperty("target")]
   public string TargetPath { get; set; }
 
-  [JsonProperty("tooltip", NullValueHandling = NullValueHandling.Ignore)]
-  public string? Tooltip { get; set; }
-
   /// <summary>
   /// The tile title. If null, the title will be inferred from the target.
   /// </summary>
   [JsonProperty("title", NullValueHandling = NullValueHandling.Ignore)]
   public string? Title { get; set; }
+
+  [JsonProperty("tooltip", NullValueHandling = NullValueHandling.Ignore)]
+  public string? Tooltip { get; set; }
 
   public string GetEffectiveTitle()
   {

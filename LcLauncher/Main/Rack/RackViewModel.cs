@@ -40,4 +40,20 @@ public class RackViewModel: ViewModelBase
   public ColumnViewModel ColumnMiddle { get; }
 
   public ColumnViewModel ColumnRight { get; }
+
+  public IEnumerable<ShelfViewModel> AllShelves()
+  {
+    var columns = new List<ColumnViewModel>() {
+      ColumnLeft,
+      ColumnMiddle,
+      ColumnRight
+    };
+    foreach(var columnVm in columns)
+    {
+      foreach(var shelfVm in columnVm.Shelves)
+      {
+        yield return shelfVm;
+      }
+    }
+  }
 }

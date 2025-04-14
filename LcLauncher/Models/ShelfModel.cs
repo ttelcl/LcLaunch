@@ -27,7 +27,7 @@ public class ShelfModel
     if(tilesModel == null)
     {
       tilesModel = TileListModel.Create(Store, id);
-      tilesModel.Save();
+      tilesModel.SaveRawModel();
     }
     PrimaryTiles = tilesModel;
   }

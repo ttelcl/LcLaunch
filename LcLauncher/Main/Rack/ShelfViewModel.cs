@@ -53,7 +53,9 @@ public class ShelfViewModel: ViewModelBase
         Title = value.Shelf.Title;
         Theme = value.Shelf.Theme ?? "Olive";
         IsExpanded = !value.Shelf.Collapsed;
+        ActiveSecondaryTile = null;
         RaisePropertyChanged(nameof(PrimaryTiles));
+        RaisePropertyChanged(nameof(ShelfId));
       }
     }
   }
@@ -62,6 +64,8 @@ public class ShelfViewModel: ViewModelBase
   public ILcLaunchStore Store { get; }
 
   public TileListViewModel PrimaryTiles { get; }
+
+  public Guid ShelfId => Model.Id;
 
   public TileListViewModel? SecondaryTiles {
     get => _secondaryTiles;

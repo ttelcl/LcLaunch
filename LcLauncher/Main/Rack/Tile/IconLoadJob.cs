@@ -46,7 +46,7 @@ public class IconLoadJob
       Trace.TraceInformation(
         $"Saving tile list {SaveTarget.Model.Id}");
       SaveTarget.RebuildModel();
-      SaveTarget.Save();
+      SaveTarget.SaveRaw();
     }
   }
 }

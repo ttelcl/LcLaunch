@@ -24,7 +24,7 @@ public class TileListViewModel: ViewModelBase
     Shelf = shelf;
     Model = model;
     Tiles = new ObservableCollection<TileHostViewModel>();
-    foreach(var tile in model.Tiles)
+    foreach(var tile in model.RawTiles)
     {
       var host = new TileHostViewModel(this);
       var tileVm = TileViewModel.Create(this, tile);
@@ -66,14 +66,14 @@ public class TileListViewModel: ViewModelBase
     {
       newTiles.Add(tile?.Tile?.GetModel());
     }
-    Model.Tiles.Clear();
-    Model.Tiles.AddRange(newTiles);
+    Model.RawTiles.Clear();
+    Model.RawTiles.AddRange(newTiles);
     Model.MarkDirty();
   }
 
-  public void Save()
+  public void SaveRaw()
   {
-    Model.Save();
+    Model.SaveRawModel();
     RaisePropertyChanged(nameof(IsDirty));
   }
 
@@ -83,11 +83,15 @@ public class TileListViewModel: ViewModelBase
     RaisePropertyChanged(nameof(IsDirty));
   }
 
-  public void SaveIfDirty()
+  public void SaveIfDirty(bool rebuild)
   {
     if(IsDirty)
     {
-      Save();
+      if(rebuild)
+      {
+        RebuildModel();
+      }
+      SaveRaw();
     }
   }
 
