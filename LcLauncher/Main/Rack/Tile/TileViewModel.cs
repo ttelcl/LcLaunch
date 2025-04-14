@@ -9,12 +9,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using LcLauncher.IconUpdates;
 using LcLauncher.Models;
 using LcLauncher.WpfUtilities;
 
 namespace LcLauncher.Main.Rack.Tile;
 
-public abstract class TileViewModel: ViewModelBase
+public abstract class TileViewModel: ViewModelBase, IIconLoadJobSource
 {
   protected TileViewModel(
     TileListViewModel ownerList)
@@ -54,6 +55,11 @@ public abstract class TileViewModel: ViewModelBase
   private TileHostViewModel? _host;
 
   /// <summary>
+  /// The plain icon to use if no custom icon is available.
+  /// </summary>
+  public abstract string PlainIcon { get; }
+
+  /// <summary>
   /// Get a JSON-serializable model for this tile
   /// view model. This may be the original model the tile
   /// view model was created from, or a new model.
@@ -61,7 +67,26 @@ public abstract class TileViewModel: ViewModelBase
   /// </summary>
   public abstract TileData? GetModel();
 
-  public virtual void OnHostChanged(
+  /// <summary>
+  /// Create Icon Load jobs for this tile. The default
+  /// implementation returns an empty list. Icon load jobs
+  /// create missing icon(s), store them in the cache, and
+  /// update the icon hashes in the tile data.
+  /// </summary>
+  /// <param name="reload">
+  /// If true, reload the icon into the cache even if it
+  /// already is known.
+  /// </param>
+  /// <returns></returns>
+  public virtual IEnumerable<IconLoadJob> GetIconLoadJobs(
+    bool reload)
+  {
+    return [];
+  }
+
+  public IconLoadQueue IconLoadQueue { get => OwnerList.IconLoadQueue; }
+
+  protected virtual void OnHostChanged(
     TileHostViewModel? oldHost,
     TileHostViewModel? newHost)
   {

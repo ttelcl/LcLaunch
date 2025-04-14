@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 
+using LcLauncher.IconUpdates;
 using LcLauncher.Main.Rack;
 using LcLauncher.Models;
 using LcLauncher.Storage;
@@ -18,6 +19,8 @@ namespace LcLauncher.Main;
 
 public class MainViewModel: ViewModelBase
 {
+  private readonly DispatcherTimer _iconJobTimer;
+
   public MainViewModel()
   {
     var fileStore = new JsonDataStore();
@@ -26,27 +29,32 @@ public class MainViewModel: ViewModelBase
     // Make sure there is at least one rack (named "default")
     Store.LoadOrCreateRack("default");
     RackList = new RackListViewModel(this);
-
-
-    PageColumns.Add(new PageColumnViewModel(this));
-    PageColumns.Add(new PageColumnViewModel(this));
-    PageColumns.Add(new PageColumnViewModel(this));
     TestPane = new TestPaneViewModel(this);
+    ProcessNextIconJobCommand = new DelegateCommand(
+      p => ProcessNextIconJob(),
+      p => CanProcessNextIconJob());
+    _iconJobTimer = new DispatcherTimer(
+      DispatcherPriority.ApplicationIdle) {
+      Interval = TimeSpan.FromMilliseconds(30),
+      IsEnabled = false,
+    };
+    _iconJobTimer.Tick += (s, e) => {
+      if(!ProcessNextIconJob())
+      {
+        _iconJobTimer.Stop();
+        Trace.TraceInformation(
+          $"Rack Queue is now stopped");
+      }
+    };
   }
+
+  public ICommand ProcessNextIconJobCommand { get; }
 
   public ILcLaunchStore Store => StoreImplementation;
 
   public JsonLcLaunchStore StoreImplementation { get; }
 
   public JsonDataStore FileStore { get => StoreImplementation.Provider; }
-
-  public List<PageColumnViewModel> PageColumns { get; } = [];
-
-  public PageColumnViewModel ColumnA => PageColumns[0];
-
-  public PageColumnViewModel ColumnB => PageColumns[1];
-
-  public PageColumnViewModel ColumnC => PageColumns[2];
 
   public TestPaneViewModel TestPane { get; }
 
@@ -65,4 +73,22 @@ public class MainViewModel: ViewModelBase
 
   public RackListViewModel RackList { get; }
 
+  public void RackQueueActivating(IconLoadQueue queue)
+  {
+    Trace.TraceInformation(
+      $"Rack Queue is now active");
+    _iconJobTimer.IsEnabled = true;
+  }
+
+  public bool ProcessNextIconJob()
+  {
+    var processed = CurrentRack?.IconLoadQueue.ProcessNextJob() ?? false;
+    return processed;
+  }
+
+  public bool CanProcessNextIconJob()
+  {
+    return CurrentRack != null &&
+      !CurrentRack.IconLoadQueue.IsEmpty();
+  }
 }

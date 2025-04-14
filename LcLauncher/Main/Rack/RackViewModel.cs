@@ -9,17 +9,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using LcLauncher.IconUpdates;
 using LcLauncher.Models;
 using LcLauncher.WpfUtilities;
 
 namespace LcLauncher.Main.Rack;
 
-public class RackViewModel: ViewModelBase
+public class RackViewModel: ViewModelBase, IIconLoadJobSource
 {
   public RackViewModel(
     MainViewModel owner,
     RackModel model)
   {
+    IconLoadQueue = new IconLoadQueue(q => owner.RackQueueActivating(q));
     Owner = owner;
     Model = model;
     ColumnLeft = new ColumnViewModel(this, Model.Columns[0]);
@@ -53,6 +55,19 @@ public class RackViewModel: ViewModelBase
       foreach(var shelfVm in columnVm.Shelves)
       {
         yield return shelfVm;
+      }
+    }
+  }
+
+  public IconLoadQueue IconLoadQueue { get; }
+
+  public IEnumerable<IconLoadJob> GetIconLoadJobs(bool reload)
+  {
+    foreach(var shelf in AllShelves())
+    {
+      foreach(var job in shelf.GetIconLoadJobs(reload))
+      {
+        yield return job;
       }
     }
   }

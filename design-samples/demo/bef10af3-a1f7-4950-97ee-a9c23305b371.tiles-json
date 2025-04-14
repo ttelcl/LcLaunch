@@ -1,0 +1,85 @@
+[
+  {
+    "shellLaunch": {
+      "target": "C:\\Windows\\System32\\calc.exe"
+    }
+  },
+  {
+    "shellLaunch": {
+      "target": "C:\\Windows\\notepad.exe",
+      "title": "Notepad",
+      "tooltip": "tooltip text for Notepad"
+    }
+  },
+  {
+    "shellLaunch": {
+      "target": "C:\\Windows\\write.exe",
+      "title": "Wordpad"
+    }
+  },
+  {
+    "shellLaunch": {
+      "target": "C:\\Windows\\regedit.exe",
+      "title": "RegEdit",
+      "tooltip": "Registry Editor"
+    }
+  },
+  {
+    "shellLaunch": {
+      "target": "C:\\Windows\\System32\\timedate.cpl",
+      "title": "Time & Date",
+      "tooltip": "Time and Date Control Panel"
+    }
+  },
+  {
+    "shellLaunch": {
+      "target": "C:\\Windows\\System32\\@WLOGO_48x48.png",
+      "title": "This is an image of the Windows Logo. And a bloody long title."
+    }
+  },
+  {
+    "rawLaunch": {
+      "target": "C:\\Windows\\notepad.exe",
+      "title": "Raw Launch (NYI)",
+      "tooltip": "tooltip text",
+      "iconSource": "C:\\Windows\\HelpPane.exe"
+    }
+  },
+  {
+    "group": {
+      "title": "A Group",
+      "tilelist": "70fd51d1-8deb-4e73-b9f4-ccd224e2f433"
+    }
+  },
+  {
+    "group": {
+      "title": "Another Group",
+      "tilelist": "70fd51d1-8deb-4e73-b9f4-ccd224e2f433"
+    }
+  },
+  {
+    "quad": [
+      {
+        "shellLaunch": {
+          "target": "C:\\Windows\\System32\\calc.exe",
+          "title": "Calculator"
+        }
+      },
+      {
+        "shellLaunch": {
+          "target": "C:\\Windows\\System32\\@WLOGO_48x48.png",
+          "title": "Windows Logo"
+        }
+      },
+      {
+        "shellLaunch": {
+          "target": "C:\\Windows\\regedit.exe",
+          "title": "RegEdit"
+        }
+      },
+      {}
+    ]
+  },
+  {},
+  {}
+]

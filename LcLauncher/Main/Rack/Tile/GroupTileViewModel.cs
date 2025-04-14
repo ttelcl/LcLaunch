@@ -4,12 +4,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
+using LcLauncher.IconUpdates;
 using LcLauncher.Models;
 using LcLauncher.WpfUtilities;
 
@@ -25,6 +27,7 @@ public class GroupTileViewModel: TileViewModel
     Model = model;
     ToggleGroupCommand = new DelegateCommand(
       p => IsActive = !IsActive);
+    GroupIcons = new ObservableCollection<GroupIconViewModel>();
     var childModel = TileListModel.Load(ownerList.Shelf.Store, model.TileList);
     if(childModel == null)
     {
@@ -34,10 +37,16 @@ public class GroupTileViewModel: TileViewModel
         ownerList.Shelf.Store,
         model.TileList);
     }
-    ChildTiles = new TileListViewModel(ownerList.Shelf, childModel);
+    ChildTiles = new TileListViewModel(
+      ownerList.Shelf.Rack.IconLoadQueue,
+      ownerList.Shelf,
+      childModel);
+    ResetGroupIcons();
   }
 
   public ICommand ToggleGroupCommand { get; }
+
+  public override string PlainIcon { get => "DotsGrid"; }
 
   public TileGroup Model { get; }
 
@@ -106,4 +115,25 @@ public class GroupTileViewModel: TileViewModel
   private bool _isActive = false;
 
   public TileListViewModel ChildTiles { get; }
+
+  public ObservableCollection<GroupIconViewModel> GroupIcons { get; }
+
+  public void ResetGroupIcons()
+  {
+    GroupIcons.Clear();
+    foreach(var tvm in ChildTiles.Tiles.Take(16))
+    {
+      var givm = new GroupIconViewModel(this, tvm.Tile);
+      GroupIcons.Add(givm);
+    }
+    //while(GroupIcons.Count < 16)
+    //{
+    //  GroupIcons.Add(new GroupIconViewModel(this, null));
+    //}
+  }
+
+  public override IEnumerable<IconLoadJob> GetIconLoadJobs(bool reload)
+  {
+    return ChildTiles.GetIconLoadJobs(reload);
+  }
 }

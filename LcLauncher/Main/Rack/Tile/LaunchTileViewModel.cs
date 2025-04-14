@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
+using LcLauncher.IconUpdates;
 using LcLauncher.Models;
 
 namespace LcLauncher.Main.Rack.Tile;
@@ -17,13 +18,14 @@ namespace LcLauncher.Main.Rack.Tile;
 /// <summary>
 /// Shared tile view model for both launch tiles.
 /// </summary>
-public class LaunchTileViewModel: TileViewModel
+public class LaunchTileViewModel: TileViewModel, IIconHost
 {
   private LaunchTileViewModel(
     TileListViewModel ownerList,
     LaunchData model)
     : base(ownerList)
   {
+    IconHostId = Guid.NewGuid();
     Model = model;
     _title = Model.GetEffectiveTitle();
     _tooltip = Model.GetEffectiveTooltip();
@@ -109,6 +111,26 @@ public class LaunchTileViewModel: TileViewModel
   }
   private BitmapSource? _icon;
 
+  public BitmapSource? IconSmall {
+    get => _iconSmall;
+    set {
+      if(SetNullableInstanceProperty(ref _iconSmall, value))
+      {
+      }
+    }
+  }
+  private BitmapSource? _iconSmall;
+
+  public BitmapSource? IconMedium {
+    get => _iconMedium;
+    set {
+      if(SetNullableInstanceProperty(ref _iconMedium, value))
+      {
+      }
+    }
+  }
+  private BitmapSource? _iconMedium;
+
   public void LoadIcon(IconLoadLevel level)
   {
     var hasIcon = Icon != null;
@@ -124,6 +146,8 @@ public class LaunchTileViewModel: TileViewModel
           }
           var icon = iconCache.LoadCachedIcon(Model.Icon48);
           Icon = icon;
+          IconSmall = iconCache.LoadCachedIcon(Model.Icon16);
+          IconMedium = iconCache.LoadCachedIcon(Model.Icon32);
           return;
         }
       case IconLoadLevel.LoadIfMissing:
@@ -138,15 +162,19 @@ public class LaunchTileViewModel: TileViewModel
             if(icon != null)
             {
               Icon = icon;
+              IconSmall = iconCache.LoadCachedIcon(Model.Icon16);
+              IconMedium = iconCache.LoadCachedIcon(Model.Icon32);
               return;
             }
           }
           HardLoadIcon();
+          LoadIcon(IconLoadLevel.FromCache);
           return;
         }
       case IconLoadLevel.LoadAlways:
         {
           HardLoadIcon();
+          LoadIcon(IconLoadLevel.FromCache);
           return;
         }
       default:
@@ -199,4 +227,35 @@ public class LaunchTileViewModel: TileViewModel
     RawLaunch => "RocketLaunchOutline",
     _ => "Help"
   };
+
+  public override string PlainIcon { get => FallbackIcon; }
+
+
+  /// <summary>
+  /// This implementation returns zero or one icon load job
+  /// </summary>
+  public override IEnumerable<IconLoadJob> GetIconLoadJobs(
+    bool reload)
+  {
+    if(reload)
+    {
+      yield return new IconLoadJob(
+        OwnerList,
+        this,
+        () => { LoadIcon(IconLoadLevel.LoadAlways); });
+    }
+    else
+    {
+      var hasIcon = Icon != null;
+      if(!hasIcon)
+      {
+        yield return new IconLoadJob(
+          OwnerList,
+          this,
+          () => { LoadIcon(IconLoadLevel.LoadIfMissing); });
+      }
+    }
+  }
+
+  public Guid IconHostId { get; }
 }

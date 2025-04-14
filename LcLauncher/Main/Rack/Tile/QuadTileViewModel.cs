@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,6 +33,8 @@ public class QuadTileViewModel: TileViewModel
   }
 
   public List<LaunchTile> RawModel { get; }
+
+  public override string PlainIcon { get => "ViewGrid"; }
 
   public override TileData? GetModel()
   {

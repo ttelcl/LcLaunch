@@ -167,7 +167,8 @@ public class IconCache
     try
     {
       using var iconStream = iconCache.OpenBlobStream(entry);
-      return BitmapFrame.Create(iconStream);
+      return BitmapFrame.Create(
+        iconStream, BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
     }
     catch(Exception ex)
     {

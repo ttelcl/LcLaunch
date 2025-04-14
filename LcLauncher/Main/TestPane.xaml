@@ -21,24 +21,16 @@
             />
         <!-- Main Content -->
         <Border
-            Height="200"
+            Height="100"
             BorderThickness="1"
-            Margin="2" Padding="5"
+            Margin="2" Padding="2"
             BorderBrush="Blue">
             <DockPanel>
                 <WrapPanel DockPanel.Dock="Left" Orientation="Vertical">
-                    <Button Content="Reset 1st Shelf"
-                            Command="{Binding ResetShelf1Command}"/>
-                    <Button Content="Load Shelf file..."
-                            Command="{Binding LoadShelfFileCommand}"/>
-                    <Button Content="Scan Test Tiles"
-                            Command="{Binding TestTestTilesCommand}"/>
-                    <Button Content="Load Rack"
-                            Command="{Binding LoadDemoRackCommand}"/>
                     <Button Content="Test Rebuild/Save" 
                             Command="{Binding TestRebuildCommand}"/>
-                    <Button Content="Button 6" />
-                    <Button Content="Button 7" />
+                    <Button Content="Next Icon Job" 
+                            Command="{Binding Host.ProcessNextIconJobCommand}"/>
                 </WrapPanel>
                 <DockPanel DockPanel.Dock="Top">
                     <Button
@@ -53,25 +45,25 @@
                 <Border
                     BorderThickness="1"
                     BorderBrush="Blue"
-                    Margin="2" Padding="5">
+                    Margin="1" Padding="5,1">
                     <StackPanel Orientation="Horizontal">
                         <Image
                             Source="{Binding IconSmall}"
                             Stretch="None"
-                            Margin="5"/>
+                            Margin="5,0"/>
                         <Image
                             Source="{Binding IconMedium}"
                             Stretch="None"
-                            Margin="5"/>
+                            Margin="5,0"/>
                         <Image
                             Source="{Binding IconLarge}"
                             Stretch="None"
-                            Margin="5"/>
-                        <Image
+                            Margin="5,0"/>
+                        <!--<Image
                             Source="{Binding IconExtraLarge}"
                             Stretch="None"
                             Margin="5"/>
-                        <!--<Image
+                        <Image
                             Source="{Binding IconExtraLarge}"
                             Stretch="UniformToFill"
                             Height="72" Width="72"
