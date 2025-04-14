@@ -293,6 +293,7 @@ public class TestPaneViewModel: ViewModelBase
   private void TestRebuild()
   {
     var testShelfId = new Guid("4bfb0220-9c04-4456-a2a9-fa9d870850fe");
+    var copyId = new Guid("bef10af3-a1f7-4950-97ee-a9c23305b371");
     var rack = Host.CurrentRack;
     if(rack == null)
     {
@@ -312,7 +313,9 @@ public class TestPaneViewModel: ViewModelBase
     Trace.TraceInformation(
       $"TestRebuild: Found shelf {testShelfId}");
     var primaryTiles = shelfVm.PrimaryTiles;
-    var copyId = new Guid("bef10af3-a1f7-4950-97ee-a9c23305b371");
+    Trace.TraceInformation(
+      $"TestRebuild: Rebuilding tiles and saving a copy");
+    primaryTiles.RebuildModel();
     primaryTiles.Model.DevSaveCopy(copyId);
   }
 
