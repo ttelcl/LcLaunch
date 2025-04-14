@@ -30,7 +30,7 @@ public class TileData: LaunchTile
     : base(shellLaunch, rawLaunch)
   {
     Group = group;
-    Quad = new(quad ?? new List<LaunchTile>());
+    Quad = quad == null ? null : quad.ToList();
   }
 
   public static TileData EmptyTile()
@@ -69,9 +69,9 @@ public class TileData: LaunchTile
   [JsonProperty("group", NullValueHandling = NullValueHandling.Ignore)]
   public TileGroup? Group { get; set; }
 
-  [JsonProperty("quad")]
-  public List<LaunchTile> Quad { get; }
+  [JsonProperty("quad", NullValueHandling = NullValueHandling.Ignore)]
+  public List<LaunchTile>? Quad { get; }
 
-  public bool ShouldSerializeQuad() => Quad.Count > 0;
+  //public bool ShouldSerializeQuad() => Quad.Count > 0;
 
 }

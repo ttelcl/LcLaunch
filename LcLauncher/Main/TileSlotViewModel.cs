@@ -82,7 +82,7 @@ public class TileSlotViewModel: ViewModelBase
         { ShellLaunch: { } } => "Shell",
         { RawLaunch: { } } => "Raw",
         { Group: { } } => "Group",
-        { Quad: { Count: > 0 } } => "Quad",
+        { Quad: { } } => "Quad",
         _ => "Empty"
       };
     }

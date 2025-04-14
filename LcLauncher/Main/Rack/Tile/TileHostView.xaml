@@ -41,9 +41,9 @@
                     <DataTemplate DataType="{x:Type local:GroupTileViewModel}">
                         <local:GroupTileView/>
                     </DataTemplate>
-                    <!--<DataTemplate DataType="{x:Type local:QuadTileViewModel}">
+                    <DataTemplate DataType="{x:Type local:QuadTileViewModel}">
                         <local:QuadTileView/>
-                    </DataTemplate>-->
+                    </DataTemplate>
                     <DataTemplate DataType="{x:Type local:EmptyTileViewModel}">
                         <local:EmptyTileView/>
                     </DataTemplate>

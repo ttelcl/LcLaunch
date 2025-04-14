@@ -34,7 +34,7 @@ public abstract class TileViewModel: ViewModelBase
         LaunchTileViewModel.FromRaw(ownerList, rawLaunch),
       { Group: { } group } =>
         new GroupTileViewModel(ownerList, group),
-      //{ Quad: { } quadTile } => new QuadTileViewModel(quadTile),
+      { Quad: { } quadTile } => new QuadTileViewModel(ownerList, quadTile),
       _ => new EmptyTileViewModel(ownerList, model)
     };
   }
