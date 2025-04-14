@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
+using LcLauncher.IconUpdates;
 using LcLauncher.Models;
 
 namespace LcLauncher.Main.Rack.Tile;
@@ -17,13 +18,14 @@ namespace LcLauncher.Main.Rack.Tile;
 /// <summary>
 /// Shared tile view model for both launch tiles.
 /// </summary>
-public class LaunchTileViewModel: TileViewModel
+public class LaunchTileViewModel: TileViewModel, IIconHost
 {
   private LaunchTileViewModel(
     TileListViewModel ownerList,
     LaunchData model)
     : base(ownerList)
   {
+    IconHostId = Guid.NewGuid();
     Model = model;
     _title = Model.GetEffectiveTitle();
     _tooltip = Model.GetEffectiveTooltip();
@@ -199,4 +201,32 @@ public class LaunchTileViewModel: TileViewModel
     RawLaunch => "RocketLaunchOutline",
     _ => "Help"
   };
+
+  /// <summary>
+  /// This implementation returns zero or one icon load job
+  /// </summary>
+  public override IEnumerable<IconLoadJob> GetIconLoadJobs(
+    bool reload)
+  {
+    if(reload)
+    {
+      yield return new IconLoadJob(
+        OwnerList,
+        this,
+        () => { LoadIcon(IconLoadLevel.LoadAlways); });
+    }
+    else
+    {
+      var hasIcon = Icon != null;
+      if(!hasIcon)
+      {
+        yield return new IconLoadJob(
+          OwnerList,
+          this,
+          () => { LoadIcon(IconLoadLevel.LoadIfMissing); });
+      }
+    }
+  }
+
+  public Guid IconHostId { get; }
 }

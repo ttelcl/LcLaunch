@@ -9,20 +9,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LcLauncher.Main.Rack.Tile;
+using LcLauncher.Main.Rack.Tile;
 
+namespace LcLauncher.IconUpdates;
 
 public class IconLoadJob
 {
   public IconLoadJob(
     TileListViewModel saveTarget,
+    IIconHost iconHost,
     Action load)
   {
     SaveTarget = saveTarget;
+    IconHost = iconHost;
     Load = load;
   }
 
   public TileListViewModel SaveTarget { get; }
+
+  public IIconHost IconHost { get; }
 
   public Action Load { get; }
 
@@ -39,14 +44,14 @@ public class IconLoadJob
     }
   }
 
-  public void CheckSave()
-  {
-    if(SaveTarget.IsDirty)
-    {
-      Trace.TraceInformation(
-        $"Saving tile list {SaveTarget.Model.Id}");
-      SaveTarget.RebuildModel();
-      SaveTarget.SaveRaw();
-    }
-  }
+  //public void CheckSave()
+  //{
+  //  if(SaveTarget.IsDirty)
+  //  {
+  //    Trace.TraceInformation(
+  //      $"Saving tile list {SaveTarget.Model.Id}");
+  //    SaveTarget.RebuildModel();
+  //    SaveTarget.SaveRaw();
+  //  }
+  //}
 }

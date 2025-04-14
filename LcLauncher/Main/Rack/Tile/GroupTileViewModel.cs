@@ -34,7 +34,10 @@ public class GroupTileViewModel: TileViewModel
         ownerList.Shelf.Store,
         model.TileList);
     }
-    ChildTiles = new TileListViewModel(ownerList.Shelf, childModel);
+    ChildTiles = new TileListViewModel(
+      ownerList.Shelf.Rack.IconLoadQueue,
+      ownerList.Shelf,
+      childModel);
   }
 
   public ICommand ToggleGroupCommand { get; }

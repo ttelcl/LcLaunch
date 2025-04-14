@@ -10,17 +10,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using LcLauncher.IconUpdates;
 using LcLauncher.Models;
 using LcLauncher.WpfUtilities;
 
 namespace LcLauncher.Main.Rack.Tile;
 
-public class TileListViewModel: ViewModelBase
+public class TileListViewModel: ViewModelBase, IIconLoadJobSource
 {
+
   public TileListViewModel(
+    IconLoadQueue iconLoadQueue,
     ShelfViewModel shelf,
     TileListModel model)
   {
+    IconJobQueue = new IconListQueue(iconLoadQueue, this);
     Shelf = shelf;
     Model = model;
     Tiles = new ObservableCollection<TileHostViewModel>();
@@ -55,6 +59,8 @@ public class TileListViewModel: ViewModelBase
   public bool IsPrimary { get => Model.Id == Shelf.Model.Id; }
 
   public ObservableCollection<TileHostViewModel> Tiles { get; }
+
+  public IconListQueue IconJobQueue { get; }
 
   /// <summary>
   /// Rebuild the persisted model from the viewmodels
@@ -96,4 +102,20 @@ public class TileListViewModel: ViewModelBase
   }
 
   public bool IsDirty => Model.IsDirty;
+
+  public IEnumerable<IconLoadJob> GetIconLoadJobs(bool reload)
+  {
+    foreach(var host in Tiles)
+    {
+      if(host.Tile != null)
+      {
+        foreach(var job in host.Tile.GetIconLoadJobs(reload))
+        {
+          yield return job;
+        }
+      }
+    }
+  }
+
+  public IconLoadQueue IconLoadQueue { get => Shelf.Rack.IconLoadQueue; }
 }

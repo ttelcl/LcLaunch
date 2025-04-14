@@ -12,6 +12,7 @@ using System.Windows.Input;
 
 using ControlzEx.Theming;
 
+using LcLauncher.IconUpdates;
 using LcLauncher.Main.Rack.Tile;
 using LcLauncher.Models;
 using LcLauncher.WpfUtilities;
@@ -20,7 +21,7 @@ using GroupTileViewModel = LcLauncher.Main.Rack.Tile.GroupTileViewModel;
 
 namespace LcLauncher.Main.Rack;
 
-public class ShelfViewModel: ViewModelBase
+public class ShelfViewModel: ViewModelBase, IIconLoadJobSource
 {
   public ShelfViewModel(
     ColumnViewModel column,
@@ -34,12 +35,23 @@ public class ShelfViewModel: ViewModelBase
       p => Theme = (p as string) ?? "Olive");
     ToggleExpandedCommand = new DelegateCommand(
       p => IsExpanded = !IsExpanded);
-    PrimaryTiles = new TileListViewModel(this, model.PrimaryTiles);
+    PrimaryTiles = new TileListViewModel(
+      column.Rack.IconLoadQueue,
+      this,
+      model.PrimaryTiles);
+    EnqueueIconJobs = new DelegateCommand(
+      p => QueueIcons(false));
+    RefreshIconJobs = new DelegateCommand(
+      p => QueueIcons(true));
   }
 
   public ICommand SetThemeCommand { get; }
 
   public ICommand ToggleExpandedCommand { get; }
+
+  public ICommand EnqueueIconJobs { get; }
+
+  public ICommand RefreshIconJobs { get; }
 
   public ColumnViewModel Column { get; }
 
@@ -177,5 +189,21 @@ public class ShelfViewModel: ViewModelBase
       return;
     }
     ThemeManager.Current.ChangeTheme(Host, theme);
+  }
+
+  public IEnumerable<IconLoadJob> GetIconLoadJobs(bool reload)
+  {
+    return PrimaryTiles.GetIconLoadJobs(reload);
+  }
+
+  public IconLoadQueue IconLoadQueue { get => Rack.IconLoadQueue; }
+
+  private void QueueIcons(bool reload)
+  {
+    var before = IconLoadQueue.JobCount();
+    this.EnqueueAllIconJobs(reload);
+    var after = IconLoadQueue.JobCount();
+    Trace.TraceInformation(
+      $"Queued {after - before} icon load jobs ({after} - {before}) for {Model.Id}");
   }
 }

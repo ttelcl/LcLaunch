@@ -163,6 +163,10 @@
                     <MenuItem Header="Expanded"
                               Command="{Binding ToggleExpandedCommand}"
                               IsChecked="{Binding IsExpanded}"/>
+                    <MenuItem Header="Update Missing Icons"
+                              Command="{Binding EnqueueIconJobs}"/>
+                    <MenuItem Header="Reload All Icons"
+                              Command="{Binding RefreshIconJobs}"/>
                 </ContextMenu>
             </DockPanel.ContextMenu>
             <DockPanel.InputBindings>

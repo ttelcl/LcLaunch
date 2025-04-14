@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 
+using LcLauncher.IconUpdates;
 using LcLauncher.Main.Rack;
 using LcLauncher.Models;
 using LcLauncher.Storage;
@@ -27,7 +28,12 @@ public class MainViewModel: ViewModelBase
     Store.LoadOrCreateRack("default");
     RackList = new RackListViewModel(this);
     TestPane = new TestPaneViewModel(this);
+    ProcessNextIconJobCommand = new DelegateCommand(
+      p => ProcessNextIconJob(),
+      p => CanProcessNextIconJob());
   }
+
+  public ICommand ProcessNextIconJobCommand { get; }
 
   public ILcLaunchStore Store => StoreImplementation;
 
@@ -52,4 +58,21 @@ public class MainViewModel: ViewModelBase
 
   public RackListViewModel RackList { get; }
 
+  public void RackQueueActivating(IconLoadQueue queue)
+  {
+    Trace.TraceInformation(
+      $"Rack Queue is now active");
+  }
+
+  public bool ProcessNextIconJob()
+  {
+    var processed = CurrentRack?.IconLoadQueue.ProcessNextJob() ?? false;
+    return processed;
+  }
+
+  public bool CanProcessNextIconJob()
+  {
+    return CurrentRack != null &&
+      !CurrentRack.IconLoadQueue.IsEmpty();
+  }
 }
