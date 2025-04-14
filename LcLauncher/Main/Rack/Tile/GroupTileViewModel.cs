@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
+using LcLauncher.IconUpdates;
 using LcLauncher.Models;
 using LcLauncher.WpfUtilities;
 
@@ -109,4 +110,9 @@ public class GroupTileViewModel: TileViewModel
   private bool _isActive = false;
 
   public TileListViewModel ChildTiles { get; }
+
+  public override IEnumerable<IconLoadJob> GetIconLoadJobs(bool reload)
+  {
+    return ChildTiles.GetIconLoadJobs(reload);
+  }
 }

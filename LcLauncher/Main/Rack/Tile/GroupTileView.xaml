@@ -10,7 +10,9 @@
     mc:Ignorable="d" 
     d:DataContext="{d:DesignInstance local:GroupTileViewModel, IsDesignTimeCreatable=False}"
     d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Background="#00000000">
+    <Grid
+        Background="{DynamicResource MahApps.Brushes.Accent4}"
+        ToolTip="{Binding EffectiveTooltip}">
         <Grid.InputBindings>
             <MouseBinding
                 Gesture="LeftClick"
