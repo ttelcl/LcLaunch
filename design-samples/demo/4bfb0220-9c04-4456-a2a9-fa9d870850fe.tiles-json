@@ -1,60 +1,40 @@
 [
   {
     "shellLaunch": {
-      "target": "C:\\Windows\\System32\\calc.exe",
-      "title": null,
-      "icon48": null,
-      "icon32": null,
-      "icon16": null
+      "target": "C:\\Windows\\System32\\calc.exe"
     }
   },
   {
     "shellLaunch": {
       "target": "C:\\Windows\\notepad.exe",
       "title": "Notepad",
-      "tooltip": "tooltip text for Notepad",
-      "icon48": null,
-      "icon32": null,
-      "icon16": null
+      "tooltip": "tooltip text for Notepad"
     }
   },
   {
     "shellLaunch": {
       "target": "C:\\Windows\\write.exe",
-      "title": "Wordpad",
-      "icon48": null,
-      "icon32": null,
-      "icon16": null
+      "title": "Wordpad"
     }
   },
   {
     "shellLaunch": {
       "target": "C:\\Windows\\regedit.exe",
       "title": "RegEdit",
-      "tooltip": "Registry Editor",
-      "icon48": null,
-      "icon32": null,
-      "icon16": null
+      "tooltip": "Registry Editor"
     }
   },
   {
     "shellLaunch": {
       "target": "C:\\Windows\\System32\\timedate.cpl",
       "title": "Time & Date",
-      "tooltip": "Time and Date Control Panel",
-      "icon48": null,
-      "icon32": null,
-      "icon16": null
+      "tooltip": "Time and Date Control Panel"
     }
   },
   {
     "shellLaunch": {
       "target": "C:\\Windows\\System32\\@WLOGO_48x48.png",
-      "title": "This is an image of the Windows Logo. And a bloody long title.",
-      "tooltip": null,
-      "icon48": null,
-      "icon32": null,
-      "icon16": null
+      "title": "This is an image of the Windows Logo. And a bloody long title."
     }
   },
   {
@@ -62,11 +42,7 @@
       "target": "C:\\Windows\\notepad.exe",
       "title": "Raw Launch (NYI)",
       "tooltip": "tooltip text",
-      "iconSource": "C:\\Windows\\HelpPane.exe",
-      "icon48": null,
-      "icon32": null,
-      "icon16": null,
-      "workingDirectory": null
+      "iconSource": "C:\\Windows\\HelpPane.exe"
     }
   },
   {
