@@ -111,6 +111,26 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
   }
   private BitmapSource? _icon;
 
+  public BitmapSource? IconSmall {
+    get => _iconSmall;
+    set {
+      if(SetNullableInstanceProperty(ref _iconSmall, value))
+      {
+      }
+    }
+  }
+  private BitmapSource? _iconSmall;
+
+  public BitmapSource? IconMedium {
+    get => _iconMedium;
+    set {
+      if(SetNullableInstanceProperty(ref _iconMedium, value))
+      {
+      }
+    }
+  }
+  private BitmapSource? _iconMedium;
+
   public void LoadIcon(IconLoadLevel level)
   {
     var hasIcon = Icon != null;
@@ -126,6 +146,8 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
           }
           var icon = iconCache.LoadCachedIcon(Model.Icon48);
           Icon = icon;
+          IconSmall = iconCache.LoadCachedIcon(Model.Icon16);
+          IconMedium = iconCache.LoadCachedIcon(Model.Icon32);
           return;
         }
       case IconLoadLevel.LoadIfMissing:
@@ -140,6 +162,8 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
             if(icon != null)
             {
               Icon = icon;
+              IconSmall = iconCache.LoadCachedIcon(Model.Icon16);
+              IconMedium = iconCache.LoadCachedIcon(Model.Icon32);
               return;
             }
           }
@@ -203,6 +227,9 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
     RawLaunch => "RocketLaunchOutline",
     _ => "Help"
   };
+
+  public override string PlainIcon { get => FallbackIcon; }
+
 
   /// <summary>
   /// This implementation returns zero or one icon load job

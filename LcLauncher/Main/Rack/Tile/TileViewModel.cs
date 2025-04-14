@@ -55,6 +55,11 @@ public abstract class TileViewModel: ViewModelBase, IIconLoadJobSource
   private TileHostViewModel? _host;
 
   /// <summary>
+  /// The plain icon to use if no custom icon is available.
+  /// </summary>
+  public abstract string PlainIcon { get; }
+
+  /// <summary>
   /// Get a JSON-serializable model for this tile
   /// view model. This may be the original model the tile
   /// view model was created from, or a new model.

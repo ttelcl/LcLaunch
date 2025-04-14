@@ -45,6 +45,8 @@ public class EmptyTileViewModel: TileViewModel
   }
   private string _icon = "Egg";
 
+  public override string PlainIcon { get => Icon; }
+
   private string FindIcon()
   {
     return Model switch {
