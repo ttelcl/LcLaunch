@@ -1,40 +1,58 @@
 [
   {
     "shellLaunch": {
-      "target": "C:\\Windows\\System32\\calc.exe"
+      "target": "C:\\Windows\\System32\\calc.exe",
+      "icon48": "f63ff828c8573e0a7fc5f5071134bfb0e8fe7cd6",
+      "icon32": "9667e7f29b5d2482a74da8c6c8403b7535448ccc",
+      "icon16": "7808da728f6db17af604184e7229c3ffb7e5517d"
     }
   },
   {
     "shellLaunch": {
       "target": "C:\\Windows\\notepad.exe",
       "title": "Notepad",
-      "tooltip": "tooltip text for Notepad"
+      "tooltip": "tooltip text for Notepad",
+      "icon48": "072078ae80d57dc49e7fca7421c39ec26f5815ca",
+      "icon32": "187f599b70038ca0510a24993ca2c87c54cba4dd",
+      "icon16": "73dd732feeba6cc56e756a596a7d0f67380301e7"
     }
   },
   {
     "shellLaunch": {
       "target": "C:\\Windows\\write.exe",
-      "title": "Wordpad"
+      "title": "Wordpad",
+      "icon48": "11117dcfcca95ad13490b735886090b6ccbb411d",
+      "icon32": "4c5021e627f0af3ff38230d2e6c11788b7b4933f",
+      "icon16": "5eb198fcf6b94e4e560d628df69e029d393dbb1c"
     }
   },
   {
     "shellLaunch": {
       "target": "C:\\Windows\\regedit.exe",
       "title": "RegEdit",
-      "tooltip": "Registry Editor"
+      "tooltip": "Registry Editor",
+      "icon48": "0e465ca8eed53671175329b410a0ecdfdbabb56d",
+      "icon32": "80ab6c90b565b38af9439e51066d2aa7661060ec",
+      "icon16": "0d4628fdc828b9d5a5ee149f00e78a21cd64f8cf"
     }
   },
   {
     "shellLaunch": {
       "target": "C:\\Windows\\System32\\timedate.cpl",
       "title": "Time & Date",
-      "tooltip": "Time and Date Control Panel"
+      "tooltip": "Time and Date Control Panel",
+      "icon48": "b8a4c90b1e8cc095103a630f8ae931270b1ac991",
+      "icon32": "e28a98e48d167cba41b15d9e227913f0ae240cc1",
+      "icon16": "49285438e1ef8749b13f8adfd3baa23ce2b6cb86"
     }
   },
   {
     "shellLaunch": {
       "target": "C:\\Windows\\System32\\@WLOGO_48x48.png",
-      "title": "This is an image of the Windows Logo. And a bloody long title."
+      "title": "This is an image of the Windows Logo. And a bloody long title.",
+      "icon48": "8a00e4fb0258a6553d7e32afdf8a8fcba1e9e592",
+      "icon32": "a6f6a0288bbf73025d118a371bbf492e59c0ebf1",
+      "icon16": "0a665ccd6f9cb65c8103596c5f795a4e92c7f25d"
     }
   },
   {
@@ -42,7 +60,10 @@
       "target": "C:\\Windows\\notepad.exe",
       "title": "Raw Launch (NYI)",
       "tooltip": "tooltip text",
-      "iconSource": "C:\\Windows\\HelpPane.exe"
+      "iconSource": "C:\\Windows\\HelpPane.exe",
+      "icon48": "5464d8daa0c267353e6056bf10380b2b4c353ce8",
+      "icon32": "522235d05901983190a750662e762887d3e4e2af",
+      "icon16": "53b8a711cc383f76fe6ae5545f5a077f97a21454"
     }
   },
   {
@@ -76,8 +97,10 @@
           "target": "C:\\Windows\\regedit.exe",
           "title": "RegEdit"
         }
-      }
+      },
+      {}
     ]
   },
+  {},
   {}
 ]

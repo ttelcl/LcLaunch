@@ -1,0 +1,20 @@
+[
+  {
+    "shellLaunch": {
+      "target": "C:\\Windows\\regedit.exe",
+      "title": "RegEdit",
+      "tooltip": "Registry Editor",
+      "icon48": "0e465ca8eed53671175329b410a0ecdfdbabb56d",
+      "icon32": "80ab6c90b565b38af9439e51066d2aa7661060ec",
+      "icon16": "0d4628fdc828b9d5a5ee149f00e78a21cd64f8cf"
+    }
+  },
+  {
+    "group": {
+      "title": "Group: The Main Shelf",
+      "tilelist": "4bfb0220-9c04-4456-a2a9-fa9d870850fe"
+    }
+  },
+  {},
+  {}
+]

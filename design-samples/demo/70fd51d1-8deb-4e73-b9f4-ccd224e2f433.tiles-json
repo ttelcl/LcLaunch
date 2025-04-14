@@ -3,9 +3,9 @@
     "shellLaunch": {
       "target": "C:\\Windows\\System32\\calc.exe",
       "title": "Calculator",
-      "icon48": null,
-      "icon32": null,
-      "icon16": null
+      "icon48": "f63ff828c8573e0a7fc5f5071134bfb0e8fe7cd6",
+      "icon32": "9667e7f29b5d2482a74da8c6c8403b7535448ccc",
+      "icon16": "7808da728f6db17af604184e7229c3ffb7e5517d"
     }
   },
   {
@@ -13,9 +13,11 @@
       "target": "C:\\Windows\\System32\\@WLOGO_48x48.png",
       "title": "Windows Logo",
       "tooltip": "Windows Logo (PNG)",
-      "icon48": null,
-      "icon32": null,
-      "icon16": null
+      "icon48": "8a00e4fb0258a6553d7e32afdf8a8fcba1e9e592",
+      "icon32": "a6f6a0288bbf73025d118a371bbf492e59c0ebf1",
+      "icon16": "0a665ccd6f9cb65c8103596c5f795a4e92c7f25d"
     }
-  }
+  },
+  {},
+  {}
 ]
