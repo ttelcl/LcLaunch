@@ -27,7 +27,7 @@ public class ShelfModel
     if(tilesModel == null)
     {
       tilesModel = TileListModel.Create(Store, id);
-      tilesModel.Save();
+      tilesModel.SaveRawModel();
     }
     PrimaryTiles = tilesModel;
   }
@@ -42,7 +42,7 @@ public class ShelfModel
     { 
       shelf = new ShelfData(
         "MISSING Shelf " + id.ToString(),
-        false,
+        true, // Start out collapsed in this unusual case
         "Cobalt");
       needsSave = true;
     }

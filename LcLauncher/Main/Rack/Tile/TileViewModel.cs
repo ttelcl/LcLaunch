@@ -16,27 +16,38 @@ namespace LcLauncher.Main.Rack.Tile;
 
 public abstract class TileViewModel: ViewModelBase
 {
-  protected TileViewModel()
+  protected TileViewModel(
+    TileListViewModel ownerList)
   {
+    OwnerList=ownerList;
   }
 
-  public static TileViewModel Create(TileData? model)
+  public static TileViewModel Create(
+    TileListViewModel ownerList,
+    TileData? model)
   {
     return model switch {
-      null => new EmptyTileViewModel(null),
-      { ShellLaunch: { } shellLaunch } => LaunchTileViewModel.FromShell(shellLaunch),
-      { RawLaunch: { } rawLaunch } => LaunchTileViewModel.FromRaw(rawLaunch),
-      //{ Quad: { } quadTile } => new QuadTileViewModel(quadTile),
-      //{ Group: { } group } => new GroupTileViewModel(group),
-      _ => new EmptyTileViewModel(model)
+      null => new EmptyTileViewModel(ownerList, null),
+      { ShellLaunch: { } shellLaunch } =>
+        LaunchTileViewModel.FromShell(ownerList, shellLaunch),
+      { RawLaunch: { } rawLaunch } =>
+        LaunchTileViewModel.FromRaw(ownerList, rawLaunch),
+      { Group: { } group } =>
+        new GroupTileViewModel(ownerList, group),
+      { Quad: { } quadTile } => new QuadTileViewModel(ownerList, quadTile),
+      _ => new EmptyTileViewModel(ownerList, model)
     };
   }
+
+  public TileListViewModel OwnerList { get; }
 
   public TileHostViewModel? Host {
     get => _host;
     internal set {
+      var oldHost = _host;
       if(SetNullableInstanceProperty(ref _host, value))
       {
+        OnHostChanged(oldHost, _host);
       }
     }
   }
@@ -49,4 +60,11 @@ public abstract class TileViewModel: ViewModelBase
   /// In the case of an empty tile, this may be null.
   /// </summary>
   public abstract TileData? GetModel();
+
+  public virtual void OnHostChanged(
+    TileHostViewModel? oldHost,
+    TileHostViewModel? newHost)
+  {
+    // do nothing
+  }
 }

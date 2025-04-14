@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,8 +27,8 @@ public abstract class LaunchData
   /// </summary>
   protected LaunchData(
     string target,
-    string? tooltip = null,
     string? title = null,
+    string? tooltip = null,
     ProcessWindowStyle windowStyle = ProcessWindowStyle.Normal,
     string? iconSource = null,
     string? icon48 = null,
@@ -53,14 +54,37 @@ public abstract class LaunchData
   [JsonProperty("target")]
   public string TargetPath { get; set; }
 
-  [JsonProperty("tooltip", NullValueHandling = NullValueHandling.Ignore)]
-  public string? Tooltip { get; set; }
-
   /// <summary>
   /// The tile title. If null, the title will be inferred from the target.
   /// </summary>
   [JsonProperty("title", NullValueHandling = NullValueHandling.Ignore)]
   public string? Title { get; set; }
+
+  [JsonProperty("tooltip", NullValueHandling = NullValueHandling.Ignore)]
+  public string? Tooltip { get; set; }
+
+  public string GetEffectiveTitle()
+  {
+    if(!String.IsNullOrEmpty(Title))
+    {
+      return Title;
+    }
+    return Path.GetFileNameWithoutExtension(TargetPath);
+  }
+
+  public string GetEffectiveTooltip()
+  {
+    if(!String.IsNullOrEmpty(Tooltip))
+    {
+      return Tooltip;
+    }
+    if(!String.IsNullOrEmpty(Title))
+    {
+      return Title;
+    }
+    return Path.GetFileName(TargetPath);
+    //return null;
+  }
 
   /// <summary>
   /// The startup window style. Default is Normal. Other options are

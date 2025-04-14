@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 
 using LcLauncher.Models;
 
@@ -19,36 +20,28 @@ namespace LcLauncher.Main.Rack.Tile;
 public class LaunchTileViewModel: TileViewModel
 {
   private LaunchTileViewModel(
+    TileListViewModel ownerList,
     LaunchData model)
+    : base(ownerList)
   {
     Model = model;
-    if(model is ShellLaunch shell)
-    {
-      ShellModel = shell;
-      RawModel = null;
-    }
-    else if(model is RawLaunch raw)
-    {
-      ShellModel = null;
-      RawModel = raw;
-    }
-    else
-    {
-      throw new InvalidOperationException(
-        $"Invalid launch data type {model.GetType().FullName}");
-    }
+    _title = Model.GetEffectiveTitle();
+    _tooltip = Model.GetEffectiveTooltip();
+    LoadIcon(IconLoadLevel.FromCache);
   }
 
   public static LaunchTileViewModel FromShell(
+    TileListViewModel ownerList,
     ShellLaunch model)
   {
-    return new LaunchTileViewModel(model);
+    return new LaunchTileViewModel(ownerList, model);
   }
 
   public static LaunchTileViewModel FromRaw(
+    TileListViewModel ownerList,
     RawLaunch model)
   {
-    return new LaunchTileViewModel(model);
+    return new LaunchTileViewModel(ownerList, model);
   }
 
   /// <summary>
@@ -63,14 +56,38 @@ public class LaunchTileViewModel: TileViewModel
   /// Exactly one of <see cref="ShellModel"/> or 
   /// <see cref="RawModel"/> is not null.
   /// </summary>
-  public ShellLaunch? ShellModel { get; }
+  public ShellLaunch? ShellModel { get => Model as ShellLaunch; }
 
   /// <summary>
   /// The model for this tile, if it is a raw launch.
   /// Exactly one of <see cref="ShellModel"/> or
   /// <see cref="RawModel"/> is not null.
   /// </summary>
-  public RawLaunch? RawModel { get; }
+  public RawLaunch? RawModel { get => Model as RawLaunch; }
+
+  public string Title {
+    get => _title;
+    set {
+      if(SetValueProperty(ref _title, value))
+      {
+        // TODO: feed back to original and save
+        Model.Title = value;
+      }
+    }
+  }
+  private string _title;
+
+  public string Tooltip {
+    get => _tooltip;
+    set {
+      if(SetValueProperty(ref _tooltip, value))
+      {
+        // TODO: feed back to original and save
+        Model.Tooltip = value;
+      }
+    }
+  }
+  private string _tooltip;
 
   public override TileData? GetModel()
   {
@@ -81,4 +98,105 @@ public class LaunchTileViewModel: TileViewModel
         $"Invalid launch data type {Model.GetType().FullName}")
     };
   }
+
+  public BitmapSource? Icon {
+    get => _icon;
+    set {
+      if(SetNullableInstanceProperty(ref _icon, value))
+      {
+      }
+    }
+  }
+  private BitmapSource? _icon;
+
+  public void LoadIcon(IconLoadLevel level)
+  {
+    var hasIcon = Icon != null;
+    var hasHash = Model.Icon48 != null;
+    var iconCache = OwnerList.IconCache;
+    switch(level)
+    {
+      case IconLoadLevel.FromCache:
+        {
+          if(hasIcon || !hasHash)
+          {
+            return;
+          }
+          var icon = iconCache.LoadCachedIcon(Model.Icon48);
+          Icon = icon;
+          return;
+        }
+      case IconLoadLevel.LoadIfMissing:
+        {
+          if(hasIcon)
+          {
+            return;
+          }
+          if(hasHash)
+          {
+            var icon = iconCache.LoadCachedIcon(Model.Icon48);
+            if(icon != null)
+            {
+              Icon = icon;
+              return;
+            }
+          }
+          HardLoadIcon();
+          return;
+        }
+      case IconLoadLevel.LoadAlways:
+        {
+          HardLoadIcon();
+          return;
+        }
+      default:
+        throw new ArgumentOutOfRangeException(
+          nameof(level), level, "Invalid icon load level");
+    }
+  }
+
+  private void HardLoadIcon()
+  {
+    var iconCache = OwnerList.IconCache;
+    var iconSource = Model.GetIconSource();
+    var hashes = iconCache.CacheIcons(iconSource, IconSize.Normal);
+    if(hashes == null)
+    {
+      // Clear all icons - they are no longer valid
+      if(!String.IsNullOrEmpty(Model.Icon16)
+        || !String.IsNullOrEmpty(Model.Icon32)
+        || !String.IsNullOrEmpty(Model.Icon48))
+      {
+        OwnerList.MarkDirty();
+      }
+      Model.Icon48 = null;
+      Model.Icon32 = null;
+      Model.Icon16 = null;
+      Trace.TraceError(
+        $"Failed to load icon for {iconSource}");
+      Icon = null;
+      return;
+    }
+    if(Model.Icon48 != hashes.Large)
+    {
+      Model.Icon48 = hashes.Large;
+      OwnerList.MarkDirty();
+    }
+    if(Model.Icon32 != hashes.Medium)
+    {
+      Model.Icon32 = hashes.Medium;
+      OwnerList.MarkDirty();
+    }
+    if(Model.Icon16 != hashes.Small)
+    {
+      Model.Icon16 = hashes.Small;
+      OwnerList.MarkDirty();
+    }
+  }
+
+  public string FallbackIcon => Model switch {
+    ShellLaunch => "RocketLaunch",
+    RawLaunch => "RocketLaunchOutline",
+    _ => "Help"
+  };
 }

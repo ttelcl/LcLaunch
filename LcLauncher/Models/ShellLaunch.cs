@@ -45,15 +45,15 @@ public class ShellLaunch: LaunchData
 {
   public ShellLaunch(
     string target,
-    string? tooltip = null,
     string? title = null,
+    string? tooltip = null,
     ProcessWindowStyle windowStyle = ProcessWindowStyle.Normal,
     string? iconSource = null,
     string? icon48 = null,
     string? icon32 = null,
     string? icon16 = null,
     string verb = "")
-    : base(target, tooltip, title, windowStyle,
+    : base(target, title, tooltip, windowStyle,
            iconSource, icon48, icon32, icon16)
   {
     Verb = verb;

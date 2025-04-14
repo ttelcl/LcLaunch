@@ -35,6 +35,7 @@ public class TestPaneViewModel: ViewModelBase
     OpenIconFileCommand = new DelegateCommand(p => OpenIconFile());
     TestTestTilesCommand = new DelegateCommand(p => ScanTestTiles());
     LoadDemoRackCommand = new DelegateCommand(p => LoadDemoRack());
+    TestRebuildCommand = new DelegateCommand(p => TestRebuild());
   }
 
   public MainViewModel Host { get; }
@@ -167,6 +168,8 @@ public class TestPaneViewModel: ViewModelBase
 
   public ICommand LoadDemoRackCommand { get; }
 
+  public ICommand TestRebuildCommand { get; }
+
   private void ResetShelf1()
   {
     Host.ColumnA.DbgShelfA = new ShelfViewModel(
@@ -232,7 +235,7 @@ public class TestPaneViewModel: ViewModelBase
     }
     var icons = new List<BitmapSource>();
     var cache = Host.FileStore.GetIconCache(tiles.Id);
-    foreach(var tileBase in tiles.Tiles ?? [])
+    foreach(var tileBase in tiles.RawTiles ?? [])
     {
       var shellLaunch = tileBase?.ShellLaunch;
       if(shellLaunch != null)
@@ -285,6 +288,35 @@ public class TestPaneViewModel: ViewModelBase
     {
       IconExtraLarge = icons[3];
     }
+  }
+
+  private void TestRebuild()
+  {
+    var testShelfId = new Guid("4bfb0220-9c04-4456-a2a9-fa9d870850fe");
+    var copyId = new Guid("bef10af3-a1f7-4950-97ee-a9c23305b371");
+    var rack = Host.CurrentRack;
+    if(rack == null)
+    {
+      Trace.TraceError(
+        $"TestRebuild: No rack selected");
+      return;
+    }
+    var shelfVm =
+      rack.AllShelves()
+      .FirstOrDefault(vm => vm.Model.Id == testShelfId);
+    if(shelfVm == null)
+    {
+      Trace.TraceError(
+        $"TestRebuild: No shelf found with ID {testShelfId}");
+      return;
+    }
+    Trace.TraceInformation(
+      $"TestRebuild: Found shelf {testShelfId}");
+    var primaryTiles = shelfVm.PrimaryTiles;
+    Trace.TraceInformation(
+      $"TestRebuild: Rebuilding tiles and saving a copy");
+    primaryTiles.RebuildModel();
+    primaryTiles.Model.DevSaveCopy(copyId);
   }
 
   private void LoadDemoRack()

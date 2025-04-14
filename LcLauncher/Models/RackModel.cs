@@ -65,5 +65,8 @@ public class RackModel
 
   public IReadOnlyDictionary<Guid, ShelfModel> ShelfMap => _shelves;
 
+  /// <summary>
+  /// The 3 columns of the rack.
+  /// </summary>
   public List<ShelfModel>[] Columns { get; }
 }

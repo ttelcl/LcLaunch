@@ -23,8 +23,8 @@ public class RawLaunch: LaunchData
   /// </summary>
   public RawLaunch(
     string target,
-    string? tooltip = null,
     string? title = null,
+    string? tooltip = null,
     ProcessWindowStyle windowStyle = ProcessWindowStyle.Normal,
     string? iconSource = null,
     string? icon48 = null,
@@ -34,7 +34,7 @@ public class RawLaunch: LaunchData
     IEnumerable<string>? arguments = null,
     IDictionary<string, string?>? env = null,
     IDictionary<string, PathEdit>? pathenv = null)
-    : base(target, tooltip, title, windowStyle,
+    : base(target, title, tooltip, windowStyle,
            iconSource, icon48, icon32, icon16)
   {
     WorkingDirectory = workingDirectory;

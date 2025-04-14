@@ -35,4 +35,9 @@ public class LaunchTile
 
   [JsonProperty("rawLaunch", NullValueHandling = NullValueHandling.Ignore)]
   public RawLaunch? RawLaunch { get; set; }
+
+  public bool HasLaunch()
+  {
+    return ShellLaunch != null || RawLaunch != null;
+  }
 }

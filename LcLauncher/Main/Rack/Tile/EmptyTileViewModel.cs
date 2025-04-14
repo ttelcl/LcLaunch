@@ -14,9 +14,14 @@ namespace LcLauncher.Main.Rack.Tile;
 
 public class EmptyTileViewModel: TileViewModel
 {
-  public EmptyTileViewModel(TileData? model)
+  public EmptyTileViewModel(
+    TileListViewModel ownerList,
+    TileData? model,
+    string? icon = null)
+    : base(ownerList)
   {
-    Model=model;
+    Model = model;
+    Icon = icon ?? FindIcon();
   }
 
   /// <summary>
@@ -28,5 +33,27 @@ public class EmptyTileViewModel: TileViewModel
   public override TileData? GetModel()
   {
     return TileData.EmptyTile();
+  }
+
+  public string Icon {
+    get => _icon;
+    set {
+      if(SetValueProperty(ref _icon, value))
+      {
+      }
+    }
+  }
+  private string _icon = "Egg";
+
+  private string FindIcon()
+  {
+    return Model switch {
+      null => "EggOutline",
+      { ShellLaunch: { } } => "RocketLaunch",
+      { RawLaunch: { } } => "RocketLaunchOutline",
+      { Group: { } } => "DotsGrid",
+      { Quad: { } } => "ViewGrid",
+      _ => "Egg",
+    };
   }
 }

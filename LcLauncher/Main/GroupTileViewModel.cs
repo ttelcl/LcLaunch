@@ -12,9 +12,9 @@ using LcLauncher.Models;
 
 namespace LcLauncher.Main;
 
-public class GroupTileViewModel: TileViewModelBase
+public class GroupTileViewModel0: TileViewModelBase
 {
-  public GroupTileViewModel(
+  public GroupTileViewModel0(
     TileGroup model)
   {
     _model = model;

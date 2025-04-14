@@ -7,6 +7,7 @@
     xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     xmlns:local="clr-namespace:LcLauncher.Main"
+    xmlns:rack="clr-namespace:LcLauncher.Main.Rack"
     TitleCharacterCasing="Normal"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance local:MainViewModel, IsDesignTimeCreatable=False}"
@@ -30,7 +31,9 @@
     </mah:MetroWindow.RightWindowCommands>
     <DockPanel>
         <local:TestPane DockPanel.Dock="Top" DataContext="{Binding TestPane}"/>
-        <ScrollViewer VerticalScrollBarVisibility="Visible">
+        <ScrollViewer
+            Visibility="{Binding CurrentRack, Converter={StaticResource VisibleIfNull}}"
+            VerticalScrollBarVisibility="Visible">
             <Grid
             Background="{DynamicResource MahApps.Brushes.Gray10}">
                 <Grid.ColumnDefinitions>
@@ -54,6 +57,13 @@
                     DataContext="{Binding ColumnC}"
                     />
             </Grid>
+        </ScrollViewer>
+        <ScrollViewer
+            Visibility="{Binding CurrentRack, Converter={StaticResource VisibleIfNotNull}}"
+            VerticalScrollBarVisibility="Visible">
+            <rack:RackView
+                DataContext="{Binding CurrentRack}"
+                />
         </ScrollViewer>
     </DockPanel>
 </mah:MetroWindow>

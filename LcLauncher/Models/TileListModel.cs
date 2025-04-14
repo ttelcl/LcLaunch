@@ -35,9 +35,9 @@ public class TileListModel
     ILcLaunchStore store)
   {
     Id = id;
-    Tiles = tiles.ToList();
+    RawTiles = tiles.ToList();
     Store = store;
-    IconCache = store.GetIconCache(id, true /* could be false too */);
+    IconCache = store.GetIconCache(id, false /* create cache on first use */);
   }
 
   /// <summary>
@@ -76,14 +76,35 @@ public class TileListModel
     return list == null ? null : new TileListModel(id, list, store);
   }
 
-  public void Save()
+  /// <summary>
+  /// Save the existing model. Warning: this is quite possibly
+  /// NOT what you want to save, as it may not have all changes.
+  /// Use the methods in the ViewModel to rebuild the model from the
+  /// viewmodels first.
+  /// </summary>
+  public void SaveRawModel()
   {
-    Store.SaveTiles(Id, Tiles);
+    Store.SaveTiles(Id, RawTiles);
+    IsDirty = false;
+  }
+
+  public void DevSaveCopy(Guid id)
+  {
+    Trace.TraceInformation(
+      $"Saving copy of tile list {Id} as {id}");
+    Store.SaveTiles(id, RawTiles);
+  }
+
+  public bool IsDirty { get; private set; }
+
+  public void MarkDirty()
+  {
+    IsDirty = true;
   }
 
   public Guid Id { get; }
 
-  public List<TileData?> Tiles { get; }
+  public List<TileData?> RawTiles { get; }
 
   /// <summary>
   /// The store in which this list is saved and its icons are cached.

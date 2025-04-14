@@ -24,10 +24,10 @@ public class TileListViewModel: ViewModelBase
     Shelf = shelf;
     Model = model;
     Tiles = new ObservableCollection<TileHostViewModel>();
-    foreach(var tile in model.Tiles)
+    foreach(var tile in model.RawTiles)
     {
       var host = new TileHostViewModel(this);
-      var tileVm = TileViewModel.Create(tile);
+      var tileVm = TileViewModel.Create(this, tile);
       host.Tile = tileVm;
       Tiles.Add(host);
     }
@@ -41,7 +41,7 @@ public class TileListViewModel: ViewModelBase
     while(Tiles.Count < expectedTileCount)
     {
       var host = new TileHostViewModel(this);
-      host.Tile = new EmptyTileViewModel(null);
+      host.Tile = new EmptyTileViewModel(this, null);
       Tiles.Add(host);
     }
   }
@@ -50,7 +50,50 @@ public class TileListViewModel: ViewModelBase
 
   public TileListModel Model { get; }
 
+  public ILauncherIconCache IconCache => Model.IconCache;
+
   public bool IsPrimary { get => Model.Id == Shelf.Model.Id; }
 
   public ObservableCollection<TileHostViewModel> Tiles { get; }
+
+  /// <summary>
+  /// Rebuild the persisted model from the viewmodels
+  /// </summary>
+  public void RebuildModel()
+  {
+    var newTiles = new List<TileData?>();
+    foreach(var tile in Tiles)
+    {
+      newTiles.Add(tile?.Tile?.GetModel());
+    }
+    Model.RawTiles.Clear();
+    Model.RawTiles.AddRange(newTiles);
+    Model.MarkDirty();
+  }
+
+  public void SaveRaw()
+  {
+    Model.SaveRawModel();
+    RaisePropertyChanged(nameof(IsDirty));
+  }
+
+  public void MarkDirty()
+  {
+    Model.MarkDirty();
+    RaisePropertyChanged(nameof(IsDirty));
+  }
+
+  public void SaveIfDirty(bool rebuild)
+  {
+    if(IsDirty)
+    {
+      if(rebuild)
+      {
+        RebuildModel();
+      }
+      SaveRaw();
+    }
+  }
+
+  public bool IsDirty => Model.IsDirty;
 }
