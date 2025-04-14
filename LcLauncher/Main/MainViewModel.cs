@@ -26,11 +26,6 @@ public class MainViewModel: ViewModelBase
     // Make sure there is at least one rack (named "default")
     Store.LoadOrCreateRack("default");
     RackList = new RackListViewModel(this);
-
-
-    PageColumns.Add(new PageColumnViewModel(this));
-    PageColumns.Add(new PageColumnViewModel(this));
-    PageColumns.Add(new PageColumnViewModel(this));
     TestPane = new TestPaneViewModel(this);
   }
 
@@ -39,14 +34,6 @@ public class MainViewModel: ViewModelBase
   public JsonLcLaunchStore StoreImplementation { get; }
 
   public JsonDataStore FileStore { get => StoreImplementation.Provider; }
-
-  public List<PageColumnViewModel> PageColumns { get; } = [];
-
-  public PageColumnViewModel ColumnA => PageColumns[0];
-
-  public PageColumnViewModel ColumnB => PageColumns[1];
-
-  public PageColumnViewModel ColumnC => PageColumns[2];
 
   public TestPaneViewModel TestPane { get; }
 
