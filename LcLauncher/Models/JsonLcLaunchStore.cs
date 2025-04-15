@@ -113,6 +113,15 @@ public class JsonLcLaunchStore: ILcLaunchStore
   /// <inheritdoc/>
   public ILauncherIconCache GetIconCache(Guid cacheId, bool initialize)
   {
+
+    // TODO: implement hypercaching
+
+    var cache = CreateIconCache(cacheId, initialize);
+    return cache;
+  }
+
+  private ILauncherIconCache CreateIconCache(Guid cacheId, bool initialize)
+  {
     var host = Provider.GetIconCache(cacheId);
     if(initialize)
     {
