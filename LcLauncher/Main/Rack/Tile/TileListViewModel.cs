@@ -35,19 +35,7 @@ public class TileListViewModel: ViewModelBase, IIconLoadJobSource
       host.Tile = tileVm;
       Tiles.Add(host);
     }
-    // TODO: padding; row/column model; the code below is temporary
-    var rows = (Tiles.Count + 3) / 4;
-    if(rows < 1)
-    {
-      rows = 1;
-    }
-    var expectedTileCount = rows * 4;
-    while(Tiles.Count < expectedTileCount)
-    {
-      var host = new TileHostViewModel(this);
-      host.Tile = new EmptyTileViewModel(this, null);
-      Tiles.Add(host);
-    }
+    PadRow();
   }
 
   public ShelfViewModel Shelf { get; }
@@ -118,4 +106,37 @@ public class TileListViewModel: ViewModelBase, IIconLoadJobSource
   }
 
   public IconLoadQueue IconLoadQueue { get => Shelf.Rack.IconLoadQueue; }
+
+  /// <summary>
+  /// Add empty tiles until the following properties hold:
+  /// The number of tiles is a multiple of 4. And there is
+  /// at least one row of tiles. If any changes were made,
+  /// the model is rebuilt.
+  /// </summary>
+  /// <returns>
+  /// True if the list was modified, false if it was already
+  /// meeting the requirements. 
+  /// </returns>
+  public bool PadRow()
+  {
+    var rows = (Tiles.Count + 3) / 4;
+    if(rows < 1)
+    {
+      rows = 1;
+    }
+    var expectedTileCount = rows * 4;
+    var dirty = false;
+    while(Tiles.Count < expectedTileCount)
+    {
+      dirty = true;
+      var host = new TileHostViewModel(this);
+      host.Tile = new EmptyTileViewModel(this, null);
+      Tiles.Add(host);
+    }
+    if(dirty)
+    {
+      RebuildModel();
+    }
+    return dirty;
+  }
 }

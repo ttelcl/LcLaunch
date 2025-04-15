@@ -66,34 +66,6 @@ public class IconCache
     return entry == null ? null : LoadCachedIconEntry(entry);
   }
 
-  /// <summary>
-  /// Create an icon, put it in the cache, and return the hash.
-  /// Expect this to be slow.
-  /// </summary>
-  /// <param name="iconSource">
-  /// The file for which to retrieve the icon.
-  /// </param>
-  /// <param name="size">
-  /// The icon size to retrieve. Supported sizes are 16, 32, 48, 256.
-  /// </param>
-  /// <param name="icon">
-  /// Returns the icon that was loaded, if found.
-  /// </param>
-  /// <returns>
-  /// The hash of the icon in the cache, or null if the icon could not be loaded.
-  /// </returns>
-  public string? CacheIcon(
-    string iconSource, int size, out BitmapSource? icon)
-  {
-    icon = IconCache.IconForFile(iconSource, size);
-    if(icon == null)
-    {
-      return null;
-    }
-    CacheIcon(icon, out var blobEntry);
-    return blobEntry.Hash;
-  }
-
   public IconHashes? CacheIcons(
     string iconSource, IconSize sizes)
   {
@@ -112,22 +84,30 @@ public class IconCache
     var icon256 = icons[3];
     if(icon16 != null)
     {
-      CacheIcon(icon16, out var be);
+      var added = CacheIcon(icon16, out var be) ? "ADDED" : "existing";
+      Trace.TraceInformation(
+        $"Icon16 {added}: {be.Hash}");
       hash16 = be.Hash;
     }
     if(icon32 != null)
     {
-      CacheIcon(icon32, out var be);
+      var added = CacheIcon(icon32, out var be) ? "ADDED" : "existing";
+      Trace.TraceInformation(
+        $"Icon32 {added}: {be.Hash}");
       hash32 = be.Hash;
     }
     if(icon48 != null)
     {
-      CacheIcon(icon48, out var be);
+      var added = CacheIcon(icon48, out var be) ? "ADDED" : "existing";
+      Trace.TraceInformation(
+        $"Icon48 {added}: {be.Hash}");
       hash48 = be.Hash;
     }
     if(icon256 != null)
     {
-      CacheIcon(icon256, out var be);
+      var added = CacheIcon(icon256, out var be) ? "ADDED" : "existing";
+      Trace.TraceInformation(
+        $"Icon256 {added}: {be.Hash}");
       hash256 = be.Hash;
     }
     if(hash16 == null && hash32 == null && hash48 == null && hash256 == null)
@@ -183,40 +163,6 @@ public class IconCache
   {
     _iconCache.Initialize(reInitialize);
     return _iconCache;
-  }
-
-  /// <summary>
-  /// Try to get the icon for a file, using the shell.
-  /// </summary>
-  /// <param name="path">
-  /// The full path to the file.
-  /// </param>
-  /// <param name="size">
-  /// The size of the icon to get. Supported sizes are 16, 32, 48, 256.
-  /// The actual returned size may vary.
-  /// </param>
-  /// <returns></returns>
-  private static BitmapSource? IconForFile(string path, int size)
-  {
-    try
-    {
-      using var iconShell = ShellObject.FromParsingName(path);
-      var thumbnail = iconShell.Thumbnail;
-      thumbnail.FormatOption = ShellThumbnailFormatOption.IconOnly;
-      return size switch {
-        16 => thumbnail.SmallBitmapSource,
-        32 => thumbnail.MediumBitmapSource,
-        48 => thumbnail.LargeBitmapSource,
-        256 => thumbnail.ExtraLargeBitmapSource,
-        _ => null,
-      };
-    }
-    catch(ShellException ex)
-    {
-      Trace.TraceError(
-        $"IconForFile: Error probing icon file {path}: {ex}");
-      return null;
-    }
   }
 
   private static BitmapSource?[]? IconsForFile(
