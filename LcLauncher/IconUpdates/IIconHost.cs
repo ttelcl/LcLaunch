@@ -13,7 +13,7 @@ namespace LcLauncher.IconUpdates;
 /// <summary>
 /// An object that can have an icon.
 /// The most important part of this is a unique ID
-/// to help duplicate <see cref="IconLoadJob"/>s for the same
+/// to help detect duplicate <see cref="IconLoadJob"/>s for the same
 /// target.
 /// </summary>
 public interface IIconHost
@@ -25,9 +25,5 @@ public interface IIconHost
   /// </summary>
   Guid IconHostId { get; }
 
-  /// <summary>
-  /// For convenience: the actual icon
-  /// </summary>
-  BitmapSource? Icon { get; }
 }
 

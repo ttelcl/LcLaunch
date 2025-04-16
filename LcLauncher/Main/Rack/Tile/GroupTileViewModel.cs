@@ -17,13 +17,14 @@ using LcLauncher.WpfUtilities;
 
 namespace LcLauncher.Main.Rack.Tile;
 
-public class GroupTileViewModel: TileViewModel
+public class GroupTileViewModel: TileViewModel, IIconHost
 {
   public GroupTileViewModel(
     TileListViewModel ownerList,
     TileGroup model)
     : base(ownerList)
   {
+    IconHostId = Guid.NewGuid();
     Model = model;
     ToggleGroupCommand = new DelegateCommand(
       p => IsActive = !IsActive);
@@ -45,6 +46,8 @@ public class GroupTileViewModel: TileViewModel
   }
 
   public ICommand ToggleGroupCommand { get; }
+
+  public Guid IconHostId { get; }
 
   public override string PlainIcon { get => "DotsGrid"; }
 
@@ -126,14 +129,15 @@ public class GroupTileViewModel: TileViewModel
       var givm = new GroupIconViewModel(this, tvm.Tile);
       GroupIcons.Add(givm);
     }
-    //while(GroupIcons.Count < 16)
-    //{
-    //  GroupIcons.Add(new GroupIconViewModel(this, null));
-    //}
   }
 
   public override IEnumerable<IconLoadJob> GetIconLoadJobs(bool reload)
   {
-    return ChildTiles.GetIconLoadJobs(reload);
+    foreach(var job in ChildTiles.GetIconLoadJobs(reload))
+    {
+      yield return job;
+    }
+    //yield return new IconLoadJob(
+    //  ChildTiles, this, );
   }
 }

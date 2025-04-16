@@ -24,10 +24,10 @@ public class TileListViewModel: ViewModelBase, IIconLoadJobSource
     ShelfViewModel shelf,
     TileListModel model)
   {
-    IconJobQueue = new IconListQueue(iconLoadQueue, this);
     Shelf = shelf;
     Model = model;
     Tiles = new ObservableCollection<TileHostViewModel>();
+    IconJobQueue = new IconListQueue(iconLoadQueue, this);
     foreach(var tile in model.RawTiles)
     {
       var host = new TileHostViewModel(this);
