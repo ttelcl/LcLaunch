@@ -137,7 +137,7 @@ public class GroupTileViewModel: TileViewModel, IIconHost
     {
       yield return job;
     }
-    //yield return new IconLoadJob(
-    //  ChildTiles, this, );
+    //ChildTiles.IconJobQueue.RegisterPostLoadAction(
+    //  IconHostId, ???);
   }
 }

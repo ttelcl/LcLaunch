@@ -15,18 +15,38 @@ namespace LcLauncher.IconUpdates;
 
 public class IconLoadJob
 {
+  /// <summary>
+  /// Create a new icon load job.
+  /// </summary>
+  /// <param name="iconJobQueue">
+  /// The inner queue to use for this job. This is the 
+  /// <see cref="IconListQueue"/> instance associated
+  /// with the target icon list.
+  /// </param>
+  /// <param name="iconHost">
+  /// The Icon Host uniquely identifying the viewmodel for the
+  /// control that will display the icon(s).
+  /// </param>
+  /// <param name="load">
+  /// The action that will perform the actual loading of the icon.
+  /// </param>
   public IconLoadJob(
-    TileListViewModel saveTarget,
+    IconListQueue iconJobQueue,
     IIconHost iconHost,
     Action load)
   {
-    IconJobQueue = saveTarget.IconJobQueue;
-    SaveTarget = saveTarget;
+    IconJobQueue = iconJobQueue;
     IconHost = iconHost;
     Load = load;
   }
 
-  public TileListViewModel SaveTarget { get; }
+  public IconLoadJob(
+    TileListViewModel saveTarget,
+    IIconHost iconHost,
+    Action load)
+    : this(saveTarget.IconJobQueue, iconHost, load)
+  {
+  }
 
   public IconListQueue IconJobQueue { get; }
 
