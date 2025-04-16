@@ -105,7 +105,7 @@ public class BlobStorage
     Span<byte> hashBuffer = stackalloc byte[20];
     SHA1.HashData(blob, hashBuffer);
     var hashString = BlobEntry.HashString(hashBuffer);
-    IndexFile.Update(); // needed if there are multiple references to the same cache
+    // IndexFile.Update(); // needed if something external changed the cache
     var existing = IndexFile.FindOneByPrefix(hashString);
     if(existing != null)
     {

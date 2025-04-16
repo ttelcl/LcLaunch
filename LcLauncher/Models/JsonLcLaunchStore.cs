@@ -26,6 +26,7 @@ public class JsonLcLaunchStore: ILcLaunchStore
     JsonDataStore provider)
   {
     Provider = provider;
+    _iconCacheCache = [];
   }
 
   public JsonDataStore Provider { get; }
@@ -111,14 +112,28 @@ public class JsonLcLaunchStore: ILcLaunchStore
   }
 
   /// <inheritdoc/>
-  public ILauncherIconCache GetIconCache(Guid cacheId, bool initialize)
+  public ILauncherIconCache GetIconCache(Guid cacheId)
   {
 
-    // TODO: implement hypercaching
-
-    var cache = CreateIconCache(cacheId, initialize);
+    if(_iconCacheCache.TryGetValue(cacheId, out var weakRef))
+    {
+      if(weakRef.TryGetTarget(out var oldCache))
+      {
+        return oldCache;
+      }
+      else
+      {
+        // Remove expired cache
+        _iconCacheCache.Remove(cacheId);
+      }
+    }
+    var cache = CreateIconCache(cacheId, false);
+    _iconCacheCache[cacheId] = new WeakReference<ILauncherIconCache>(cache);
     return cache;
   }
+
+  private Dictionary<Guid, WeakReference<ILauncherIconCache>> _iconCacheCache;
+    
 
   private ILauncherIconCache CreateIconCache(Guid cacheId, bool initialize)
   {
