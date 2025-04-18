@@ -44,6 +44,10 @@ public class ShelfViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
       p => QueueIcons(false));
     RefreshIconJobs = new DelegateCommand(
       p => QueueIcons(true));
+    ToggleCutCommand = new DelegateCommand(
+      p => {
+        IsKeyShelf = Column.Rack.KeyShelf != this;
+      });
   }
 
   public ICommand SetThemeCommand { get; }
@@ -53,6 +57,8 @@ public class ShelfViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
   public ICommand EnqueueIconJobs { get; }
 
   public ICommand RefreshIconJobs { get; }
+
+  public ICommand ToggleCutCommand { get; }
 
   public ColumnViewModel Column { get; }
 
