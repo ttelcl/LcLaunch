@@ -22,7 +22,7 @@ using GroupTileViewModel = LcLauncher.Main.Rack.Tile.GroupTileViewModel;
 
 namespace LcLauncher.Main.Rack;
 
-public class ShelfViewModel: ViewModelBase, IIconLoadJobSource
+public class ShelfViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
 {
   public ShelfViewModel(
     ColumnViewModel column,
@@ -123,6 +123,7 @@ public class ShelfViewModel: ViewModelBase, IIconLoadJobSource
         if(Model.Shelf.Theme != value)
         {
           Model.Shelf.Theme = value;
+          Model.MarkDirty();
         }
         SetTheme("Dark." + value);
       }
@@ -138,6 +139,7 @@ public class ShelfViewModel: ViewModelBase, IIconLoadJobSource
         if(Model.Shelf.Title != value)
         {
           Model.Shelf.Title = value;
+          Model.MarkDirty();
         }
       }
     }
@@ -150,6 +152,11 @@ public class ShelfViewModel: ViewModelBase, IIconLoadJobSource
       if(SetValueProperty(ref _isExpanded, value))
       {
         RaisePropertyChanged(nameof(ShelfExpandedIcon));
+        if(Model.Shelf.Collapsed != !value)
+        {
+          Model.Shelf.Collapsed = !value;
+          Model.MarkDirty();
+        }
       }
     }
   }
@@ -206,5 +213,25 @@ public class ShelfViewModel: ViewModelBase, IIconLoadJobSource
     var after = IconLoadQueue.JobCount();
     Trace.TraceInformation(
       $"Queued {after - before} icon load jobs ({after} - {before}) for {Model.Id}");
+  }
+
+  public bool IsDirty { get => Model.IsDirty; }
+
+  public void MarkDirty()
+  {
+    Model.MarkDirty();
+    RaisePropertyChanged(nameof(IsDirty));
+  }
+
+  public void SaveIfDirty()
+  {
+    if(IsDirty)
+    {
+      Trace.TraceInformation(
+        $"Saving shelf {Model.Id}");
+      // No need to 'rebuild' anything, since there are no sub-models
+      Model.Save();
+      RaisePropertyChanged(nameof(IsDirty));
+    }
   }
 }

@@ -61,11 +61,16 @@ public class MainViewModel: ViewModelBase
   public RackViewModel? CurrentRack {
     get => _currentRack;
     set {
+      var oldRack = _currentRack;
       if(SetNullableInstanceProperty(ref _currentRack, value))
       {
         var rackLabel = value?.Name ?? "<NONE>";
         Trace.TraceInformation(
           $"Switched to rack '{rackLabel}'");
+        if(oldRack != null)
+        {
+          oldRack.SaveShelvesIfModified();
+        }
       }
     }
   }
@@ -90,5 +95,10 @@ public class MainViewModel: ViewModelBase
   {
     return CurrentRack != null &&
       !CurrentRack.IconLoadQueue.IsEmpty();
+  }
+
+  public void OnWindowClosing()
+  {
+    CurrentRack?.SaveShelvesIfModified();
   }
 }

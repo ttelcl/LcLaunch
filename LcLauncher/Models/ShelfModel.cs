@@ -32,6 +32,7 @@ public class ShelfModel
       tilesModel.SaveRawModel();
     }
     PrimaryTiles = tilesModel;
+    IsDirty = false;
   }
 
   public static ShelfModel Load(
@@ -72,5 +73,14 @@ public class ShelfModel
   public void Save()
   {
     Store.SaveShelf(Id, Shelf);
+    IsDirty = false;
   }
+
+  public bool IsDirty { get; private set; }
+
+  public void MarkDirty()
+  {
+    IsDirty = true;
+  }
+
 }

@@ -14,7 +14,8 @@
     WindowStartupLocation="CenterScreen"
     ResizeMode="NoResize"
     Title="Luc's Application Launchpad"
-    Height="920" Width="1285">
+    Height="920" Width="1285"
+    Closing="WindowClosing">
     <mah:MetroWindow.RightWindowCommands>
         <mah:WindowCommands>
             <mah:SplitButton

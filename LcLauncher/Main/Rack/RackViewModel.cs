@@ -72,4 +72,15 @@ public class RackViewModel: ViewModelBase, IIconLoadJobSource
       }
     }
   }
+
+  public void SaveShelvesIfModified()
+  {
+    Trace.TraceInformation(
+      $"Saving modified shelves in rack '{Name}' (if any)");
+    foreach(var shelf in AllShelves())
+    {
+      shelf.SaveIfDirty();
+    }
+  }
+
 }
