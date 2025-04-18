@@ -17,7 +17,7 @@ using LcLauncher.WpfUtilities;
 
 namespace LcLauncher.Main.Rack.Tile;
 
-public class TileListViewModel: ViewModelBase, IIconLoadJobSource
+public class TileListViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
 {
 
   public TileListViewModel(
@@ -71,16 +71,20 @@ public class TileListViewModel: ViewModelBase, IIconLoadJobSource
   /// </summary>
   private void SaveRaw()
   {
+    Trace.TraceInformation(
+      $"Saving tile list {Model.Id}");
     Model.SaveRawModel();
     RaisePropertyChanged(nameof(IsDirty));
   }
 
+  /// <inheritdoc/>
   public void MarkDirty()
   {
     Model.MarkDirty();
     RaisePropertyChanged(nameof(IsDirty));
   }
 
+  /// <inheritdoc/>
   public void SaveIfDirty()
   {
     if(IsDirty)
@@ -90,6 +94,7 @@ public class TileListViewModel: ViewModelBase, IIconLoadJobSource
     }
   }
 
+  /// <inheritdoc/>
   public bool IsDirty => Model.IsDirty;
 
   public IEnumerable<IconLoadJob> GetIconLoadJobs(bool reload)

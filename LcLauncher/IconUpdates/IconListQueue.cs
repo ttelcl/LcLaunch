@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using LcLauncher.Main.Rack.Tile;
+using LcLauncher.Persistence;
 
 namespace LcLauncher.IconUpdates;
 
@@ -43,7 +44,7 @@ public class IconListQueue
 
   public IconLoadQueue Parent { get; }
 
-  public TileListViewModel Target { get; }
+  public IPersisted Target { get; }
 
   /// <summary>
   /// Called after all load jobs in this queue have been processed,
@@ -51,13 +52,7 @@ public class IconListQueue
   /// </summary>
   internal void OnQueueCompleted()
   {
-    if(Target.IsDirty)
-    {
-      Trace.TraceInformation(
-        $"Saving tile list {TargetId}");
-      Target.RebuildModel();
-      Target.SaveIfDirty();
-    }
+    Target.SaveIfDirty();
     // TODO: other post-completion tasks (updating group tiles and
     // quad tiles)
   }
