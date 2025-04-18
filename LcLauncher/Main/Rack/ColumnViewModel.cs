@@ -60,5 +60,11 @@ public class ColumnViewModel: ViewModelBase
     var modelSource = Column[indexSource];
     Column.RemoveAt(indexSource);
     Column.Insert(indexTarget, modelSource);
+    MarkRackDirty();
+  }
+
+  public void MarkRackDirty()
+  {
+    Rack.MarkDirty();
   }
 }

@@ -16,7 +16,7 @@ using LcLauncher.WpfUtilities;
 
 namespace LcLauncher.Main.Rack;
 
-public class RackViewModel: ViewModelBase, IIconLoadJobSource
+public class RackViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
 {
   public RackViewModel(
     MainViewModel owner,
@@ -83,4 +83,22 @@ public class RackViewModel: ViewModelBase, IIconLoadJobSource
     }
   }
 
+  public bool IsDirty { get => Model.IsDirty; }
+
+  public void MarkDirty()
+  {
+    Model.MarkDirty();
+    RaisePropertyChanged(nameof(IsDirty));
+  }
+
+  public void SaveIfDirty()
+  {
+    if(IsDirty)
+    {
+      Trace.TraceInformation(
+        $"Saving rack metadata '{Name}'");
+      Model.Save();
+      RaisePropertyChanged(nameof(IsDirty));
+    }
+  }
 }

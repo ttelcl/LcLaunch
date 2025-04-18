@@ -70,4 +70,22 @@ public class RackModel
   /// The 3 columns of the rack.
   /// </summary>
   public List<ShelfModel>[] Columns { get; }
+
+  /// <summary>
+  /// Save this rack itself (the column setup).
+  /// Does NOT save the shelves
+  /// </summary>
+  public void Save()
+  {
+    Store.SaveRack(RackName, RackData);
+    IsDirty = false;
+  }
+
+  public bool IsDirty { get; private set; }
+
+  public void MarkDirty()
+  {
+    IsDirty = true;
+  }
+
 }
