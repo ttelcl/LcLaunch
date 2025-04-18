@@ -10,7 +10,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LcLauncher.Models;
+using LcLauncher.Models;
+
+namespace LcLauncher.Persistence;
 
 /// <summary>
 /// Static extensions on <see cref="ILcLaunchStore"/>
@@ -104,6 +106,6 @@ public static class LcLaunchStore
     {
       return existingRack;
     }
-    return CreateRack(store, rackName, false);
+    return store.CreateRack(rackName, false);
   }
 }

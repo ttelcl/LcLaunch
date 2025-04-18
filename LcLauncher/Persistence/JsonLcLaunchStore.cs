@@ -10,9 +10,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using LcLauncher.Models;
 using LcLauncher.Storage;
 
-namespace LcLauncher.Models;
+namespace LcLauncher.Persistence;
 
 /// <summary>
 /// Implements <see cref="ILcLaunchStore"/> using JSON files.

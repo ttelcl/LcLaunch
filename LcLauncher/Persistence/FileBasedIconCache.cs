@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 
 using LcLauncher.Storage;
 
-namespace LcLauncher.Models;
+namespace LcLauncher.Persistence;
 
 /// <summary>
 /// File based implementation of <see cref="ILauncherIconCache"/>

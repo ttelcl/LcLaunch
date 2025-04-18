@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 
 using LcLauncher.IconUpdates;
 using LcLauncher.Models;
+using LcLauncher.Persistence;
 using LcLauncher.WpfUtilities;
 
 namespace LcLauncher.Main.Rack.Tile;
@@ -65,7 +66,10 @@ public class TileListViewModel: ViewModelBase, IIconLoadJobSource
     Model.MarkDirty();
   }
 
-  public void SaveRaw()
+  /// <summary>
+  /// Save, without rebuilding the model (assuming it is already)
+  /// </summary>
+  private void SaveRaw()
   {
     Model.SaveRawModel();
     RaisePropertyChanged(nameof(IsDirty));
@@ -77,14 +81,11 @@ public class TileListViewModel: ViewModelBase, IIconLoadJobSource
     RaisePropertyChanged(nameof(IsDirty));
   }
 
-  public void SaveIfDirty(bool rebuild)
+  public void SaveIfDirty()
   {
     if(IsDirty)
     {
-      if(rebuild)
-      {
-        RebuildModel();
-      }
+      RebuildModel();
       SaveRaw();
     }
   }

@@ -15,6 +15,7 @@ using ControlzEx.Theming;
 using LcLauncher.IconUpdates;
 using LcLauncher.Main.Rack.Tile;
 using LcLauncher.Models;
+using LcLauncher.Persistence;
 using LcLauncher.WpfUtilities;
 
 using GroupTileViewModel = LcLauncher.Main.Rack.Tile.GroupTileViewModel;

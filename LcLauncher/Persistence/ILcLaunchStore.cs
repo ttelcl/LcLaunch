@@ -7,7 +7,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LcLauncher.Models;
+using LcLauncher.Models;
+
+namespace LcLauncher.Persistence;
 
 /// <summary>
 /// Abstract store of LcLaunch persistent data.

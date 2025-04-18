@@ -56,7 +56,7 @@ public class IconListQueue
       Trace.TraceInformation(
         $"Saving tile list {TargetId}");
       Target.RebuildModel();
-      Target.SaveRaw();
+      Target.SaveIfDirty();
     }
     // TODO: other post-completion tasks (updating group tiles and
     // quad tiles)

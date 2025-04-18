@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 
 using LcLauncher.IconUpdates;
 using LcLauncher.Models;
+using LcLauncher.Persistence;
 
 namespace LcLauncher.Main.Rack.Tile;
 

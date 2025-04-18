@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 
 using Newtonsoft.Json;
 
+using LcLauncher.Persistence;
+
 namespace LcLauncher.Models;
 
 public class ShelfModel

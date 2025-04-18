@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
-namespace LcLauncher.Models;
+namespace LcLauncher.Persistence;
 
 [Flags]
 public enum IconSize

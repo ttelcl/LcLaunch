@@ -4,15 +4,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Diagnostics;
-using LcLauncher.Storage.BlobsStorage;
-using Microsoft.WindowsAPICodePack.Shell;
-using System.IO;
 using System.Windows.Media.Imaging;
-using LcLauncher.Models;
+
+using Microsoft.WindowsAPICodePack.Shell;
+
+using LcLauncher.Persistence;
+using LcLauncher.Storage.BlobsStorage;
 
 namespace LcLauncher.Storage;
 

@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 using LcLauncher.Storage;
+using LcLauncher.Persistence;
 
 namespace LcLauncher.Models;
 

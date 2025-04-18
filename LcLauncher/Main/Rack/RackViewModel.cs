@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 
 using LcLauncher.IconUpdates;
 using LcLauncher.Models;
+using LcLauncher.Persistence;
 using LcLauncher.WpfUtilities;
 
 namespace LcLauncher.Main.Rack;
