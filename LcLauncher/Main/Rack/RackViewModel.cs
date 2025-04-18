@@ -85,6 +85,38 @@ public class RackViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
 
   public bool IsDirty { get => Model.IsDirty; }
 
+  /// <summary>
+  /// The one shelf that is treated special. In UI feedback
+  /// it may be referenced as 'cut' (like in Excel, where 'cutting'
+  /// doesn't actually cut anything until it is used elsehwere).
+  /// </summary>
+  public ShelfViewModel? KeyShelf {
+    // Note: interlinked with ShelfViewModel.IsKeyShelf
+    get => _keyShelf;
+    set {
+      var oldShelf = _keyShelf;
+      if(SetNullableInstanceProperty(ref _keyShelf, value))
+      {
+        if(oldShelf != null)
+        {
+          oldShelf.IsKeyShelf = false;
+        }
+        if(_keyShelf != null)
+        {
+          _keyShelf.IsKeyShelf = true;
+          Trace.TraceInformation(
+            $"Key shelf changed to '{_keyShelf.ShelfId}'");
+        }
+        else
+        {
+          Trace.TraceInformation(
+            $"Key shelf cleared");
+        }
+      }
+    }
+  }
+  private ShelfViewModel? _keyShelf;
+
   public void MarkDirty()
   {
     Model.MarkDirty();

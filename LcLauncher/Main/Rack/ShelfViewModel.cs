@@ -58,7 +58,7 @@ public class ShelfViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
 
   public RackViewModel Rack => Column.Rack;
 
-  public ShelfModel Model { 
+  public ShelfModel Model {
     get => _model;
     private set {
       if(SetValueProperty(ref _model, value))
@@ -73,6 +73,27 @@ public class ShelfViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
     }
   }
   private ShelfModel _model;
+
+  public bool IsKeyShelf {
+    get => _isKeyShelf;
+    set {
+      if(SetValueProperty(ref _isKeyShelf, value))
+      {
+        if(_isKeyShelf)
+        {
+          // Note: Make sure this doesn't recurse indefinitely
+          // Setting Rack.KeyShelf to this will call this property
+          // setter, but the 'ifs' above will block further recursion.
+          Column.Rack.KeyShelf = this;
+        }
+        else if(Column.Rack.KeyShelf == this)
+        {
+          Column.Rack.KeyShelf = null;
+        } // else: don't affect Rack.KeyShelf
+      }
+    }
+  }
+  private bool _isKeyShelf;
 
   public ILcLaunchStore Store { get; }
 
