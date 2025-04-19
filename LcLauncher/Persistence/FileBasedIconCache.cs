@@ -49,10 +49,10 @@ public class FileBasedIconCache: ILauncherIconCache
     IconSize sizes = IconSize.Normal)
   {
     // For now, require iconSource to be an existing file.
-    if(!File.Exists(iconSource))
-    {
-      return null;
-    }
+    //if(!File.Exists(iconSource))
+    //{
+    //  return null;
+    //}
     var hashes = Host.CacheIcons(iconSource, sizes);
     return hashes;
   }

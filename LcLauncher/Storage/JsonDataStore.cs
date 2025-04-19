@@ -67,7 +67,7 @@ public class JsonDataStore
     return LoadData<T>(id.ToString(), extension);
   }
 
-  public void SaveData<T>(
+  public string SaveData<T>(
     string tag,
     string extension,
     T data)
@@ -89,6 +89,7 @@ public class JsonDataStore
     {
       File.Move(tmpPath, path);
     }
+    return path;
   }
 
   public void SaveData<T>(

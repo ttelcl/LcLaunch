@@ -13,8 +13,8 @@
     <Grid>
         <!-- Underlay text -->
         <TextBlock
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
             Text="Development Temporary Interface"
             Foreground="#440000FF"
             FontSize="48"
@@ -31,6 +31,8 @@
                             Command="{Binding TestRebuildCommand}"/>
                     <Button Content="Next Icon Job" 
                             Command="{Binding Host.ProcessNextIconJobCommand}"/>
+                    <Button Content="Application Folder test" 
+                            Command="{Binding TestApplicationShellFolderCommand}"/>
                 </WrapPanel>
                 <DockPanel DockPanel.Dock="Top">
                     <Button
@@ -40,7 +42,7 @@
                     <TextBox
                         Text="{Binding IconFile, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                         IsReadOnly="False"
-                        />
+                        mah:TextBoxHelper.Watermark="icon file"/>
                 </DockPanel>
                 <Border
                     BorderThickness="1"
@@ -59,15 +61,23 @@
                             Source="{Binding IconLarge}"
                             Stretch="None"
                             Margin="5,0"/>
-                        <!--<Image
-                            Source="{Binding IconExtraLarge}"
-                            Stretch="None"
-                            Margin="5"/>
                         <Image
-                            Source="{Binding IconExtraLarge}"
+                            Source="{Binding IconSmallFixed}"
                             Stretch="UniformToFill"
-                            Height="72" Width="72"
-                            Margin="5"/>-->
+                            Width="16" Height="16"
+                            Margin="5,0"/>
+                        <Image
+                            Source="{Binding IconMediumFixed}"
+                            Stretch="UniformToFill"
+                            Width="32" Height="32"
+                            RenderOptions.BitmapScalingMode="HighQuality"
+                            Margin="5,0"/>
+                        <Image
+                            Source="{Binding IconLargeFixed}"
+                            Stretch="UniformToFill"
+                            Width="48" Height="48"
+                            RenderOptions.BitmapScalingMode="Fant"
+                            Margin="5,0"/>
                     </StackPanel>
                 </Border>
             </DockPanel>
