@@ -17,14 +17,14 @@ using LcLauncher.WpfUtilities;
 
 namespace LcLauncher.Main.Rack.Tile;
 
-public class GroupTileViewModel: TileViewModel, IIconHost
+public class GroupTileViewModel: TileViewModel, IPostIconLoadActor
 {
   public GroupTileViewModel(
     TileListViewModel ownerList,
     TileGroup model)
     : base(ownerList)
   {
-    IconHostId = Guid.NewGuid();
+    PostIconLoadId = Guid.NewGuid();
     Model = model;
     ToggleGroupCommand = new DelegateCommand(
       p => IsActive = !IsActive);
@@ -47,7 +47,7 @@ public class GroupTileViewModel: TileViewModel, IIconHost
 
   public ICommand ToggleGroupCommand { get; }
 
-  public Guid IconHostId { get; }
+  public Guid PostIconLoadId { get; }
 
   public override string PlainIcon { get => "DotsGrid"; }
 
@@ -137,7 +137,13 @@ public class GroupTileViewModel: TileViewModel, IIconHost
     {
       yield return job;
     }
-    //ChildTiles.IconJobQueue.RegisterPostLoadAction(
-    //  IconHostId, ???);
+    ChildTiles.IconJobQueue.QueuePostLoadActor(this);
+  }
+
+  public void PostIconLoad()
+  {
+    Trace.TraceInformation(
+      $"PostIconLoad for group tile '{Title}'");
+    ResetGroupIcons();
   }
 }

@@ -22,6 +22,7 @@ namespace LcLauncher.IconUpdates;
 public class IconListQueue
 {
   private readonly Dictionary<Guid, IconLoadJob> _jobs;
+  private readonly Dictionary<Guid, IPostIconLoadActor> _postLoadActors;
 
   /// <summary>
   /// Create a new IconListQueue
@@ -31,6 +32,7 @@ public class IconListQueue
     TileListViewModel target)
   {
     _jobs = [];
+    _postLoadActors = [];
     // do not use target ID: the same list may be used in multiple view models!
     QueueId = Guid.NewGuid();
     TargetId = target.Model.Id;
@@ -53,8 +55,12 @@ public class IconListQueue
   internal void OnQueueCompleted()
   {
     Target.SaveIfDirty();
-    // TODO: other post-completion tasks (updating group tiles and
-    // quad tiles)
+    var postLoadActors = _postLoadActors.Values.ToList();
+    _postLoadActors.Clear();
+    foreach(var actor in postLoadActors)
+    {
+      actor.PostIconLoad();
+    }
   }
 
   // Called from IconLoadQueue
@@ -75,6 +81,14 @@ public class IconListQueue
   {
     // Don't care if this replaces an existing job!
     _jobs[job.IconHost.IconHostId] = job;
+  }
+
+  public void QueuePostLoadActor(
+    IPostIconLoadActor actor)
+  {
+    // Remove existing actor first, adding the new one at the end.
+    _postLoadActors.Remove(actor.PostIconLoadId);
+    _postLoadActors.Add(actor.PostIconLoadId, actor);
   }
 
   public int JobCount()
