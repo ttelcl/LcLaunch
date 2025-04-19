@@ -15,6 +15,7 @@ using Microsoft.WindowsAPICodePack.Shell;
 
 using LcLauncher.Persistence;
 using LcLauncher.Storage.BlobsStorage;
+using LcLauncher.Models;
 
 namespace LcLauncher.Storage;
 
@@ -71,7 +72,7 @@ public class IconCache
   public IconHashes? CacheIcons(
     string iconSource, IconSize sizes)
   {
-    var icons = IconCache.IconsForFile(iconSource, sizes);
+    var icons = IconCache.IconsForSource(iconSource, sizes);
     if(icons == null)
     {
       return null;
@@ -167,37 +168,78 @@ public class IconCache
     return _iconCache;
   }
 
-  private static BitmapSource?[]? IconsForFile(
-    string path, IconSize sizes)
+  /// <summary>
+  /// Load icons for the given source from the shell.
+  /// </summary>
+  /// <param name="source">
+  /// The icon source: a file name (document or executable),
+  /// or an application ID prefixed with "shell:AppsFolder\".
+  /// </param>
+  /// <param name="sizes"></param>
+  /// <returns></returns>
+  public static BitmapSource?[]? IconsForSource(
+    string source, IconSize sizes)
   {
+    bool useAppIcon = source.StartsWith(LaunchData.ShellAppsFolderPrefix);
     try
     {
       var icons = new BitmapSource?[4];
-      using var iconShell = ShellObject.FromParsingName(path);
+      using var iconShell = ShellObject.FromParsingName(source);
       var thumbnail = iconShell.Thumbnail;
-      thumbnail.FormatOption = ShellThumbnailFormatOption.IconOnly;
-      if(sizes.HasFlag(IconSize.Small))
+      if(useAppIcon)
       {
-        icons[0] = thumbnail.SmallBitmapSource;
+        thumbnail.FormatOption = ShellThumbnailFormatOption.Default;
+        // Beware: 'Default' causes incorrect icon sizes, do not
+        // rely on SmallBBitmapSource etc properties in this case,
+        // use CurrentSize + BitmapSource instead.
+        if(sizes.HasFlag(IconSize.Small))
+        {
+          thumbnail.CurrentSize = DefaultIconSize.Small;
+          icons[0] = thumbnail.BitmapSource;
+        }
+        if(sizes.HasFlag(IconSize.Medium))
+        {
+          thumbnail.CurrentSize = DefaultIconSize.Medium;
+          icons[1] = thumbnail.BitmapSource;
+        }
+        if(sizes.HasFlag(IconSize.Large))
+        {
+          thumbnail.CurrentSize = DefaultIconSize.Large;
+          icons[2] = thumbnail.BitmapSource;
+        }
+        if(sizes.HasFlag(IconSize.ExtraLarge))
+        {
+          thumbnail.CurrentSize = DefaultIconSize.ExtraLarge;
+          icons[3] = thumbnail.BitmapSource;
+        }
+        return icons;
       }
-      if(sizes.HasFlag(IconSize.Medium))
+      else
       {
-        icons[1] = thumbnail.MediumBitmapSource;
+        thumbnail.FormatOption = ShellThumbnailFormatOption.IconOnly;
+        if(sizes.HasFlag(IconSize.Small))
+        {
+          icons[0] = thumbnail.SmallBitmapSource;
+        }
+        if(sizes.HasFlag(IconSize.Medium))
+        {
+          icons[1] = thumbnail.MediumBitmapSource;
+        }
+        if(sizes.HasFlag(IconSize.Large))
+        {
+          icons[2] = thumbnail.LargeBitmapSource;
+        }
+        if(sizes.HasFlag(IconSize.ExtraLarge))
+        {
+          icons[3] = thumbnail.ExtraLargeBitmapSource;
+        }
+        return icons;
       }
-      if(sizes.HasFlag(IconSize.Large))
-      {
-        icons[2] = thumbnail.LargeBitmapSource;
-      }
-      if(sizes.HasFlag(IconSize.ExtraLarge))
-      {
-        icons[3] = thumbnail.ExtraLargeBitmapSource;
-      }
-      return icons;
     }
     catch(ShellException ex)
     {
       Trace.TraceError(
-        $"IconForFile: Error probing icon file {path}: {ex}");
+        $"IconForFile: Error probing icon source {source}: {ex}");
       return null;
     }
   }

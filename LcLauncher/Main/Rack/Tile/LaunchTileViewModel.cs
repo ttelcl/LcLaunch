@@ -28,6 +28,20 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
   {
     IconHostId = Guid.NewGuid();
     Model = model;
+    if(model is ShellLaunch)
+    {
+      Classification = LaunchData.GetLaunchKind(
+        model.TargetPath, false);
+    }
+    else if(model is RawLaunch)
+    {
+      Classification = LaunchData.GetLaunchKind(
+        model.TargetPath, true);
+    }
+    else
+    {
+      Classification = LaunchKind.Invalid;
+    }
     _title = Model.GetEffectiveTitle();
     _tooltip = Model.GetEffectiveTooltip();
     LoadIcon(IconLoadLevel.FromCache);
@@ -67,6 +81,8 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
   /// <see cref="RawModel"/> is not null.
   /// </summary>
   public RawLaunch? RawModel { get => Model as RawLaunch; }
+
+  public LaunchKind Classification { get; }
 
   public string Title {
     get => _title;
@@ -134,14 +150,14 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
 
   public void LoadIcon(IconLoadLevel level)
   {
-    var hasIcon = Icon != null;
+    //var hasIcon = Icon != null;
     var hasHash = Model.Icon48 != null;
     var iconCache = OwnerList.IconCache;
     switch(level)
     {
       case IconLoadLevel.FromCache:
         {
-          if(hasIcon || !hasHash)
+          if(/*hasIcon ||*/ !hasHash)
           {
             return;
           }
@@ -153,10 +169,10 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
         }
       case IconLoadLevel.LoadIfMissing:
         {
-          if(hasIcon)
-          {
-            return;
-          }
+          //if(hasIcon)
+          //{
+          //  return;
+          //}
           if(hasHash)
           {
             var icon = iconCache.LoadCachedIcon(Model.Icon48);

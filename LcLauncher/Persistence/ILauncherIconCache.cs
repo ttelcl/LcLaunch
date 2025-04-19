@@ -8,6 +8,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
+using LcLauncher.Models;
+
 namespace LcLauncher.Persistence;
 
 [Flags]
@@ -81,7 +83,8 @@ public interface ILauncherIconCache
   /// </summary>
   /// <param name="iconSource">
   /// The source specification for the icon. Normally this is
-  /// the name of the document or executable file.
+  /// the name of the document, or an executable file,
+  /// or an application identifier.
   /// </param>
   /// <param name="sizes">
   /// The sizes to cache. The sizes are specified as a bitwise
@@ -110,7 +113,7 @@ public class IconHashes
 /// </summary>
 public enum IconLoadLevel { 
   /// <summary>
-  /// Only get the icon if it is already in the cache
+  /// Only get the icon if it already in the cache
   /// </summary>
   FromCache,
   /// <summary>
