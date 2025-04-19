@@ -28,6 +28,11 @@
                                   Command="{Binding ToggleCutCommand}"
                                   IsChecked="{Binding IsKeyShelf}"/>
                         <Separator/>
+                        <MenuItem Header="Add Tile Row"
+                                  Command="{Binding PrimaryTiles.AddEmptyRowCommand}"/>
+                        <MenuItem Header="Remove Empty Tile Row"
+                                  Command="{Binding PrimaryTiles.RemoveLastEmptyRowCommand}"/>
+                        <Separator/>
                         <MenuItem Header="Color Theme">
                             <MenuItem Header="Olive" Command="{Binding SetThemeCommand}"
                                       CommandParameter="Olive"

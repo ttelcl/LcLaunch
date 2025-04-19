@@ -38,6 +38,7 @@ public class TileHostViewModel: ViewModelBase
           value.Host = this;
         }
         RaisePropertyChanged(nameof(HasTile));
+        RaisePropertyChanged(nameof(IsEmpty));
       }
     }
   }
@@ -45,6 +46,10 @@ public class TileHostViewModel: ViewModelBase
 
   public bool HasTile {
     get => _tile != null;
+  }
+
+  public bool IsEmpty {
+    get => _tile == null || _tile is EmptyTileViewModel;  
   }
 
   public bool Hovering {

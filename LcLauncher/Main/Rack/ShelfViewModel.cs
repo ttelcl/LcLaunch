@@ -96,14 +96,10 @@ public class ShelfViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
         {
           Column.Rack.KeyShelf = null;
         } // else: don't affect Rack.KeyShelf
-        //RaisePropertyChanged(nameof(CutStatusIcon));
       }
     }
   }
   private bool _isKeyShelf;
-
-  //public string CutStatusIcon =>
-  //  IsKeyShelf ? "ClipboardFlowOutline" : "ContentCut";
 
   public ILcLaunchStore Store { get; }
 

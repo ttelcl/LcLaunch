@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 using LcLauncher.IconUpdates;
 using LcLauncher.Models;
@@ -36,8 +37,18 @@ public class TileListViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
       host.Tile = tileVm;
       Tiles.Add(host);
     }
+    AddEmptyRowCommand = new DelegateCommand(
+      p => AddEmptyRow(),
+      p => CanAddEmptyRow());
+    RemoveLastEmptyRowCommand = new DelegateCommand(
+      p => RemoveLastEmptyRow(),
+      p => CanRemoveLastEmptyRow());
     PadRow();
   }
+
+  public ICommand AddEmptyRowCommand { get; }
+
+  public ICommand RemoveLastEmptyRowCommand { get; }
 
   public ShelfViewModel Shelf { get; }
 
@@ -112,6 +123,103 @@ public class TileListViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
   }
 
   public IconLoadQueue IconLoadQueue { get => Shelf.Rack.IconLoadQueue; }
+
+  /// <summary>
+  /// True if there is at least one tile and the last tile
+  /// in the list is empty (i.e.: it could be removed to make space).
+  /// </summary>
+  public bool LastTileIsEmpty()
+  {
+    if(Tiles.Count == 0)
+    {
+      // No tiles, so no empty tile
+      return false;
+    }
+    var lastTile = Tiles.Last();
+    return lastTile.IsEmpty;
+  }
+
+  /// <summary>
+  /// True if there is at least one full row.
+  /// </summary>
+  public bool HasRows()
+  {
+    return Tiles.Count >= 4;
+  }
+
+  /// <summary>
+  /// True if the number of tiles is a multiple of 4 and
+  /// at least 4: all rows are full and there is at least one row.
+  /// </summary>
+  public bool IsPadded()
+  {
+    return Tiles.Count % 4 == 0 && Tiles.Count >= 4;
+  }
+
+  public bool CanRemoveLastEmptyRow()
+  {
+    if(!IsPadded())
+    {
+      // We are in some intermediate state
+      return false;
+    }
+    return
+      Tiles[^1].IsEmpty &&
+      Tiles[^2].IsEmpty &&
+      Tiles[^3].IsEmpty &&
+      Tiles[^4].IsEmpty;
+  }
+
+  public bool CanAddEmptyRow()
+  {
+    if(Tiles.Count % 4 != 0)
+    {
+      // We are in some intermediate state
+      return false;
+    }
+    if(Tiles.Count == 0)
+    {
+      return true;
+    }
+    return // at least one of the last row tiles is in use
+      !Tiles[^1].IsEmpty ||
+      !Tiles[^2].IsEmpty ||
+      !Tiles[^3].IsEmpty ||
+      !Tiles[^4].IsEmpty;
+  }
+
+  public bool AddEmptyRow()
+  {
+    if(CanAddEmptyRow())
+    {
+      for(var i = 0; i < 4; i++)
+      {
+        var host = new TileHostViewModel(this);
+        host.Tile = new EmptyTileViewModel(
+          this, TileData.EmptyTile());
+        Tiles.Add(host);
+      }
+      MarkDirty();
+      SaveIfDirty(); // TODO: use autosave instead
+      return true;
+    }
+    return false;
+  }
+
+  public bool RemoveLastEmptyRow()
+  {
+    if(CanRemoveLastEmptyRow())
+    {
+      Tiles.RemoveAt(Tiles.Count - 1);
+      Tiles.RemoveAt(Tiles.Count - 1);
+      Tiles.RemoveAt(Tiles.Count - 1);
+      Tiles.RemoveAt(Tiles.Count - 1);
+      MarkDirty();
+      SaveIfDirty(); // TODO: use autosave instead
+      return true;
+    }
+    return false;
+  }
 
   /// <summary>
   /// Add empty tiles until the following properties hold:
