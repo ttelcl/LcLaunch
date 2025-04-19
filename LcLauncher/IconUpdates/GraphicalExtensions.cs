@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -64,6 +65,27 @@ public static class GraphicalExtensions
       icon.DpiX, icon.DpiY,
       PixelFormats.Bgra32, null,
       buffer, icon.PixelWidth * 4);
+  }
+
+  public static BitmapSource ScaleDown(
+    this BitmapSource icon, int maxSize)
+  {
+    if(icon.PixelWidth <= maxSize && icon.PixelHeight <= maxSize)
+    {
+      return icon;
+    }
+    Trace.TraceInformation(
+      $"Scaling down icon from {icon.PixelWidth}x{icon.PixelHeight} to {maxSize}x{maxSize}");
+    if(icon.PixelHeight != icon.PixelWidth)
+    {
+      throw new NotSupportedException(
+        "Only square icons are supported");
+    }
+    var scale = (double)maxSize / icon.PixelWidth;
+    var result = new TransformedBitmap(
+      icon,
+      new ScaleTransform(scale, scale));
+    return result;
   }
 
 }
