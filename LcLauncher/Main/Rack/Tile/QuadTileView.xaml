@@ -10,7 +10,41 @@
     mc:Ignorable="d" 
     d:DataContext="{d:DesignInstance local:QuadTileViewModel, IsDesignTimeCreatable=False}"
     d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
+    <UserControl.ContextMenu>
+        <ContextMenu>
+            <MenuItem
+                Header="Cut Tile"
+                IsEnabled="False"/>
+            <MenuItem
+                Header="Insert cut Tile Here"
+                IsEnabled="False"/>
+            <MenuItem
+                Header="Paste cut Tile"
+                IsEnabled="False"/>
+            <Separator/>
+            <MenuItem
+                Header="Expand to normal tiles"
+                IsEnabled="False"/>
+            <MenuItem
+                Header="Merge with next tile"
+                IsEnabled="False"/>
+            <Separator/>
+            <MenuItem
+                Header="Add Tile Row"
+                Command="{Binding Host.TileList.AddEmptyRowCommand}"/>
+            <MenuItem
+                Header="Remove Empty Tile Row"
+                Command="{Binding Host.TileList.RemoveLastEmptyRowCommand}"/>
+            <Separator/>
+            <MenuItem Header="Danger Zone">
+                <MenuItem
+                    Header="Delete (and replace with empty tile)"
+                    IsEnabled="False"/>
+            </MenuItem>
+        </ContextMenu>
+    </UserControl.ContextMenu>
+    <Grid Background="#00000000">
+        <!-- The background ensures that right clicks are caught here, not deeper -->
         <iconPacks:PackIconMaterial
             Kind="ViewGrid"
             Foreground="{DynamicResource MahApps.Brushes.AccentBase}"

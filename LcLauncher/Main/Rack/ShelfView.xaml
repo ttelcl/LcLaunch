@@ -28,11 +28,8 @@
                                   Command="{Binding ToggleCutCommand}"
                                   IsChecked="{Binding IsKeyShelf}"/>
                         <Separator/>
-                        <MenuItem Header="Add Tile Row"
-                                  Command="{Binding PrimaryTiles.AddEmptyRowCommand}"/>
-                        <MenuItem Header="Remove Empty Tile Row"
-                                  Command="{Binding PrimaryTiles.RemoveLastEmptyRowCommand}"/>
-                        <Separator/>
+                        <MenuItem Header="Edit Title..."
+                                  IsEnabled="False"/>
                         <MenuItem Header="Color Theme">
                             <MenuItem Header="Olive" Command="{Binding SetThemeCommand}"
                                       CommandParameter="Olive"
@@ -173,10 +170,25 @@
                                                   Converter={StaticResource ValueIs},
                                                   ConverterParameter=Teal}"/>
                         </MenuItem>
+                        <MenuItem Header="Insert: Move Shelf Here"
+                                  IsEnabled="False"/>
+                        <MenuItem Header="Create New Shelf Here"
+                                  IsEnabled="False"/>
+                        <Separator/>
+                        <MenuItem Header="Add Tile Row"
+                                  Command="{Binding PrimaryTiles.AddEmptyRowCommand}"/>
+                        <MenuItem Header="Remove Empty Tile Row"
+                                  Command="{Binding PrimaryTiles.RemoveLastEmptyRowCommand}"/>
+                        <Separator/>
                         <MenuItem Header="Update Missing Icons"
                                   Command="{Binding EnqueueIconJobs}"/>
                         <MenuItem Header="Reload All Icons"
                                   Command="{Binding RefreshIconJobs}"/>
+                        <Separator/>
+                        <MenuItem Header="Danger Zone">
+                            <MenuItem Header="Delete Shelf!"
+                                  IsEnabled="False"/>
+                        </MenuItem>
                     </ContextMenu>
                 </DockPanel.ContextMenu>
                 <DockPanel.InputBindings>

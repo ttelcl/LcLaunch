@@ -11,6 +11,14 @@
     d:DataContext="{d:DesignInstance local:ColumnViewModel, IsDesignTimeCreatable=False}"
     d:DesignHeight="450" d:DesignWidth="800"
     Background="{DynamicResource MahApps.Brushes.Control.Background}">
+    <UserControl.ContextMenu>
+        <ContextMenu>
+            <MenuItem Header="Insert: Move Shelf Here"
+                      IsEnabled="False"/>
+            <MenuItem Header="Create New Shelf Here"
+                      IsEnabled="False"/>
+        </ContextMenu>
+    </UserControl.ContextMenu>
     <ItemsControl
         ItemsSource="{Binding Shelves}">
         <ItemsControl.ItemsPanel>
