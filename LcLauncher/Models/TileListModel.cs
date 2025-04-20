@@ -26,7 +26,6 @@ namespace LcLauncher.Models;
 /// </summary>
 public class TileListModel
 {
-  private List<ITileListOwner> _claimers;
 
   /// <summary>
   /// Create a new TileList. Use <see cref="Load"/> or
@@ -35,13 +34,14 @@ public class TileListModel
   private TileListModel(
     Guid id,
     IEnumerable<TileData?> tiles,
-    ILcLaunchStore store)
+    RackModel rack)
   {
-    _claimers = new List<ITileListOwner>();
     Id = id;
     RawTiles = tiles.ToList();
-    Store = store;
-    IconCache = store.GetIconCache(id);
+    Store = rack.Store;
+    IconCache = Store.GetIconCache(id);
+    Rack = rack;
+    ClaimTracker = Rack.GetClaimTracker(id);
   }
 
   /// <summary>
@@ -53,10 +53,10 @@ public class TileListModel
   /// </param>
   /// <returns></returns>
   public static TileListModel Create(
-    ILcLaunchStore store,
+    RackModel rack,
     Guid? id = null)
   {
-    return new TileListModel(id ?? Guid.NewGuid(), [], store);
+    return new TileListModel(id ?? Guid.NewGuid(), [], rack);
   }
 
   /// <summary>
@@ -73,11 +73,11 @@ public class TileListModel
   /// did not exist.
   /// </returns>
   public static TileListModel? Load(
-    ILcLaunchStore store,
+    RackModel rack,
     Guid id)
   {
-    var list = store.LoadTiles(id);
-    return list == null ? null : new TileListModel(id, list, store);
+    var list = rack.Store.LoadTiles(id);
+    return list == null ? null : new TileListModel(id, list, rack);
   }
 
   /// <summary>
@@ -111,11 +111,19 @@ public class TileListModel
   public List<TileData?> RawTiles { get; }
 
   /// <summary>
+  /// The rack this list belongs to. This provides the context
+  /// in which this list should be unique.
+  /// </summary>
+  public RackModel Rack { get; }
+
+  /// <summary>
   /// The store in which this list is saved and its icons are cached.
   /// </summary>
   public ILcLaunchStore Store { get; }
 
   public ILauncherIconCache IconCache { get; }
+
+  public TileListOwnerTracker ClaimTracker { get; }
 
   /// <summary>
   /// Try to claim ownership, registering the intent to claim
@@ -124,16 +132,7 @@ public class TileListModel
   /// </summary>
   public bool ClaimOwnerShip(ITileListOwner claimer)
   {
-    if(claimer.TargetTilelist != this)
-    {
-      throw new InvalidOperationException(
-        $"ITileListOwner.TargetTileList does not match");
-    }
-    if(!_claimers.Contains(claimer))
-    {
-      _claimers.Add(claimer);
-    }
-    return _claimers[0] == claimer;
+    return ClaimTracker.ClaimOwnerShip(claimer);
   }
 
   /// <summary>
@@ -142,15 +141,10 @@ public class TileListModel
   /// </summary>
   public bool ReleaseOwnerShip(ITileListOwner claimer)
   {
-    if(claimer.TargetTilelist != this)
-    {
-      throw new InvalidOperationException(
-        $"ITileListOwner.TargetTileList does not match");
-    }
-    return _claimers.Remove(claimer);
+    return ClaimTracker.ReleaseOwnerShip(claimer);
   }
 
   public ITileListOwner? Owner {
-    get => _claimers.Count == 0 ? null : _claimers[0];
+    get => ClaimTracker.Owner;
   }
 }

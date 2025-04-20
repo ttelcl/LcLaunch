@@ -23,6 +23,7 @@ namespace LcLauncher.Models;
 public class RackModel
 {
   private Dictionary<Guid, ShelfModel> _shelves;
+  private readonly Dictionary<Guid, WeakReference<TileListOwnerTracker>> _claimTrackerCache;
 
   /// <summary>
   /// Create a new RackModel. If the name is unknown, it will be created.
@@ -31,6 +32,7 @@ public class RackModel
     ILcLaunchStore store,
     string rackName)
   {
+    _claimTrackerCache = [];
     LcLaunchStore.ValidateRackName(rackName);
     Store = store;
     RackName = rackName;
@@ -88,4 +90,17 @@ public class RackModel
     IsDirty = true;
   }
 
+  public TileListOwnerTracker GetClaimTracker(Guid id)
+  {
+    if(_claimTrackerCache.TryGetValue(id, out var weakRef))
+    {
+      if(weakRef.TryGetTarget(out var tracker))
+      {
+        return tracker;
+      }
+    }
+    var newTracker = new TileListOwnerTracker(id);
+    _claimTrackerCache[id] = new WeakReference<TileListOwnerTracker>(newTracker);
+    return newTracker;
+  }
 }

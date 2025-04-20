@@ -30,13 +30,13 @@ public class GroupTileViewModel: TileViewModel, IPostIconLoadActor, ITileListOwn
     ToggleGroupCommand = new DelegateCommand(
       p => IsActive = !IsActive);
     GroupIcons = new ObservableCollection<GroupIconViewModel>();
-    var childModel = TileListModel.Load(ownerList.Shelf.Store, model.TileList);
+    var childModel = TileListModel.Load(ownerList.Shelf.Rack.Model, model.TileList);
     if(childModel == null)
     {
       Trace.TraceWarning(
         $"Creating missing tile list {model.TileList}");
       childModel = TileListModel.Create(
-        ownerList.Shelf.Store,
+        ownerList.Shelf.Rack.Model,
         model.TileList);
     }
     ChildTiles = new TileListViewModel(

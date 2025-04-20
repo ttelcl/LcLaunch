@@ -25,10 +25,10 @@ public class ShelfModel
     Owner = owner;
     Id = id;
     Shelf = shelf;
-    var tilesModel = TileListModel.Load(Store, id);
+    var tilesModel = TileListModel.Load(Owner, id);
     if(tilesModel == null)
     {
-      tilesModel = TileListModel.Create(Store, id);
+      tilesModel = TileListModel.Create(Owner, id);
       tilesModel.SaveRawModel();
     }
     PrimaryTiles = tilesModel;

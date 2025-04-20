@@ -19,6 +19,10 @@ namespace LcLauncher.Models;
 /// </summary>
 public interface ITileListOwner
 {
+  /// <summary>
+  /// The target tile list. Or more precisely: any TileListModel
+  /// pointing to the underlying tile list in the rack.
+  /// </summary>
   TileListModel TargetTilelist { get; }
 
   string TileListOwnerLabel { get; }
