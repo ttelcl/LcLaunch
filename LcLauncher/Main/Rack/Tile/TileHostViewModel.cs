@@ -94,4 +94,14 @@ public class TileHostViewModel: ViewModelBase
     }
   }
   private bool _isKeyTile = false;
+
+  public int GetTileIndex()
+  {
+    return TileList.Tiles.IndexOf(this);
+  }
+
+  public override string ToString()
+  {
+    return $"{TileList.Model.Id}[{GetTileIndex()}]";
+  }
 }

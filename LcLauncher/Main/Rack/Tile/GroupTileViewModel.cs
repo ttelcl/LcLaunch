@@ -35,6 +35,14 @@ public class GroupTileViewModel: TileViewModel, IPostIconLoadActor, ITileListOwn
     FixGraphCommand = new DelegateCommand(
       p => { ConditionalReplaceWithClone(); },
       p => IsConflicted);
+    ToggleCutCommand = new DelegateCommand(
+      p => {
+        if(Host != null)
+        {
+          Host.IsKeyTile = Host.Rack.KeyTile != Host && !IsActive;
+        }
+      },
+      p => Host!=null && !IsActive);
     GroupIcons = new ObservableCollection<GroupIconViewModel>();
     var childModel = TileListModel.Load(ownerList.Shelf.Rack.Model, model.TileList);
     if(childModel == null)
@@ -60,6 +68,8 @@ public class GroupTileViewModel: TileViewModel, IPostIconLoadActor, ITileListOwn
     }
     ResetGroupIcons();
   }
+
+  public ICommand ToggleCutCommand { get; }
 
   public ICommand ToggleGroupCommand { get; }
 
@@ -115,6 +125,7 @@ public class GroupTileViewModel: TileViewModel, IPostIconLoadActor, ITileListOwn
   }
 
   public bool IsActive {
+    // Note: IsActive and Host.IsKeyTile cannot both be true
     get => _isActive;
     set {
       var wasActive = OwnerList.Shelf.ActiveSecondaryTile == this;
@@ -129,6 +140,22 @@ public class GroupTileViewModel: TileViewModel, IPostIconLoadActor, ITileListOwn
         {
           // deactivate this group
           OwnerList.Shelf.ActiveSecondaryTile = null;
+        }
+        if(IsActive)
+        {
+          if(Host != null)
+          {
+            Host.IsKeyTile = false;
+          }
+        }
+        else
+        {
+          if(Host != null && ChildTiles.ContainsKeyTile())
+          {
+            // Make sure the key tile does not go invisible
+            // 'Uncut' it instead.
+            Host.Rack.KeyTile = null;
+          }
         }
       }
     }

@@ -52,6 +52,8 @@ public class TileListViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
 
   public ShelfViewModel Shelf { get; }
 
+  public RackViewModel Rack => Shelf.Rack;
+
   public TileListModel Model { get; }
 
   public ILauncherIconCache IconCache => Model.IconCache;
@@ -67,7 +69,7 @@ public class TileListViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
     SaveIfDirty(); // make sure the model is up to date
     var cloneModel = Model.CreateClone();
     var clone = new TileListViewModel(
-      Shelf.Rack.IconLoadQueue,
+      Rack.IconLoadQueue,
       Shelf,
       cloneModel);
     return clone;
@@ -133,7 +135,7 @@ public class TileListViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
     }
   }
 
-  public IconLoadQueue IconLoadQueue { get => Shelf.Rack.IconLoadQueue; }
+  public IconLoadQueue IconLoadQueue { get => Rack.IconLoadQueue; }
 
   /// <summary>
   /// True if there is at least one tile and the last tile
@@ -263,5 +265,11 @@ public class TileListViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
       RebuildModel();
     }
     return dirty;
+  }
+
+  public bool ContainsKeyTile()
+  {
+    var keyTile = Rack.KeyTile;
+    return keyTile!=null && Tiles.Contains(keyTile);
   }
 }

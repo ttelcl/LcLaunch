@@ -61,7 +61,7 @@
         <Border
             Visibility="{Binding IsKeyTile, Converter={StaticResource VisibleIf}}"
             Background="#88CCCCCC"
-            BorderThickness="5"
+            BorderThickness="3"
             Margin="2,0"
             BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
             IsHitTestVisible="False"/>

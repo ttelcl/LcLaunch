@@ -17,9 +17,6 @@
                 Command="{Binding Host.ToggleCutCommand}"
                 IsChecked="{Binding Host.IsKeyTile}"/>
             <MenuItem
-                Header="Insert cut Tile Here"
-                IsEnabled="False"/>
-            <MenuItem
                 Header="Paste cut Tile Here"
                 IsEnabled="False"/>
             <Separator/>
