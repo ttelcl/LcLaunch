@@ -24,9 +24,13 @@ public class TileHostViewModel: ViewModelBase
       p => {
         IsKeyTile = Rack.KeyTile != this;
       });
+    InsertEmptyTileCommand = new DelegateCommand(
+      p => TileList.InsertEmptyTile(this));
   }
 
   public ICommand ToggleCutCommand { get; }
+
+  public ICommand InsertEmptyTileCommand { get; }
 
   public TileListViewModel TileList { get; }
 

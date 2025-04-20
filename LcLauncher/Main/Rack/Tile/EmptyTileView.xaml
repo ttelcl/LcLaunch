@@ -17,8 +17,8 @@
                 Command="{Binding Host.ToggleCutCommand}"
                 IsChecked="{Binding Host.IsKeyTile}"/>
             <MenuItem
-                Header="Paste cut Tile Here"
-                IsEnabled="False"/>
+                Header="Insert Another Empty Slot Here"
+                Command="{Binding Host.InsertEmptyTileCommand}"/>
             <Separator/>
             <MenuItem
                 Header="Add Tile Row"

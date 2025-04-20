@@ -208,8 +208,7 @@ public class TileListViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
       for(var i = 0; i < 4; i++)
       {
         var host = new TileHostViewModel(this);
-        host.Tile = new EmptyTileViewModel(
-          this, TileData.EmptyTile());
+        host.Tile = new EmptyTileViewModel(this, TileData.EmptyTile());
         Tiles.Add(host);
       }
       MarkDirty();
@@ -257,7 +256,7 @@ public class TileListViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
     {
       dirty = true;
       var host = new TileHostViewModel(this);
-      host.Tile = new EmptyTileViewModel(this, null);
+      host.Tile = new EmptyTileViewModel(this, TileData.EmptyTile());
       Tiles.Add(host);
     }
     if(dirty)
@@ -272,4 +271,46 @@ public class TileListViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
     var keyTile = Rack.KeyTile;
     return keyTile!=null && Tiles.Contains(keyTile);
   }
+
+  public void InsertEmptyTile(int position)
+  {
+    if(position < 0)
+    {
+      throw new ArgumentOutOfRangeException(nameof(position));
+    }
+    if(position >= Tiles.Count)
+    {
+      // Interpret this request 'creatively': add an entire row and be done
+      AddEmptyRow();
+      return;
+    }
+    if(LastTileIsEmpty())
+    {
+      // Remove the last empty tile to make space
+      Tiles.RemoveAt(Tiles.Count - 1);
+    }
+    else
+    {
+      AddEmptyRow();
+      // Remove the last empty tile to make space
+      Tiles.RemoveAt(Tiles.Count - 1);
+    }
+    var host = new TileHostViewModel(this);
+    host.Tile = new EmptyTileViewModel(this, TileData.EmptyTile());
+    Tiles.Insert(position, host);
+    MarkDirty();
+    SaveIfDirty();
+  }
+
+  public void InsertEmptyTile(TileHostViewModel host)
+  {
+    if(host.TileList != this)
+    {
+      throw new ArgumentException(
+        "Host does not belong to this tile list");
+    }
+    var index = Tiles.IndexOf(host);
+    InsertEmptyTile(index);
+  }
+
 }
