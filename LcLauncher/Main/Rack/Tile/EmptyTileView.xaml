@@ -15,41 +15,76 @@
             <MenuItem
                 Header="Cut Tile"
                 Command="{Binding Host.ToggleCutCommand}"
-                IsChecked="{Binding Host.IsKeyTile}"/>
+                IsChecked="{Binding Host.IsKeyTile}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="ContentCut" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
             <MenuItem
-                Header="Insert Another Empty Slot Here"
-                Command="{Binding Host.InsertEmptyTileCommand}"/>
+                Header="Paste Tile Here (Swap)"
+                IsEnabled="False">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="ContentPaste" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem
+                Header="Insert Another Empty Tile Here"
+                Command="{Binding Host.InsertEmptyTileCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="Egg" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem
+                Header="Delete this Empty Tile"
+                IsEnabled="False">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="EggOff" Width="20" Height="20"
+                                                Foreground="#FFFF4444"/>
+                </MenuItem.Icon>
+            </MenuItem>
             <Separator/>
             <MenuItem
                 Header="Add Tile Row"
-                Command="{Binding Host.TileList.AddEmptyRowCommand}"/>
+                Command="{Binding Host.TileList.AddEmptyRowCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="TableRowPlusAfter" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
             <MenuItem
                 Header="Remove Empty Tile Row"
-                Command="{Binding Host.TileList.RemoveLastEmptyRowCommand}"/>
+                Command="{Binding Host.TileList.RemoveLastEmptyRowCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="TableRowRemove" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
             <Separator/>
-            <!--<MenuItem Header="Danger Zone">
-                <MenuItem
-                    Header="Delete (and replace with empty tile)"
-                    IsEnabled="False"/>
-            </MenuItem>-->
-            <MenuItem
-                Header="Delete Empty Tile"
-                IsEnabled="False"/>
             <MenuItem
                 Header="Bind to Application..."
                 ToolTip="(from application list)"
                 ToolTipService.ShowOnDisabled="True"
-                IsEnabled="False"/>
+                IsEnabled="False">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="ApplicationOutline" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
             <MenuItem
                 Header="Bind to Executable..."
                 ToolTip="(from file system, allows for arguments and environment tweaks)"
                 ToolTipService.ShowOnDisabled="True"
-                IsEnabled="False"/>
+                IsEnabled="False">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="ApplicationCogOutline" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
             <MenuItem
                 Header="Bind to Document or Shortcut..."
                 ToolTip="(from file system, allows any file type)"
                 ToolTipService.ShowOnDisabled="True"
-                IsEnabled="False"/>
+                IsEnabled="False">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="FileDocumentPlus" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
         </ContextMenu>
     </UserControl.ContextMenu>
     <Grid Background="#00000000">

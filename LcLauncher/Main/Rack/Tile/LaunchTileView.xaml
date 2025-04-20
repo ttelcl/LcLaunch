@@ -15,29 +15,62 @@
             <MenuItem
                 Header="Cut Tile"
                 Command="{Binding Host.ToggleCutCommand}"
-                IsChecked="{Binding Host.IsKeyTile}"/>
+                IsChecked="{Binding Host.IsKeyTile}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="ContentCut" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
             <MenuItem
-                Header="Insert Empty Slot Here"
-                Command="{Binding Host.InsertEmptyTileCommand}"/>
+                Header="Insert Empty Tile Here"
+                Command="{Binding Host.InsertEmptyTileCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="Egg" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
             <Separator/>
             <MenuItem
                 Header="Edit ..."
-                IsEnabled="False"/>
+                IsEnabled="False">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="ApplicationEditOutline" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
             <MenuItem
                 Header="Shrink ..."
-                IsEnabled="False"/>
+                IsEnabled="False">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="ViewGridPlusOutline" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
             <Separator/>
             <MenuItem
                 Header="Add Tile Row"
-                Command="{Binding Host.TileList.AddEmptyRowCommand}"/>
+                Command="{Binding Host.TileList.AddEmptyRowCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="TableRowPlusAfter" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
             <MenuItem
                 Header="Remove Empty Tile Row"
-                Command="{Binding Host.TileList.RemoveLastEmptyRowCommand}"/>
+                Command="{Binding Host.TileList.RemoveLastEmptyRowCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="TableRowRemove" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
             <Separator/>
             <MenuItem Header="Danger Zone">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="AlertOutline" Width="20" Height="20"
+                                                Foreground="#FFFF4444"/>
+                </MenuItem.Icon>
                 <MenuItem
                     Header="Delete (and replace with empty tile)"
-                    IsEnabled="False"/>
+                    IsEnabled="False">
+                    <MenuItem.Icon>
+                        <iconPacks:PackIconMaterial Kind="DeleteAlert" Width="20" Height="20"
+                                                    Foreground="#FFFF4444"/>
+                    </MenuItem.Icon>
+                </MenuItem>
             </MenuItem>
         </ContextMenu>
     </UserControl.ContextMenu>
