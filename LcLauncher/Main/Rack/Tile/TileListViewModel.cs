@@ -62,6 +62,17 @@ public class TileListViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
 
   public IconListQueue IconJobQueue { get; }
 
+  public TileListViewModel CreateClone()
+  {
+    SaveIfDirty(); // make sure the model is up to date
+    var cloneModel = Model.CreateClone();
+    var clone = new TileListViewModel(
+      Shelf.Rack.IconLoadQueue,
+      Shelf,
+      cloneModel);
+    return clone;
+  }
+
   /// <summary>
   /// Rebuild the persisted model from the viewmodels
   /// </summary>

@@ -56,7 +56,15 @@ public class TileListModel
     RackModel rack,
     Guid? id = null)
   {
-    return new TileListModel(id ?? Guid.NewGuid(), [], rack);
+    return new TileListModel(
+      id ?? Guid.NewGuid(),
+      [
+        TileData.EmptyTile(),
+        TileData.EmptyTile(),
+        TileData.EmptyTile(),
+        TileData.EmptyTile(),
+      ],
+      rack);
   }
 
   /// <summary>
@@ -78,6 +86,21 @@ public class TileListModel
   {
     var list = rack.Store.LoadTiles(id);
     return list == null ? null : new TileListModel(id, list, rack);
+  }
+
+  public TileListModel CreateClone()
+  {
+    SaveRawModel();
+    var newId = Guid.NewGuid();
+    var tiles = new List<TileData?>(RawTiles); // clone to independent list
+    var clone = new TileListModel(
+      newId,
+      tiles,
+      Rack);
+    Trace.TraceInformation(
+      $"Creating clone of tile list {Id} as {newId}");
+    clone.SaveRawModel();
+    return clone;
   }
 
   /// <summary>

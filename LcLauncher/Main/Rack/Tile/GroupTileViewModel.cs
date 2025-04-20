@@ -31,7 +31,10 @@ public class GroupTileViewModel: TileViewModel, IPostIconLoadActor, ITileListOwn
       $"Group {PostIconLoadId} targeting {model.TileList} from list {ownerList.Model.Id}";
     Model = model;
     ToggleGroupCommand = new DelegateCommand(
-      p => IsActive = !IsActive);
+      p => IsActive = !IsConflicted && !IsActive);
+    FixGraphCommand = new DelegateCommand(
+      p => { ConditionalReplaceWithClone(); },
+      p => IsConflicted);
     GroupIcons = new ObservableCollection<GroupIconViewModel>();
     var childModel = TileListModel.Load(ownerList.Shelf.Rack.Model, model.TileList);
     if(childModel == null)
@@ -41,11 +44,13 @@ public class GroupTileViewModel: TileViewModel, IPostIconLoadActor, ITileListOwn
       childModel = TileListModel.Create(
         ownerList.Shelf.Rack.Model,
         model.TileList);
+      childModel.MarkDirty();
     }
     ChildTiles = new TileListViewModel(
       ownerList.Shelf.Rack.IconLoadQueue,
       ownerList.Shelf,
       childModel);
+    ChildTiles.SaveIfDirty();
     if(!this.ClaimTileList())
     {
       Trace.TraceWarning(
@@ -57,6 +62,8 @@ public class GroupTileViewModel: TileViewModel, IPostIconLoadActor, ITileListOwn
   }
 
   public ICommand ToggleGroupCommand { get; }
+
+  public ICommand FixGraphCommand { get; }
 
   public Guid PostIconLoadId { get; }
 
@@ -156,6 +163,31 @@ public class GroupTileViewModel: TileViewModel, IPostIconLoadActor, ITileListOwn
     Trace.TraceInformation(
       $"PostIconLoad for group tile '{Title}'");
     ResetGroupIcons();
+  }
+
+  private Guid ReplaceWithClone()
+  {
+    var targetClone = ChildTiles.CreateClone();
+    var modelClone = new TileGroup(
+      targetClone.Model.Id,
+      Model.Title,
+      Model.Tooltip);
+    var clone = new GroupTileViewModel(
+      OwnerList,
+      modelClone);
+    Host!.Tile = clone;
+    OwnerList.MarkDirty();
+    OwnerList.SaveIfDirty();
+    return targetClone.Model.Id;
+  }
+
+  private Guid ConditionalReplaceWithClone()
+  {
+    if(IsConflicted)
+    {
+      return ReplaceWithClone();
+    }
+    return Model.TileList;
   }
 
   public string TileListOwnerLabel { get; }

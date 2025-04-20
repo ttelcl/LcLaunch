@@ -10,6 +10,18 @@
     mc:Ignorable="d" 
     d:DataContext="{d:DesignInstance local:GroupTileViewModel, IsDesignTimeCreatable=False}"
     d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.ContextMenu>
+        <ContextMenu>
+            <MenuItem
+                Header="Group Tile Menu - TBD"
+                IsEnabled="False"/>
+            <MenuItem Header="Target tile list Info">
+                <MenuItem
+                Header="{Binding Model.TileList}"
+                IsEnabled="False"/>
+            </MenuItem>
+        </ContextMenu>
+    </UserControl.ContextMenu>
     <Grid
         Background="{DynamicResource MahApps.Brushes.Accent4}"
         ToolTip="{Binding EffectiveTooltip}">
@@ -36,14 +48,26 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <iconPacks:PackIconMaterial
+        <Border
             Visibility="{Binding IsConflicted, Converter={StaticResource VisibleIf}}"
-            Kind="Close"
-            Foreground="#FF6666"
-            Height="96" Width="96"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"/>
+            Background="#88444444">
+            <Border.ContextMenu>
+                <ContextMenu>
+                    <MenuItem
+                        Header="Fix duplicate reference: Clone to new tile list"
+                        Command="{Binding FixGraphCommand}"/>
+                </ContextMenu>
+            </Border.ContextMenu>
+            <iconPacks:PackIconMaterial
+                ToolTip="Disabled because this is a duplicate. Right-click to fix."
+                Kind="Close"
+                Foreground="#FF6666"
+                Height="80" Width="80"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"/>
+        </Border>
         <TextBlock
+            IsHitTestVisible="False"
             VerticalAlignment="Bottom"
             HorizontalAlignment="Center"
             FontSize="11"
