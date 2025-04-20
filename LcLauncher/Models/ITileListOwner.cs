@@ -19,13 +19,20 @@ namespace LcLauncher.Models;
 /// </summary>
 public interface ITileListOwner
 {
-  /// <summary>
-  /// The target tile list. Or more precisely: any TileListModel
-  /// pointing to the underlying tile list in the rack.
-  /// </summary>
-  TileListModel TargetTilelist { get; }
+  TileListOwnerTracker ClaimTracker { get; }
 
+  /// <summary>
+  /// A label for UI purposes. This is used to identify the owner
+  /// in error messages and logging.
+  /// </summary>
   string TileListOwnerLabel { get; }
+
+  /// <summary>
+  /// If true, the ownership claim should take priority over
+  /// ones without this flag. This is used to prioritize
+  /// shelves over groups.
+  /// </summary>
+  public bool ClaimPriority { get; }
 }
 
 public static class TileListOwnerExtensions
@@ -33,17 +40,17 @@ public static class TileListOwnerExtensions
   public static bool OwnsTileList(
     this ITileListOwner owner)
   {
-    return owner.TargetTilelist.Owner == owner;
+    return owner.ClaimTracker.Owner == owner;
   }
 
   public static bool ClaimTileList(this ITileListOwner owner)
   {
-    return owner.TargetTilelist.ClaimOwnerShip(owner);
+    return owner.ClaimTracker.ClaimOwnerShip(owner);
   }
 
   public static bool ReleaseTileList(this ITileListOwner owner)
   {
-    return owner.TargetTilelist.ReleaseOwnerShip(owner);
+    return owner.ClaimTracker.ReleaseOwnerShip(owner);
   }
 }
 

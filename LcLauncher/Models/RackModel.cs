@@ -23,7 +23,8 @@ namespace LcLauncher.Models;
 public class RackModel
 {
   private Dictionary<Guid, ShelfModel> _shelves;
-  private readonly Dictionary<Guid, WeakReference<TileListOwnerTracker>> _claimTrackerCache;
+  private readonly Dictionary<Guid, WeakReference<TileListOwnerTracker>>
+    _claimTrackerCache;
 
   /// <summary>
   /// Create a new RackModel. If the name is unknown, it will be created.
@@ -99,8 +100,76 @@ public class RackModel
         return tracker;
       }
     }
-    var newTracker = new TileListOwnerTracker(id);
+    var newTracker = TileListOwnerTracker.FromRack(this, id);
     _claimTrackerCache[id] = new WeakReference<TileListOwnerTracker>(newTracker);
     return newTracker;
+  }
+
+  public bool HasClaimTracker(Guid id)
+  {
+    return _claimTrackerCache.ContainsKey(id);
+  }
+
+  public IEnumerable<ITileListOwner> EnumClaims()
+  {
+    foreach(var tracker in EnumClaimTrackers())
+    {
+      foreach(var claim in tracker.EnumClaimers())
+      {
+        yield return claim;
+      }
+    }
+  }
+
+  /// <summary>
+  /// Enumerate all claim trackers that have an owner.
+  /// </summary>
+  public IEnumerable<TileListOwnerTracker> EnumClaimTrackers()
+  {
+    foreach(var weakRef in _claimTrackerCache.Values)
+    {
+      if(weakRef.TryGetTarget(out var tracker))
+      {
+        if(tracker.HasOwner)
+        {
+          yield return tracker;
+        }
+      }
+    }
+  }
+
+  public void TraceClaimStatus()
+  {
+    foreach(var tracker in EnumClaimTrackers())
+    {
+      if(tracker.HasConflict)
+      {
+        Trace.TraceError(
+          $"List {tracker.TileListId} has ownership conflicts:");
+        foreach(var claim in tracker.EnumClaimers())
+        {
+          if(claim.OwnsTileList())
+          {
+            Trace.TraceInformation(
+              $"  Owner:    {claim.TileListOwnerLabel}");
+          }
+          else
+          {
+            Trace.TraceWarning(
+              $"  Conflict: {claim.TileListOwnerLabel}");
+          }
+        }
+      }
+      else if(tracker.HasOwner)
+      {
+        Trace.TraceInformation(
+          $"List {tracker.TileListId}: no conflict. Owned by {tracker.Owner!.TileListOwnerLabel}");
+      }
+      else
+      {
+        Trace.TraceWarning(
+          $"Claim {tracker.TileListId} (no owner claims)");
+      }
+    }
   }
 }

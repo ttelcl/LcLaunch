@@ -29,6 +29,7 @@ public class ShelfViewModel:
     ColumnViewModel column,
     ShelfModel model)
   {
+    ClaimTracker = column.Rack.Model.GetClaimTracker(model.Id);
     Column = column;
     Store = column.Rack.Store;
     Model = model;
@@ -68,8 +69,7 @@ public class ShelfViewModel:
   public ShelfModel Model {
     get => _model;
     private set {
-      TileListModel? oldTarget = TargetTilelist;
-      if(oldTarget != null)
+      if(_model != null)
       {
         // This property is 'initialize once'
         // Multi-init would violate TargetListModel invariant and probably
@@ -77,14 +77,14 @@ public class ShelfViewModel:
         throw new InvalidOperationException(
           "ShelfViewModel.Model: Can only be set once.");
       }
-      if(SetInstanceProperty(ref _model, value))
+      if(SetInstanceProperty(ref _model!, value))
       {
         if(!this.ClaimTileList())
         {
           Trace.TraceWarning(
             $"ShelfViewModel.Model: Failed to claim tile list for "+
             $"'{TileListOwnerLabel}', already claimed by "+
-            $"'{TargetTilelist.Owner?.TileListOwnerLabel ?? String.Empty}'");
+            $"'{ClaimTracker.Owner?.TileListOwnerLabel ?? String.Empty}'");
         }
         Title = value.Shelf.Title;
         Theme = value.Shelf.Theme ?? "Olive";
@@ -279,6 +279,7 @@ public class ShelfViewModel:
     }
   }
 
-  public TileListModel TargetTilelist { get => Model?.PrimaryTiles!; }
   public string TileListOwnerLabel { get => $"Shelf {ShelfId}"; }
+  public TileListOwnerTracker ClaimTracker { get; }
+  public bool ClaimPriority { get => true; }
 }

@@ -28,6 +28,7 @@ public class RackViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
     ColumnLeft = new ColumnViewModel(this, Model.Columns[0]);
     ColumnMiddle = new ColumnViewModel(this, Model.Columns[1]);
     ColumnRight = new ColumnViewModel(this, Model.Columns[2]);
+    Model.TraceClaimStatus();
   }
 
   public MainViewModel Owner { get; }

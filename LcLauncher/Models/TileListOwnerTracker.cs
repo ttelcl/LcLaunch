@@ -19,14 +19,33 @@ public class TileListOwnerTracker
 {
   private readonly List<ITileListOwner> _claimers;
 
-  public TileListOwnerTracker(
+  private TileListOwnerTracker(
+    RackModel host,
     Guid tileListId)
   {
-    _claimers = new List<ITileListOwner>();
+    _claimers = [];
+    Host = host;
     TileListId = tileListId;
+    Trace.TraceInformation(
+      $"TileListOwnerTracker: Created tracker {TrackerId} for list {TileListId}");
   }
 
+  public static TileListOwnerTracker FromRack(
+    RackModel host, Guid tileListId)
+  {
+    if(host.HasClaimTracker(tileListId))
+    {
+      throw new InvalidOperationException(
+        $"TileListOwnerTracker: Claim tracker for {tileListId} already exists");
+    }
+    return new TileListOwnerTracker(host, tileListId);
+  }
+
+  public RackModel Host { get; }
+
   public Guid TileListId { get; }
+
+  public Guid TrackerId { get; } = Guid.NewGuid();
 
   /// <summary>
   /// Try to claim ownership, registering the intent to claim
@@ -35,14 +54,26 @@ public class TileListOwnerTracker
   /// </summary>
   public bool ClaimOwnerShip(ITileListOwner claimer)
   {
-    if(claimer.TargetTilelist.ClaimTracker != this)
+    if(claimer.ClaimTracker != this)
     {
       throw new InvalidOperationException(
-        $"ITileListOwner.TargetTileList does not match");
+        $"ITileListOwner.ClaimedTileListId does not match");
     }
     if(!_claimers.Contains(claimer))
     {
-      _claimers.Add(claimer);
+      if(claimer.ClaimPriority && Owner!=null && !Owner.ClaimPriority)
+      {
+        // override the current owner
+        Trace.TraceWarning(
+          $"TileListOwnerTracker: {claimer.TileListOwnerLabel} "+
+          $"overrides {Owner?.TileListOwnerLabel ?? String.Empty} for "+
+          $"list {TileListId}");
+        _claimers.Insert(0, claimer);
+      }
+      else
+      {
+        _claimers.Add(claimer);
+      }
     }
     return _claimers[0] == claimer;
   }
@@ -53,16 +84,28 @@ public class TileListOwnerTracker
   /// </summary>
   public bool ReleaseOwnerShip(ITileListOwner claimer)
   {
-    if(claimer.TargetTilelist.ClaimTracker != this)
+    if(claimer.ClaimTracker != this)
     {
       throw new InvalidOperationException(
-        $"ITileListOwner.TargetTileList does not match");
+        $"ITileListOwner.ClaimedTileListId does not match");
     }
     return _claimers.Remove(claimer);
   }
 
+  /// <summary>
+  /// The ITileListOwner that is currently the owner of this
+  /// (or null if none)
+  /// </summary>
   public ITileListOwner? Owner {
     get => _claimers.Count == 0 ? null : _claimers[0];
   }
 
+  public bool HasOwner { get => _claimers.Count > 0; }
+
+  public bool HasConflict { get => _claimers.Count > 1; }
+
+  public IEnumerable<ITileListOwner> EnumClaimers()
+  {
+    return _claimers;
+  }
 }

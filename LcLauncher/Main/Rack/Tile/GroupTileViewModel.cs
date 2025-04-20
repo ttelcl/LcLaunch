@@ -25,7 +25,10 @@ public class GroupTileViewModel: TileViewModel, IPostIconLoadActor, ITileListOwn
     : base(ownerList)
   {
     PostIconLoadId = Guid.NewGuid();
-    TileListOwnerLabel = $"Group {PostIconLoadId} in list {ownerList.Model.Id}";
+    var rack = ownerList.Shelf.Rack.Model;
+    ClaimTracker = rack.GetClaimTracker(model.TileList);
+    TileListOwnerLabel =
+      $"Group {PostIconLoadId} targeting {model.TileList} from list {ownerList.Model.Id}";
     Model = model;
     ToggleGroupCommand = new DelegateCommand(
       p => IsActive = !IsActive);
@@ -48,7 +51,7 @@ public class GroupTileViewModel: TileViewModel, IPostIconLoadActor, ITileListOwn
       Trace.TraceWarning(
         $"GroupTileViewModel: Failed to claim tile list for "+
         $"'{TileListOwnerLabel}', already claimed by "+
-        $"'{TargetTilelist.Owner?.TileListOwnerLabel ?? String.Empty}'");
+        $"'{ClaimTracker.Owner?.TileListOwnerLabel ?? String.Empty}'");
     }
     ResetGroupIcons();
   }
@@ -155,6 +158,8 @@ public class GroupTileViewModel: TileViewModel, IPostIconLoadActor, ITileListOwn
     ResetGroupIcons();
   }
 
-  public TileListModel TargetTilelist { get => ChildTiles.Model; }
   public string TileListOwnerLabel { get; }
+  public TileListOwnerTracker ClaimTracker { get; }
+  public bool ClaimPriority { get => false; }
+  public bool IsConflicted { get => !this.OwnsTileList(); }
 }
