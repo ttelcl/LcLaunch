@@ -14,7 +14,8 @@
         <ContextMenu>
             <MenuItem
                 Header="Cut Tile"
-                IsEnabled="False"/>
+                Command="{Binding Host.ToggleCutCommand}"
+                IsChecked="{Binding Host.IsKeyTile}"/>
             <MenuItem
                 Header="Insert cut Tile Here"
                 IsEnabled="False"/>

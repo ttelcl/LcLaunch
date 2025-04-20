@@ -57,5 +57,13 @@
             Width="100" Height="100"
             Visibility="{Binding Hovering, Converter={StaticResource VisibleIf}}">
         </Border>
+        <!-- Indicate this is the key shelf, but stay responsive -->
+        <Border
+            Visibility="{Binding IsKeyTile, Converter={StaticResource VisibleIf}}"
+            Background="#88CCCCCC"
+            BorderThickness="5"
+            Margin="2,0"
+            BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+            IsHitTestVisible="False"/>
     </Grid>
 </UserControl>

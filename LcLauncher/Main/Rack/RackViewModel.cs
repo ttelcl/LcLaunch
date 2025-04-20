@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using LcLauncher.IconUpdates;
+using LcLauncher.Main.Rack.Tile;
 using LcLauncher.Models;
 using LcLauncher.Persistence;
 using LcLauncher.WpfUtilities;
@@ -104,6 +105,7 @@ public class RackViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
         }
         if(_keyShelf != null)
         {
+          KeyTile = null; // KeyShelf and KeyTile are mutually exclusive
           _keyShelf.IsKeyShelf = true;
           Trace.TraceInformation(
             $"Key shelf changed to '{_keyShelf.ShelfId}'");
@@ -117,6 +119,34 @@ public class RackViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
     }
   }
   private ShelfViewModel? _keyShelf;
+
+  public TileHostViewModel? KeyTile {
+    // Note: interlinked with TileHostViewModel.IsKeyTile
+    get => _keyTile;
+    set {
+      var oldTile = _keyTile;
+      if(SetNullableInstanceProperty(ref _keyTile, value))
+      {
+        if(oldTile != null)
+        {
+          oldTile.IsKeyTile = false;
+        }
+        if(_keyTile != null)
+        {
+          KeyShelf = null; // KeyShelf and KeyTile are mutually exclusive
+          _keyTile.IsKeyTile = true;
+          Trace.TraceInformation(
+            $"Key tile changed to '{_keyTile}'");
+        }
+        else
+        {
+          Trace.TraceInformation(
+            $"Key tile cleared");
+        }
+      }
+    }
+  }
+  private TileHostViewModel? _keyTile;
 
   public void MarkDirty()
   {

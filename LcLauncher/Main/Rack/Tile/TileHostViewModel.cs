@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 using LcLauncher.WpfUtilities;
 
@@ -19,9 +20,19 @@ public class TileHostViewModel: ViewModelBase
     TileListViewModel tileList)
   {
     TileList = tileList;
+    ToggleCutCommand = new DelegateCommand(
+      p => {
+        IsKeyTile = Rack.KeyTile != this;
+      });
   }
 
+  public ICommand ToggleCutCommand { get; }
+
   public TileListViewModel TileList { get; }
+
+  public ShelfViewModel Shelf => TileList.Shelf;
+
+  public RackViewModel Rack => TileList.Shelf.Rack;
 
   public TileViewModel? Tile {
     get => _tile;
@@ -63,4 +74,24 @@ public class TileHostViewModel: ViewModelBase
   }
   private bool _hovering = false;
 
+  public bool IsKeyTile {
+    get => _isKeyTile;
+    set {
+      if(SetValueProperty(ref _isKeyTile, value))
+      {
+        if(_isKeyTile)
+        {
+          // Note: Make sure this doesn't recurse indefinitely
+          // Setting Rack.KeyTile to this will call this property
+          // setter, but the 'ifs' above will block further recursion.
+          Rack.KeyTile = this;
+        }
+        else if(Rack.KeyTile == this)
+        {
+          Rack.KeyTile = null;
+        } // else: don't affect Rack.KeyTile
+      }
+    }
+  }
+  private bool _isKeyTile = false;
 }
