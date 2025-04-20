@@ -17,7 +17,7 @@ using LcLauncher.WpfUtilities;
 
 namespace LcLauncher.Main.Rack.Tile;
 
-public class GroupTileViewModel: TileViewModel, IPostIconLoadActor
+public class GroupTileViewModel: TileViewModel, IPostIconLoadActor, ITileListOwner
 {
   public GroupTileViewModel(
     TileListViewModel ownerList,
@@ -25,6 +25,7 @@ public class GroupTileViewModel: TileViewModel, IPostIconLoadActor
     : base(ownerList)
   {
     PostIconLoadId = Guid.NewGuid();
+    TileListOwnerLabel = $"Group {PostIconLoadId} in list {ownerList.Model.Id}";
     Model = model;
     ToggleGroupCommand = new DelegateCommand(
       p => IsActive = !IsActive);
@@ -42,6 +43,13 @@ public class GroupTileViewModel: TileViewModel, IPostIconLoadActor
       ownerList.Shelf.Rack.IconLoadQueue,
       ownerList.Shelf,
       childModel);
+    if(!this.ClaimTileList())
+    {
+      Trace.TraceWarning(
+        $"GroupTileViewModel: Failed to claim tile list for "+
+        $"'{TileListOwnerLabel}', already claimed by "+
+        $"'{TargetTilelist.Owner?.TileListOwnerLabel ?? String.Empty}'");
+    }
     ResetGroupIcons();
   }
 
@@ -146,4 +154,7 @@ public class GroupTileViewModel: TileViewModel, IPostIconLoadActor
       $"PostIconLoad for group tile '{Title}'");
     ResetGroupIcons();
   }
+
+  public TileListModel TargetTilelist { get => ChildTiles.Model; }
+  public string TileListOwnerLabel { get; }
 }

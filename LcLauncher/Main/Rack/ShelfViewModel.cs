@@ -22,7 +22,8 @@ using GroupTileViewModel = LcLauncher.Main.Rack.Tile.GroupTileViewModel;
 
 namespace LcLauncher.Main.Rack;
 
-public class ShelfViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
+public class ShelfViewModel:
+  ViewModelBase, IIconLoadJobSource, IPersisted, ITileListOwner
 {
   public ShelfViewModel(
     ColumnViewModel column,
@@ -67,8 +68,24 @@ public class ShelfViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
   public ShelfModel Model {
     get => _model;
     private set {
-      if(SetValueProperty(ref _model, value))
+      TileListModel? oldTarget = TargetTilelist;
+      if(oldTarget != null)
       {
+        // This property is 'initialize once'
+        // Multi-init would violate TargetListModel invariant and probably
+        // some more.
+        throw new InvalidOperationException(
+          "ShelfViewModel.Model: Can only be set once.");
+      }
+      if(SetInstanceProperty(ref _model, value))
+      {
+        if(!this.ClaimTileList())
+        {
+          Trace.TraceWarning(
+            $"ShelfViewModel.Model: Failed to claim tile list for "+
+            $"'{TileListOwnerLabel}', already claimed by "+
+            $"'{TargetTilelist.Owner?.TileListOwnerLabel ?? String.Empty}'");
+        }
         Title = value.Shelf.Title;
         Theme = value.Shelf.Theme ?? "Olive";
         IsExpanded = !value.Shelf.Collapsed;
@@ -261,4 +278,7 @@ public class ShelfViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
       RaisePropertyChanged(nameof(IsDirty));
     }
   }
+
+  public TileListModel TargetTilelist { get => Model?.PrimaryTiles!; }
+  public string TileListOwnerLabel { get => $"Shelf {ShelfId}"; }
 }

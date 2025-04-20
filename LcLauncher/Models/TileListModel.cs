@@ -26,6 +26,8 @@ namespace LcLauncher.Models;
 /// </summary>
 public class TileListModel
 {
+  private List<ITileListOwner> _claimers;
+
   /// <summary>
   /// Create a new TileList. Use <see cref="Load"/> or
   /// <see cref="Create(Guid?)"/> to call this constructor.
@@ -35,6 +37,7 @@ public class TileListModel
     IEnumerable<TileData?> tiles,
     ILcLaunchStore store)
   {
+    _claimers = new List<ITileListOwner>();
     Id = id;
     RawTiles = tiles.ToList();
     Store = store;
@@ -113,4 +116,41 @@ public class TileListModel
   public ILcLaunchStore Store { get; }
 
   public ILauncherIconCache IconCache { get; }
+
+  /// <summary>
+  /// Try to claim ownership, registering the intent to claim
+  /// ownership. Returns true if <paramref name="claimer"/> is
+  /// now considered the owner of this list.
+  /// </summary>
+  public bool ClaimOwnerShip(ITileListOwner claimer)
+  {
+    if(claimer.TargetTilelist != this)
+    {
+      throw new InvalidOperationException(
+        $"ITileListOwner.TargetTileList does not match");
+    }
+    if(!_claimers.Contains(claimer))
+    {
+      _claimers.Add(claimer);
+    }
+    return _claimers[0] == claimer;
+  }
+
+  /// <summary>
+  /// Release the ownership claim to this list. Returns
+  /// false if it wasn't a claimer in the first place.
+  /// </summary>
+  public bool ReleaseOwnerShip(ITileListOwner claimer)
+  {
+    if(claimer.TargetTilelist != this)
+    {
+      throw new InvalidOperationException(
+        $"ITileListOwner.TargetTileList does not match");
+    }
+    return _claimers.Remove(claimer);
+  }
+
+  public ITileListOwner? Owner {
+    get => _claimers.Count == 0 ? null : _claimers[0];
+  }
 }
