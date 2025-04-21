@@ -204,7 +204,7 @@ public class GroupTileViewModel: TileViewModel, IPostIconLoadActor, ITileListOwn
       modelClone);
     Host!.Tile = clone;
     OwnerList.MarkDirty();
-    OwnerList.SaveIfDirty();
+    //OwnerList.SaveIfDirty();
     return targetClone.Model.Id;
   }
 

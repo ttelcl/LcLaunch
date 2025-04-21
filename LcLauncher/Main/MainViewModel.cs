@@ -70,6 +70,7 @@ public class MainViewModel: ViewModelBase
         if(oldRack != null)
         {
           oldRack.SaveShelvesIfModified();
+          oldRack.SaveDirtyTileLists();
           oldRack.SaveIfDirty();
         }
       }
@@ -101,6 +102,7 @@ public class MainViewModel: ViewModelBase
   public void OnWindowClosing()
   {
     CurrentRack?.SaveShelvesIfModified();
+    CurrentRack?.SaveDirtyTileLists();
     CurrentRack?.SaveIfDirty();
   }
 }

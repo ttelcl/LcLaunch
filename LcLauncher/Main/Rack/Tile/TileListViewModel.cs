@@ -56,6 +56,8 @@ public class TileListViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
 
   public TileListModel Model { get; }
 
+  public Guid TileListId => Model.Id;
+
   public ILauncherIconCache IconCache => Model.IconCache;
 
   public bool IsPrimary { get => Model.Id == Shelf.Model.Id; }
@@ -212,7 +214,7 @@ public class TileListViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
         Tiles.Add(host);
       }
       MarkDirty();
-      SaveIfDirty(); // TODO: use autosave instead
+      //SaveIfDirty(); // TODO: use autosave instead
       return true;
     }
     return false;
@@ -227,7 +229,7 @@ public class TileListViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
       Tiles.RemoveAt(Tiles.Count - 1);
       Tiles.RemoveAt(Tiles.Count - 1);
       MarkDirty();
-      SaveIfDirty(); // TODO: use autosave instead
+      //SaveIfDirty(); // TODO: use autosave instead
       return true;
     }
     return false;
@@ -299,7 +301,7 @@ public class TileListViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
     host.Tile = new EmptyTileViewModel(this, TileData.EmptyTile());
     Tiles.Insert(position, host);
     MarkDirty();
-    SaveIfDirty();
+    //SaveIfDirty();
   }
 
   public void InsertEmptyTile(TileHostViewModel host)
@@ -313,4 +315,18 @@ public class TileListViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
     InsertEmptyTile(index);
   }
 
+  internal void GatherTileLists(Dictionary<Guid, TileListViewModel> buffer)
+  {
+    if(!buffer.ContainsKey(TileListId))
+    {
+      buffer.Add(TileListId, this);
+      foreach(var tile in Tiles)
+      {
+        if(tile.Tile != null && tile.Tile is GroupTileViewModel groupVm)
+        {
+          groupVm.ChildTiles.GatherTileLists(buffer);
+        }
+      }
+    }
+  }
 }

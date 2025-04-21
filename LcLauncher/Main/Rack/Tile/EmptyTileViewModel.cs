@@ -71,11 +71,6 @@ public class EmptyTileViewModel: TileViewModel
   {
     if(Host != null)
     {
-      //MessageBox.Show(
-      //  "Not Yet Implemented",
-      //  "Delete Tile",
-      //  MessageBoxButton.OK,
-      //  MessageBoxImage.Warning);
       Host.DeleteTile();
     }
   }

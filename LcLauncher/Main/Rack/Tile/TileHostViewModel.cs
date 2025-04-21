@@ -125,7 +125,7 @@ public class TileHostViewModel: ViewModelBase
     }
     Tile = new EmptyTileViewModel(TileList, TileData.EmptyTile());
     TileList.RebuildModel(); // includes MarkDirty()
-    TileList.SaveIfDirty();
+    //TileList.SaveIfDirty();
   }
 
   /// <summary>
@@ -143,6 +143,6 @@ public class TileHostViewModel: ViewModelBase
     TileList.Tiles.Remove(this);
     TileList.PadRow();
     TileList.RebuildModel(); // includes MarkDirty()
-    TileList.SaveIfDirty();
+    //TileList.SaveIfDirty();
   }
 }

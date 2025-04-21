@@ -285,4 +285,9 @@ public class ShelfViewModel:
   public string TileListOwnerLabel { get => $"Shelf {ShelfId}"; }
   public TileListOwnerTracker ClaimTracker { get; }
   public bool ClaimPriority { get => true; }
+
+  internal void GatherTileLists(Dictionary<Guid, TileListViewModel> buffer)
+  {
+    PrimaryTiles.GatherTileLists(buffer);
+  }
 }

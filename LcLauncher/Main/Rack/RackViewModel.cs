@@ -62,6 +62,26 @@ public class RackViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
     }
   }
 
+  /// <summary>
+  /// Gather all tile lists referenced in the rack by walking
+  /// the shelves, tile lists and group tiles.
+  /// </summary>
+  public List<TileListViewModel> GatherTileLists()
+  {
+    var tileLists = new Dictionary<Guid, TileListViewModel>();
+    GatherTileLists(tileLists);
+    return tileLists.Values.ToList();
+  }
+
+  internal void GatherTileLists(
+    Dictionary<Guid, TileListViewModel> tileLists)
+  {
+    foreach(var shelf in AllShelves())
+    {
+      shelf.GatherTileLists(tileLists);
+    }
+  }
+
   public IconLoadQueue IconLoadQueue { get; }
 
   public IEnumerable<IconLoadJob> GetIconLoadJobs(bool reload)
@@ -82,6 +102,16 @@ public class RackViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
     foreach(var shelf in AllShelves())
     {
       shelf.SaveIfDirty();
+    }
+  }
+
+  public void SaveDirtyTileLists()
+  {
+    Trace.TraceInformation(
+      $"Saving modified tile lists in rack '{Name}' (if any)");
+    foreach(var tileList in GatherTileLists())
+    {
+      tileList.SaveIfDirty();
     }
   }
 
