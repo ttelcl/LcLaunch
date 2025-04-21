@@ -28,6 +28,12 @@ public class EmptyTileViewModel: TileViewModel
     DeleteEmptyTileCommand = new DelegateCommand(
       p => DeleteTile(),
       p => CanDeleteTile());
+    CopyKeyTileHereCommand = new DelegateCommand(
+      p => CopyKeyTileHere(),
+      p => CanCopyKeyTileHere());
+    SwapKeyTileHereCommand = new DelegateCommand(
+      p => SwapKeyTileHere(),
+      p => CanSwapKeyTileHere());
   }
 
   /// <summary>
@@ -78,5 +84,35 @@ public class EmptyTileViewModel: TileViewModel
   private bool CanDeleteTile()
   {
     return Host != null && !Host.IsKeyTile;
+  }
+
+  public ICommand CopyKeyTileHereCommand { get; }
+
+  private void CopyKeyTileHere()
+  {
+    if(Host != null && Host.Rack.KeyTile != null)
+    {
+      Host.CopyTileHere(Host.Rack.KeyTile);
+    }
+  }
+
+  private bool CanCopyKeyTileHere()
+  {
+    return Host != null && Host.Rack.KeyTile != null && !Host.IsKeyTile;
+  }
+
+  public ICommand SwapKeyTileHereCommand { get; }
+
+  private void SwapKeyTileHere()
+  {
+    if(Host != null && Host.Rack.KeyTile != null)
+    {
+      Host.SwapTileHere(Host.Rack.KeyTile);
+    }
+  }
+
+  private bool CanSwapKeyTileHere()
+  {
+    return Host != null && Host.Rack.KeyTile != null && !Host.IsKeyTile;
   }
 }

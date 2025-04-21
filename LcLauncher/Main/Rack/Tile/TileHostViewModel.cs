@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 using LcLauncher.Models;
@@ -125,7 +126,6 @@ public class TileHostViewModel: ViewModelBase
     }
     Tile = new EmptyTileViewModel(TileList, TileData.EmptyTile());
     TileList.RebuildModel(); // includes MarkDirty()
-    //TileList.SaveIfDirty();
   }
 
   /// <summary>
@@ -143,6 +143,56 @@ public class TileHostViewModel: ViewModelBase
     TileList.Tiles.Remove(this);
     TileList.PadRow();
     TileList.RebuildModel(); // includes MarkDirty()
-    //TileList.SaveIfDirty();
+  }
+
+  public void CopyTileHere(
+    TileHostViewModel other)
+  {
+    if(IsKeyTile)
+    {
+      throw new InvalidOperationException(
+        "Cannot target the marked tile");
+    }
+    if(!IsEmpty)
+    {
+      throw new InvalidOperationException(
+        "Cannot copy tile here, because this tile is not empty");
+    }
+    var tile = TileViewModel.Create(
+      TileList,
+      other.Tile?.GetModel());
+    Tile = tile;
+    TileList.MarkDirty();
+    if(other.IsKeyTile)
+    {
+      // expected to be the normal case
+      other.IsKeyTile = false;
+    }
+  }
+
+  public void SwapTileHere(
+    TileHostViewModel other)
+  {
+    if(IsKeyTile)
+    {
+      throw new InvalidOperationException(
+        "Cannot target the marked tile");
+    }
+    if(!IsEmpty)
+    {
+      throw new InvalidOperationException(
+        "Cannot swap tile here, because this tile is not empty");
+    }
+    var tile = TileViewModel.Create(
+      TileList,
+      other.Tile?.GetModel());
+    Tile = tile;
+    TileList.MarkDirty();
+    if(other.IsKeyTile)
+    {
+      // expected to be the normal case
+      other.IsKeyTile = false;
+    }
+    other.ClearTile();
   }
 }

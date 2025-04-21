@@ -113,6 +113,14 @@
                     <MenuItem
                         Header="Fix duplicate reference: Clone to new tile list"
                         Command="{Binding FixGraphCommand}"/>
+                    <MenuItem
+                        Header="{Binding Host.MarkTileText}"
+                        Command="{Binding Host.ToggleCutCommand}"
+                        IsChecked="{Binding Host.IsKeyTile}">
+                        <MenuItem.Icon>
+                            <iconPacks:PackIconMaterial Kind="MapMarkerOutline" Width="20" Height="20"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
                 </ContextMenu>
             </Border.ContextMenu>
             <iconPacks:PackIconMaterial

@@ -22,14 +22,14 @@
             </MenuItem>
             <MenuItem
                 Header="Paste: Swap with Marked Tile"
-                IsEnabled="False">
+                Command="{Binding SwapKeyTileHereCommand}">
                 <MenuItem.Icon>
                     <iconPacks:PackIconMaterial Kind="MapMarkerDown" Width="20" Height="20"/>
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem
                 Header="Paste: Copy Marked Tile Here"
-                IsEnabled="False">
+                Command="{Binding CopyKeyTileHereCommand}">
                 <MenuItem.Icon>
                     <iconPacks:PackIconMaterial Kind="MapMarkerPlus" Width="20" Height="20"/>
                 </MenuItem.Icon>
