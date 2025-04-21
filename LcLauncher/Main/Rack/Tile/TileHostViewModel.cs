@@ -94,10 +94,13 @@ public class TileHostViewModel: ViewModelBase
         {
           Rack.KeyTile = null;
         } // else: don't affect Rack.KeyTile
+        RaisePropertyChanged(nameof(MarkTileText));
       }
     }
   }
   private bool _isKeyTile = false;
+
+  public string MarkTileText { get => IsKeyTile ? "Unmark Tile" : "Mark Tile"; }
 
   public int GetTileIndex()
   {

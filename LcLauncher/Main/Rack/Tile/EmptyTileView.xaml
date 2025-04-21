@@ -13,18 +13,25 @@
     <UserControl.ContextMenu>
         <ContextMenu>
             <MenuItem
-                Header="Cut Tile"
+                Header="{Binding Host.MarkTileText}"
                 Command="{Binding Host.ToggleCutCommand}"
                 IsChecked="{Binding Host.IsKeyTile}">
                 <MenuItem.Icon>
-                    <iconPacks:PackIconMaterial Kind="ContentCut" Width="20" Height="20"/>
+                    <iconPacks:PackIconMaterial Kind="MapMarkerOutline" Width="20" Height="20"/>
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem
-                Header="Paste Tile Here (Swap)"
+                Header="Paste: Swap with Marked Tile"
                 IsEnabled="False">
                 <MenuItem.Icon>
-                    <iconPacks:PackIconMaterial Kind="ContentPaste" Width="20" Height="20"/>
+                    <iconPacks:PackIconMaterial Kind="MapMarkerDown" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem
+                Header="Paste: Copy Marked Tile Here"
+                IsEnabled="False">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="MapMarkerPlus" Width="20" Height="20"/>
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem
@@ -36,7 +43,7 @@
             </MenuItem>
             <MenuItem
                 Header="Delete this Empty Tile"
-                IsEnabled="False">
+                Command="{Binding DeleteEmptyTileCommand}">
                 <MenuItem.Icon>
                     <iconPacks:PackIconMaterial Kind="EggOff" Width="20" Height="20"
                                                 Foreground="#FFFF4444"/>

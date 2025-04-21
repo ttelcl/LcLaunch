@@ -11,7 +11,20 @@
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     DataContextChanged="ShelfView_DataContextChanged"
     d:DataContext="{d:DesignInstance local:ShelfViewModel, IsDesignTimeCreatable=False}"
+    Background="#00000000"
     d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.ContextMenu>
+        <ContextMenu>
+            <!-- Mostly to prevent Column context menu from showing in gaps -->
+            <MenuItem Header="{Binding MarkShelfText}"
+                      Command="{Binding ToggleCutCommand}"
+                      IsChecked="{Binding IsKeyShelf}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="MapMarkerOutline" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
+        </ContextMenu>
+    </UserControl.ContextMenu>
     <StackPanel
         Orientation="Vertical">
         <!-- Shelf header -->
@@ -21,12 +34,16 @@
                 Margin="2,4,2,0">
                 <DockPanel.ContextMenu>
                     <ContextMenu>
+                        <MenuItem Header="{Binding MarkShelfText}"
+                                  Command="{Binding ToggleCutCommand}"
+                                  IsChecked="{Binding IsKeyShelf}">
+                            <MenuItem.Icon>
+                                <iconPacks:PackIconMaterial Kind="MapMarkerOutline" Width="20" Height="20"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
                         <MenuItem Header="Expanded"
                                   Command="{Binding ToggleExpandedCommand}"
                                   IsChecked="{Binding IsExpanded}"/>
-                        <MenuItem Header="Cut Shelf"
-                                  Command="{Binding ToggleCutCommand}"
-                                  IsChecked="{Binding IsKeyShelf}"/>
                         <Separator/>
                         <MenuItem Header="Edit Title..."
                                   IsEnabled="False"/>
@@ -186,8 +203,19 @@
                                   Command="{Binding RefreshIconJobs}"/>
                         <Separator/>
                         <MenuItem Header="Danger Zone">
-                            <MenuItem Header="Delete Shelf!"
-                                  IsEnabled="False"/>
+                            <MenuItem.Icon>
+                                <iconPacks:PackIconMaterial
+                                    Kind="AlertOutline" Width="20" Height="20"
+                                    Foreground="#FFFF4444"/>
+                            </MenuItem.Icon>
+                            <MenuItem
+                                Header="Delete Shelf!"
+                                IsEnabled="False">
+                                <MenuItem.Icon>
+                                    <iconPacks:PackIconMaterial Kind="DeleteAlert" Width="20" Height="20"
+                                                    Foreground="#FFFF4444"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
                         </MenuItem>
                     </ContextMenu>
                 </DockPanel.ContextMenu>
@@ -259,7 +287,17 @@
                 Margin="2,0"
                 BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
                 IsHitTestVisible="True">
-                <TextBlock
+                <Border.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="{Binding MarkShelfText}"
+                                  Command="{Binding ToggleCutCommand}">
+                            <MenuItem.Icon>
+                                <iconPacks:PackIconMaterial Kind="MapMarkerOff" Width="20" Height="20"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                    </ContextMenu>
+                </Border.ContextMenu>
+                <!--<TextBlock
                     HorizontalAlignment="Center"
                     VerticalAlignment="Top"
                     Foreground="#FFFFFF88"
@@ -267,7 +305,7 @@
                     FontStyle="Italic"
                     Background="#33444444">
                     This shelf is cut, ready to be pasted elsewhere
-                </TextBlock>
+                </TextBlock>-->
             </Border>
         </Grid>
     </StackPanel>

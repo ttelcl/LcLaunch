@@ -113,10 +113,13 @@ public class ShelfViewModel:
         {
           Column.Rack.KeyShelf = null;
         } // else: don't affect Rack.KeyShelf
+        RaisePropertyChanged(nameof(MarkShelfText));
       }
     }
   }
   private bool _isKeyShelf;
+
+  public string MarkShelfText => IsKeyShelf ? "Unmark Shelf" : "Mark Shelf";
 
   public ILcLaunchStore Store { get; }
 

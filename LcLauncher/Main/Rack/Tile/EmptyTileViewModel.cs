@@ -9,6 +9,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using LcLauncher.Models;
+using System.Windows;
+using System.Windows.Input;
+using LcLauncher.WpfUtilities;
 
 namespace LcLauncher.Main.Rack.Tile;
 
@@ -22,6 +25,9 @@ public class EmptyTileViewModel: TileViewModel
   {
     Model = model;
     Icon = icon ?? FindIcon();
+    DeleteEmptyTileCommand = new DelegateCommand(
+      p => DeleteTile(),
+      p => CanDeleteTile());
   }
 
   /// <summary>
@@ -57,5 +63,24 @@ public class EmptyTileViewModel: TileViewModel
       { Quad: { } } => "ViewGrid",
       _ => "Egg",
     };
+  }
+
+  public ICommand DeleteEmptyTileCommand { get; }
+
+  private void DeleteTile()
+  {
+    if(Host != null)
+    {
+      MessageBox.Show(
+        "Not Yet Implemented",
+        "Delete Tile",
+        MessageBoxButton.OK,
+        MessageBoxImage.Warning);
+    }
+  }
+
+  private bool CanDeleteTile()
+  {
+    return Host != null && !Host.IsKeyTile;
   }
 }

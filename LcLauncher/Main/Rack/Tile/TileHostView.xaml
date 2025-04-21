@@ -57,10 +57,10 @@
             Width="100" Height="100"
             Visibility="{Binding Hovering, Converter={StaticResource VisibleIf}}">
         </Border>
-        <!-- Indicate this is the key shelf, but stay responsive -->
+        <!-- Indicate this is the key tile, but stay responsive -->
         <Border
             Visibility="{Binding IsKeyTile, Converter={StaticResource VisibleIf}}"
-            Background="#88CCCCCC"
+            Background="#77999999"
             BorderThickness="3"
             Margin="2,0"
             BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"

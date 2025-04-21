@@ -13,11 +13,11 @@
     <UserControl.ContextMenu>
         <ContextMenu>
             <MenuItem
-                Header="Cut Tile"
+                Header="{Binding Host.MarkTileText}"
                 Command="{Binding Host.ToggleCutCommand}"
                 IsChecked="{Binding Host.IsKeyTile}">
                 <MenuItem.Icon>
-                    <iconPacks:PackIconMaterial Kind="ContentCut" Width="20" Height="20"/>
+                    <iconPacks:PackIconMaterial Kind="MapMarkerOutline" Width="20" Height="20"/>
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem
@@ -28,7 +28,7 @@
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem
-                Header="Paste cut Tile"
+                Header="Paste Marked Tile"
                 IsEnabled="False">
                 <MenuItem.Icon>
                     <iconPacks:PackIconMaterial Kind="ViewGridPlus" Width="20" Height="20"/>
