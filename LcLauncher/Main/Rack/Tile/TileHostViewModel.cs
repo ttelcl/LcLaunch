@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
+using LcLauncher.Models;
 using LcLauncher.WpfUtilities;
 
 namespace LcLauncher.Main.Rack.Tile;
@@ -110,5 +111,38 @@ public class TileHostViewModel: ViewModelBase
   public override string ToString()
   {
     return $"{TileList.Model.Id}[{GetTileIndex()}]";
+  }
+
+  /// <summary>
+  /// Clear this tile to an empty tile, destroying the original tile.
+  /// </summary>
+  public void ClearTile()
+  {
+    if(IsKeyTile)
+    {
+      throw new InvalidOperationException(
+        "Cannot clear or delete the marked tile");
+    }
+    Tile = new EmptyTileViewModel(TileList, TileData.EmptyTile());
+    TileList.RebuildModel(); // includes MarkDirty()
+    TileList.SaveIfDirty();
+  }
+
+  /// <summary>
+  /// Delete this tile from the list, destroying the original tile.
+  /// Also pads the list to make the last row full again (i.e.: adds
+  /// an empty tile at the end).
+  /// </summary>
+  public void DeleteTile()
+  {
+    if(IsKeyTile)
+    {
+      throw new InvalidOperationException(
+        "Cannot clear or delete the marked tile");
+    }
+    TileList.Tiles.Remove(this);
+    TileList.PadRow();
+    TileList.RebuildModel(); // includes MarkDirty()
+    TileList.SaveIfDirty();
   }
 }
