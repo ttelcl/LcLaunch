@@ -30,4 +30,20 @@ public partial class MainWindow: MetroWindow
       vm.OnWindowClosing();
     }
   }
+
+  private void WindowActivated(object sender, System.EventArgs e)
+  {
+    if(DataContext is MainViewModel vm)
+    {
+      vm.OnAppActiveChange(true);
+    }
+  }
+
+  private void WindowDeactivated(object sender, System.EventArgs e)
+  {
+    if(DataContext is MainViewModel vm)
+    {
+      vm.OnAppActiveChange(false);
+    }
+  }
 }

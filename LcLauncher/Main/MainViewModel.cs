@@ -105,4 +105,21 @@ public class MainViewModel: ViewModelBase
     CurrentRack?.SaveDirtyTileLists();
     CurrentRack?.SaveIfDirty();
   }
+
+  public void OnAppActiveChange(bool active)
+  {
+    if(active)
+    {
+      Trace.TraceInformation(
+        $"Application is now active");
+    }
+    else
+    {
+      Trace.TraceInformation(
+        $"Application is now inactive");
+      CurrentRack?.SaveShelvesIfModified();
+      CurrentRack?.SaveDirtyTileLists();
+      CurrentRack?.SaveIfDirty();
+    }
+  }
 }
