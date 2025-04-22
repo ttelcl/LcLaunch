@@ -72,7 +72,7 @@
                 </MenuItem.Icon>
                 <MenuItem
                     Header="Delete (and replace with empty tile)"
-                    IsEnabled="False">
+                    Command="{Binding Host.ConfirmAndClearTileCommand}">
                     <MenuItem.Icon>
                         <iconPacks:PackIconMaterial Kind="DeleteAlert" Width="20" Height="20"
                                                     Foreground="#FFFF4444"/>

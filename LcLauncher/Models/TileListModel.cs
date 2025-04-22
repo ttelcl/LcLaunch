@@ -41,7 +41,6 @@ public class TileListModel
     Store = rack.Store;
     IconCache = Store.GetIconCache(id);
     Rack = rack;
-    ClaimTracker = Rack.GetClaimTracker(id);
   }
 
   /// <summary>
@@ -145,29 +144,4 @@ public class TileListModel
   public ILcLaunchStore Store { get; }
 
   public ILauncherIconCache IconCache { get; }
-
-  public TileListOwnerTracker ClaimTracker { get; }
-
-  /// <summary>
-  /// Try to claim ownership, registering the intent to claim
-  /// ownership. Returns true if <paramref name="claimer"/> is
-  /// now considered the owner of this list.
-  /// </summary>
-  public bool ClaimOwnerShip(ITileListOwner claimer)
-  {
-    return ClaimTracker.ClaimOwnerShip(claimer);
-  }
-
-  /// <summary>
-  /// Release the ownership claim to this list. Returns
-  /// false if it wasn't a claimer in the first place.
-  /// </summary>
-  public bool ReleaseOwnerShip(ITileListOwner claimer)
-  {
-    return ClaimTracker.ReleaseOwnerShip(claimer);
-  }
-
-  public ITileListOwner? Owner {
-    get => ClaimTracker.Owner;
-  }
 }

@@ -31,7 +31,10 @@ public class GroupTileViewModel: TileViewModel, IPostIconLoadActor, ITileListOwn
       $"Group {PostIconLoadId} targeting {model.TileList} from list {ownerList.Model.Id}";
     Model = model;
     ToggleGroupCommand = new DelegateCommand(
-      p => IsActive = !IsConflicted && !IsActive);
+      p => IsActive = !IsConflicted
+           && !IsActive
+           && !GetIsKeyTile(),
+      p => !IsConflicted && !GetIsKeyTile());
     FixGraphCommand = new DelegateCommand(
       p => { ConditionalReplaceWithClone(); },
       p => IsConflicted);
@@ -59,13 +62,6 @@ public class GroupTileViewModel: TileViewModel, IPostIconLoadActor, ITileListOwn
       ownerList.Shelf,
       childModel);
     ChildTiles.SaveIfDirty();
-    if(!this.ClaimTileList())
-    {
-      Trace.TraceWarning(
-        $"GroupTileViewModel: Failed to claim tile list for "+
-        $"'{TileListOwnerLabel}', already claimed by "+
-        $"'{ClaimTracker.Owner?.TileListOwnerLabel ?? String.Empty}'");
-    }
     ResetGroupIcons();
   }
 
@@ -218,7 +214,31 @@ public class GroupTileViewModel: TileViewModel, IPostIconLoadActor, ITileListOwn
   }
 
   public string TileListOwnerLabel { get; }
+
   public TileListOwnerTracker ClaimTracker { get; }
+
   public bool ClaimPriority { get => false; }
+
   public bool IsConflicted { get => !this.OwnsTileList(); }
+
+  protected override void OnHostChanged(
+    TileHostViewModel? oldHost, TileHostViewModel? newHost)
+  {
+    // Only Claim tile list while this is socketed in its host
+    if(newHost != null)
+    {
+      if(!this.ClaimTileList())
+      {
+        Trace.TraceWarning(
+          $"GroupTileViewModel: Failed to claim tile list for "+
+          $"'{TileListOwnerLabel}', already claimed by "+
+          $"'{ClaimTracker.Owner?.TileListOwnerLabel ?? String.Empty}'");
+      }
+    }
+    else
+    {
+      // Release the claim when the host is removed
+      this.ReleaseTileList();
+    }
+  }
 }

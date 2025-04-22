@@ -67,6 +67,11 @@ public abstract class TileViewModel: ViewModelBase, IIconLoadJobSource
   /// </summary>
   public abstract TileData? GetModel();
 
+  public bool GetIsKeyTile()
+  {
+    return Host != null && Host.IsKeyTile;
+  }
+
   /// <summary>
   /// Create Icon Load jobs for this tile. The default
   /// implementation returns an empty list. Icon load jobs

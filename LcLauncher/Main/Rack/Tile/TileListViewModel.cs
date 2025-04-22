@@ -182,7 +182,8 @@ public class TileListViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
       Tiles[^1].IsEmpty &&
       Tiles[^2].IsEmpty &&
       Tiles[^3].IsEmpty &&
-      Tiles[^4].IsEmpty;
+      Tiles[^4].IsEmpty &&
+      Tiles.Count > 4;
   }
 
   public bool CanAddEmptyRow()

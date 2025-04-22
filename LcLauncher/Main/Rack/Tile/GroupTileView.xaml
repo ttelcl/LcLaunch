@@ -14,10 +14,18 @@
         <ContextMenu>
             <MenuItem
                 Header="{Binding Host.MarkTileText}"
-                Command="{Binding Host.ToggleCutCommand}"
+                Command="{Binding ToggleCutCommand}"
                 IsChecked="{Binding Host.IsKeyTile}">
                 <MenuItem.Icon>
                     <iconPacks:PackIconMaterial Kind="MapMarkerOutline" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem
+                Header="Toggle (Shortcut: Left Click)"
+                Command="{Binding ToggleGroupCommand}"
+                IsChecked="{Binding IsActive}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="ArrowExpandDown" Width="20" Height="20"/>
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem
@@ -70,7 +78,7 @@
                 </MenuItem.Icon>
                 <MenuItem
                     Header="Delete (and replace with empty tile)"
-                    IsEnabled="False">
+                    Command="{Binding Host.ConfirmAndClearTileCommand}">
                     <MenuItem.Icon>
                         <iconPacks:PackIconMaterial Kind="DeleteAlert" Width="20" Height="20"
                                                     Foreground="#FFFF4444"/>

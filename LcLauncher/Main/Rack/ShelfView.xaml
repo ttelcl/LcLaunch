@@ -202,6 +202,18 @@
                         <MenuItem Header="Reload All Icons"
                                   Command="{Binding RefreshIconJobs}"/>
                         <Separator/>
+                        <MenuItem Header="Target tile list Info">
+                            <MenuItem.Icon>
+                                <iconPacks:PackIconMaterial Kind="InformationSlabCircleOutline" Width="20" Height="20"/>
+                            </MenuItem.Icon>
+                            <MenuItem
+                                Header="{Binding ShelfId}"
+                                IsEnabled="False">
+                                <MenuItem.Icon>
+                                    <iconPacks:PackIconMaterial Kind="InformationSlabCircleOutline" Width="20" Height="20"/>
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </MenuItem>
                         <MenuItem Header="Danger Zone">
                             <MenuItem.Icon>
                                 <iconPacks:PackIconMaterial

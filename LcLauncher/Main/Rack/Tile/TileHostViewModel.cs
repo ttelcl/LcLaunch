@@ -28,11 +28,40 @@ public class TileHostViewModel: ViewModelBase
       });
     InsertEmptyTileCommand = new DelegateCommand(
       p => TileList.InsertEmptyTile(this));
+    CopyMarkedTileHereCommand = new DelegateCommand(
+      p => {
+        if(CanCopyTileHere(Rack.KeyTile))
+        {
+          CopyTileHere(Rack.KeyTile!);
+        }
+      },
+      p =>
+        CanCopyTileHere(Rack.KeyTile));
+    SwapMarkedTileHereCommand = new DelegateCommand(
+      p => {
+        if(CanSwapTileHere(Rack.KeyTile))
+        {
+          SwapTileHere(Rack.KeyTile!);
+        }
+      },
+      p =>
+        CanSwapTileHere(Rack.KeyTile));
+    ConfirmAndClearTileCommand = new DelegateCommand(
+      p => {
+        var result = ConfirmAndClearTile();
+      },
+      p => !IsKeyTile);
   }
 
   public ICommand ToggleCutCommand { get; }
 
   public ICommand InsertEmptyTileCommand { get; }
+
+  public ICommand CopyMarkedTileHereCommand { get; }
+
+  public ICommand SwapMarkedTileHereCommand { get; }
+
+  public ICommand ConfirmAndClearTileCommand { get; }
 
   public TileListViewModel TileList { get; }
 
@@ -66,7 +95,7 @@ public class TileHostViewModel: ViewModelBase
   }
 
   public bool IsEmpty {
-    get => _tile == null || _tile is EmptyTileViewModel;  
+    get => _tile == null || _tile is EmptyTileViewModel;
   }
 
   public bool Hovering {
@@ -114,18 +143,75 @@ public class TileHostViewModel: ViewModelBase
     return $"{TileList.Model.Id}[{GetTileIndex()}]";
   }
 
-  /// <summary>
-  /// Clear this tile to an empty tile, destroying the original tile.
-  /// </summary>
-  public void ClearTile()
+  public bool IsEmptyTile()
+  {
+    return Tile == null ||
+      Tile is EmptyTileViewModel;
+  }
+
+  public bool IsGroupTile()
+  {
+    return Tile != null &&
+      Tile is GroupTileViewModel;
+  }
+
+  public bool IsLaunchTile()
+  {
+    return Tile != null &&
+      Tile is LaunchTileViewModel;
+  }
+
+  public bool IsQuadTile()
+  {
+    return Tile != null &&
+      Tile is QuadTileViewModel;
+  }
+
+  public TileData? ReplaceTile(
+    TileData? newRawData)
   {
     if(IsKeyTile)
     {
       throw new InvalidOperationException(
-        "Cannot clear or delete the marked tile");
+        "Cannot edit the marked tile");
     }
-    Tile = new EmptyTileViewModel(TileList, TileData.EmptyTile());
-    TileList.RebuildModel(); // includes MarkDirty()
+    var oldRawData = Tile?.GetModel();
+    Tile = TileViewModel.Create(
+      TileList,
+      newRawData);
+    TileList.MarkDirty();
+    return oldRawData;
+  }
+
+  /// <summary>
+  /// Clear this tile to an empty tile, destroying the original tile.
+  /// </summary>
+  public TileData? ClearTile()
+  {
+    return ReplaceTile(TileData.EmptyTile());
+  }
+
+  public TileData? ConfirmAndClearTile()
+  {
+    if(!IsKeyTile)
+    {
+      var result = MessageBox.Show(
+        "Are you sure you want to delete this tile?\n(This cannot be undone)",
+        "Delete Tile",
+        MessageBoxButton.YesNo,
+        MessageBoxImage.Warning);
+      if(result == MessageBoxResult.Yes)
+      {
+        return ClearTile();
+      }
+      else
+      {
+        // user cancelled
+        return null;
+      }
+    }
+    // refused
+    return null;
   }
 
   /// <summary>
@@ -133,66 +219,90 @@ public class TileHostViewModel: ViewModelBase
   /// Also pads the list to make the last row full again (i.e.: adds
   /// an empty tile at the end).
   /// </summary>
-  public void DeleteTile()
+  public TileData? DeleteTile()
   {
     if(IsKeyTile)
     {
       throw new InvalidOperationException(
         "Cannot clear or delete the marked tile");
     }
+    var oldData = Tile?.GetModel();
+    Tile = null;
     TileList.Tiles.Remove(this);
     TileList.PadRow();
-    TileList.RebuildModel(); // includes MarkDirty()
+    TileList.MarkDirty();
+    return oldData;
   }
 
-  public void CopyTileHere(
+  public bool CanDeleteTile()
+  {
+    return !IsKeyTile;
+  }
+
+  public TileData? CopyTileHere(
     TileHostViewModel other)
   {
+    if(other == this)
+    {
+      throw new InvalidOperationException(
+        "Cannot copy a tile to itself");
+    }
     if(IsKeyTile)
     {
       throw new InvalidOperationException(
-        "Cannot target the marked tile");
+        "Cannot copy to the marked tile");
     }
     if(!IsEmpty)
     {
       throw new InvalidOperationException(
         "Cannot copy tile here, because this tile is not empty");
     }
-    var tile = TileViewModel.Create(
-      TileList,
-      other.Tile?.GetModel());
-    Tile = tile;
-    TileList.MarkDirty();
+    if(other.IsGroupTile())
+    {
+      // this would create a duplicate tile list reference
+      throw new InvalidOperationException(
+        "Cannot 'copy' group tiles");
+    }
     if(other.IsKeyTile)
     {
       // expected to be the normal case
       other.IsKeyTile = false;
     }
+    var newData = other.Tile?.GetModel();
+    return ReplaceTile(newData);
+  }
+
+  public bool CanCopyTileHere(
+    TileHostViewModel? other)
+  {
+    return
+      other != null
+      && other != this
+      && !IsKeyTile
+      && IsEmpty
+      && !other.IsGroupTile();
   }
 
   public void SwapTileHere(
     TileHostViewModel other)
   {
-    if(IsKeyTile)
+    if(other == this)
     {
       throw new InvalidOperationException(
-        "Cannot target the marked tile");
+        "Cannot swap a tile with itself");
     }
-    if(!IsEmpty)
-    {
-      throw new InvalidOperationException(
-        "Cannot swap tile here, because this tile is not empty");
-    }
-    var tile = TileViewModel.Create(
-      TileList,
-      other.Tile?.GetModel());
-    Tile = tile;
-    TileList.MarkDirty();
-    if(other.IsKeyTile)
-    {
-      // expected to be the normal case
-      other.IsKeyTile = false;
-    }
-    other.ClearTile();
+    var otherData = other.Tile?.GetModel();
+    other.IsKeyTile = false;
+    IsKeyTile = false;
+    var hereData = ReplaceTile(otherData);
+    other.ReplaceTile(hereData);
+  }
+
+  public bool CanSwapTileHere(
+    TileHostViewModel? other)
+  {
+    return
+      other != null
+      && other != this;
   }
 }
