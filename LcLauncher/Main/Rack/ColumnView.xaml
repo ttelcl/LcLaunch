@@ -14,9 +14,17 @@
     <UserControl.ContextMenu>
         <ContextMenu>
             <MenuItem Header="Insert: Move Shelf Here"
-                      IsEnabled="False"/>
+                                  IsEnabled="False">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="MapMarkerDown" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
             <MenuItem Header="Create New Shelf Here"
-                      IsEnabled="False"/>
+                                  IsEnabled="False">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="Bookshelf" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
         </ContextMenu>
     </UserControl.ContextMenu>
     <ItemsControl

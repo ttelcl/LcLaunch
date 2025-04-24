@@ -41,9 +41,21 @@
                                 <iconPacks:PackIconMaterial Kind="MapMarkerOutline" Width="20" Height="20"/>
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem Header="Expanded"
+                        <MenuItem Header="Insert: Move Shelf Here"
+                                  IsEnabled="False">
+                            <MenuItem.Icon>
+                                <iconPacks:PackIconMaterial Kind="MapMarkerDown" Width="20" Height="20"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="Create New Shelf Here"
+                                  IsEnabled="False">
+                            <MenuItem.Icon>
+                                <iconPacks:PackIconMaterial Kind="Bookshelf" Width="20" Height="20"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <!--<MenuItem Header="Expanded"
                                   Command="{Binding ToggleExpandedCommand}"
-                                  IsChecked="{Binding IsExpanded}"/>
+                                  IsChecked="{Binding IsExpanded}"/>-->
                         <Separator/>
                         <MenuItem Header="Edit Title..."
                                   IsEnabled="False"/>
@@ -187,10 +199,6 @@
                                                   Converter={StaticResource ValueIs},
                                                   ConverterParameter=Teal}"/>
                         </MenuItem>
-                        <MenuItem Header="Insert: Move Shelf Here"
-                                  IsEnabled="False"/>
-                        <MenuItem Header="Create New Shelf Here"
-                                  IsEnabled="False"/>
                         <Separator/>
                         <MenuItem Header="Add Tile Row"
                                   Command="{Binding PrimaryTiles.AddEmptyRowCommand}"/>

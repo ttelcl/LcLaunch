@@ -18,20 +18,18 @@ using LcLauncher.Models;
 using LcLauncher.Persistence;
 using LcLauncher.WpfUtilities;
 
-using GroupTileViewModel = LcLauncher.Main.Rack.Tile.GroupTileViewModel;
-
 namespace LcLauncher.Main.Rack;
 
 public class ShelfViewModel:
   ViewModelBase, IIconLoadJobSource, IPersisted, ITileListOwner
 {
   public ShelfViewModel(
-    ColumnViewModel column,
+    RackViewModel rack,
     ShelfModel model)
   {
-    ClaimTracker = column.Rack.Model.GetClaimTracker(model.Id);
-    Column = column;
-    Store = column.Rack.Store;
+    Rack = rack;
+    ClaimTracker = Rack.Model.GetClaimTracker(model.Id);
+    Store = Rack.Store;
     Model = model;
     _model = Model;
     SetThemeCommand = new DelegateCommand(
@@ -39,7 +37,7 @@ public class ShelfViewModel:
     ToggleExpandedCommand = new DelegateCommand(
       p => IsExpanded = !IsExpanded);
     PrimaryTiles = new TileListViewModel(
-      column.Rack.IconLoadQueue,
+      Rack.IconLoadQueue,
       this,
       model.PrimaryTiles);
     EnqueueIconJobs = new DelegateCommand(
@@ -48,7 +46,7 @@ public class ShelfViewModel:
       p => QueueIcons(true));
     ToggleCutCommand = new DelegateCommand(
       p => {
-        IsKeyShelf = Column.Rack.KeyShelf != this;
+        IsKeyShelf = Rack.KeyShelf != this;
       });
   }
 
@@ -62,9 +60,7 @@ public class ShelfViewModel:
 
   public ICommand ToggleCutCommand { get; }
 
-  public ColumnViewModel Column { get; }
-
-  public RackViewModel Rack => Column.Rack;
+  public RackViewModel Rack { get; }
 
   public ShelfModel Model {
     get => _model;
@@ -107,11 +103,11 @@ public class ShelfViewModel:
           // Note: Make sure this doesn't recurse indefinitely
           // Setting Rack.KeyShelf to this will call this property
           // setter, but the 'ifs' above will block further recursion.
-          Column.Rack.KeyShelf = this;
+          Rack.KeyShelf = this;
         }
-        else if(Column.Rack.KeyShelf == this)
+        else if(Rack.KeyShelf == this)
         {
-          Column.Rack.KeyShelf = null;
+          Rack.KeyShelf = null;
         } // else: don't affect Rack.KeyShelf
         RaisePropertyChanged(nameof(MarkShelfText));
       }

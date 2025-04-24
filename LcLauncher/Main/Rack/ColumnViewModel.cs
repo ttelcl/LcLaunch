@@ -26,7 +26,7 @@ public class ColumnViewModel: ViewModelBase
     Shelves = new ObservableCollection<ShelfViewModel>();
     foreach(var shelf in column)
     {
-      Shelves.Add(new ShelfViewModel(this, shelf));
+      Shelves.Add(new ShelfViewModel(Rack, shelf));
     }
   }
 
