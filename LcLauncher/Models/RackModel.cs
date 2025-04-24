@@ -65,7 +65,7 @@ public class RackModel
   /// </summary>
   public string RackName { get; }
 
-  public RackData RackData { get; }
+  public RackData RackData { get; private set; }
 
   public IReadOnlyDictionary<Guid, ShelfModel> ShelfMap => _shelves;
 
@@ -89,6 +89,16 @@ public class RackModel
   public void MarkDirty()
   {
     IsDirty = true;
+  }
+
+  internal void RebuildRackData()
+  {
+    var columns = new List<List<Guid>> {
+      Columns[0].Select(s => s.Id).ToList(),
+      Columns[1].Select(s => s.Id).ToList(),
+      Columns[2].Select(s => s.Id).ToList()
+    };
+    RackData = new RackData(columns);
   }
 
   public TileListOwnerTracker GetClaimTracker(Guid id)

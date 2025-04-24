@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 using LcLauncher.IconUpdates;
 using LcLauncher.Main.Rack.Tile;
@@ -19,6 +20,8 @@ namespace LcLauncher.Main.Rack;
 
 public class RackViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
 {
+  private List<ColumnViewModel> _columns;
+
   public RackViewModel(
     MainViewModel owner,
     RackModel model)
@@ -26,9 +29,14 @@ public class RackViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
     IconLoadQueue = new IconLoadQueue(q => owner.RackQueueActivating(q));
     Owner = owner;
     Model = model;
+    _columns = new List<ColumnViewModel>();
+    Columns = _columns.AsReadOnly();
     ColumnLeft = new ColumnViewModel(this, Model.Columns[0]);
     ColumnMiddle = new ColumnViewModel(this, Model.Columns[1]);
     ColumnRight = new ColumnViewModel(this, Model.Columns[2]);
+    _columns.Add(ColumnLeft);
+    _columns.Add(ColumnMiddle);
+    _columns.Add(ColumnRight);
     Model.TraceClaimStatus();
   }
 
@@ -46,14 +54,11 @@ public class RackViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
 
   public ColumnViewModel ColumnRight { get; }
 
+  public IReadOnlyList<ColumnViewModel> Columns { get; }
+
   public IEnumerable<ShelfViewModel> AllShelves()
   {
-    var columns = new List<ColumnViewModel>() {
-      ColumnLeft,
-      ColumnMiddle,
-      ColumnRight
-    };
-    foreach(var columnVm in columns)
+    foreach(var columnVm in Columns)
     {
       foreach(var shelfVm in columnVm.Shelves)
       {
@@ -73,7 +78,93 @@ public class RackViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
     return tileLists.Values.ToList();
   }
 
-  internal void GatherTileLists(
+  /// <summary>
+  /// Get the current location of a shelf in this rack,
+  /// or null if it is not in this rack.
+  /// </summary>
+  public ShelfLocation? GetShelfLocation(ShelfViewModel shelf)
+  {
+    for(int i = 0; i < Columns.Count; i++)
+    {
+      var column = Columns[i];
+      for(int j = 0; j < column.Shelves.Count; j++)
+      {
+        if(column.Shelves[j] == shelf)
+        {
+          return new ShelfLocation(i, j);
+        }
+      }
+    }
+    return null;
+  }
+
+  public ShelfLocation GetColumnTail(int columnIndex)
+  {
+    if(columnIndex < 0 || columnIndex >= Columns.Count)
+    {
+      throw new ArgumentOutOfRangeException(nameof(columnIndex));
+    }
+    var column = Columns[columnIndex];
+    return new ShelfLocation(columnIndex, column.Shelves.Count);
+  }
+
+  public void MoveShelf(ShelfLocation source, ShelfLocation destination)
+  {
+    if(source.ColumnIndex < 0 || source.ColumnIndex >= Columns.Count)
+    {
+      throw new ArgumentOutOfRangeException(nameof(source));
+    }
+    if(destination.ColumnIndex < 0 || destination.ColumnIndex >= Columns.Count)
+    {
+      throw new ArgumentOutOfRangeException(nameof(destination));
+    }
+    var columnSource = Columns[source.ColumnIndex];
+    var columnTarget = Columns[destination.ColumnIndex];
+    // Check that the source is an existing shelf
+    if(source.ShelfIndex < 0 
+      || source.ShelfIndex >= columnSource.Shelves.Count)
+    {
+      throw new ArgumentOutOfRangeException(nameof(source));
+    }
+    var maxDestinationIndex = columnTarget.Shelves.Count-1;
+    if(source.ColumnIndex != destination.ColumnIndex)
+    {
+      // For different-column moves, the maximum destination index
+      // is the empty slot after the last shelf in the column.
+      maxDestinationIndex++;
+    }
+    // Check that the destination is an existing shelf or the tail
+    // of the column.
+    if(destination.ShelfIndex < 0
+      || destination.ShelfIndex > maxDestinationIndex)
+    {
+      throw new ArgumentOutOfRangeException(nameof(destination));
+    }
+    if(source.ColumnIndex == destination.ColumnIndex
+      && source.ShelfIndex == destination.ShelfIndex)
+    {
+      MessageBox.Show(
+        "Source and destination shelf are the same");
+    }
+    columnSource.MoveShelf(
+      source.ShelfIndex, columnTarget, destination.ShelfIndex);
+  }
+
+  public ShelfViewModel? GetShelfByLocation(ShelfLocation location)
+  {
+    if(location.ColumnIndex < 0 || location.ColumnIndex >= Columns.Count)
+    {
+      return null;
+    }
+    var column = Columns[location.ColumnIndex];
+    if(location.ShelfIndex < 0 || location.ShelfIndex >= column.Shelves.Count)
+    {
+      return null;
+    }
+    return column.Shelves[location.ShelfIndex];
+  }
+
+  private void GatherTileLists(
     Dictionary<Guid, TileListViewModel> tileLists)
   {
     foreach(var shelf in AllShelves())
@@ -190,6 +281,7 @@ public class RackViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
     {
       Trace.TraceInformation(
         $"Saving rack metadata '{Name}'");
+      Model.RebuildRackData();
       Model.Save();
       RaisePropertyChanged(nameof(IsDirty));
     }

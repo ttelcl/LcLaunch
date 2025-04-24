@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 using LcLauncher.Models;
 using LcLauncher.WpfUtilities;
@@ -19,12 +20,12 @@ public class ColumnViewModel: ViewModelBase
 {
   public ColumnViewModel(
     RackViewModel rack,
-    List<ShelfModel> column)
+    List<ShelfModel> model)
   {
     Rack = rack;
-    Column = column;
+    Model = model;
     Shelves = new ObservableCollection<ShelfViewModel>();
-    foreach(var shelf in column)
+    foreach(var shelf in model)
     {
       Shelves.Add(new ShelfViewModel(Rack, shelf));
     }
@@ -32,35 +33,50 @@ public class ColumnViewModel: ViewModelBase
 
   public RackViewModel Rack { get; }
 
-  List<ShelfModel> Column { get; }
+  List<ShelfModel> Model { get; }
 
   public ObservableCollection<ShelfViewModel> Shelves { get; }
 
-  public void MoveShelf(
-    ShelfViewModel shelfSource,
-    ShelfViewModel shelfTarget) 
+  internal void MoveShelf(
+    int indexSource,
+    int indexDestination) 
   {
-    var indexSource = Shelves.IndexOf(shelfSource);
-    var indexTarget = Shelves.IndexOf(shelfTarget);
-    if(indexSource < 0)
-    {
-      throw new ArgumentException(
-        "Source shelf not found in column");
-    }
-    if(indexTarget < 0)
-    {
-      throw new ArgumentException(
-        "Target shelf not found in column");
-    }
-    if(indexSource == indexTarget)
+    if(indexSource == indexDestination)
     {
       return;
     }
-    Shelves.Move(indexSource, indexTarget);
-    var modelSource = Column[indexSource];
-    Column.RemoveAt(indexSource);
-    Column.Insert(indexTarget, modelSource);
+    if(indexSource < 0 || indexSource >= Shelves.Count)
+    {
+      throw new ArgumentOutOfRangeException(nameof(indexSource));
+    }
+    if(indexDestination < 0 || indexDestination >= Shelves.Count)
+    {
+      // For same-column moves, the maximum destination index is
+      // the last shelf in the column, not the empty slot after!
+      throw new ArgumentOutOfRangeException(nameof(indexDestination));
+    }
+    Shelves.Move(indexSource, indexDestination);
+    var modelSource = Model[indexSource];
+    Model.RemoveAt(indexSource);
+    Model.Insert(indexDestination, modelSource);
     MarkRackDirty();
+  }
+
+  internal void MoveShelf(
+    int indexSource,
+    ColumnViewModel columnDestination,
+    int indexDestination)
+  {
+    if(columnDestination == this)
+    {
+      MoveShelf(indexSource, indexDestination);
+      return;
+    }
+    MessageBox.Show(
+      "Moving shelves between columns is not yet supported.",
+      "Not implemented",
+      MessageBoxButton.OK,
+      MessageBoxImage.Information);
   }
 
   public void MarkRackDirty()

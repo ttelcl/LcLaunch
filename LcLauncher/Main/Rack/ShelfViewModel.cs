@@ -48,6 +48,9 @@ public class ShelfViewModel:
       p => {
         IsKeyShelf = Rack.KeyShelf != this;
       });
+    MoveMarkedShelfHereCommand = new DelegateCommand(
+      p => MoveMarkedShelfHere(),
+      p => CanMoveMarkedShelfHere());
   }
 
   public ICommand SetThemeCommand { get; }
@@ -59,6 +62,8 @@ public class ShelfViewModel:
   public ICommand RefreshIconJobs { get; }
 
   public ICommand ToggleCutCommand { get; }
+
+  public ICommand MoveMarkedShelfHereCommand { get; }
 
   public RackViewModel Rack { get; }
 
@@ -286,4 +291,36 @@ public class ShelfViewModel:
   {
     PrimaryTiles.GatherTileLists(buffer);
   }
+
+  private bool CanMoveMarkedShelfHere()
+  {
+    if(Rack.KeyShelf == null)
+    {
+      return false;
+    }
+    if(Rack.KeyShelf == this)
+    {
+      return false;
+    }
+    return true;
+  }
+
+  private void MoveMarkedShelfHere()
+  {
+    if(CanMoveMarkedShelfHere())
+    {
+      var keyShelf = Rack.KeyShelf!;
+      var sourceLocation = Rack.GetShelfLocation(keyShelf);
+      var destinationLocation = Rack.GetShelfLocation(this);
+      if(sourceLocation != null && destinationLocation != null)
+      {
+        Rack.MoveShelf(
+          sourceLocation.Value,
+          destinationLocation.Value);
+      }
+    }
+    Rack.KeyShelf = null;
+  }
+
+  //
 }
