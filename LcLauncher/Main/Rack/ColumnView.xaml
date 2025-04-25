@@ -14,7 +14,7 @@
     <UserControl.ContextMenu>
         <ContextMenu>
             <MenuItem Header="Insert Marked Shelf Here"
-                      IsEnabled="False">
+                      Command="{Binding MoveMarkedShelfHereCommand}">
                 <MenuItem.Icon>
                     <iconPacks:PackIconMaterial Kind="MapMarkerDown" Width="20" Height="20"/>
                 </MenuItem.Icon>
@@ -27,17 +27,23 @@
             </MenuItem>
         </ContextMenu>
     </UserControl.ContextMenu>
-    <ItemsControl
-        ItemsSource="{Binding Shelves}">
-        <ItemsControl.ItemsPanel>
-            <ItemsPanelTemplate>
-                <StackPanel Orientation="Vertical"/>
-            </ItemsPanelTemplate>
-        </ItemsControl.ItemsPanel>
-        <ItemsControl.ItemTemplate>
-            <DataTemplate>
-                <local:ShelfView DataContext="{Binding}"/>
-            </DataTemplate>
-        </ItemsControl.ItemTemplate>
-    </ItemsControl>
+    <StackPanel Orientation="Vertical">
+        <ItemsControl
+            ItemsSource="{Binding Shelves}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Vertical"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <local:ShelfView DataContext="{Binding}"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <!-- insert a small invisible box causing a gap after the last shelf
+             where another shelf can be moved -->
+        <Border Height="30">
+        </Border>
+    </StackPanel>
 </UserControl>

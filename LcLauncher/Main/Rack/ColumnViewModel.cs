@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 
 using LcLauncher.Models;
 using LcLauncher.WpfUtilities;
@@ -20,18 +21,29 @@ public class ColumnViewModel: ViewModelBase
 {
   public ColumnViewModel(
     RackViewModel rack,
-    List<ShelfModel> model)
+    int columnIndex)
   {
     Rack = rack;
-    Model = model;
+    Model = rack.Model.Columns[columnIndex];
+    ColumnIndex = columnIndex;
     Shelves = new ObservableCollection<ShelfViewModel>();
-    foreach(var shelf in model)
+    foreach(var shelf in Model)
     {
       Shelves.Add(new ShelfViewModel(Rack, shelf));
     }
+    MoveMarkedShelfHereCommand = new DelegateCommand(
+      p => MoveMarkedShelfHere(),
+      p => CanMoveMarkedShelfHere());
   }
 
+  /// <summary>
+  /// Move the marked shelf to the tail of this column.
+  /// </summary>
+  public ICommand MoveMarkedShelfHereCommand { get; }
+
   public RackViewModel Rack { get; }
+
+  public int ColumnIndex { get; }
 
   List<ShelfModel> Model { get; }
 
@@ -39,7 +51,7 @@ public class ColumnViewModel: ViewModelBase
 
   internal void MoveShelf(
     int indexSource,
-    int indexDestination) 
+    int indexDestination)
   {
     if(indexSource == indexDestination)
     {
@@ -53,12 +65,16 @@ public class ColumnViewModel: ViewModelBase
     {
       // For same-column moves, the maximum destination index is
       // the last shelf in the column, not the empty slot after!
+      // Hence the '>=' instead of '>'.
       throw new ArgumentOutOfRangeException(nameof(indexDestination));
     }
+    // Move the viewmodel
     Shelves.Move(indexSource, indexDestination);
+    // Move the model
     var modelSource = Model[indexSource];
     Model.RemoveAt(indexSource);
     Model.Insert(indexDestination, modelSource);
+    // Mark the container as dirty
     MarkRackDirty();
   }
 
@@ -72,15 +88,85 @@ public class ColumnViewModel: ViewModelBase
       MoveShelf(indexSource, indexDestination);
       return;
     }
-    MessageBox.Show(
-      "Moving shelves between columns is not yet supported.",
-      "Not implemented",
-      MessageBoxButton.OK,
-      MessageBoxImage.Information);
+    else
+    {
+      if(columnDestination.Rack != Rack)
+      {
+        throw new ArgumentException(
+          "Cannot move shelves between different racks");
+      }
+      if(indexSource < 0 || indexSource >= Shelves.Count)
+      {
+        throw new ArgumentOutOfRangeException(nameof(indexSource));
+      }
+      if(indexDestination < 0 || indexDestination > columnDestination.Shelves.Count)
+      {
+        // For not-same-column moves, the maximum destination index is
+        // the last shelf in the column plus 1
+        // Hence the '>' instead of '>='.
+        throw new ArgumentOutOfRangeException(nameof(indexDestination));
+      }
+
+      // Move the viewmodel
+      var shelfVm = Shelves[indexSource];
+      Shelves.RemoveAt(indexSource);
+      columnDestination.Shelves.Insert(indexDestination, shelfVm);
+
+      // Move the model
+      var shelfModel = Model[indexSource];
+      Model.RemoveAt(indexSource);
+      columnDestination.Model.Insert(indexDestination, shelfModel);
+
+      // Mark the container as dirty
+      MarkRackDirty();
+    }
   }
 
   public void MarkRackDirty()
   {
     Rack.MarkDirty();
   }
+
+  private bool CanMoveMarkedShelfHere()
+  {
+    var keyShelf = Rack.KeyShelf!;
+    if(keyShelf == null)
+    {
+      return false;
+    }
+    var columnLocation = Rack.GetColumnTail(this);
+    var sourceLocation = Rack.GetShelfLocation(keyShelf);
+    if(sourceLocation == null)
+    {
+      return false;
+    }
+    if(columnLocation.ColumnIndex == sourceLocation.Value.ColumnIndex)
+    {
+      // Same column, so we cannot move to the last shelf
+      return sourceLocation.Value.ShelfIndex < columnLocation.ShelfIndex;
+    }
+    else
+    {
+      // Different column, so we also can move to any location
+      return true;
+    }
+  }
+
+  private void MoveMarkedShelfHere()
+  {
+    if(CanMoveMarkedShelfHere())
+    {
+      var keyShelf = Rack.KeyShelf!;
+      var sourceLocation = Rack.GetShelfLocation(keyShelf);
+      var destinationLocation = Rack.GetColumnTail(this);
+      if(sourceLocation != null)
+      {
+        Rack.MoveShelf(
+          sourceLocation.Value,
+          destinationLocation);
+      }
+    }
+    Rack.KeyShelf = null;
+  }
+
 }

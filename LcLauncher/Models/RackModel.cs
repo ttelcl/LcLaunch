@@ -65,7 +65,7 @@ public class RackModel
   /// </summary>
   public string RackName { get; }
 
-  public RackData RackData { get; private set; }
+  public RackData RackData { get; }
 
   public IReadOnlyDictionary<Guid, ShelfModel> ShelfMap => _shelves;
 
@@ -93,12 +93,14 @@ public class RackModel
 
   internal void RebuildRackData()
   {
-    var columns = new List<List<Guid>> {
-      Columns[0].Select(s => s.Id).ToList(),
-      Columns[1].Select(s => s.Id).ToList(),
-      Columns[2].Select(s => s.Id).ToList()
-    };
-    RackData = new RackData(columns);
+    // Note: the outer and inner lists may also be referenced elsewhere,
+    // so we can only replace their contents, not the lists themselves.
+    RackData.Columns[0].Clear();
+    RackData.Columns[0].AddRange(Columns[0].Select(s => s.Id));
+    RackData.Columns[1].Clear();
+    RackData.Columns[1].AddRange(Columns[1].Select(s => s.Id));
+    RackData.Columns[2].Clear();
+    RackData.Columns[2].AddRange(Columns[2].Select(s => s.Id));
   }
 
   public TileListOwnerTracker GetClaimTracker(Guid id)

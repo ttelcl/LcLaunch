@@ -31,9 +31,9 @@ public class RackViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
     Model = model;
     _columns = new List<ColumnViewModel>();
     Columns = _columns.AsReadOnly();
-    ColumnLeft = new ColumnViewModel(this, Model.Columns[0]);
-    ColumnMiddle = new ColumnViewModel(this, Model.Columns[1]);
-    ColumnRight = new ColumnViewModel(this, Model.Columns[2]);
+    ColumnLeft = new ColumnViewModel(this, 0);
+    ColumnMiddle = new ColumnViewModel(this, 1);
+    ColumnRight = new ColumnViewModel(this, 2);
     _columns.Add(ColumnLeft);
     _columns.Add(ColumnMiddle);
     _columns.Add(ColumnRight);
@@ -106,6 +106,16 @@ public class RackViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
     }
     var column = Columns[columnIndex];
     return new ShelfLocation(columnIndex, column.Shelves.Count);
+  }
+
+  public ShelfLocation GetColumnTail(ColumnViewModel column)
+  {
+    if(!Columns.Contains(column))
+    {
+      throw new ArgumentException(
+        "Column is not part of this rack", nameof(column));
+    }
+    return GetColumnTail(column.ColumnIndex);
   }
 
   public void MoveShelf(ShelfLocation source, ShelfLocation destination)
