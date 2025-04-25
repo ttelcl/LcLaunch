@@ -34,6 +34,9 @@ public class ColumnViewModel: ViewModelBase
     MoveMarkedShelfHereCommand = new DelegateCommand(
       p => MoveMarkedShelfHere(),
       p => CanMoveMarkedShelfHere());
+    CreateNewShelfHereCommand = new DelegateCommand(
+      p => CreateNewShelfHere(),
+      p => Rack.KeyShelf == null && Rack.KeyTile == null);
   }
 
   /// <summary>
@@ -41,11 +44,13 @@ public class ColumnViewModel: ViewModelBase
   /// </summary>
   public ICommand MoveMarkedShelfHereCommand { get; }
 
+  public ICommand CreateNewShelfHereCommand { get; }
+
   public RackViewModel Rack { get; }
 
   public int ColumnIndex { get; }
 
-  List<ShelfModel> Model { get; }
+  internal List<ShelfModel> Model { get; }
 
   public ObservableCollection<ShelfViewModel> Shelves { get; }
 
@@ -167,6 +172,13 @@ public class ColumnViewModel: ViewModelBase
       }
     }
     Rack.KeyShelf = null;
+  }
+
+  private void CreateNewShelfHere()
+  {
+    var sourceLocation = Rack.GetColumnTail(this);
+    var _ = Rack.CreateNewShelf(sourceLocation, null);
+    // Todo: open editor
   }
 
 }

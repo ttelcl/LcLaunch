@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 using ControlzEx.Theming;
@@ -51,6 +52,12 @@ public class ShelfViewModel:
     MoveMarkedShelfHereCommand = new DelegateCommand(
       p => MoveMarkedShelfHere(),
       p => CanMoveMarkedShelfHere());
+    CreateNewShelfHereCommand = new DelegateCommand(
+      p => CreateNewShelfHere(),
+      p => Rack.KeyShelf == null && Rack.KeyTile == null);
+    DeleteShelfCommand = new DelegateCommand(
+      p => DeleteShelf(),
+      p => CanDeleteShelf());
   }
 
   public ICommand SetThemeCommand { get; }
@@ -64,6 +71,10 @@ public class ShelfViewModel:
   public ICommand ToggleCutCommand { get; }
 
   public ICommand MoveMarkedShelfHereCommand { get; }
+
+  public ICommand CreateNewShelfHereCommand { get; }
+
+  public ICommand DeleteShelfCommand { get; }
 
   public RackViewModel Rack { get; }
 
@@ -320,6 +331,76 @@ public class ShelfViewModel:
       }
     }
     Rack.KeyShelf = null;
+  }
+
+  private void CreateNewShelfHere()
+  {
+    var sourceLocation = Rack.GetShelfLocation(this);
+    if(sourceLocation == null)
+    {
+      return;
+    }
+    var _ = Rack.CreateNewShelf(sourceLocation.Value, null, Theme);
+    // Todo: open editor
+  }
+
+  private bool CanDeleteShelf()
+  {
+    if(Rack.KeyShelf != null || Rack.KeyTile != null)
+    {
+      return false;
+    }
+    if(SecondaryTiles != null)
+    {
+      return false;
+    }
+    return true;
+  }
+
+  private bool GetIsEmpty()
+  {
+    return PrimaryTiles.Tiles.All(t => t.IsEmpty);
+  }
+
+  private void DeleteShelf()
+  {
+    if(CanDeleteShelf())
+    {
+      if(!GetIsEmpty())
+      {
+        var response = MessageBox.Show(
+          "This shelf is not empty. Do you really want to delete it?",
+          "Delete Shelf",
+          MessageBoxButton.YesNo,
+          MessageBoxImage.Warning);
+        if(response != MessageBoxResult.Yes)
+        {
+          return;
+        }
+      }
+      var sourceLocation = Rack.GetShelfLocation(this);
+      if(sourceLocation != null)
+      {
+        // We are about to detach this shelf from the rack.
+        // Make sure its persisted model is up to date (it may still
+        // be in use by other racks!)
+        SaveIfDirty();
+
+        var columnVm = Rack.Columns[sourceLocation.Value.ColumnIndex];
+
+        // Remove the shelf vm from the column
+        columnVm.Shelves.RemoveAt(sourceLocation.Value.ShelfIndex);
+
+        // Remove the shelf model from the column
+        columnVm.Model.RemoveAt(sourceLocation.Value.ShelfIndex);
+
+        Rack.MarkDirty();
+        Rack.SaveIfDirty();
+
+        // We don't delete the backing store content. The shelf
+        // may be in use elsewhere still.
+      }
+    }
   }
 
   //

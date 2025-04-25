@@ -17,7 +17,7 @@ namespace LcLauncher.Models;
 
 public class ShelfModel
 {
-  private ShelfModel(
+  internal ShelfModel(
     RackModel owner,
     Guid id,
     ShelfData shelf)

@@ -296,4 +296,38 @@ public class RackViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
       RaisePropertyChanged(nameof(IsDirty));
     }
   }
+
+  internal ShelfViewModel CreateNewShelf(
+    ShelfLocation location,
+    string? title = null,
+    string initialTheme = "Olive")
+  {
+    var columnVm = Columns[location.ColumnIndex];
+    if(location.ShelfIndex < 0
+      || location.ShelfIndex > columnVm.Shelves.Count)
+    {
+      throw new ArgumentOutOfRangeException(nameof(location));
+    }
+    var shelfGuid = Guid.NewGuid();
+    var shelfData = new ShelfData(
+      title ?? $"Unnamed shelf {shelfGuid}",
+      false,
+      initialTheme);
+    var shelfModel = new ShelfModel(
+      Model,
+      shelfGuid,
+      shelfData);
+    var shelfVm = new ShelfViewModel(this, shelfModel);
+    // Insert VM into the column
+    columnVm.Shelves.Insert(
+      location.ShelfIndex, shelfVm);
+    // Insert model into the column
+    columnVm.Model.Insert(
+      location.ShelfIndex, shelfModel);
+    shelfVm.MarkDirty();
+    shelfVm.SaveIfDirty();
+    MarkDirty();
+    SaveIfDirty();
+    return shelfVm;
+  }
 }

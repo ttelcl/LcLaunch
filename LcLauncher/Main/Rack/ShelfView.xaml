@@ -48,7 +48,7 @@
                             </MenuItem.Icon>
                         </MenuItem>
                         <MenuItem Header="Create New Shelf Here"
-                                  IsEnabled="False">
+                                  Command="{Binding CreateNewShelfHereCommand}">
                             <MenuItem.Icon>
                                 <iconPacks:PackIconMaterial Kind="Bookshelf" Width="20" Height="20"/>
                             </MenuItem.Icon>
@@ -230,7 +230,7 @@
                             </MenuItem.Icon>
                             <MenuItem
                                 Header="Delete Shelf!"
-                                IsEnabled="False">
+                                Command="{Binding DeleteShelfCommand}">
                                 <MenuItem.Icon>
                                     <iconPacks:PackIconMaterial Kind="DeleteAlert" Width="20" Height="20"
                                                     Foreground="#FFFF4444"/>
