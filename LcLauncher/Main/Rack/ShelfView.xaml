@@ -35,34 +35,36 @@
                 <DockPanel.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="{Binding MarkShelfText}"
-                                  Command="{Binding ToggleCutCommand}"
-                                  IsChecked="{Binding IsKeyShelf}">
+                                  Command="{Binding ToggleCutCommand}">
                             <MenuItem.Icon>
-                                <iconPacks:PackIconMaterial Kind="MapMarkerOutline" Width="20" Height="20"/>
+                                <iconPacks:PackIconMaterial
+                                    Kind="{Binding MarkShelfActionIcon}"
+                                    Width="20" Height="20"/>
                             </MenuItem.Icon>
                         </MenuItem>
                         <MenuItem Header="Insert Marked Shelf Here"
                                   Command="{Binding MoveMarkedShelfHereCommand}">
                             <MenuItem.Icon>
-                                <iconPacks:PackIconMaterial Kind="MapMarkerDown" Width="20" Height="20"/>
+                                <iconPacks:PackIconMaterial
+                                    Kind="TrayArrowDown"
+                                    Width="20" Height="20"/>
                             </MenuItem.Icon>
                         </MenuItem>
                         <MenuItem Header="Create New Shelf Here"
                                   Command="{Binding CreateNewShelfHereCommand}">
                             <MenuItem.Icon>
-                                <iconPacks:PackIconMaterial Kind="Bookshelf" Width="20" Height="20"/>
+                                <iconPacks:PackIconMaterial
+                                    Kind="TrayPlus"
+                                    Width="20" Height="20"/>
                             </MenuItem.Icon>
                         </MenuItem>
-                        <!--<MenuItem Header="Expanded"
-                                  Command="{Binding ToggleExpandedCommand}"
-                                  IsChecked="{Binding IsExpanded}"/>-->
-                        <Separator/>
                         <MenuItem Header="Properties..."
                                   Command="{Binding EditCommand}">
                             <MenuItem.Icon>
                                 <iconPacks:PackIconMaterial Kind="Cog" Width="20" Height="20"/>
                             </MenuItem.Icon>
                         </MenuItem>
+                        <!--
                         <MenuItem Header="Color Theme">
                             <MenuItem Header="Olive" Command="{Binding SetThemeCommand}"
                                       CommandParameter="Olive"
@@ -203,16 +205,33 @@
                                                   Converter={StaticResource ValueIs},
                                                   ConverterParameter=Teal}"/>
                         </MenuItem>
+                        -->
                         <Separator/>
                         <MenuItem Header="Add Tile Row"
-                                  Command="{Binding PrimaryTiles.AddEmptyRowCommand}"/>
+                                  Command="{Binding PrimaryTiles.AddEmptyRowCommand}">
+                            <MenuItem.Icon>
+                                <iconPacks:PackIconMaterial Kind="TableRowPlusAfter" Width="20" Height="20"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
                         <MenuItem Header="Remove Empty Tile Row"
-                                  Command="{Binding PrimaryTiles.RemoveLastEmptyRowCommand}"/>
+                                  Command="{Binding PrimaryTiles.RemoveLastEmptyRowCommand}">
+                            <MenuItem.Icon>
+                                <iconPacks:PackIconMaterial Kind="TableRowRemove" Width="20" Height="20"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
                         <Separator/>
                         <MenuItem Header="Update Missing Icons"
-                                  Command="{Binding EnqueueIconJobs}"/>
+                                  Command="{Binding EnqueueIconJobs}">
+                            <MenuItem.Icon>
+                                <iconPacks:PackIconMaterial Kind="Reload" Width="20" Height="20"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
                         <MenuItem Header="Reload All Icons"
-                                  Command="{Binding RefreshIconJobs}"/>
+                                  Command="{Binding RefreshIconJobs}">
+                            <MenuItem.Icon>
+                                <iconPacks:PackIconMaterial Kind="ReloadAlert" Width="20" Height="20"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
                         <Separator/>
                         <MenuItem Header="Target tile list Info">
                             <MenuItem.Icon>
@@ -236,7 +255,7 @@
                                 Header="Delete Shelf!"
                                 Command="{Binding DeleteShelfCommand}">
                                 <MenuItem.Icon>
-                                    <iconPacks:PackIconMaterial Kind="DeleteAlert" Width="20" Height="20"
+                                    <iconPacks:PackIconMaterial Kind="TrayRemove" Width="20" Height="20"
                                                     Foreground="#FFFF4444"/>
                                 </MenuItem.Icon>
                             </MenuItem>
@@ -279,6 +298,17 @@
                         Kind="Cog"
                         Height="16" Width="16"/>
                 </Button>
+                <ToggleButton
+                    DockPanel.Dock="Right"
+                    IsChecked="{Binding IsKeyShelf}"
+                    MinWidth="20" MinHeight="20"
+                    BorderThickness="0"
+                    Margin="0,0,8,0"
+                    Style="{DynamicResource MahApps.Styles.ToggleButton.Circle}">
+                    <iconPacks:PackIconMaterial
+                        Kind="{Binding MarkShelfIcon}"
+                        Height="16" Width="16"/>
+                </ToggleButton>
                 <Grid/>
                 <!-- Spacer -->
             </DockPanel>

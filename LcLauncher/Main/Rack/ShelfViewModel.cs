@@ -131,12 +131,21 @@ public class ShelfViewModel:
           Rack.KeyShelf = null;
         } // else: don't affect Rack.KeyShelf
         RaisePropertyChanged(nameof(MarkShelfText));
+        RaisePropertyChanged(nameof(MarkShelfIcon));
+        RaisePropertyChanged(nameof(MarkShelfActionIcon));
       }
     }
   }
   private bool _isKeyShelf;
 
-  public string MarkShelfText => IsKeyShelf ? "Unmark Shelf" : "Mark Shelf";
+  public string MarkShelfText =>
+    IsKeyShelf ? "Unmark Shelf" : "Mark Shelf";
+
+  public string MarkShelfIcon =>
+    IsKeyShelf ? "CheckboxIntermediate" : "CheckboxBlankOutline";
+
+  public string MarkShelfActionIcon =>
+    IsKeyShelf ? "CheckboxBlankOffOutline" : "CheckboxIntermediate";
 
   public ILcLaunchStore Store { get; }
 

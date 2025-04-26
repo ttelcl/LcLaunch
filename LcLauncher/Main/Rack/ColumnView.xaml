@@ -16,13 +16,13 @@
             <MenuItem Header="Insert Marked Shelf Here"
                       Command="{Binding MoveMarkedShelfHereCommand}">
                 <MenuItem.Icon>
-                    <iconPacks:PackIconMaterial Kind="MapMarkerDown" Width="20" Height="20"/>
+                    <iconPacks:PackIconMaterial Kind="TrayArrowDown" Width="20" Height="20"/>
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem Header="Create New Shelf Here"
                       Command="{Binding CreateNewShelfHereCommand}">
                 <MenuItem.Icon>
-                    <iconPacks:PackIconMaterial Kind="Bookshelf" Width="20" Height="20"/>
+                    <iconPacks:PackIconMaterial Kind="TrayPlus" Width="20" Height="20"/>
                 </MenuItem.Icon>
             </MenuItem>
         </ContextMenu>
