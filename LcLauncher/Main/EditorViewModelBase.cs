@@ -151,5 +151,6 @@ public class EditorViewModelBase: ViewModelBase, IHasTheme
   public virtual void AcceptEditor()
   {
     // do nothing.
+    IsActive = false;
   }
 }

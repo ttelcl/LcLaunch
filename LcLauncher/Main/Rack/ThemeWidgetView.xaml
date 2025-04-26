@@ -11,6 +11,7 @@
     d:DataContext="{d:DesignInstance local:ThemeWidgetViewModel, IsDesignTimeCreatable=False}"
     d:DesignHeight="450" d:DesignWidth="800">
     <Grid
+        Background="#00000000"
         MinWidth="120">
         <Grid.InputBindings>
             <MouseBinding
@@ -26,6 +27,7 @@
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     Width="20" Height="20"
+                    IsHitTestVisible="True"
                     Foreground="{Binding SampleColor}"
                     Kind="{Binding SelectedIcon}" />
             </Border>

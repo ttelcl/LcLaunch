@@ -47,4 +47,23 @@ public class ShelfEditViewModel: EditorViewModelBase
   private string _title = string.Empty;
 
   public ThemePickerViewModel ThemePicker { get; }
+
+  public override bool CanAcceptEditor()
+  {
+    return
+      !String.IsNullOrEmpty(Title)
+      && (Title != Target.Title || Theme != Target.Theme);
+  }
+
+  public override void AcceptEditor()
+  {
+    if(CanAcceptEditor())
+    {
+      Target.Title = Title;
+      Target.Theme = Theme;
+      Target.MarkDirty();
+      Target.SaveIfDirty();
+      IsActive = false;
+    }
+  }
 }
