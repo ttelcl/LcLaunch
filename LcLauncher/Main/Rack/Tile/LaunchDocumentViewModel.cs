@@ -5,9 +5,11 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 using LcLauncher.Models;
 
@@ -43,7 +45,6 @@ public class LaunchDocumentViewModel: EditorViewModelBase
         Model = shellLaunch;
         _model = Model;
         Tile = launchTile;
-        _tile = Tile;
         TargetPath = shellLaunch.TargetPath;
         Title = shellLaunch.Title ?? String.Empty;
         Tooltip = shellLaunch.Tooltip ?? String.Empty;
@@ -61,20 +62,79 @@ public class LaunchDocumentViewModel: EditorViewModelBase
     }
   }
 
+  private LaunchDocumentViewModel(
+    TileHostViewModel tileHost,
+    ShellLaunch newModel)
+    : base(
+        tileHost.Rack.Owner,
+        "Create new Document Launch tile",
+        tileHost.Shelf.Theme)
+  {
+    TileHost = tileHost;
+    Model = newModel;
+    _model = Model;
+    Tile = null;
+    TargetPath = newModel.TargetPath;
+    Title = newModel.Title ?? String.Empty;
+    Tooltip = newModel.Tooltip ?? String.Empty;
+  }
+
+  public static LaunchDocumentViewModel? CreateFromFile(
+    TileHostViewModel tileHost,
+    string targetFile)
+  {
+    if(!File.Exists(targetFile))
+    {
+      MessageBox.Show(
+        $"File does not exist: {targetFile}",
+        "Error",
+        MessageBoxButton.OK,
+        MessageBoxImage.Error);
+      return null;
+    }
+    targetFile = Path.GetFullPath(targetFile);
+    if(tileHost.Tile is not EmptyTileViewModel)
+    {
+      MessageBox.Show(
+        "Tile is not empty",
+        "Error",
+        MessageBoxButton.OK,
+        MessageBoxImage.Error);
+      return null;
+    }
+
+    var shellLaunch = new ShellLaunch(
+      targetFile,
+      Path.GetFileNameWithoutExtension(targetFile),
+      Path.GetFileName(targetFile),
+      ProcessWindowStyle.Normal,
+      iconSource: null,
+      icon48: null,
+      icon32: null,
+      icon16: null,
+      verb: string.Empty);
+
+    return new LaunchDocumentViewModel(
+      tileHost,
+      shellLaunch);
+  }
+
   public TileHostViewModel TileHost { get; }
 
   /// <summary>
   /// Store intermediate data for the tile.
+  /// Can be the original when editing or null
+  /// for a brand new tile.
   /// </summary>
-  public LaunchTileViewModel Tile {
+  public LaunchTileViewModel? Tile {
     get => _tile;
     set {
-      if(SetInstanceProperty(ref _tile, value))
+      if(SetNullableInstanceProperty(ref _tile, value))
       {
       }
     }
   }
-  private LaunchTileViewModel _tile;
+  private LaunchTileViewModel? _tile = null;
 
   public ShelfViewModel Shelf => TileHost.Shelf;
 
