@@ -9,8 +9,8 @@
     mc:Ignorable="d" 
     xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-    DataContextChanged="ShelfView_DataContextChanged"
     d:DataContext="{d:DesignInstance local:ShelfViewModel, IsDesignTimeCreatable=False}"
+    DataContextChanged="ShelfView_DataContextChanged"
     Background="#00000000"
     d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.ContextMenu>
@@ -57,8 +57,12 @@
                                   Command="{Binding ToggleExpandedCommand}"
                                   IsChecked="{Binding IsExpanded}"/>-->
                         <Separator/>
-                        <MenuItem Header="Edit Title..."
-                                  IsEnabled="False"/>
+                        <MenuItem Header="Properties..."
+                                  Command="{Binding EditCommand}">
+                            <MenuItem.Icon>
+                                <iconPacks:PackIconMaterial Kind="Cog" Width="20" Height="20"/>
+                            </MenuItem.Icon>
+                        </MenuItem>
                         <MenuItem Header="Color Theme">
                             <MenuItem Header="Olive" Command="{Binding SetThemeCommand}"
                                       CommandParameter="Olive"

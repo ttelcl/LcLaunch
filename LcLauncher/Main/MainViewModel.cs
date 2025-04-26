@@ -134,13 +134,13 @@ public class MainViewModel: ViewModelBase
         {
           oldEditor.IsActive = false;
           Trace.TraceInformation(
-            $"Closed editor '{oldEditor.Title}' ({oldEditor.GetType().Name})");
+            $"Closed editor '{oldEditor.EditorTitle}' ({oldEditor.GetType().Name})");
         }
         if(_currentEditor != null)
         {
           _currentEditor.IsActive = true;
           Trace.TraceInformation(
-            $"Switched to editor '{_currentEditor.Title}' ({_currentEditor.GetType().Name})");
+            $"Switched to editor '{_currentEditor.EditorTitle}' ({_currentEditor.GetType().Name})");
         }
         else
         {

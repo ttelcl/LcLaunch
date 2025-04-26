@@ -22,7 +22,7 @@ using LcLauncher.WpfUtilities;
 namespace LcLauncher.Main.Rack;
 
 public class ShelfViewModel:
-  ViewModelBase, IIconLoadJobSource, IPersisted, ITileListOwner
+  ViewModelBase, IIconLoadJobSource, IPersisted, ITileListOwner, IHasTheme
 {
   public ShelfViewModel(
     RackViewModel rack,
@@ -58,6 +58,9 @@ public class ShelfViewModel:
     DeleteShelfCommand = new DelegateCommand(
       p => DeleteShelf(),
       p => CanDeleteShelf());
+    EditCommand = new DelegateCommand(
+      p => ShelfEditViewModel.Show(this),
+      p => Rack.KeyShelf == null && Rack.KeyTile == null);
   }
 
   public ICommand SetThemeCommand { get; }
@@ -75,6 +78,8 @@ public class ShelfViewModel:
   public ICommand CreateNewShelfHereCommand { get; }
 
   public ICommand DeleteShelfCommand { get; }
+
+  public ICommand EditCommand { get; }
 
   public RackViewModel Rack { get; }
 

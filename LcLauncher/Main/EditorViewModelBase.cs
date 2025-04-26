@@ -13,6 +13,7 @@ using System.Windows.Input;
 using ControlzEx.Theming;
 
 using LcLauncher.Main.Rack;
+using LcLauncher.Models;
 using LcLauncher.WpfUtilities;
 
 namespace LcLauncher.Main;
@@ -20,18 +21,18 @@ namespace LcLauncher.Main;
 /// <summary>
 /// Common base class for all Editors.
 /// </summary>
-public class EditorViewModelBase: ViewModelBase
+public class EditorViewModelBase: ViewModelBase, IHasTheme
 {
   /// <summary>
   /// Create a new EditorViewModelBase
   /// </summary>
   public EditorViewModelBase(
     MainViewModel owner,
-    string title,
+    string editorTitle,
     string theme = "Olive")
   {
     Owner = owner;
-    Title = title;
+    EditorTitle = editorTitle;
     Theme = theme;
     CancelCommand = new DelegateCommand(
       p => CancelEditor());
@@ -54,7 +55,7 @@ public class EditorViewModelBase: ViewModelBase
 
   public MainViewModel Owner { get; }
 
-  public string Title { get; }
+  public string EditorTitle { get; }
 
   public string Theme {
     get => _theme;
@@ -132,6 +133,8 @@ public class EditorViewModelBase: ViewModelBase
   /// </summary>
   public virtual void CancelEditor()
   {
+    Trace.TraceInformation(
+      "EditorBaseView.CancelEditor: Cancelling editor");
     IsActive = false;
   }
 
