@@ -27,12 +27,12 @@
             BorderBrush="Blue">
             <DockPanel>
                 <WrapPanel DockPanel.Dock="Left" Orientation="Vertical">
-                    <Button Content="Test Rebuild/Save" 
-                            Command="{Binding TestRebuildCommand}"/>
                     <Button Content="Next Icon Job" 
                             Command="{Binding Host.ProcessNextIconJobCommand}"/>
                     <Button Content="Application Folder test" 
                             Command="{Binding TestApplicationShellFolderCommand}"/>
+                    <Button Content="Test Editor"
+                            Command="{Binding TestEditorCommand}"/>
                 </WrapPanel>
                 <DockPanel DockPanel.Dock="Top">
                     <Button

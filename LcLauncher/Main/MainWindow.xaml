@@ -34,12 +34,15 @@
     </mah:MetroWindow.RightWindowCommands>
     <DockPanel>
         <local:TestPane DockPanel.Dock="Top" DataContext="{Binding TestPane}"/>
-        <ScrollViewer
-            Visibility="{Binding CurrentRack, Converter={StaticResource VisibleIfNotNull}}"
-            VerticalScrollBarVisibility="Visible">
-            <rack:RackView
-                DataContext="{Binding CurrentRack}"
-                />
-        </ScrollViewer>
+        <Grid>
+            <ScrollViewer
+                Visibility="{Binding CurrentRack, Converter={StaticResource VisibleIfNotNull}}"
+                VerticalScrollBarVisibility="Visible">
+                <rack:RackView DataContext="{Binding CurrentRack}"/>
+            </ScrollViewer>
+            <local:EditorBaseView
+                Visibility="{Binding Converter={StaticResource VisibleIfNotNull}}"
+                DataContext="{Binding CurrentEditor}"/>
+        </Grid>
     </DockPanel>
 </mah:MetroWindow>

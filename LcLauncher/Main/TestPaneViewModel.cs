@@ -33,9 +33,11 @@ public class TestPaneViewModel: ViewModelBase
   {
     Host = host;
     OpenIconFileCommand = new DelegateCommand(p => OpenIconFile());
-    TestRebuildCommand = new DelegateCommand(p => TestRebuild());
     TestApplicationShellFolderCommand =
       new DelegateCommand(p => TestApplicationShellFolder());
+    TestEditorCommand =
+      new DelegateCommand(
+        p => EditorViewModelBase.ShowTest(host));
   }
 
   public MainViewModel Host { get; }
@@ -196,7 +198,7 @@ public class TestPaneViewModel: ViewModelBase
 
   public ICommand OpenIconFileCommand { get; }
 
-  public ICommand TestRebuildCommand { get; }
+  public ICommand TestEditorCommand { get; }
 
   private void OpenIconFile()
   {
@@ -213,35 +215,6 @@ public class TestPaneViewModel: ViewModelBase
     {
       IconFile = ofd.FileName;
     }
-  }
-
-  private void TestRebuild()
-  {
-    var testShelfId = new Guid("4bfb0220-9c04-4456-a2a9-fa9d870850fe");
-    var copyId = new Guid("bef10af3-a1f7-4950-97ee-a9c23305b371");
-    var rack = Host.CurrentRack;
-    if(rack == null)
-    {
-      Trace.TraceError(
-        $"TestRebuild: No rack selected");
-      return;
-    }
-    var shelfVm =
-      rack.AllShelves()
-      .FirstOrDefault(vm => vm.Model.Id == testShelfId);
-    if(shelfVm == null)
-    {
-      Trace.TraceError(
-        $"TestRebuild: No shelf found with ID {testShelfId}");
-      return;
-    }
-    Trace.TraceInformation(
-      $"TestRebuild: Found shelf {testShelfId}");
-    var primaryTiles = shelfVm.PrimaryTiles;
-    Trace.TraceInformation(
-      $"TestRebuild: Rebuilding tiles and saving a copy");
-    primaryTiles.RebuildModel();
-    primaryTiles.Model.DevSaveCopy(copyId);
   }
 
   public ICommand TestApplicationShellFolderCommand { get; }
