@@ -20,7 +20,6 @@
             >
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <!--<WrapPanel/>-->
                     <UniformGrid Columns="4"/>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>

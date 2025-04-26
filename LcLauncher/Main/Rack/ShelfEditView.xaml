@@ -65,8 +65,21 @@
             MinHeight="60"
             BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
             BorderThickness="1">
-            <!-- temporary placeholder -->
-            <TextBlock Text="{Binding Theme}"/>
+            <StackPanel Orientation="Vertical">
+                <ItemsControl
+                    ItemsSource="{Binding ThemePicker.ThemeWidgets}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="6"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <local:ThemeWidgetView DataContext="{Binding}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
         </Border>
     </Grid>
 </UserControl>

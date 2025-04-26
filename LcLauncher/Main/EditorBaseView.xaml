@@ -36,6 +36,7 @@
                     DockPanel.Dock="Right"
                     Margin="10,5"
                     MinWidth="100"
+                    FontSize="14"
                     Command="{Binding AcceptCommand}"/>
                 <Button
                     Content="Cancel"
@@ -43,6 +44,7 @@
                     Margin="10,5"
                     MinWidth="100"
                     IsCancel="True"
+                    FontSize="14"
                     Command="{Binding CancelCommand}"/>
                 <StackPanel/> <!-- filler -->
             </DockPanel>
