@@ -30,7 +30,7 @@
             <Separator/>
             <MenuItem
                 Header="Edit ..."
-                IsEnabled="False">
+                Command="{Binding EditCommand}">
                 <MenuItem.Icon>
                     <iconPacks:PackIconMaterial Kind="ApplicationEditOutline" Width="20" Height="20"/>
                 </MenuItem.Icon>

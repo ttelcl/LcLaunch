@@ -8,11 +8,13 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
 using LcLauncher.IconUpdates;
 using LcLauncher.Models;
 using LcLauncher.Persistence;
+using LcLauncher.WpfUtilities;
 
 namespace LcLauncher.Main.Rack.Tile;
 
@@ -45,6 +47,9 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
     _title = Model.GetEffectiveTitle();
     _tooltip = Model.GetEffectiveTooltip();
     LoadIcon(IconLoadLevel.FromCache);
+    EditCommand = new DelegateCommand(
+      p => StartEdit(),
+      p => CanEdit());
   }
 
   public static LaunchTileViewModel FromShell(
@@ -60,6 +65,8 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
   {
     return new LaunchTileViewModel(ownerList, model);
   }
+
+  public ICommand EditCommand { get; }
 
   /// <summary>
   /// The model for this tile. This is either equal to
@@ -275,4 +282,45 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
   }
 
   public Guid IconHostId { get; }
+
+  private bool CanEdit()
+  {
+    if(Host == null)
+    {
+      return false;
+    }
+    if(GetIsKeyTile())
+    {
+      return false;
+    }
+    if(ShellModel != null)
+    {
+      return Classification switch {
+        LaunchKind.Document => true,
+        LaunchKind.ShellApplication => false, // NYI
+        LaunchKind.Raw => false, // should never happen
+        _ => false,
+      };
+    }
+    else if(RawModel != null)
+    {
+      // NYI
+      return false;
+    }
+    else
+    {
+      return false;
+    }
+  }
+
+  private void StartEdit()
+  {
+    if(!CanEdit())
+    {
+      return;
+    }
+    var editor = new LaunchDocumentViewModel(
+      Host!);
+    editor.IsActive = true;
+  }
 }
