@@ -11,6 +11,7 @@
     TitleCharacterCasing="Normal"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance local:MainViewModel, IsDesignTimeCreatable=False}"
+    Icon="/LcLauncher;component/lclaunch.ico"
     WindowStartupLocation="CenterScreen"
     ResizeMode="NoResize"
     Title="Luc's Application Launchpad"

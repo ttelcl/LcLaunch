@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="lclaunch.ico" />
+    <Resource Include="lclaunch.ico" />
   </ItemGroup>
 
   <ItemGroup>
