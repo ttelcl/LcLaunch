@@ -123,6 +123,29 @@
                             BorderThickness="0"
                             BorderBrush="Blue"
                             Margin="10,0"
+                            Height="24"
+                            Width="24">
+                            <Grid>
+                                <iconPacks:PackIconMaterial
+                                    Height="24" Width="24"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Foreground="#FF6D8764"
+                                    Kind="Circle"/>
+                                <iconPacks:PackIconMaterial
+                                    Height="16" Width="16"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Foreground="#FFDD66"
+                                    RotationAngle="315"
+                                    Kind="RocketLaunchOutline"/>
+                            </Grid>
+                        </Border>
+                        <Border
+                            VerticalAlignment="Center"
+                            BorderThickness="0"
+                            BorderBrush="Blue"
+                            Margin="10,0"
                             Height="16"
                             Width="16">
                             <Grid
@@ -142,45 +165,26 @@
                                     Kind="RocketLaunchOutline"/>
                             </Grid>
                         </Border>
-                        <Border
-                            VerticalAlignment="Center"
-                            BorderThickness="0"
-                            BorderBrush="Blue"
-                            Margin="10,0"
-                            Height="24"
-                            Width="24">
-                            <Grid>
-                                <iconPacks:PackIconMaterial
-                                    Height="24" Width="24"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    Foreground="#FF6D8764"
-                                    Kind="Circle"/>
-                                <iconPacks:PackIconMaterial
-                                    Height="16" Width="16"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    Foreground="#FFDD66"
-                                    RotationAngle="315"
-                                    Kind="RocketLaunchOutline"/>
-                            </Grid>
-                        </Border>
                         <local:LcLaunchLogo
                             VerticalAlignment="Center"
                             Margin="10,0"
-                            Height="96" Width="96"/>
+                            Height="96" Width="96" LogoSize="96"/>
                         <local:LcLaunchLogo
                             VerticalAlignment="Center"
                             Margin="10,0"
-                            Height="48" Width="48"/>
+                            Height="48" Width="48" LogoSize="48"/>
                         <local:LcLaunchLogo
                             VerticalAlignment="Center"
                             Margin="10,0"
-                            Height="32" Width="32"/>
+                            Height="32" Width="32" LogoSize="32"/>
                         <local:LcLaunchLogo
                             VerticalAlignment="Center"
                             Margin="10,0"
-                            Height="24" Width="24"/>
+                            Height="24" Width="24" LogoSize="24"/>
+                        <local:LcLaunchLogo
+                            VerticalAlignment="Center"
+                            Margin="10,0"
+                            Height="16" Width="16" LogoSize="16"/>
                         <Image
                             Source="{Binding IconSmall}"
                             Stretch="None"

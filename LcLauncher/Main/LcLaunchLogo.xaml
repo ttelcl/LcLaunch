@@ -10,22 +10,21 @@
     mc:Ignorable="d" 
     d:DesignHeight="96" d:DesignWidth="96">
     <!-- Unusually, this is not an MVVM control. There is no use of datacontext -->
-    <Viewbox Stretch="UniformToFill">
-        <!-- The viewbox implements the scaling magic -->
-        <Grid>
-            <iconPacks:PackIconMaterial
-                Height="96" Width="96"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Foreground="#FF6D8764"
-                Kind="Circle"/>
-            <iconPacks:PackIconMaterial
-                Height="64" Width="64"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Foreground="#FFDD66"
-                RotationAngle="315"
-                Kind="RocketLaunchOutline"/>
-        </Grid>
-    </Viewbox>
+    <Grid>
+        <iconPacks:PackIconMaterial
+            Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:LcLaunchLogo}}, Path=LogoSize}"
+            Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:LcLaunchLogo}}, Path=LogoSize}"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Foreground="#FF6D8764"
+            Kind="Circle"/>
+        <iconPacks:PackIconMaterial
+            Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:LcLaunchLogo}}, Path=InnerSize}"
+            Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:LcLaunchLogo}}, Path=InnerSize}"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Foreground="#FFDD66"
+            RotationAngle="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:LcLaunchLogo}}, Path=Angle}"
+            Kind="RocketLaunchOutline"/>
+    </Grid>
 </UserControl>
