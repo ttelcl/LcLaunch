@@ -66,6 +66,24 @@
             </MenuItem>
             <Separator/>
             <MenuItem
+                Header="Bind to Shortcut..."
+                ToolTip="(from your Start Menu or elsewhere)"
+                ToolTipService.ShowOnDisabled="True"
+                Command="{Binding CreateShortcutTileCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="LinkVariantPlus" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem
+                Header="Bind to Document..."
+                ToolTip="(from file system, allows any file type)"
+                ToolTipService.ShowOnDisabled="True"
+                Command="{Binding CreateDocumentTileCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="FileDocumentPlus" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem
                 Header="Bind to Application..."
                 ToolTip="(from application list)"
                 ToolTipService.ShowOnDisabled="True"
@@ -78,18 +96,9 @@
                 Header="Bind to Executable..."
                 ToolTip="(from file system, allows for arguments and environment tweaks)"
                 ToolTipService.ShowOnDisabled="True"
-                IsEnabled="False">
+                Command="{Binding CreateExecutableTileCommand}">
                 <MenuItem.Icon>
                     <iconPacks:PackIconMaterial Kind="ApplicationCogOutline" Width="20" Height="20"/>
-                </MenuItem.Icon>
-            </MenuItem>
-            <MenuItem
-                Header="Bind to Document or Shortcut..."
-                ToolTip="(from file system, allows any file type)"
-                ToolTipService.ShowOnDisabled="True"
-                IsEnabled="False">
-                <MenuItem.Icon>
-                    <iconPacks:PackIconMaterial Kind="FileDocumentPlus" Width="20" Height="20"/>
                 </MenuItem.Icon>
             </MenuItem>
         </ContextMenu>
