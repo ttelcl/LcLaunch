@@ -165,6 +165,22 @@
                                     Kind="RocketLaunchOutline"/>
                             </Grid>
                         </Border>
+                        <local:LcLaunchLogo
+                            VerticalAlignment="Center"
+                            Margin="10,0"
+                            Height="96" Width="96"/>
+                        <local:LcLaunchLogo
+                            VerticalAlignment="Center"
+                            Margin="10,0"
+                            Height="48" Width="48"/>
+                        <local:LcLaunchLogo
+                            VerticalAlignment="Center"
+                            Margin="10,0"
+                            Height="32" Width="32"/>
+                        <local:LcLaunchLogo
+                            VerticalAlignment="Center"
+                            Margin="10,0"
+                            Height="24" Width="24"/>
                         <Image
                             Source="{Binding IconSmall}"
                             Stretch="None"
