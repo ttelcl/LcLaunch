@@ -12,6 +12,7 @@ using System.Windows;
 using System.Windows.Input;
 
 using LcLauncher.Models;
+using LcLauncher.Persistence;
 using LcLauncher.WpfUtilities;
 
 namespace LcLauncher.Main.Rack.Tile;
@@ -176,10 +177,15 @@ public class TileHostViewModel: ViewModelBase
         "Cannot edit the marked tile");
     }
     var oldRawData = Tile?.GetModel();
-    Tile = TileViewModel.Create(
+    var tile = TileViewModel.Create(
       TileList,
       newRawData);
+    Tile = tile;
     TileList.MarkDirty();
+    if(tile is LaunchTileViewModel launchTile)
+    {
+      launchTile.LoadIcon(IconLoadLevel.LoadIfMissing);
+    }
     return oldRawData;
   }
 
