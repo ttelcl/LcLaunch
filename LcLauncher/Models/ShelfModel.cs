@@ -11,11 +11,13 @@ using System.Threading.Tasks;
 
 using Newtonsoft.Json;
 
+using LcLauncher.Persistence;
+
 namespace LcLauncher.Models;
 
 public class ShelfModel
 {
-  private ShelfModel(
+  internal ShelfModel(
     RackModel owner,
     Guid id,
     ShelfData shelf)
@@ -23,13 +25,14 @@ public class ShelfModel
     Owner = owner;
     Id = id;
     Shelf = shelf;
-    var tilesModel = TileListModel.Load(Store, id);
+    var tilesModel = TileListModel.Load(Owner, id);
     if(tilesModel == null)
     {
-      tilesModel = TileListModel.Create(Store, id);
+      tilesModel = TileListModel.Create(Owner, id);
       tilesModel.SaveRawModel();
     }
     PrimaryTiles = tilesModel;
+    IsDirty = false;
   }
 
   public static ShelfModel Load(
@@ -70,5 +73,14 @@ public class ShelfModel
   public void Save()
   {
     Store.SaveShelf(Id, Shelf);
+    IsDirty = false;
   }
+
+  public bool IsDirty { get; private set; }
+
+  public void MarkDirty()
+  {
+    IsDirty = true;
+  }
+
 }

@@ -3,6 +3,7 @@
  */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -11,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using LcLauncher.Main.Rack.Tile;
+using LcLauncher.Persistence;
 
 namespace LcLauncher.IconUpdates;
 
@@ -20,6 +22,7 @@ namespace LcLauncher.IconUpdates;
 public class IconListQueue
 {
   private readonly Dictionary<Guid, IconLoadJob> _jobs;
+  private readonly Dictionary<Guid, IPostIconLoadActor> _postLoadActors;
 
   /// <summary>
   /// Create a new IconListQueue
@@ -29,17 +32,36 @@ public class IconListQueue
     TileListViewModel target)
   {
     _jobs = [];
+    _postLoadActors = [];
     // do not use target ID: the same list may be used in multiple view models!
     QueueId = Guid.NewGuid();
+    TargetId = target.Model.Id;
     Parent = parent;
     Target = target;    
   }
 
   public Guid QueueId { get; }
 
+  public Guid TargetId { get; }
+
   public IconLoadQueue Parent { get; }
 
-  public TileListViewModel Target { get; }
+  public IPersisted Target { get; }
+
+  /// <summary>
+  /// Called after all load jobs in this queue have been processed,
+  /// and this list queue is about to be detached from the parent queue.
+  /// </summary>
+  internal void OnQueueCompleted()
+  {
+    Target.SaveIfDirty();
+    var postLoadActors = _postLoadActors.Values.ToList();
+    _postLoadActors.Clear();
+    foreach(var actor in postLoadActors)
+    {
+      actor.PostIconLoad();
+    }
+  }
 
   // Called from IconLoadQueue
   internal IconLoadJob? TryDequeueJob()
@@ -59,6 +81,14 @@ public class IconListQueue
   {
     // Don't care if this replaces an existing job!
     _jobs[job.IconHost.IconHostId] = job;
+  }
+
+  public void QueuePostLoadActor(
+    IPostIconLoadActor actor)
+  {
+    // Remove existing actor first, adding the new one at the end.
+    _postLoadActors.Remove(actor.PostIconLoadId);
+    _postLoadActors.Add(actor.PostIconLoadId, actor);
   }
 
   public int JobCount()

@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 using ControlzEx.Theming;
@@ -15,20 +16,21 @@ using ControlzEx.Theming;
 using LcLauncher.IconUpdates;
 using LcLauncher.Main.Rack.Tile;
 using LcLauncher.Models;
+using LcLauncher.Persistence;
 using LcLauncher.WpfUtilities;
-
-using GroupTileViewModel = LcLauncher.Main.Rack.Tile.GroupTileViewModel;
 
 namespace LcLauncher.Main.Rack;
 
-public class ShelfViewModel: ViewModelBase, IIconLoadJobSource
+public class ShelfViewModel:
+  ViewModelBase, IIconLoadJobSource, IPersisted, ITileListOwner, IHasTheme
 {
   public ShelfViewModel(
-    ColumnViewModel column,
+    RackViewModel rack,
     ShelfModel model)
   {
-    Column = column;
-    Store = column.Rack.Store;
+    Rack = rack;
+    ClaimTracker = Rack.Model.GetClaimTracker(model.Id);
+    Store = Rack.Store;
     Model = model;
     _model = Model;
     SetThemeCommand = new DelegateCommand(
@@ -36,13 +38,29 @@ public class ShelfViewModel: ViewModelBase, IIconLoadJobSource
     ToggleExpandedCommand = new DelegateCommand(
       p => IsExpanded = !IsExpanded);
     PrimaryTiles = new TileListViewModel(
-      column.Rack.IconLoadQueue,
+      Rack.IconLoadQueue,
       this,
       model.PrimaryTiles);
     EnqueueIconJobs = new DelegateCommand(
       p => QueueIcons(false));
     RefreshIconJobs = new DelegateCommand(
       p => QueueIcons(true));
+    ToggleCutCommand = new DelegateCommand(
+      p => {
+        IsKeyShelf = Rack.KeyShelf != this;
+      });
+    MoveMarkedShelfHereCommand = new DelegateCommand(
+      p => MoveMarkedShelfHere(),
+      p => CanMoveMarkedShelfHere());
+    CreateNewShelfHereCommand = new DelegateCommand(
+      p => CreateNewShelfHere(),
+      p => Rack.KeyShelf == null && Rack.KeyTile == null);
+    DeleteShelfCommand = new DelegateCommand(
+      p => DeleteShelf(),
+      p => CanDeleteShelf());
+    EditCommand = new DelegateCommand(
+      p => ShelfEditViewModel.Show(this),
+      p => Rack.KeyShelf == null && Rack.KeyTile == null);
   }
 
   public ICommand SetThemeCommand { get; }
@@ -53,15 +71,38 @@ public class ShelfViewModel: ViewModelBase, IIconLoadJobSource
 
   public ICommand RefreshIconJobs { get; }
 
-  public ColumnViewModel Column { get; }
+  public ICommand ToggleCutCommand { get; }
 
-  public RackViewModel Rack => Column.Rack;
+  public ICommand MoveMarkedShelfHereCommand { get; }
 
-  public ShelfModel Model { 
+  public ICommand CreateNewShelfHereCommand { get; }
+
+  public ICommand DeleteShelfCommand { get; }
+
+  public ICommand EditCommand { get; }
+
+  public RackViewModel Rack { get; }
+
+  public ShelfModel Model {
     get => _model;
     private set {
-      if(SetValueProperty(ref _model, value))
+      if(_model != null)
       {
+        // This property is 'initialize once'
+        // Multi-init would violate TargetListModel invariant and probably
+        // some more.
+        throw new InvalidOperationException(
+          "ShelfViewModel.Model: Can only be set once.");
+      }
+      if(SetInstanceProperty(ref _model!, value))
+      {
+        if(!this.ClaimTileList())
+        {
+          Trace.TraceWarning(
+            $"ShelfViewModel.Model: Failed to claim tile list for "+
+            $"'{TileListOwnerLabel}', already claimed by "+
+            $"'{ClaimTracker.Owner?.TileListOwnerLabel ?? String.Empty}'");
+        }
         Title = value.Shelf.Title;
         Theme = value.Shelf.Theme ?? "Olive";
         IsExpanded = !value.Shelf.Collapsed;
@@ -72,6 +113,39 @@ public class ShelfViewModel: ViewModelBase, IIconLoadJobSource
     }
   }
   private ShelfModel _model;
+
+  public bool IsKeyShelf {
+    get => _isKeyShelf;
+    set {
+      if(SetValueProperty(ref _isKeyShelf, value))
+      {
+        if(_isKeyShelf)
+        {
+          // Note: Make sure this doesn't recurse indefinitely
+          // Setting Rack.KeyShelf to this will call this property
+          // setter, but the 'ifs' above will block further recursion.
+          Rack.KeyShelf = this;
+        }
+        else if(Rack.KeyShelf == this)
+        {
+          Rack.KeyShelf = null;
+        } // else: don't affect Rack.KeyShelf
+        RaisePropertyChanged(nameof(MarkShelfText));
+        RaisePropertyChanged(nameof(MarkShelfIcon));
+        RaisePropertyChanged(nameof(MarkShelfActionIcon));
+      }
+    }
+  }
+  private bool _isKeyShelf;
+
+  public string MarkShelfText =>
+    IsKeyShelf ? "Unmark Shelf" : "Mark Shelf";
+
+  public string MarkShelfIcon =>
+    IsKeyShelf ? "CheckboxIntermediate" : "CheckboxBlankOutline";
+
+  public string MarkShelfActionIcon =>
+    IsKeyShelf ? "CheckboxBlankOffOutline" : "CheckboxIntermediate";
 
   public ILcLaunchStore Store { get; }
 
@@ -122,6 +196,7 @@ public class ShelfViewModel: ViewModelBase, IIconLoadJobSource
         if(Model.Shelf.Theme != value)
         {
           Model.Shelf.Theme = value;
+          Model.MarkDirty();
         }
         SetTheme("Dark." + value);
       }
@@ -137,6 +212,7 @@ public class ShelfViewModel: ViewModelBase, IIconLoadJobSource
         if(Model.Shelf.Title != value)
         {
           Model.Shelf.Title = value;
+          Model.MarkDirty();
         }
       }
     }
@@ -149,6 +225,11 @@ public class ShelfViewModel: ViewModelBase, IIconLoadJobSource
       if(SetValueProperty(ref _isExpanded, value))
       {
         RaisePropertyChanged(nameof(ShelfExpandedIcon));
+        if(Model.Shelf.Collapsed != !value)
+        {
+          Model.Shelf.Collapsed = !value;
+          Model.MarkDirty();
+        }
       }
     }
   }
@@ -206,4 +287,135 @@ public class ShelfViewModel: ViewModelBase, IIconLoadJobSource
     Trace.TraceInformation(
       $"Queued {after - before} icon load jobs ({after} - {before}) for {Model.Id}");
   }
+
+  public bool IsDirty { get => Model.IsDirty; }
+
+  public void MarkDirty()
+  {
+    Model.MarkDirty();
+    RaisePropertyChanged(nameof(IsDirty));
+  }
+
+  public void SaveIfDirty()
+  {
+    if(IsDirty)
+    {
+      Trace.TraceInformation(
+        $"Saving shelf {Model.Id}");
+      // No need to 'rebuild' anything, since there are no sub-models
+      Model.Save();
+      RaisePropertyChanged(nameof(IsDirty));
+    }
+  }
+
+  public string TileListOwnerLabel { get => $"Shelf {ShelfId}"; }
+  public TileListOwnerTracker ClaimTracker { get; }
+  public bool ClaimPriority { get => true; }
+
+  internal void GatherTileLists(Dictionary<Guid, TileListViewModel> buffer)
+  {
+    PrimaryTiles.GatherTileLists(buffer);
+  }
+
+  private bool CanMoveMarkedShelfHere()
+  {
+    if(Rack.KeyShelf == null)
+    {
+      return false;
+    }
+    if(Rack.KeyShelf == this)
+    {
+      return false;
+    }
+    return true;
+  }
+
+  private void MoveMarkedShelfHere()
+  {
+    if(CanMoveMarkedShelfHere())
+    {
+      var keyShelf = Rack.KeyShelf!;
+      var sourceLocation = Rack.GetShelfLocation(keyShelf);
+      var destinationLocation = Rack.GetShelfLocation(this);
+      if(sourceLocation != null && destinationLocation != null)
+      {
+        Rack.MoveShelf(
+          sourceLocation.Value,
+          destinationLocation.Value);
+      }
+    }
+    Rack.KeyShelf = null;
+  }
+
+  private void CreateNewShelfHere()
+  {
+    var sourceLocation = Rack.GetShelfLocation(this);
+    if(sourceLocation == null)
+    {
+      return;
+    }
+    var _ = Rack.CreateNewShelf(sourceLocation.Value, null, Theme);
+    // Todo: open editor
+  }
+
+  private bool CanDeleteShelf()
+  {
+    if(Rack.KeyShelf != null || Rack.KeyTile != null)
+    {
+      return false;
+    }
+    if(SecondaryTiles != null)
+    {
+      return false;
+    }
+    return true;
+  }
+
+  private bool GetIsEmpty()
+  {
+    return PrimaryTiles.Tiles.All(t => t.IsEmpty);
+  }
+
+  private void DeleteShelf()
+  {
+    if(CanDeleteShelf())
+    {
+      if(!GetIsEmpty())
+      {
+        var response = MessageBox.Show(
+          "This shelf is not empty. Do you really want to delete it?",
+          "Delete Shelf",
+          MessageBoxButton.YesNo,
+          MessageBoxImage.Warning);
+        if(response != MessageBoxResult.Yes)
+        {
+          return;
+        }
+      }
+      var sourceLocation = Rack.GetShelfLocation(this);
+      if(sourceLocation != null)
+      {
+        // We are about to detach this shelf from the rack.
+        // Make sure its persisted model is up to date (it may still
+        // be in use by other racks!)
+        SaveIfDirty();
+
+        var columnVm = Rack.Columns[sourceLocation.Value.ColumnIndex];
+
+        // Remove the shelf vm from the column
+        columnVm.Shelves.RemoveAt(sourceLocation.Value.ShelfIndex);
+
+        // Remove the shelf model from the column
+        columnVm.Model.RemoveAt(sourceLocation.Value.ShelfIndex);
+
+        Rack.MarkDirty();
+        Rack.SaveIfDirty();
+
+        // We don't delete the backing store content. The shelf
+        // may be in use elsewhere still.
+      }
+    }
+  }
+
+  //
 }

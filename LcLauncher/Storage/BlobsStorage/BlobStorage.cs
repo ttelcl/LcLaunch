@@ -105,15 +105,18 @@ public class BlobStorage
     Span<byte> hashBuffer = stackalloc byte[20];
     SHA1.HashData(blob, hashBuffer);
     var hashString = BlobEntry.HashString(hashBuffer);
+    // IndexFile.Update(); // needed if something external changed the cache
     var existing = IndexFile.FindOneByPrefix(hashString);
     if(existing != null)
     {
       // Blob already exists - avoid adding a duplicate!
-      Trace.TraceInformation(
-        $"Blob already exists, not adding it again: {hashString}");
+      //Trace.TraceInformation(
+      //  $"Blob already exists, not adding it again: {hashString}");
       entry = existing;
       return false;
     }
+    //Trace.TraceInformation(
+    //  $"Adding blob ({blob.Length} bytes): {hashString}");
     entry = BlobContainerFile.AppendBlob(blob, hashBuffer);
     IndexFile.Update();
     return true;

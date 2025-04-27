@@ -10,6 +10,83 @@
     mc:Ignorable="d" 
     d:DataContext="{d:DesignInstance local:GroupTileViewModel, IsDesignTimeCreatable=False}"
     d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.ContextMenu>
+        <ContextMenu>
+            <MenuItem
+                Header="{Binding Host.MarkTileText}"
+                Command="{Binding ToggleCutCommand}"
+                IsChecked="{Binding Host.IsKeyTile}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="MapMarkerOutline" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem
+                Header="Toggle (Shortcut: Left Click)"
+                Command="{Binding ToggleGroupCommand}"
+                IsChecked="{Binding IsActive}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="ArrowExpandDown" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem
+                Header="Insert Empty Tile Here"
+                Command="{Binding Host.InsertEmptyTileCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="Egg" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <Separator/>
+            <MenuItem
+                Header="Edit Title..."
+                IsEnabled="False">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="Pencil" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <Separator/>
+            <MenuItem
+                Header="Add Tile Row"
+                Command="{Binding Host.TileList.AddEmptyRowCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="TableRowPlusAfter" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem
+                Header="Remove Empty Tile Row"
+                Command="{Binding Host.TileList.RemoveLastEmptyRowCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="TableRowRemove" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <Separator/>
+            <MenuItem Header="Target tile list Info">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="InformationSlabCircleOutline" Width="20" Height="20"/>
+                </MenuItem.Icon>
+                <MenuItem
+                    Header="{Binding Model.TileList}"
+                    IsEnabled="False">
+                    <MenuItem.Icon>
+                        <iconPacks:PackIconMaterial Kind="InformationSlabCircleOutline" Width="20" Height="20"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Header="Danger Zone">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="AlertOutline" Width="20" Height="20"
+                                                Foreground="#FFFF4444"/>
+                </MenuItem.Icon>
+                <MenuItem
+                    Header="Delete (and replace with empty tile)"
+                    Command="{Binding Host.ConfirmAndClearTileCommand}">
+                    <MenuItem.Icon>
+                        <iconPacks:PackIconMaterial Kind="DeleteAlert" Width="20" Height="20"
+                                                    Foreground="#FFFF4444"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+        </ContextMenu>
+    </UserControl.ContextMenu>
     <Grid
         Background="{DynamicResource MahApps.Brushes.Accent4}"
         ToolTip="{Binding EffectiveTooltip}">
@@ -36,13 +113,34 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <!--<iconPacks:PackIconMaterial
-            Kind="DotsGrid"
-            Foreground="{DynamicResource MahApps.Brushes.AccentBase}"
-            Height="48" Width="48"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"/>-->
+        <Border
+            Visibility="{Binding IsConflicted, Converter={StaticResource VisibleIf}}"
+            Background="#88444444">
+            <Border.ContextMenu>
+                <ContextMenu>
+                    <MenuItem
+                        Header="Fix duplicate reference: Clone to new tile list"
+                        Command="{Binding FixGraphCommand}"/>
+                    <MenuItem
+                        Header="{Binding Host.MarkTileText}"
+                        Command="{Binding Host.ToggleCutCommand}"
+                        IsChecked="{Binding Host.IsKeyTile}">
+                        <MenuItem.Icon>
+                            <iconPacks:PackIconMaterial Kind="MapMarkerOutline" Width="20" Height="20"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </ContextMenu>
+            </Border.ContextMenu>
+            <iconPacks:PackIconMaterial
+                ToolTip="Disabled because this is a duplicate. Right-click to fix."
+                Kind="Close"
+                Foreground="#FF6666"
+                Height="80" Width="80"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"/>
+        </Border>
         <TextBlock
+            IsHitTestVisible="False"
             VerticalAlignment="Bottom"
             HorizontalAlignment="Center"
             FontSize="11"

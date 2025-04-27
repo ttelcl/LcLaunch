@@ -17,34 +17,61 @@ using LcLauncher.WpfUtilities;
 
 namespace LcLauncher.Main.Rack.Tile;
 
-public class GroupTileViewModel: TileViewModel
+public class GroupTileViewModel: TileViewModel, IPostIconLoadActor, ITileListOwner
 {
   public GroupTileViewModel(
     TileListViewModel ownerList,
     TileGroup model)
     : base(ownerList)
   {
+    PostIconLoadId = Guid.NewGuid();
+    var rack = ownerList.Shelf.Rack.Model;
+    ClaimTracker = rack.GetClaimTracker(model.TileList);
+    TileListOwnerLabel =
+      $"Group {PostIconLoadId} targeting {model.TileList} from list {ownerList.Model.Id}";
     Model = model;
     ToggleGroupCommand = new DelegateCommand(
-      p => IsActive = !IsActive);
+      p => IsActive = !IsConflicted
+           && !IsActive
+           && !GetIsKeyTile(),
+      p => !IsConflicted && !GetIsKeyTile());
+    FixGraphCommand = new DelegateCommand(
+      p => { ConditionalReplaceWithClone(); },
+      p => IsConflicted);
+    ToggleCutCommand = new DelegateCommand(
+      p => {
+        if(Host != null)
+        {
+          Host.IsKeyTile = Host.Rack.KeyTile != Host && !IsActive;
+        }
+      },
+      p => Host!=null && !IsActive);
     GroupIcons = new ObservableCollection<GroupIconViewModel>();
-    var childModel = TileListModel.Load(ownerList.Shelf.Store, model.TileList);
+    var childModel = TileListModel.Load(ownerList.Shelf.Rack.Model, model.TileList);
     if(childModel == null)
     {
       Trace.TraceWarning(
         $"Creating missing tile list {model.TileList}");
       childModel = TileListModel.Create(
-        ownerList.Shelf.Store,
+        ownerList.Shelf.Rack.Model,
         model.TileList);
+      childModel.MarkDirty();
     }
     ChildTiles = new TileListViewModel(
       ownerList.Shelf.Rack.IconLoadQueue,
       ownerList.Shelf,
       childModel);
+    ChildTiles.SaveIfDirty();
     ResetGroupIcons();
   }
 
+  public ICommand ToggleCutCommand { get; }
+
   public ICommand ToggleGroupCommand { get; }
+
+  public ICommand FixGraphCommand { get; }
+
+  public Guid PostIconLoadId { get; }
 
   public override string PlainIcon { get => "DotsGrid"; }
 
@@ -94,6 +121,7 @@ public class GroupTileViewModel: TileViewModel
   }
 
   public bool IsActive {
+    // Note: IsActive and Host.IsKeyTile cannot both be true
     get => _isActive;
     set {
       var wasActive = OwnerList.Shelf.ActiveSecondaryTile == this;
@@ -108,6 +136,22 @@ public class GroupTileViewModel: TileViewModel
         {
           // deactivate this group
           OwnerList.Shelf.ActiveSecondaryTile = null;
+        }
+        if(IsActive)
+        {
+          if(Host != null)
+          {
+            Host.IsKeyTile = false;
+          }
+        }
+        else
+        {
+          if(Host != null && ChildTiles.ContainsKeyTile())
+          {
+            // Make sure the key tile does not go invisible
+            // 'Uncut' it instead.
+            Host.Rack.KeyTile = null;
+          }
         }
       }
     }
@@ -126,14 +170,75 @@ public class GroupTileViewModel: TileViewModel
       var givm = new GroupIconViewModel(this, tvm.Tile);
       GroupIcons.Add(givm);
     }
-    //while(GroupIcons.Count < 16)
-    //{
-    //  GroupIcons.Add(new GroupIconViewModel(this, null));
-    //}
   }
 
   public override IEnumerable<IconLoadJob> GetIconLoadJobs(bool reload)
   {
-    return ChildTiles.GetIconLoadJobs(reload);
+    foreach(var job in ChildTiles.GetIconLoadJobs(reload))
+    {
+      yield return job;
+    }
+    ChildTiles.IconJobQueue.QueuePostLoadActor(this);
+  }
+
+  public void PostIconLoad()
+  {
+    Trace.TraceInformation(
+      $"PostIconLoad for group tile '{Title}'");
+    ResetGroupIcons();
+  }
+
+  private Guid ReplaceWithClone()
+  {
+    var targetClone = ChildTiles.CreateClone();
+    var modelClone = new TileGroup(
+      targetClone.Model.Id,
+      Model.Title,
+      Model.Tooltip);
+    var clone = new GroupTileViewModel(
+      OwnerList,
+      modelClone);
+    Host!.Tile = clone;
+    OwnerList.MarkDirty();
+    //OwnerList.SaveIfDirty();
+    return targetClone.Model.Id;
+  }
+
+  private Guid ConditionalReplaceWithClone()
+  {
+    if(IsConflicted)
+    {
+      return ReplaceWithClone();
+    }
+    return Model.TileList;
+  }
+
+  public string TileListOwnerLabel { get; }
+
+  public TileListOwnerTracker ClaimTracker { get; }
+
+  public bool ClaimPriority { get => false; }
+
+  public bool IsConflicted { get => !this.OwnsTileList(); }
+
+  protected override void OnHostChanged(
+    TileHostViewModel? oldHost, TileHostViewModel? newHost)
+  {
+    // Only Claim tile list while this is socketed in its host
+    if(newHost != null)
+    {
+      if(!this.ClaimTileList())
+      {
+        Trace.TraceWarning(
+          $"GroupTileViewModel: Failed to claim tile list for "+
+          $"'{TileListOwnerLabel}', already claimed by "+
+          $"'{ClaimTracker.Owner?.TileListOwnerLabel ?? String.Empty}'");
+      }
+    }
+    else
+    {
+      // Release the claim when the host is removed
+      this.ReleaseTileList();
+    }
   }
 }

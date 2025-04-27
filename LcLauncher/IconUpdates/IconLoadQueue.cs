@@ -51,22 +51,15 @@ public class IconLoadQueue
     if(job == null)
     {
       Trace.TraceInformation(
-        $"Processed last icon load job for {queue.Target.Model.Id}");
+        $"Processed last icon load job for list {queue.TargetId}");
       // No more jobs in this queue
       _queues.Remove(queue.QueueId);
-      var target = queue.Target;
-      if(target.IsDirty)
-      {
-        Trace.TraceInformation(
-          $"Saving tile list {queue.Target.Model.Id}");
-        target.RebuildModel();
-        target.SaveRaw();
-      }
+      queue.OnQueueCompleted();
     }
     else
     {
       Trace.TraceInformation(
-        $"Processing icon load job for {job.SaveTarget.Model.Id}");
+        $"Processing icon load job for {queue.TargetId}");
       job.Execute();
     }
     return true;
@@ -75,11 +68,11 @@ public class IconLoadQueue
   public void EnqueueJob(IconLoadJob job)
   {
     var wasEmpty = IsEmpty();
-    if(!_queues.TryGetValue(job.SaveTarget.IconJobQueue.QueueId, out var queue))
+    if(!_queues.TryGetValue(job.QueueId, out var queue))
     {
       // (Re)Insert the queue for this job into this master queue
-      queue = job.SaveTarget.IconJobQueue;
-      _queues[queue.QueueId] = queue;
+      queue = job.IconJobQueue;
+      _queues[job.QueueId] = queue;
     }
     queue.EnqueueJob(job);
     if(wasEmpty)

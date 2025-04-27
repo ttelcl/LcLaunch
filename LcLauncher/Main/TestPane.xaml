@@ -13,24 +13,28 @@
     <Grid>
         <!-- Underlay text -->
         <TextBlock
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
             Text="Development Temporary Interface"
             Foreground="#440000FF"
             FontSize="48"
             />
         <!-- Main Content -->
         <Border
-            Height="100"
+            Height="150"
             BorderThickness="1"
             Margin="2" Padding="2"
             BorderBrush="Blue">
             <DockPanel>
                 <WrapPanel DockPanel.Dock="Left" Orientation="Vertical">
-                    <Button Content="Test Rebuild/Save" 
-                            Command="{Binding TestRebuildCommand}"/>
                     <Button Content="Next Icon Job" 
                             Command="{Binding Host.ProcessNextIconJobCommand}"/>
+                    <Button Content="Application Folder test" 
+                            Command="{Binding TestApplicationShellFolderCommand}"/>
+                    <Button Content="Test Editor"
+                            Command="{Binding TestEditorCommand}"/>
+                    <Button Content="Save Logos"
+                            Command="{Binding SaveLogosCommand}"/>
                 </WrapPanel>
                 <DockPanel DockPanel.Dock="Top">
                     <Button
@@ -40,13 +44,149 @@
                     <TextBox
                         Text="{Binding IconFile, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
                         IsReadOnly="False"
-                        />
+                        mah:TextBoxHelper.Watermark="icon file"/>
                 </DockPanel>
                 <Border
                     BorderThickness="1"
                     BorderBrush="Blue"
                     Margin="1" Padding="5,1">
                     <StackPanel Orientation="Horizontal">
+                        <Border
+                            VerticalAlignment="Center"
+                            Margin="10,0"
+                            BorderThickness="0"
+                            BorderBrush="Blue"
+                            Height="96"
+                            Width="96">
+                            <Grid>
+                                <iconPacks:PackIconMaterial
+                                    Height="96" Width="96"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Foreground="#FF6D8764"
+                                    Kind="Circle"/>
+                                <iconPacks:PackIconMaterial
+                                    Height="64" Width="64"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Foreground="#FFDD66"
+                                    RotationAngle="315"
+                                    Kind="RocketLaunchOutline"/>
+                            </Grid>
+                        </Border>
+                        <Border
+                            VerticalAlignment="Center"
+                            BorderThickness="0"
+                            BorderBrush="Blue"
+                            Margin="10,0"
+                            Height="48"
+                            Width="48">
+                            <Grid>
+                                <iconPacks:PackIconMaterial
+                                    Height="48" Width="48"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Foreground="#FF6D8764"
+                                    Kind="Circle"/>
+                                <iconPacks:PackIconMaterial
+                                    Height="32" Width="32"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Foreground="#FFDD66"
+                                    RotationAngle="315"
+                                    Kind="RocketLaunchOutline"/>
+                            </Grid>
+                        </Border>
+                        <Border
+                            VerticalAlignment="Center"
+                            BorderThickness="0"
+                            BorderBrush="Blue"
+                            Margin="10,0"
+                            Height="32"
+                            Width="32">
+                            <Grid>
+                                <iconPacks:PackIconMaterial
+                                    Height="32" Width="32"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Foreground="#FF6D8764"
+                                    Kind="Circle"/>
+                                <iconPacks:PackIconMaterial
+                                    Height="21" Width="21"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Foreground="#FFDD66"
+                                    RotationAngle="315"
+                                    Kind="RocketLaunchOutline"/>
+                            </Grid>
+                        </Border>
+                        <Border
+                            VerticalAlignment="Center"
+                            BorderThickness="0"
+                            BorderBrush="Blue"
+                            Margin="10,0"
+                            Height="24"
+                            Width="24">
+                            <Grid>
+                                <iconPacks:PackIconMaterial
+                                    Height="24" Width="24"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Foreground="#FF6D8764"
+                                    Kind="Circle"/>
+                                <iconPacks:PackIconMaterial
+                                    Height="16" Width="16"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Foreground="#FFDD66"
+                                    RotationAngle="315"
+                                    Kind="RocketLaunchOutline"/>
+                            </Grid>
+                        </Border>
+                        <Border
+                            VerticalAlignment="Center"
+                            BorderThickness="0"
+                            BorderBrush="Blue"
+                            Margin="10,0"
+                            Height="16"
+                            Width="16">
+                            <Grid
+                                Background="#FF6D8764">
+                                <!--<iconPacks:PackIconMaterial
+                                    Height="16" Width="16"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Foreground="{DynamicResource MahApps.Brushes.AccentBase}"
+                                    Kind="Circle"/>-->
+                                <iconPacks:PackIconMaterial
+                                    Height="16" Width="16"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Foreground="#FFDD66"
+                                    RotationAngle="270"
+                                    Kind="RocketLaunchOutline"/>
+                            </Grid>
+                        </Border>
+                        <local:LcLaunchLogo
+                            x:Name="Logo96"
+                            VerticalAlignment="Center"
+                            Height="96" Width="96" LogoSize="96"/>
+                        <local:LcLaunchLogo
+                            x:Name="Logo48"
+                            VerticalAlignment="Center"
+                            Height="48" Width="48" LogoSize="48"/>
+                        <local:LcLaunchLogo
+                            x:Name="Logo32"
+                            VerticalAlignment="Center"
+                            Height="32" Width="32" LogoSize="32"/>
+                        <local:LcLaunchLogo
+                            x:Name="Logo24"
+                            VerticalAlignment="Center"
+                            Height="24" Width="24" LogoSize="24"/>
+                        <local:LcLaunchLogo
+                            x:Name="Logo16"
+                            VerticalAlignment="Center"
+                            Height="16" Width="16" LogoSize="16"/>
                         <Image
                             Source="{Binding IconSmall}"
                             Stretch="None"
@@ -59,15 +199,23 @@
                             Source="{Binding IconLarge}"
                             Stretch="None"
                             Margin="5,0"/>
-                        <!--<Image
-                            Source="{Binding IconExtraLarge}"
-                            Stretch="None"
-                            Margin="5"/>
                         <Image
-                            Source="{Binding IconExtraLarge}"
+                            Source="{Binding IconSmallFixed}"
                             Stretch="UniformToFill"
-                            Height="72" Width="72"
-                            Margin="5"/>-->
+                            Width="16" Height="16"
+                            Margin="5,0"/>
+                        <Image
+                            Source="{Binding IconMediumFixed}"
+                            Stretch="UniformToFill"
+                            Width="32" Height="32"
+                            RenderOptions.BitmapScalingMode="HighQuality"
+                            Margin="5,0"/>
+                        <Image
+                            Source="{Binding IconLargeFixed}"
+                            Stretch="UniformToFill"
+                            Width="48" Height="48"
+                            RenderOptions.BitmapScalingMode="Fant"
+                            Margin="5,0"/>
                     </StackPanel>
                 </Border>
             </DockPanel>

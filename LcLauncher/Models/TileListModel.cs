@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
+using LcLauncher.Persistence;
 using LcLauncher.Storage;
 using LcLauncher.Storage.BlobsStorage;
 
@@ -25,6 +26,7 @@ namespace LcLauncher.Models;
 /// </summary>
 public class TileListModel
 {
+
   /// <summary>
   /// Create a new TileList. Use <see cref="Load"/> or
   /// <see cref="Create(Guid?)"/> to call this constructor.
@@ -32,12 +34,13 @@ public class TileListModel
   private TileListModel(
     Guid id,
     IEnumerable<TileData?> tiles,
-    ILcLaunchStore store)
+    RackModel rack)
   {
     Id = id;
     RawTiles = tiles.ToList();
-    Store = store;
-    IconCache = store.GetIconCache(id, false /* create cache on first use */);
+    Store = rack.Store;
+    IconCache = Store.GetIconCache(id);
+    Rack = rack;
   }
 
   /// <summary>
@@ -49,10 +52,18 @@ public class TileListModel
   /// </param>
   /// <returns></returns>
   public static TileListModel Create(
-    ILcLaunchStore store,
+    RackModel rack,
     Guid? id = null)
   {
-    return new TileListModel(id ?? Guid.NewGuid(), [], store);
+    return new TileListModel(
+      id ?? Guid.NewGuid(),
+      [
+        TileData.EmptyTile(),
+        TileData.EmptyTile(),
+        TileData.EmptyTile(),
+        TileData.EmptyTile(),
+      ],
+      rack);
   }
 
   /// <summary>
@@ -69,11 +80,26 @@ public class TileListModel
   /// did not exist.
   /// </returns>
   public static TileListModel? Load(
-    ILcLaunchStore store,
+    RackModel rack,
     Guid id)
   {
-    var list = store.LoadTiles(id);
-    return list == null ? null : new TileListModel(id, list, store);
+    var list = rack.Store.LoadTiles(id);
+    return list == null ? null : new TileListModel(id, list, rack);
+  }
+
+  public TileListModel CreateClone()
+  {
+    SaveRawModel();
+    var newId = Guid.NewGuid();
+    var tiles = new List<TileData?>(RawTiles); // clone to independent list
+    var clone = new TileListModel(
+      newId,
+      tiles,
+      Rack);
+    Trace.TraceInformation(
+      $"Creating clone of tile list {Id} as {newId}");
+    clone.SaveRawModel();
+    return clone;
   }
 
   /// <summary>
@@ -105,6 +131,12 @@ public class TileListModel
   public Guid Id { get; }
 
   public List<TileData?> RawTiles { get; }
+
+  /// <summary>
+  /// The rack this list belongs to. This provides the context
+  /// in which this list should be unique.
+  /// </summary>
+  public RackModel Rack { get; }
 
   /// <summary>
   /// The store in which this list is saved and its icons are cached.

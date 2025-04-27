@@ -7,7 +7,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LcLauncher.Models;
+using LcLauncher.Models;
+
+namespace LcLauncher.Persistence;
 
 /// <summary>
 /// Abstract store of LcLaunch persistent data.
@@ -60,17 +62,13 @@ public interface ILcLaunchStore
   IEnumerable<Guid> EnumTiles();
 
   /// <summary>
-  /// Get the icon cache for the given ID.
+  /// Get the icon cache for the given ID. Newly created
+  /// caches are not automatically initialized by this method.
   /// </summary>
   /// <param name="cacheId">
   /// The ID of the cache to load.
   /// </param>
-  /// <param name="initialize">
-  /// If true, initialize the cache if it does not exist yet.
-  /// Otherwise, the cache is not initialized and the returned
-  /// instance will be initialized when it is first used.
-  /// </param>
   /// <returns></returns>
-  ILauncherIconCache GetIconCache(Guid cacheId, bool initialize);
+  ILauncherIconCache GetIconCache(Guid cacheId);
 }
 

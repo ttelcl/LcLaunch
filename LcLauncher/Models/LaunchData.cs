@@ -130,4 +130,66 @@ public abstract class LaunchData
     return String.IsNullOrEmpty(IconSource) ? TargetPath : IconSource;
   }
 
+  public const string ShellAppsFolderPrefix =
+    "shell:AppsFolder\\";
+
+  public static LaunchKind GetLaunchKind(
+    string target, bool raw)
+  {
+    if(String.IsNullOrEmpty(target))
+    {
+      return LaunchKind.Invalid;
+    }
+    if(raw)
+    {
+      if(!target.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
+      {
+        return LaunchKind.Invalid;
+      }
+      if(target.Length < 8
+        || target[1] != ':'
+        || Char.ToUpper(target[0]) < 'A'
+        || Char.ToUpper(target[0]) > 'Z'
+        || (target[2] != Path.DirectorySeparatorChar &&
+            target[2] != Path.AltDirectorySeparatorChar))
+      {
+        return LaunchKind.Invalid;
+      }
+      // Looks like a path. At this point we don't care if it exists
+      // (too expensive to check here)
+      return LaunchKind.Raw;
+      //if(File.Exists(target))
+      //{
+      //  // File exists
+      //  return LaunchKind.Raw;
+      //}
+      //return LaunchKind.Missing;
+    }
+    else
+    {
+      if(target.StartsWith(LaunchData.ShellAppsFolderPrefix))
+      {
+        // This is deffinitely a shell app. It may be missing, but
+        // that's something to figure out later.
+        return LaunchKind.ShellApplication;
+      }
+      if(target.Length < 8
+        || target[1] != ':'
+        || Char.ToUpper(target[0]) < 'A'
+        || Char.ToUpper(target[0]) > 'Z'
+        || (target[2] != Path.DirectorySeparatorChar &&
+            target[2] != Path.AltDirectorySeparatorChar))
+      {
+        // Not a valid path, so not a document. Could still be a raw
+        // shell app, but let's require the special prefix for that.
+        return LaunchKind.Invalid;
+      }
+      else
+      {
+        // Looks like a path. At this point we don't care if it exists
+        // (too expensive to check here)
+        return LaunchKind.Document;
+      }
+    }
+  }
 }

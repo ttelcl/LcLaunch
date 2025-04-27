@@ -10,9 +10,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using LcLauncher.Models;
 using LcLauncher.Storage;
 
-namespace LcLauncher.Models;
+namespace LcLauncher.Persistence;
 
 /// <summary>
 /// Implements <see cref="ILcLaunchStore"/> using JSON files.
@@ -26,6 +27,7 @@ public class JsonLcLaunchStore: ILcLaunchStore
     JsonDataStore provider)
   {
     Provider = provider;
+    _iconCacheCache = [];
   }
 
   public JsonDataStore Provider { get; }
@@ -111,7 +113,30 @@ public class JsonLcLaunchStore: ILcLaunchStore
   }
 
   /// <inheritdoc/>
-  public ILauncherIconCache GetIconCache(Guid cacheId, bool initialize)
+  public ILauncherIconCache GetIconCache(Guid cacheId)
+  {
+
+    if(_iconCacheCache.TryGetValue(cacheId, out var weakRef))
+    {
+      if(weakRef.TryGetTarget(out var oldCache))
+      {
+        return oldCache;
+      }
+      else
+      {
+        // Remove expired cache
+        _iconCacheCache.Remove(cacheId);
+      }
+    }
+    var cache = CreateIconCache(cacheId, false);
+    _iconCacheCache[cacheId] = new WeakReference<ILauncherIconCache>(cache);
+    return cache;
+  }
+
+  private Dictionary<Guid, WeakReference<ILauncherIconCache>> _iconCacheCache;
+    
+
+  private ILauncherIconCache CreateIconCache(Guid cacheId, bool initialize)
   {
     var host = Provider.GetIconCache(cacheId);
     if(initialize)

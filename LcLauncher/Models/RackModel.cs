@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 using LcLauncher.Storage;
+using LcLauncher.Persistence;
 
 namespace LcLauncher.Models;
 
@@ -22,6 +23,8 @@ namespace LcLauncher.Models;
 public class RackModel
 {
   private Dictionary<Guid, ShelfModel> _shelves;
+  private readonly Dictionary<Guid, WeakReference<TileListOwnerTracker>>
+    _claimTrackerCache;
 
   /// <summary>
   /// Create a new RackModel. If the name is unknown, it will be created.
@@ -30,6 +33,7 @@ public class RackModel
     ILcLaunchStore store,
     string rackName)
   {
+    _claimTrackerCache = [];
     LcLaunchStore.ValidateRackName(rackName);
     Store = store;
     RackName = rackName;
@@ -69,4 +73,115 @@ public class RackModel
   /// The 3 columns of the rack.
   /// </summary>
   public List<ShelfModel>[] Columns { get; }
+
+  /// <summary>
+  /// Save this rack itself (the column setup).
+  /// Does NOT save the shelves
+  /// </summary>
+  public void Save()
+  {
+    Store.SaveRack(RackName, RackData);
+    IsDirty = false;
+  }
+
+  public bool IsDirty { get; private set; }
+
+  public void MarkDirty()
+  {
+    IsDirty = true;
+  }
+
+  internal void RebuildRackData()
+  {
+    // Note: the outer and inner lists may also be referenced elsewhere,
+    // so we can only replace their contents, not the lists themselves.
+    RackData.Columns[0].Clear();
+    RackData.Columns[0].AddRange(Columns[0].Select(s => s.Id));
+    RackData.Columns[1].Clear();
+    RackData.Columns[1].AddRange(Columns[1].Select(s => s.Id));
+    RackData.Columns[2].Clear();
+    RackData.Columns[2].AddRange(Columns[2].Select(s => s.Id));
+  }
+
+  public TileListOwnerTracker GetClaimTracker(Guid id)
+  {
+    if(_claimTrackerCache.TryGetValue(id, out var weakRef))
+    {
+      if(weakRef.TryGetTarget(out var tracker))
+      {
+        return tracker;
+      }
+    }
+    var newTracker = TileListOwnerTracker.FromRack(this, id);
+    _claimTrackerCache[id] = new WeakReference<TileListOwnerTracker>(newTracker);
+    return newTracker;
+  }
+
+  public bool HasClaimTracker(Guid id)
+  {
+    return _claimTrackerCache.ContainsKey(id);
+  }
+
+  public IEnumerable<ITileListOwner> EnumClaims()
+  {
+    foreach(var tracker in EnumClaimTrackers())
+    {
+      foreach(var claim in tracker.EnumClaimers())
+      {
+        yield return claim;
+      }
+    }
+  }
+
+  /// <summary>
+  /// Enumerate all claim trackers that have an owner.
+  /// </summary>
+  public IEnumerable<TileListOwnerTracker> EnumClaimTrackers()
+  {
+    foreach(var weakRef in _claimTrackerCache.Values)
+    {
+      if(weakRef.TryGetTarget(out var tracker))
+      {
+        if(tracker.HasOwner)
+        {
+          yield return tracker;
+        }
+      }
+    }
+  }
+
+  public void TraceClaimStatus()
+  {
+    foreach(var tracker in EnumClaimTrackers())
+    {
+      if(tracker.HasConflict)
+      {
+        Trace.TraceError(
+          $"List {tracker.TileListId} has ownership conflicts:");
+        foreach(var claim in tracker.EnumClaimers())
+        {
+          if(claim.OwnsTileList())
+          {
+            Trace.TraceInformation(
+              $"  Owner:    {claim.TileListOwnerLabel}");
+          }
+          else
+          {
+            Trace.TraceWarning(
+              $"  Conflict: {claim.TileListOwnerLabel}");
+          }
+        }
+      }
+      else if(tracker.HasOwner)
+      {
+        Trace.TraceInformation(
+          $"List {tracker.TileListId}: no conflict. Owned by {tracker.Owner!.TileListOwnerLabel}");
+      }
+      else
+      {
+        Trace.TraceWarning(
+          $"Claim {tracker.TileListId} (no owner claims)");
+      }
+    }
+  }
 }

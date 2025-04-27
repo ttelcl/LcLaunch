@@ -11,17 +11,39 @@
     d:DataContext="{d:DesignInstance local:ColumnViewModel, IsDesignTimeCreatable=False}"
     d:DesignHeight="450" d:DesignWidth="800"
     Background="{DynamicResource MahApps.Brushes.Control.Background}">
-    <ItemsControl
-        ItemsSource="{Binding Shelves}">
-        <ItemsControl.ItemsPanel>
-            <ItemsPanelTemplate>
-                <StackPanel Orientation="Vertical"/>
-            </ItemsPanelTemplate>
-        </ItemsControl.ItemsPanel>
-        <ItemsControl.ItemTemplate>
-            <DataTemplate>
-                <local:ShelfView DataContext="{Binding}"/>
-            </DataTemplate>
-        </ItemsControl.ItemTemplate>
-    </ItemsControl>
+    <UserControl.ContextMenu>
+        <ContextMenu>
+            <MenuItem Header="Insert Marked Shelf Here"
+                      Command="{Binding MoveMarkedShelfHereCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="TrayArrowDown" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Header="Create New Shelf Here"
+                      Command="{Binding CreateNewShelfHereCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="TrayPlus" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
+        </ContextMenu>
+    </UserControl.ContextMenu>
+    <StackPanel Orientation="Vertical">
+        <ItemsControl
+            ItemsSource="{Binding Shelves}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Vertical"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <local:ShelfView DataContext="{Binding}"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <!-- insert a small invisible box causing a gap after the last shelf
+             where another shelf can be moved or created, even if the column is 'full' -->
+        <Border Height="30">
+        </Border>
+    </StackPanel>
 </UserControl>

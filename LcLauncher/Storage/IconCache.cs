@@ -4,14 +4,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Diagnostics;
-using LcLauncher.Storage.BlobsStorage;
-using Microsoft.WindowsAPICodePack.Shell;
-using System.IO;
 using System.Windows.Media.Imaging;
+
+using Microsoft.WindowsAPICodePack.Shell;
+
+using LcLauncher.Persistence;
+using LcLauncher.Storage.BlobsStorage;
 using LcLauncher.Models;
 
 namespace LcLauncher.Storage;
@@ -66,38 +69,10 @@ public class IconCache
     return entry == null ? null : LoadCachedIconEntry(entry);
   }
 
-  /// <summary>
-  /// Create an icon, put it in the cache, and return the hash.
-  /// Expect this to be slow.
-  /// </summary>
-  /// <param name="iconSource">
-  /// The file for which to retrieve the icon.
-  /// </param>
-  /// <param name="size">
-  /// The icon size to retrieve. Supported sizes are 16, 32, 48, 256.
-  /// </param>
-  /// <param name="icon">
-  /// Returns the icon that was loaded, if found.
-  /// </param>
-  /// <returns>
-  /// The hash of the icon in the cache, or null if the icon could not be loaded.
-  /// </returns>
-  public string? CacheIcon(
-    string iconSource, int size, out BitmapSource? icon)
-  {
-    icon = IconCache.IconForFile(iconSource, size);
-    if(icon == null)
-    {
-      return null;
-    }
-    CacheIcon(icon, out var blobEntry);
-    return blobEntry.Hash;
-  }
-
   public IconHashes? CacheIcons(
     string iconSource, IconSize sizes)
   {
-    var icons = IconCache.IconsForFile(iconSource, sizes);
+    var icons = IconCache.IconsForSource(iconSource, sizes);
     if(icons == null)
     {
       return null;
@@ -112,22 +87,30 @@ public class IconCache
     var icon256 = icons[3];
     if(icon16 != null)
     {
-      CacheIcon(icon16, out var be);
+      var added = CacheIcon(icon16, out var be) ? "ADDED" : "existing";
+      Trace.TraceInformation(
+        $"Icon16 {added}: {be.Hash}");
       hash16 = be.Hash;
     }
     if(icon32 != null)
     {
-      CacheIcon(icon32, out var be);
+      var added = CacheIcon(icon32, out var be) ? "ADDED" : "existing";
+      Trace.TraceInformation(
+        $"Icon32 {added}: {be.Hash}");
       hash32 = be.Hash;
     }
     if(icon48 != null)
     {
-      CacheIcon(icon48, out var be);
+      var added = CacheIcon(icon48, out var be) ? "ADDED" : "existing";
+      Trace.TraceInformation(
+        $"Icon48 {added}: {be.Hash}");
       hash48 = be.Hash;
     }
     if(icon256 != null)
     {
-      CacheIcon(icon256, out var be);
+      var added = CacheIcon(icon256, out var be) ? "ADDED" : "existing";
+      Trace.TraceInformation(
+        $"Icon256 {added}: {be.Hash}");
       hash256 = be.Hash;
     }
     if(hash16 == null && hash32 == null && hash48 == null && hash256 == null)
@@ -186,70 +169,77 @@ public class IconCache
   }
 
   /// <summary>
-  /// Try to get the icon for a file, using the shell.
+  /// Load icons for the given source from the shell.
   /// </summary>
-  /// <param name="path">
-  /// The full path to the file.
+  /// <param name="source">
+  /// The icon source: a file name (document or executable),
+  /// or an application ID prefixed with "shell:AppsFolder\".
   /// </param>
-  /// <param name="size">
-  /// The size of the icon to get. Supported sizes are 16, 32, 48, 256.
-  /// The actual returned size may vary.
-  /// </param>
+  /// <param name="sizes"></param>
   /// <returns></returns>
-  private static BitmapSource? IconForFile(string path, int size)
+  public static BitmapSource?[]? IconsForSource(
+    string source, IconSize sizes)
   {
-    try
-    {
-      using var iconShell = ShellObject.FromParsingName(path);
-      var thumbnail = iconShell.Thumbnail;
-      thumbnail.FormatOption = ShellThumbnailFormatOption.IconOnly;
-      return size switch {
-        16 => thumbnail.SmallBitmapSource,
-        32 => thumbnail.MediumBitmapSource,
-        48 => thumbnail.LargeBitmapSource,
-        256 => thumbnail.ExtraLargeBitmapSource,
-        _ => null,
-      };
-    }
-    catch(ShellException ex)
-    {
-      Trace.TraceError(
-        $"IconForFile: Error probing icon file {path}: {ex}");
-      return null;
-    }
-  }
-
-  private static BitmapSource?[]? IconsForFile(
-    string path, IconSize sizes)
-  {
+    bool useAppIcon = source.StartsWith(LaunchData.ShellAppsFolderPrefix);
     try
     {
       var icons = new BitmapSource?[4];
-      using var iconShell = ShellObject.FromParsingName(path);
+      using var iconShell = ShellObject.FromParsingName(source);
       var thumbnail = iconShell.Thumbnail;
-      thumbnail.FormatOption = ShellThumbnailFormatOption.IconOnly;
-      if(sizes.HasFlag(IconSize.Small))
+      if(useAppIcon)
       {
-        icons[0] = thumbnail.SmallBitmapSource;
+        thumbnail.FormatOption = ShellThumbnailFormatOption.Default;
+        // Beware: 'Default' causes incorrect icon sizes, do not
+        // rely on SmallBBitmapSource etc properties in this case,
+        // use CurrentSize + BitmapSource instead.
+        if(sizes.HasFlag(IconSize.Small))
+        {
+          thumbnail.CurrentSize = DefaultIconSize.Small;
+          icons[0] = thumbnail.BitmapSource;
+        }
+        if(sizes.HasFlag(IconSize.Medium))
+        {
+          thumbnail.CurrentSize = DefaultIconSize.Medium;
+          icons[1] = thumbnail.BitmapSource;
+        }
+        if(sizes.HasFlag(IconSize.Large))
+        {
+          thumbnail.CurrentSize = DefaultIconSize.Large;
+          icons[2] = thumbnail.BitmapSource;
+        }
+        if(sizes.HasFlag(IconSize.ExtraLarge))
+        {
+          thumbnail.CurrentSize = DefaultIconSize.ExtraLarge;
+          icons[3] = thumbnail.BitmapSource;
+        }
+        return icons;
       }
-      if(sizes.HasFlag(IconSize.Medium))
+      else
       {
-        icons[1] = thumbnail.MediumBitmapSource;
+        thumbnail.FormatOption = ShellThumbnailFormatOption.IconOnly;
+        if(sizes.HasFlag(IconSize.Small))
+        {
+          icons[0] = thumbnail.SmallBitmapSource;
+        }
+        if(sizes.HasFlag(IconSize.Medium))
+        {
+          icons[1] = thumbnail.MediumBitmapSource;
+        }
+        if(sizes.HasFlag(IconSize.Large))
+        {
+          icons[2] = thumbnail.LargeBitmapSource;
+        }
+        if(sizes.HasFlag(IconSize.ExtraLarge))
+        {
+          icons[3] = thumbnail.ExtraLargeBitmapSource;
+        }
+        return icons;
       }
-      if(sizes.HasFlag(IconSize.Large))
-      {
-        icons[2] = thumbnail.LargeBitmapSource;
-      }
-      if(sizes.HasFlag(IconSize.ExtraLarge))
-      {
-        icons[3] = thumbnail.ExtraLargeBitmapSource;
-      }
-      return icons;
     }
     catch(ShellException ex)
     {
       Trace.TraceError(
-        $"IconForFile: Error probing icon file {path}: {ex}");
+        $"IconForFile: Error probing icon source {source}: {ex}");
       return null;
     }
   }

@@ -11,10 +11,14 @@
     TitleCharacterCasing="Normal"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance local:MainViewModel, IsDesignTimeCreatable=False}"
+    Icon="/LcLauncher;component/lclaunch.ico"
     WindowStartupLocation="CenterScreen"
     ResizeMode="NoResize"
     Title="Luc's Application Launchpad"
-    Height="920" Width="1285">
+    Height="920" Width="1285"
+    Activated="WindowActivated"
+    Deactivated="WindowDeactivated"
+    Closing="WindowClosing">
     <mah:MetroWindow.RightWindowCommands>
         <mah:WindowCommands>
             <mah:SplitButton
@@ -31,12 +35,15 @@
     </mah:MetroWindow.RightWindowCommands>
     <DockPanel>
         <local:TestPane DockPanel.Dock="Top" DataContext="{Binding TestPane}"/>
-        <ScrollViewer
-            Visibility="{Binding CurrentRack, Converter={StaticResource VisibleIfNotNull}}"
-            VerticalScrollBarVisibility="Visible">
-            <rack:RackView
-                DataContext="{Binding CurrentRack}"
-                />
-        </ScrollViewer>
+        <Grid>
+            <ScrollViewer
+                Visibility="{Binding CurrentRack, Converter={StaticResource VisibleIfNotNull}}"
+                VerticalScrollBarVisibility="Visible">
+                <rack:RackView DataContext="{Binding CurrentRack}"/>
+            </ScrollViewer>
+            <local:EditorBaseView
+                Visibility="{Binding Converter={StaticResource VisibleIfNotNull}}"
+                DataContext="{Binding CurrentEditor}"/>
+        </Grid>
     </DockPanel>
 </mah:MetroWindow>

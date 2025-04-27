@@ -72,6 +72,13 @@ public class TileData: LaunchTile
   [JsonProperty("quad", NullValueHandling = NullValueHandling.Ignore)]
   public List<LaunchTile>? Quad { get; }
 
-  //public bool ShouldSerializeQuad() => Quad.Count > 0;
+  public bool IsEmpty()
+  {
+    return
+      ShellLaunch == null &&
+      RawLaunch == null &&
+      Group == null &&
+      Quad == null;
+  }
 
 }

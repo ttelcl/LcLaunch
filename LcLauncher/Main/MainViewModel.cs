@@ -11,7 +11,7 @@ using System.Windows.Threading;
 
 using LcLauncher.IconUpdates;
 using LcLauncher.Main.Rack;
-using LcLauncher.Models;
+using LcLauncher.Persistence;
 using LcLauncher.Storage;
 using LcLauncher.WpfUtilities;
 
@@ -61,11 +61,18 @@ public class MainViewModel: ViewModelBase
   public RackViewModel? CurrentRack {
     get => _currentRack;
     set {
+      var oldRack = _currentRack;
       if(SetNullableInstanceProperty(ref _currentRack, value))
       {
         var rackLabel = value?.Name ?? "<NONE>";
         Trace.TraceInformation(
           $"Switched to rack '{rackLabel}'");
+        if(oldRack != null)
+        {
+          oldRack.SaveShelvesIfModified();
+          oldRack.SaveDirtyTileLists();
+          oldRack.SaveIfDirty();
+        }
       }
     }
   }
@@ -91,4 +98,57 @@ public class MainViewModel: ViewModelBase
     return CurrentRack != null &&
       !CurrentRack.IconLoadQueue.IsEmpty();
   }
+
+  public void OnWindowClosing()
+  {
+    CurrentRack?.SaveShelvesIfModified();
+    CurrentRack?.SaveDirtyTileLists();
+    CurrentRack?.SaveIfDirty();
+  }
+
+  public void OnAppActiveChange(bool active)
+  {
+    if(active)
+    {
+      Trace.TraceInformation(
+        $"Application is now active");
+    }
+    else
+    {
+      Trace.TraceInformation(
+        $"Application is now inactive");
+      CurrentRack?.SaveShelvesIfModified();
+      CurrentRack?.SaveDirtyTileLists();
+      CurrentRack?.SaveIfDirty();
+    }
+  }
+
+  // Usually set indirectly by the editor's IsActive property
+  public EditorViewModelBase? CurrentEditor {
+    get => _currentEditor;
+    internal set {
+      var oldEditor = _currentEditor;
+      if(SetNullableInstanceProperty(ref _currentEditor, value))
+      {
+        if(oldEditor != null)
+        {
+          oldEditor.IsActive = false;
+          Trace.TraceInformation(
+            $"Closed editor '{oldEditor.EditorTitle}' ({oldEditor.GetType().Name})");
+        }
+        if(_currentEditor != null)
+        {
+          _currentEditor.IsActive = true;
+          Trace.TraceInformation(
+            $"Switched to editor '{_currentEditor.EditorTitle}' ({_currentEditor.GetType().Name})");
+        }
+        else
+        {
+          Trace.TraceInformation(
+            $"No editor active");
+        }
+      }
+    }
+  }
+  private EditorViewModelBase? _currentEditor;
 }

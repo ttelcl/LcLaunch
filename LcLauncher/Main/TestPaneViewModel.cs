@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using System.Windows.Media;
 
 using Microsoft.Win32;
 using Microsoft.WindowsAPICodePack.Shell;
@@ -19,6 +20,7 @@ using Newtonsoft.Json;
 
 using LcLauncher.Models;
 using LcLauncher.WpfUtilities;
+using LcLauncher.IconUpdates;
 
 namespace LcLauncher.Main;
 
@@ -31,7 +33,13 @@ public class TestPaneViewModel: ViewModelBase
   {
     Host = host;
     OpenIconFileCommand = new DelegateCommand(p => OpenIconFile());
-    TestRebuildCommand = new DelegateCommand(p => TestRebuild());
+    TestApplicationShellFolderCommand =
+      new DelegateCommand(p => TestApplicationShellFolder());
+    TestEditorCommand =
+      new DelegateCommand(
+        p => EditorViewModelBase.ShowTest(host));
+    SaveLogosCommand = new DelegateCommand(
+      p => SaveLogoPngs());
   }
 
   public MainViewModel Host { get; }
@@ -73,6 +81,12 @@ public class TestPaneViewModel: ViewModelBase
           IconExtraLarge = thumbnail.ExtraLargeBitmapSource;
           Trace.TraceInformation(
             $"Extra Large Icon: {IconExtraLarge.Width}"); // 256
+          thumbnail.FormatOption = ShellThumbnailFormatOption.Default;
+          thumbnail.AllowBiggerSize = false;
+          IconSmallFixed = thumbnail.SmallBitmapSource;
+          IconMediumFixed = thumbnail.MediumBitmapSource;
+          IconLargeFixed = thumbnail.LargeBitmapSource;
+          //IconExtraLarge = thumbnail.ExtraLargeBitmapSource;
         }
       }
       catch(Exception ex)
@@ -105,6 +119,7 @@ public class TestPaneViewModel: ViewModelBase
     set {
       if(SetNullableInstanceProperty(ref _iconSmall, value))
       {
+        //IconSmallFixed = value?.TryFixTransparancy();
       }
     }
   }
@@ -119,6 +134,7 @@ public class TestPaneViewModel: ViewModelBase
     set {
       if(SetNullableInstanceProperty(ref _iconMedium, value))
       {
+        //IconMediumFixed = value?.TryFixTransparancy();
       }
     }
   }
@@ -132,6 +148,7 @@ public class TestPaneViewModel: ViewModelBase
     set {
       if(SetNullableInstanceProperty(ref _iconLarge, value))
       {
+        //IconLargeFixed = value?.TryFixTransparancy();
       }
     }
   }
@@ -151,9 +168,39 @@ public class TestPaneViewModel: ViewModelBase
   }
   private BitmapSource? _iconExtraLarge;
 
+  public BitmapSource? IconSmallFixed {
+    get => _iconSmallFixed;
+    set {
+      if(SetNullableInstanceProperty(ref _iconSmallFixed, value))
+      {
+      }
+    }
+  }
+  private BitmapSource? _iconSmallFixed;
+
+  public BitmapSource? IconMediumFixed {
+    get => _iconMediumFixed;
+    set {
+      if(SetNullableInstanceProperty(ref _iconMediumFixed, value))
+      {
+      }
+    }
+  }
+  private BitmapSource? _iconMediumFixed;
+
+  public BitmapSource? IconLargeFixed {
+    get => _iconLargeFixed;
+    set {
+      if(SetNullableInstanceProperty(ref _iconLargeFixed, value))
+      {
+      }
+    }
+  }
+  private BitmapSource? _iconLargeFixed;
+
   public ICommand OpenIconFileCommand { get; }
 
-  public ICommand TestRebuildCommand { get; }
+  public ICommand TestEditorCommand { get; }
 
   private void OpenIconFile()
   {
@@ -172,33 +219,173 @@ public class TestPaneViewModel: ViewModelBase
     }
   }
 
-  private void TestRebuild()
+  public ICommand TestApplicationShellFolderCommand { get; }
+
+  public ICommand SaveLogosCommand { get; }
+
+  private readonly Guid AppsFolderId =
+    new("{1e87508d-89c2-42f0-8a7e-645a0f50ca58}");
+
+  private void TestApplicationShellFolder()
   {
-    var testShelfId = new Guid("4bfb0220-9c04-4456-a2a9-fa9d870850fe");
-    var copyId = new Guid("bef10af3-a1f7-4950-97ee-a9c23305b371");
-    var rack = Host.CurrentRack;
-    if(rack == null)
+    Trace.TraceInformation(
+      $"Testing Shell Application Folder features");
+    using var appsFolder =
+      (ShellObject)KnownFolderHelper.FromKnownFolderId(AppsFolderId);
+    Trace.TraceInformation(
+      $"Parsing Name: {appsFolder.ParsingName}");
+    Trace.TraceInformation(
+      $"Name: {appsFolder.Name}");
+    //Trace.TraceInformation(
+    //  $"IsFileSystemObject: {appsFolder.IsFileSystemObject}");
+    //Trace.TraceInformation(
+    //  $"IsLink: {appsFolder.IsLink}");
+    var appsVf = (IKnownFolder)appsFolder;
+    Trace.TraceInformation(
+      $"VF Category: {appsVf.Category}");
+    Trace.TraceInformation(
+      $"VF Canonical Name: {appsVf.CanonicalName}");
+    var infoDump = new List<ShellAppInfo>();
+    ShellObject? selectedSo = null;
+    foreach(var app in appsVf)
     {
-      Trace.TraceError(
-        $"TestRebuild: No rack selected");
-      return;
-    }
-    var shelfVm =
-      rack.AllShelves()
-      .FirstOrDefault(vm => vm.Model.Id == testShelfId);
-    if(shelfVm == null)
-    {
-      Trace.TraceError(
-        $"TestRebuild: No shelf found with ID {testShelfId}");
-      return;
+      var appInfo = ShellAppInfo.FromShellObject(app);
+      infoDump.Add(appInfo);
+      // "Microsoft.ScreenSketch_8wekyb3d8bbwe!App"
+      // "CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc!ubuntu"
+      // "Microsoft.AutoGenerated.{736A64EC-D4B0-70BA-2797-1B45B159F1E4}"
+      if(app.ParsingName == "Microsoft.ScreenSketch_8wekyb3d8bbwe!App")
+      {
+        selectedSo = app;
+      }
     }
     Trace.TraceInformation(
-      $"TestRebuild: Found shelf {testShelfId}");
-    var primaryTiles = shelfVm.PrimaryTiles;
+      $"Found {infoDump.Count} applications.");
+    var store = Host.FileStore;
+    var path = store.SaveData(
+      "application-dump",
+      ".json",
+      infoDump);
     Trace.TraceInformation(
-      $"TestRebuild: Rebuilding tiles and saving a copy");
-    primaryTiles.RebuildModel();
-    primaryTiles.Model.DevSaveCopy(copyId);
+      $"Saved application dump to {path}");
+    if(selectedSo != null)
+    {
+      Trace.TraceInformation(
+        $"Found {selectedSo.Name} ({selectedSo.ParsingName}) application");
+      var thumbnail = selectedSo.Thumbnail;
+      thumbnail.FormatOption = ShellThumbnailFormatOption.Default;
+      //IconSmallFixed = thumbnail.SmallBitmapSource.ScaleDown(16);
+      //IconMediumFixed = thumbnail.MediumBitmapSource.ScaleDown(32);
+      //IconLargeFixed = thumbnail.LargeBitmapSource.ScaleDown(48);
+
+      // 'thumbnails' are larger than 'icons', but we want
+      // icon sized thumbnails. The following hacks around that.
+      thumbnail.CurrentSize = DefaultIconSize.Small;
+      IconSmallFixed = thumbnail.BitmapSource;
+      Trace.TraceInformation(
+        $"Small Icon fancy: {IconSmallFixed.Width}"); // 16
+      thumbnail.CurrentSize = DefaultIconSize.Medium;
+      IconMediumFixed = thumbnail.BitmapSource;
+      Trace.TraceInformation(
+        $"Medium Icon fancy: {IconMediumFixed.Width}"); // 32
+      thumbnail.CurrentSize = DefaultIconSize.Large;
+      IconLargeFixed = thumbnail.BitmapSource;
+      Trace.TraceInformation(
+        $"Large Icon fancy: {IconLargeFixed.Width}"); // 48
+
+      thumbnail.FormatOption = ShellThumbnailFormatOption.IconOnly;
+      IconSmall = thumbnail.SmallBitmapSource;
+      IconMedium = thumbnail.MediumBitmapSource;
+      IconLarge = thumbnail.LargeBitmapSource;
+    }
   }
 
+  private void SaveLogoPngs()
+  {
+    var root = App.Current.MainWindow;
+    // gather the logo elements
+    var logos = root.FindVisualChildren<LcLaunchLogo>().ToList();
+    foreach(var logo in logos)
+    {
+      if(String.IsNullOrEmpty(logo.Name))
+      {
+        // ignore unnamed logos
+        Trace.TraceWarning(
+          $"Logo skipped: no name");
+        continue;
+      }
+      var size = logo.LogoSize;
+      if(size == logo.Width && size == logo.Height)
+      {
+        var fileName = Path.GetFullPath(logo.Name.ToLower() + ".png");
+        var bits = logo.ElementToBitmap();
+        if(bits != null)
+        {
+          var bytes = bits.SaveToArray();
+          bits.SaveToPng(fileName);
+          Trace.TraceInformation(
+            $"Saving logo {logo.Name} ({size}) ({bits.PixelWidth} x {bits.PixelHeight}): {fileName}");
+          Trace.TraceInformation(
+            $"Logo {logo.Name} (array of {bytes.Length} bytes)");
+        }
+        else
+        {
+          Trace.TraceWarning(
+            $"Logo {logo.Name} ({size}) rejected: could not render");
+        }
+      }
+      else
+      {
+        Trace.TraceWarning(
+          $"Logo {logo.Name} ({size}) rejected: does not match size");
+      }
+    }
+  }
+}
+
+/*
+ Some noteworthy parsing names:
+"Microsoft.ScreenSketch_8wekyb3d8bbwe!App"
+"CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc!ubuntu"
+"windows.immersivecontrolpanel_cw5n1h2txyewy!microsoft.windows.immersivecontrolpanel"
+  (that's the settings app)
+"{F38BF404-1D43-42F2-9305-67DE0B28FC23}\\regedit.exe"
+  (that GUID is the folder ID for the Windows folder)
+"{7C5A40EF-A0FB-4BFC-874A-C0F2E0B9FA8E}\\VideoLAN\\VLC\\vlc.exe"
+  (that GUID is the folder ID for the Program Files x86 folder)
+"Apple.iTunes"
+"308046B0AF4A39CB"
+  (that's ... Firefox ?!)
+"Microsoft.AutoGenerated.{BB044BFD-25B7-2FAA-22A8-6371A93E0456}"
+  (those seem LNK files imported to some random GUID. In this case Event Viewer)
+"bethesdanet://run/31"
+  (some custom URL handler (bethesda game, in this case))
+"C:\\Users\\ttelcl\\AppData\\Local\\JetBrains\\Installations\\dotPeek221\\dotPeek64.exe"
+  (plain file)
+ */
+
+public class ShellAppInfo
+{
+  public string? Name { get; set; }
+
+  public string? ParsingName { get; set; }
+
+  // public bool IsFileSystemObject { get; set; } // always false
+
+  // public bool IsLink { get; set; } // always false
+
+  // Pointless - always "Microsoft.WindowsAPICodePack.Shell.ShellNonFileSystemItem"
+  //public string? TypeName { get; set; }
+
+  public static ShellAppInfo FromShellObject(
+    ShellObject shell)
+  {
+    return new ShellAppInfo() {
+      Name = shell.Name,
+      ParsingName = shell.ParsingName,
+      // IsFileSystemObject = shell.IsFileSystemObject,
+      // IsLink = shell.IsLink,
+      //TypeName = shell.GetType().FullName,
+    };
+  }
 }

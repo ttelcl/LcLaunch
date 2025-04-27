@@ -11,9 +11,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
+using LcLauncher.Models;
 using LcLauncher.Storage;
 
-namespace LcLauncher.Models;
+namespace LcLauncher.Persistence;
 
 /// <summary>
 /// File based implementation of <see cref="ILauncherIconCache"/>
@@ -48,11 +49,6 @@ public class FileBasedIconCache: ILauncherIconCache
     string iconSource,
     IconSize sizes = IconSize.Normal)
   {
-    // For now, require iconSource to be an existing file.
-    if(!File.Exists(iconSource))
-    {
-      return null;
-    }
     var hashes = Host.CacheIcons(iconSource, sizes);
     return hashes;
   }

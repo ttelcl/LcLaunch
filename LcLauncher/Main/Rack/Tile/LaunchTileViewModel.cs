@@ -8,10 +8,13 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
 using LcLauncher.IconUpdates;
 using LcLauncher.Models;
+using LcLauncher.Persistence;
+using LcLauncher.WpfUtilities;
 
 namespace LcLauncher.Main.Rack.Tile;
 
@@ -27,9 +30,26 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
   {
     IconHostId = Guid.NewGuid();
     Model = model;
+    if(model is ShellLaunch)
+    {
+      Classification = LaunchData.GetLaunchKind(
+        model.TargetPath, false);
+    }
+    else if(model is RawLaunch)
+    {
+      Classification = LaunchData.GetLaunchKind(
+        model.TargetPath, true);
+    }
+    else
+    {
+      Classification = LaunchKind.Invalid;
+    }
     _title = Model.GetEffectiveTitle();
     _tooltip = Model.GetEffectiveTooltip();
     LoadIcon(IconLoadLevel.FromCache);
+    EditCommand = new DelegateCommand(
+      p => StartEdit(),
+      p => CanEdit());
   }
 
   public static LaunchTileViewModel FromShell(
@@ -45,6 +65,8 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
   {
     return new LaunchTileViewModel(ownerList, model);
   }
+
+  public ICommand EditCommand { get; }
 
   /// <summary>
   /// The model for this tile. This is either equal to
@@ -66,6 +88,8 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
   /// <see cref="RawModel"/> is not null.
   /// </summary>
   public RawLaunch? RawModel { get => Model as RawLaunch; }
+
+  public LaunchKind Classification { get; }
 
   public string Title {
     get => _title;
@@ -133,14 +157,14 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
 
   public void LoadIcon(IconLoadLevel level)
   {
-    var hasIcon = Icon != null;
+    //var hasIcon = Icon != null;
     var hasHash = Model.Icon48 != null;
     var iconCache = OwnerList.IconCache;
     switch(level)
     {
       case IconLoadLevel.FromCache:
         {
-          if(hasIcon || !hasHash)
+          if(/*hasIcon ||*/ !hasHash)
           {
             return;
           }
@@ -152,10 +176,10 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
         }
       case IconLoadLevel.LoadIfMissing:
         {
-          if(hasIcon)
-          {
-            return;
-          }
+          //if(hasIcon)
+          //{
+          //  return;
+          //}
           if(hasHash)
           {
             var icon = iconCache.LoadCachedIcon(Model.Icon48);
@@ -258,4 +282,45 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
   }
 
   public Guid IconHostId { get; }
+
+  private bool CanEdit()
+  {
+    if(Host == null)
+    {
+      return false;
+    }
+    if(GetIsKeyTile())
+    {
+      return false;
+    }
+    if(ShellModel != null)
+    {
+      return Classification switch {
+        LaunchKind.Document => true,
+        LaunchKind.ShellApplication => false, // NYI
+        LaunchKind.Raw => false, // should never happen
+        _ => false,
+      };
+    }
+    else if(RawModel != null)
+    {
+      // NYI
+      return false;
+    }
+    else
+    {
+      return false;
+    }
+  }
+
+  private void StartEdit()
+  {
+    if(!CanEdit())
+    {
+      return;
+    }
+    var editor = new LaunchDocumentViewModel(
+      Host!);
+    editor.IsActive = true;
+  }
 }

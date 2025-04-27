@@ -22,4 +22,28 @@ public partial class MainWindow: MetroWindow
   {
     InitializeComponent();
   }
+
+  private void WindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
+  {
+    if(DataContext is MainViewModel vm)
+    {
+      vm.OnWindowClosing();
+    }
+  }
+
+  private void WindowActivated(object sender, System.EventArgs e)
+  {
+    if(DataContext is MainViewModel vm)
+    {
+      vm.OnAppActiveChange(true);
+    }
+  }
+
+  private void WindowDeactivated(object sender, System.EventArgs e)
+  {
+    if(DataContext is MainViewModel vm)
+    {
+      vm.OnAppActiveChange(false);
+    }
+  }
 }
