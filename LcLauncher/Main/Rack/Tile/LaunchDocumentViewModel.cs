@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows;
 
 using LcLauncher.Models;
+using LcLauncher.Persistence;
 
 namespace LcLauncher.Main.Rack.Tile;
 
@@ -178,4 +179,46 @@ public class LaunchDocumentViewModel: EditorViewModelBase
   }
   private string _tooltip = string.Empty;
 
+  public override bool CanAcceptEditor()
+  {
+    if(String.IsNullOrEmpty(TargetPath))
+    {
+      return false;
+    }
+    return true;
+  }
+
+  public override void AcceptEditor()
+  {
+    var model = Model;
+    model.TargetPath = TargetPath;
+    model.Title = Title;
+    model.Tooltip = Tooltip;
+    //model.IconSource = null;
+    //model.Icon48 = null;
+    //model.Icon32 = null;
+    //model.Icon16 = null;
+    //model.Verb = string.Empty;
+    //model.WindowStyle = ProcessWindowStyle.Normal;
+    var tile = Tile;
+    if(tile == null)
+    {
+      tile = LaunchTileViewModel.FromShell(
+        TileHost.TileList,
+        model);
+      TileHost.Tile = tile;
+    }
+    else
+    {
+      // force update
+      TileHost.Tile = null;
+      TileHost.Tile = tile;
+    }
+    TileHost.TileList.MarkDirty();
+    if(String.IsNullOrEmpty(model.Icon48))
+    {
+      tile.LoadIcon(IconLoadLevel.LoadIfMissing);
+    }
+    IsActive = false;
+  }
 }

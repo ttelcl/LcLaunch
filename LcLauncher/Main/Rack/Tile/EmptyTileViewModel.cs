@@ -245,11 +245,21 @@ public class EmptyTileViewModel: TileViewModel
     }
     Trace.TraceInformation(
       $"Creating DOCUMENT tile for: '{Path.GetFileName(fileName)}' ({fileName})");
-    MessageBox.Show(
-      $"Not yet implemented: CreateDocumentTileFor('{Path.GetFileName(fileName)}')",
-      "Work in progress",
-      MessageBoxButton.OK,
-      MessageBoxImage.Warning);
+
+    var editModel = LaunchDocumentViewModel.CreateFromFile(
+      Host!,
+      fileName);
+
+    if(editModel == null)
+    {
+      MessageBox.Show(
+        $"Failed to create document tile for {fileName}",
+        "Error",
+        MessageBoxButton.OK,
+        MessageBoxImage.Error);
+      return;
+    }
+    editModel.IsActive = true;
   }
 
   private void CreateExecutableTileFor(string fileName)

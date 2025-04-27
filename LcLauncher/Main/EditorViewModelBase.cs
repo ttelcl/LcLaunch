@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 using ControlzEx.Theming;
@@ -150,6 +151,13 @@ public class EditorViewModelBase: ViewModelBase, IHasTheme
   /// </summary>
   public virtual void AcceptEditor()
   {
+    if(!CanAcceptEditor())
+    {
+      MessageBox.Show(
+        "This dialog's information is not valid",
+        "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+      return;
+    }
     // do nothing.
     IsActive = false;
   }
