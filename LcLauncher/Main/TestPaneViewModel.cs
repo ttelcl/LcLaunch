@@ -38,6 +38,8 @@ public class TestPaneViewModel: ViewModelBase
     TestEditorCommand =
       new DelegateCommand(
         p => EditorViewModelBase.ShowTest(host));
+    SaveLogosCommand = new DelegateCommand(
+      p => SaveLogoPngs());
   }
 
   public MainViewModel Host { get; }
@@ -219,8 +221,10 @@ public class TestPaneViewModel: ViewModelBase
 
   public ICommand TestApplicationShellFolderCommand { get; }
 
+  public ICommand SaveLogosCommand { get; }
+
   private readonly Guid AppsFolderId =
-    new Guid("{1e87508d-89c2-42f0-8a7e-645a0f50ca58}");
+    new("{1e87508d-89c2-42f0-8a7e-645a0f50ca58}");
 
   private void TestApplicationShellFolder()
   {
@@ -293,6 +297,48 @@ public class TestPaneViewModel: ViewModelBase
       IconSmall = thumbnail.SmallBitmapSource;
       IconMedium = thumbnail.MediumBitmapSource;
       IconLarge = thumbnail.LargeBitmapSource;
+    }
+  }
+
+  private void SaveLogoPngs()
+  {
+    var root = App.Current.MainWindow;
+    // gather the logo elements
+    var logos = root.FindVisualChildren<LcLaunchLogo>().ToList();
+    foreach(var logo in logos)
+    {
+      if(String.IsNullOrEmpty(logo.Name))
+      {
+        // ignore unnamed logos
+        Trace.TraceWarning(
+          $"Logo skipped: no name");
+        continue;
+      }
+      var size = logo.LogoSize;
+      if(size == logo.Width && size == logo.Height)
+      {
+        var fileName = Path.GetFullPath(logo.Name.ToLower() + ".png");
+        var bits = logo.ElementToBitmap();
+        if(bits != null)
+        {
+          var bytes = bits.SaveToArray();
+          bits.SaveToPng(fileName);
+          Trace.TraceInformation(
+            $"Saving logo {logo.Name} ({size}) ({bits.PixelWidth} x {bits.PixelHeight}): {fileName}");
+          Trace.TraceInformation(
+            $"Logo {logo.Name} (array of {bytes.Length} bytes)");
+        }
+        else
+        {
+          Trace.TraceWarning(
+            $"Logo {logo.Name} ({size}) rejected: could not render");
+        }
+      }
+      else
+      {
+        Trace.TraceWarning(
+          $"Logo {logo.Name} ({size}) rejected: does not match size");
+      }
     }
   }
 }

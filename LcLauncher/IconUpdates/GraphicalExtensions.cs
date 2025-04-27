@@ -5,7 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -86,6 +86,82 @@ public static class GraphicalExtensions
       icon,
       new ScaleTransform(scale, scale));
     return result;
+  }
+
+  public static RenderTargetBitmap? ElementToBitmap(
+    this FrameworkElement frameworkElement)
+  {
+    // Source: https://stackoverflow.com/a/65189263/271323
+
+    var targetWidth = (int)frameworkElement.ActualWidth;
+    var targetHeight = (int)frameworkElement.ActualHeight;
+
+    // Exit if there's no 'area' to render
+    if(targetWidth == 0 || targetHeight == 0)
+      return null;
+
+    // Prepare the rendering target
+    var result = new RenderTargetBitmap(
+      targetWidth, targetHeight, 96, 96, PixelFormats.Pbgra32);
+
+    DrawingVisual drawingVisual = new DrawingVisual();
+    using(var drawingContext = drawingVisual.RenderOpen())
+    {
+      // Draw the framework element into the DrawingVisual
+      var visualBrush = new VisualBrush(frameworkElement);
+      drawingContext.DrawRectangle(visualBrush, null,
+        new Rect(new Point(), new Size(targetWidth, targetHeight)));
+    }
+
+    // Render the framework element into the target
+    result.Render(drawingVisual);
+
+    return result;
+  }
+
+  public static void SaveToPng(this BitmapSource source, string fileName)
+  {
+    var frame = BitmapFrame.Create(source);
+    var encoder = new PngBitmapEncoder();
+    encoder.Frames.Add(frame);
+    using(var stream = new FileStream(fileName, FileMode.Create))
+    {
+      encoder.Save(stream);
+    }
+  }
+
+  public static byte[] SaveToArray(this BitmapSource source)
+  {
+    var frame = BitmapFrame.Create(source);
+    var encoder = new PngBitmapEncoder();
+    encoder.Frames.Add(frame);
+    using(var stream = new MemoryStream())
+    {
+      encoder.Save(stream);
+      return stream.ToArray();
+    }
+  }
+
+  /// <summary>
+  /// Save a FrameworkElement to a PNG file.
+  /// </summary>
+  /// <param name="element">
+  /// The element to save.
+  /// </param>
+  /// <param name="fileName">
+  /// The name of the file to save to. The file will be
+  /// overwritten if it exists.
+  /// </param>
+  /// <returns>
+  /// True on success, false if the element could not be
+  /// rendered to a bitmap.
+  /// </returns>
+  public static bool SaveToPng(this FrameworkElement element, string fileName)
+  {
+    fileName = Path.GetFullPath(fileName);
+    var bits = element.ElementToBitmap();
+    bits?.SaveToPng(fileName);
+    return bits != null;
   }
 
 }

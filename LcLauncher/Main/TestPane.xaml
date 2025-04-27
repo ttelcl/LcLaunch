@@ -33,6 +33,8 @@
                             Command="{Binding TestApplicationShellFolderCommand}"/>
                     <Button Content="Test Editor"
                             Command="{Binding TestEditorCommand}"/>
+                    <Button Content="Save Logos"
+                            Command="{Binding SaveLogosCommand}"/>
                 </WrapPanel>
                 <DockPanel DockPanel.Dock="Top">
                     <Button
@@ -166,24 +168,24 @@
                             </Grid>
                         </Border>
                         <local:LcLaunchLogo
+                            x:Name="Logo96"
                             VerticalAlignment="Center"
-                            Margin="10,0"
                             Height="96" Width="96" LogoSize="96"/>
                         <local:LcLaunchLogo
+                            x:Name="Logo48"
                             VerticalAlignment="Center"
-                            Margin="10,0"
                             Height="48" Width="48" LogoSize="48"/>
                         <local:LcLaunchLogo
+                            x:Name="Logo32"
                             VerticalAlignment="Center"
-                            Margin="10,0"
                             Height="32" Width="32" LogoSize="32"/>
                         <local:LcLaunchLogo
+                            x:Name="Logo24"
                             VerticalAlignment="Center"
-                            Margin="10,0"
                             Height="24" Width="24" LogoSize="24"/>
                         <local:LcLaunchLogo
+                            x:Name="Logo16"
                             VerticalAlignment="Center"
-                            Margin="10,0"
                             Height="16" Width="16" LogoSize="16"/>
                         <Image
                             Source="{Binding IconSmall}"
