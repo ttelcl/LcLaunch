@@ -23,8 +23,15 @@
     <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="5.1.0" />
     <PackageReference Include="MahApps.Metro.IconPacks.MaterialDesign" Version="5.1.0" />
     <PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.5" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.4" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="System.Text.Json" Version="8.0.5" />
+    <PackageReference Include="System.Text.Json" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

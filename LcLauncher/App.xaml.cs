@@ -3,9 +3,12 @@ using System.Data;
 using System.Diagnostics;
 using System.Windows;
 
+using Microsoft.Extensions.Configuration;
+
 using ControlzEx.Theming;
 
 using LcLauncher.Main;
+using System;
 
 namespace LcLauncher;
 
@@ -19,9 +22,24 @@ public partial class App: Application
     DispatcherUnhandledException += (s, e) =>
       ProcessUnhandledException(e);
     Trace.TraceInformation($"App.App_Startup enter");
-    ThemeManager.Current.ChangeTheme(this, "Dark.Olive");
+
+    // Load configuration
+    var builder = new ConfigurationBuilder()
+      .SetBasePath(AppContext.BaseDirectory)
+      .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+      /*.AddEnvironmentVariables()*/;
+    var configuration = builder.Build();
+
+    var defaultTheme = configuration["defaultTheme"];
+    if(String.IsNullOrEmpty(defaultTheme))
+    {
+      defaultTheme = "Olive";
+    }
+
+    ThemeManager.Current.ChangeTheme(this, "Dark." + defaultTheme);
     var mainWindow = new MainWindow();
-    MainModel = new MainViewModel();
+    MainModel = new MainViewModel(
+      configuration);
     mainWindow.DataContext = MainModel;
 
     //mainWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;

@@ -15,14 +15,17 @@ using LcLauncher.Persistence;
 using LcLauncher.Storage;
 using LcLauncher.WpfUtilities;
 
+using Microsoft.Extensions.Configuration;
+
 namespace LcLauncher.Main;
 
 public class MainViewModel: ViewModelBase
 {
   private readonly DispatcherTimer _iconJobTimer;
 
-  public MainViewModel()
+  public MainViewModel(IConfigurationRoot configuration)
   {
+    Configuration = configuration;
     var fileStore = new JsonDataStore();
     var storeImplementation = new JsonLcLaunchStore(fileStore);
     StoreImplementation = storeImplementation;
@@ -47,6 +50,8 @@ public class MainViewModel: ViewModelBase
       }
     };
   }
+
+  public IConfigurationRoot Configuration { get; }
 
   public ICommand ProcessNextIconJobCommand { get; }
 
