@@ -9,6 +9,11 @@
     <ApplicationIcon>lclaunch.ico</ApplicationIcon>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <!-- This prevents other language resources being emitted -->
+    <SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
+  </PropertyGroup>
+
   <ItemGroup>
     <Resource Include="lclaunch.ico" />
   </ItemGroup>
