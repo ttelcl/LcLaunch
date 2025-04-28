@@ -26,6 +26,7 @@ public class MainViewModel: ViewModelBase
   public MainViewModel(IConfigurationRoot configuration)
   {
     Configuration = configuration;
+    DefaultTheme = configuration["defaultTheme"] ?? "Olive";
     var fileStore = new JsonDataStore();
     var storeImplementation = new JsonLcLaunchStore(fileStore);
     StoreImplementation = storeImplementation;
@@ -82,6 +83,8 @@ public class MainViewModel: ViewModelBase
     }
   }
   private RackViewModel? _currentRack;
+
+  public string DefaultTheme { get; }
 
   public RackListViewModel RackList { get; }
 

@@ -30,11 +30,11 @@ public class EditorViewModelBase: ViewModelBase, IHasTheme
   public EditorViewModelBase(
     MainViewModel owner,
     string editorTitle,
-    string theme = "Olive")
+    string? theme /*= owner.DefaultTheme*/)
   {
     Owner = owner;
     EditorTitle = editorTitle;
-    Theme = theme;
+    Theme = theme ?? Owner.DefaultTheme;
     CancelCommand = new DelegateCommand(
       p => CancelEditor());
     AcceptCommand = new DelegateCommand(
@@ -46,7 +46,7 @@ public class EditorViewModelBase: ViewModelBase, IHasTheme
     MainViewModel owner)
   {
     var instance = new EditorViewModelBase(
-      owner, "Test", "Olive");
+      owner, "Test", owner.DefaultTheme);
     instance.IsActive = true;
   }
 

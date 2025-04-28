@@ -28,8 +28,10 @@ public class ThemePickerViewModel: ViewModelBase
   /// Create a new ThemePickerViewModel
   /// </summary>
   public ThemePickerViewModel(
+    string defaultThemeName,
     IHasTheme? destination)
   {
+    DefaultThemeName = defaultThemeName;
     ThemeWidgets = [];
     InitializeThemes();
     Destination = destination;
@@ -71,7 +73,7 @@ public class ThemePickerViewModel: ViewModelBase
           Destination.Theme = 
             _currentThemeWidget?.Theme
             ?? DefaultTheme?.Theme
-            ?? "Olive";
+            ?? DefaultThemeName;
         }
       }
     }
@@ -106,8 +108,12 @@ public class ThemePickerViewModel: ViewModelBase
     }
   }
 
+  public string DefaultThemeName { get; }
+
   public ThemeWidgetViewModel? DefaultTheme {
-    get => ThemeWidgets.FirstOrDefault();
+    get =>
+      ThemeWidgets.FirstOrDefault(twvm => twvm.Theme == DefaultThemeName)
+      ?? ThemeWidgets.FirstOrDefault();
   }
 
   private void AddTheme(

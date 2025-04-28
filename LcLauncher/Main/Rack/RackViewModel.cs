@@ -300,8 +300,9 @@ public class RackViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
   internal ShelfViewModel CreateNewShelf(
     ShelfLocation location,
     string? title = null,
-    string initialTheme = "Olive")
+    string? initialTheme = null)
   {
+    initialTheme ??= Owner.DefaultTheme;
     var columnVm = Columns[location.ColumnIndex];
     if(location.ShelfIndex < 0
       || location.ShelfIndex > columnVm.Shelves.Count)
