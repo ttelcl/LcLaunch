@@ -13,6 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
 using LcLauncher.IconUpdates;
+using LcLauncher.Launching;
 using LcLauncher.Models;
 using LcLauncher.Persistence;
 using LcLauncher.WpfUtilities;
@@ -342,10 +343,6 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
 
   private void RunTile()
   {
-    MessageBox.Show(
-      "RunTile not implemented",
-      "NYI",
-      MessageBoxButton.OK,
-      MessageBoxImage.Information);
+    Launcher.Launch(Model);
   }
 }
