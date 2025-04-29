@@ -21,17 +21,17 @@
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem
-                Header="Swap with Marked Tile"
+                Header="Move Marked Tile Here"
                 Command="{Binding Host.SwapMarkedTileHereCommand}">
                 <MenuItem.Icon>
-                    <iconPacks:PackIconMaterial Kind="MapMarkerDown" Width="20" Height="20"/>
+                    <iconPacks:PackIconMaterial Kind="ApplicationImport" Width="20" Height="20"/>
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem
-                Header="Duplicate Marked Tile Here"
+                Header="Copy Marked Tile Here"
                 Command="{Binding Host.CopyMarkedTileHereCommand}">
                 <MenuItem.Icon>
-                    <iconPacks:PackIconMaterial Kind="MapMarkerPlus" Width="20" Height="20"/>
+                    <iconPacks:PackIconMaterial Kind="ContentDuplicate" Width="20" Height="20"/>
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem

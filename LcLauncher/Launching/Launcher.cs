@@ -64,6 +64,13 @@ public static class Launcher
     //  Trace.TraceInformation(
     //    $"  {verb}");
     //}
+    if(shellLaunch.Arguments.Count > 0)
+    {
+      foreach(var arg in shellLaunch.Arguments)
+      {
+        startInfo.ArgumentList.Add(arg);
+      }
+    }
     Process.Start(startInfo);
   }
 }
