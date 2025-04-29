@@ -51,7 +51,7 @@
         <TextBox
             Grid.Row="1"
             Grid.Column="1"
-            Text="{Binding Title, Mode=TwoWay}"
+            Text="{Binding Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
             BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
             Padding="5,5"/>
         

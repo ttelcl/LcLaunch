@@ -246,6 +246,7 @@ public class RackViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
           Trace.TraceInformation(
             $"Key shelf cleared");
         }
+        RaisePropertyChanged(nameof(HasMarkedItems));
       }
     }
   }
@@ -274,10 +275,16 @@ public class RackViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
           Trace.TraceInformation(
             $"Key tile cleared");
         }
+        RaisePropertyChanged(nameof(HasMarkedItems));
       }
     }
   }
   private TileHostViewModel? _keyTile;
+
+  public bool HasMarkedItems {
+    get => KeyTile != null
+      || KeyShelf != null;
+  }
 
   public void MarkDirty()
   {

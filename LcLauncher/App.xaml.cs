@@ -26,7 +26,8 @@ public partial class App: Application
     // Load configuration
     var builder = new ConfigurationBuilder()
       .SetBasePath(AppContext.BaseDirectory)
-      .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+      .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
+      .AddJsonFile("appsettings.local.json", optional: true, reloadOnChange: false)
       /*.AddEnvironmentVariables()*/;
     var configuration = builder.Build();
 

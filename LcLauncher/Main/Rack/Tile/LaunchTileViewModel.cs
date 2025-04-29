@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
@@ -50,6 +51,15 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
     EditCommand = new DelegateCommand(
       p => StartEdit(),
       p => CanEdit());
+    FixIconCommand = new DelegateCommand(
+      p => LoadIcon(IconLoadLevel.LoadIfMissing),
+      p => Host != null && !Host.Rack.HasMarkedItems);
+    ForceIconCommand = new DelegateCommand(
+      p => LoadIcon(IconLoadLevel.LoadAlways),
+      p => Host != null && !Host.Rack.HasMarkedItems);
+    RunCommand = new DelegateCommand(
+      p => RunTile(),
+      p => Host != null && !Host.Rack.HasMarkedItems);
   }
 
   public static LaunchTileViewModel FromShell(
@@ -67,6 +77,12 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
   }
 
   public ICommand EditCommand { get; }
+
+  public ICommand FixIconCommand { get; }
+
+  public ICommand ForceIconCommand { get; }
+
+  public ICommand RunCommand { get; }
 
   /// <summary>
   /// The model for this tile. This is either equal to
@@ -322,5 +338,14 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
     var editor = new LaunchDocumentViewModel(
       Host!);
     editor.IsActive = true;
+  }
+
+  private void RunTile()
+  {
+    MessageBox.Show(
+      "RunTile not implemented",
+      "NYI",
+      MessageBoxButton.OK,
+      MessageBoxImage.Information);
   }
 }
