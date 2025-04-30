@@ -71,6 +71,15 @@ public static class Launcher
         startInfo.ArgumentList.Add(arg);
       }
     }
-    Process.Start(startInfo);
+    var process = Process.Start(startInfo);
+    if(process != null)
+    {
+      Trace.TraceInformation(
+        $"Started process {process.Id} ({process.MainModule?.FileName ?? String.Empty})");
+    }
+    else
+    {
+      Trace.TraceInformation("No process information available");
+    }
   }
 }
