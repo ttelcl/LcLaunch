@@ -9,6 +9,7 @@ using ControlzEx.Theming;
 
 using LcLauncher.Main;
 using System;
+using System.Linq;
 
 namespace LcLauncher;
 
@@ -41,6 +42,24 @@ public partial class App: Application
     var mainWindow = new MainWindow();
     MainModel = new MainViewModel(
       configuration);
+    foreach(var arg in e.Args)
+    {
+      if(arg.EndsWith(".rack-json"))
+      {
+        var rack = MainModel.RackList.FindRackByPseudoFile(arg);
+        if(rack != null)
+        {
+          Trace.TraceInformation(
+            $"Selecting rack '{rack}' specified on command line (as '{arg}')");
+          MainModel.RackList.SelectedRack = rack;
+        }
+        else
+        {
+          Trace.TraceError(
+            $"Rack '{arg}' not found");
+        }
+      }
+    }
     mainWindow.DataContext = MainModel;
 
     //mainWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;

@@ -113,4 +113,37 @@ public class RackListViewModel: ViewModelBase
     Trace.TraceInformation(
       $"Available racks: {rackNames}");
   }
+
+  public string? FindRackByPseudoFile(string pseudoFile)
+  {
+    if(String.IsNullOrEmpty(pseudoFile))
+    {
+      return null;
+    }
+    if(!pseudoFile.EndsWith(".rack-json"))
+    {
+      return null;
+    }
+    if(pseudoFile.IndexOfAny(['/', '\\', ':', '*', '?']) >= 0)
+    {
+      return null;
+    }
+    var rackName = pseudoFile.Substring(0, pseudoFile.Length - ".rack-json".Length);
+    if(Racks.Contains(rackName))
+    {
+      return rackName;
+    }
+    return null;
+  }
+
+  public bool TrySetRackByPseudoFile(string pseudoFile)
+  {
+    var rackName = FindRackByPseudoFile(pseudoFile);
+    if(rackName == null)
+    {
+      return false;
+    }
+    SelectedRack = rackName;
+    return true;
+  }
 }

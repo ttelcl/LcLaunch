@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "LcLauncher": {
+      "commandName": "Project",
+      "commandLineArgs": "rack-demo-dev.rack-json"
+    }
+  }
+}
