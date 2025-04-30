@@ -13,16 +13,31 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace LcLauncher.Main.Rack.Tile
+namespace LcLauncher.Main.Rack.Tile;
+
+/// <summary>
+/// Interaction logic for GroupTileView.xaml
+/// </summary>
+public partial class GroupTileView: UserControl
 {
-  /// <summary>
-  /// Interaction logic for GroupTileView.xaml
-  /// </summary>
-  public partial class GroupTileView: UserControl
+  public GroupTileView()
   {
-    public GroupTileView()
+    InitializeComponent();
+  }
+
+  private void GroupTileView_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+  {
+    if(e.ChangedButton == MouseButton.Left && DataContext is GroupTileViewModel tile)
     {
-      InitializeComponent();
+      tile.MouseButtonChange(true);
+    }
+  }
+
+  private void GroupTileView_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+  {
+    if(e.ChangedButton == MouseButton.Left && DataContext is GroupTileViewModel tile)
+    {
+      tile.MouseButtonChange(false);
     }
   }
 }

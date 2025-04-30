@@ -48,6 +48,7 @@ public abstract class TileViewModel: ViewModelBase, IIconLoadJobSource
       var oldHost = _host;
       if(SetNullableInstanceProperty(ref _host, value))
       {
+        HostHovering = Host != null && Host.Hovering;
         OnHostChanged(oldHost, _host);
       }
     }
@@ -90,6 +91,22 @@ public abstract class TileViewModel: ViewModelBase, IIconLoadJobSource
   }
 
   public IconLoadQueue IconLoadQueue { get => OwnerList.IconLoadQueue; }
+
+  public virtual void OnHoveringChanged(bool hovering)
+  {
+    // do nothing
+  }
+
+  private bool _hostHovering;
+  public bool HostHovering {
+    get => _hostHovering;
+    set {
+      if(SetValueProperty(ref _hostHovering, value))
+      {
+        OnHoveringChanged(value);
+      }
+    }
+  }
 
   protected virtual void OnHostChanged(
     TileHostViewModel? oldHost,

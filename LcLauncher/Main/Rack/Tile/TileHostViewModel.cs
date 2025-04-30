@@ -105,6 +105,10 @@ public class TileHostViewModel: ViewModelBase
       if(SetValueProperty(ref _hovering, value))
       {
         RaisePropertyChanged(nameof(Hovering));
+        if(Tile != null)
+        {
+          Tile.HostHovering = value;
+        }
       }
     }
   }

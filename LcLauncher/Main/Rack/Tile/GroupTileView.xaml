@@ -8,6 +8,8 @@
     xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     mc:Ignorable="d" 
+    MouseLeftButtonDown="GroupTileView_MouseLeftButtonDown"
+    MouseLeftButtonUp="GroupTileView_MouseLeftButtonUp"
     d:DataContext="{d:DesignInstance local:GroupTileViewModel, IsDesignTimeCreatable=False}"
     d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.ContextMenu>
@@ -89,16 +91,16 @@
     <Grid
         Background="{DynamicResource MahApps.Brushes.Accent4}"
         ToolTip="{Binding EffectiveTooltip}">
-        <Grid.InputBindings>
-            <MouseBinding
-                Gesture="LeftClick"
-                Command="{Binding ToggleGroupCommand}"/>
-        </Grid.InputBindings>
         <Border
             Margin="2,2"
             Background="{DynamicResource MahApps.Brushes.Accent2}"
             Width="100" Height="100"
             Visibility="{Binding IsActive, Converter={StaticResource VisibleIf}}"/>
+        <Border
+            Margin="2,2"
+            Background="{DynamicResource MahApps.Brushes.Accent3}"
+            Width="100" Height="100"
+            Visibility="{Binding IsPrimed, Converter={StaticResource VisibleIf}}"/>
         <ItemsControl
             ItemsSource="{Binding GroupIcons}">
             <ItemsControl.ItemsPanel>

@@ -221,6 +221,38 @@ public class GroupTileViewModel: TileViewModel, IPostIconLoadActor, ITileListOwn
 
   public bool IsConflicted { get => !this.OwnsTileList(); }
 
+  public void MouseButtonChange(bool down)
+  {
+    //Trace.TraceInformation(
+    //  $"GroupTileViewModel: MouseButtonChange {down}");
+    var trigger = !down && IsPrimed && HostHovering && Host!=null;
+    IsPrimed = down && HostHovering;
+    if(trigger && ToggleGroupCommand.CanExecute(null))
+    {
+      ToggleGroupCommand.Execute(null);
+    }
+  }
+
+  private bool _isPrimed;
+  public bool IsPrimed {
+    get => _isPrimed;
+    set {
+      if(SetValueProperty(ref _isPrimed, value))
+      {
+        Trace.TraceInformation(
+          $"GroupTileViewModel: IsPrimed changed to {value}");
+      }
+    }
+  }
+
+  public override void OnHoveringChanged(bool hovering)
+  {
+    if(!hovering)
+    {
+      IsPrimed = false;
+    }
+  }
+
   protected override void OnHostChanged(
     TileHostViewModel? oldHost, TileHostViewModel? newHost)
   {
