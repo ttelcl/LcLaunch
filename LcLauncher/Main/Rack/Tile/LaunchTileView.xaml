@@ -23,10 +23,9 @@
             </MenuItem>
             <MenuItem
                 Header="{Binding Host.MarkTileText}"
-                Command="{Binding Host.ToggleCutCommand}"
-                IsChecked="{Binding Host.IsKeyTile}">
+                Command="{Binding Host.ToggleCutCommand}">
                 <MenuItem.Icon>
-                    <iconPacks:PackIconMaterial Kind="MapMarkerOutline" Width="20" Height="20"/>
+                    <iconPacks:PackIconMaterial Kind="{Binding Host.MarkTileIcon}" Width="20" Height="20"/>
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem
@@ -41,7 +40,7 @@
                 Header="Edit ..."
                 Command="{Binding EditCommand}">
                 <MenuItem.Icon>
-                    <iconPacks:PackIconMaterial Kind="ApplicationEditOutline" Width="20" Height="20"/>
+                    <iconPacks:PackIconMaterial Kind="Pencil" Width="20" Height="20"/>
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem

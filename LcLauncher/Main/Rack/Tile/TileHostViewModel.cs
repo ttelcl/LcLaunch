@@ -127,12 +127,19 @@ public class TileHostViewModel: ViewModelBase
           Rack.KeyTile = null;
         } // else: don't affect Rack.KeyTile
         RaisePropertyChanged(nameof(MarkTileText));
+        RaisePropertyChanged(nameof(MarkTileIcon));
       }
     }
   }
   private bool _isKeyTile = false;
 
-  public string MarkTileText { get => IsKeyTile ? "Unmark Tile" : "Mark Tile"; }
+  public string MarkTileText {
+    get => IsKeyTile 
+      ? "Deselect Tile"
+      : "Select Tile";
+  }
+
+  public string MarkTileIcon { get => IsKeyTile ? "SelectOff" : "Select"; }
 
   public int GetTileIndex()
   {

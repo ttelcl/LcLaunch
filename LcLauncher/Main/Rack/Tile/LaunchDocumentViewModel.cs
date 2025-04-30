@@ -29,7 +29,7 @@ public class LaunchDocumentViewModel: EditorViewModelBase
     TileHostViewModel tileHost)
     : base(
         tileHost.Rack.Owner,
-        "Document Launch tile editor",
+        "Document Launch Tile - Editor",
         tileHost.Shelf.Theme)
   {
     TileHost = tileHost;
