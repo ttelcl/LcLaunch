@@ -10,6 +10,7 @@ using ControlzEx.Theming;
 using LcLauncher.Main;
 using System;
 using System.Linq;
+using System.IO;
 
 namespace LcLauncher;
 
@@ -46,11 +47,12 @@ public partial class App: Application
     {
       if(arg.EndsWith(".rack-json"))
       {
-        var rack = MainModel.RackList.FindRackByPseudoFile(arg);
+        var pseudofile = Path.GetFileName(arg);
+        var rack = MainModel.RackList.FindRackByPseudoFile(pseudofile);
         if(rack != null)
         {
           Trace.TraceInformation(
-            $"Selecting rack '{rack}' specified on command line (as '{arg}')");
+            $"Selecting rack '{rack}' specified on command line (as '{pseudofile}')");
           MainModel.RackList.SelectedRack = rack;
         }
         else

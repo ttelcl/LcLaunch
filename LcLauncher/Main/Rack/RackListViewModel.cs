@@ -135,15 +135,4 @@ public class RackListViewModel: ViewModelBase
     }
     return null;
   }
-
-  public bool TrySetRackByPseudoFile(string pseudoFile)
-  {
-    var rackName = FindRackByPseudoFile(pseudoFile);
-    if(rackName == null)
-    {
-      return false;
-    }
-    SelectedRack = rackName;
-    return true;
-  }
 }
