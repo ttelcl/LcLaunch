@@ -49,6 +49,7 @@ public class LaunchDocumentViewModel: EditorViewModelBase
         TargetPath = shellLaunch.TargetPath;
         Title = shellLaunch.Title ?? String.Empty;
         Tooltip = shellLaunch.Tooltip ?? String.Empty;
+        Verb = shellLaunch.Verb;
       }
       else
       {
@@ -78,6 +79,7 @@ public class LaunchDocumentViewModel: EditorViewModelBase
     TargetPath = newModel.TargetPath;
     Title = newModel.Title ?? String.Empty;
     Tooltip = newModel.Tooltip ?? String.Empty;
+    Verb = newModel.Verb;
   }
 
   public static LaunchDocumentViewModel? CreateFromFile(
@@ -178,6 +180,16 @@ public class LaunchDocumentViewModel: EditorViewModelBase
     }
   }
   private string _tooltip = string.Empty;
+
+  public string Verb {
+    get => _verb;
+    set {
+      if(SetValueProperty(ref _verb, value))
+      {
+      }
+    }
+  }
+  private string _verb = string.Empty;
 
   public override bool CanAcceptEditor()
   {

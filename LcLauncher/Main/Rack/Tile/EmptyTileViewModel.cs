@@ -281,11 +281,21 @@ public class EmptyTileViewModel: TileViewModel
     }
     Trace.TraceInformation(
       $"Creating EXECUTABLE tile for: '{Path.GetFileName(fileName)}' ({fileName})");
-    MessageBox.Show(
-      $"Not yet implemented: CreateExecutableTileFor('{Path.GetFileName(fileName)}')",
-      "Work in progress",
-      MessageBoxButton.OK,
-      MessageBoxImage.Warning);
+
+    var editModel = LaunchExeViewModel.CreateFromFile(
+      Host!,
+      fileName);
+
+    if(editModel == null)
+    {
+      MessageBox.Show(
+        $"Failed to create executable tile for {fileName}",
+        "Error",
+        MessageBoxButton.OK,
+        MessageBoxImage.Error);
+      return;
+    }
+    editModel.IsActive = true;
   }
 
   private void CreateGroupTile()

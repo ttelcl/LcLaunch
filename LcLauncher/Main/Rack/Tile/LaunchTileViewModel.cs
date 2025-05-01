@@ -271,7 +271,6 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
 
   public override string PlainIcon { get => FallbackIcon; }
 
-
   /// <summary>
   /// This implementation returns zero or one icon load job
   /// </summary>
@@ -321,8 +320,12 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
     }
     else if(RawModel != null)
     {
-      // NYI
-      return false;
+      return Classification switch {
+        LaunchKind.Document => false, // should never happen
+        LaunchKind.ShellApplication => false, // should never happen
+        LaunchKind.Raw => true,
+        _ => false,
+      };
     }
     else
     {
@@ -336,8 +339,20 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
     {
       return;
     }
-    var editor = new LaunchDocumentViewModel(
-      Host!);
+    EditorViewModelBase editor;
+    if(ShellModel != null)
+    {
+      editor = new LaunchDocumentViewModel(Host!);
+    }
+    else if(RawModel != null)
+    {
+      editor = new LaunchExeViewModel(Host!);
+    }
+    else
+    {
+      throw new InvalidOperationException(
+        "Invalid tile type - this constructor expects a tile with an existing launch tile");
+    }
     editor.IsActive = true;
   }
 
