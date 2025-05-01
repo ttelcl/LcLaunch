@@ -231,6 +231,11 @@ public class TileHostViewModel: ViewModelBase
         MessageBoxImage.Warning);
       if(result == MessageBoxResult.Yes)
       {
+        if(Tile is GroupTileViewModel groupTile 
+          && Shelf.ActiveSecondaryTile == groupTile)
+        {
+          Shelf.ActiveSecondaryTile = null;
+        }
         return ClearTile();
       }
       else

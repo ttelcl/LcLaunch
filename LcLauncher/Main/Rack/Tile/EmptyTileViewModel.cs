@@ -292,16 +292,9 @@ public class EmptyTileViewModel: TileViewModel
   {
     if(CanCreateTile())
     {
-      //var editModel = new GroupEditorViewModel(
-      //  Host!,
-      //  null);
-      //editModel.IsActive = true;
-      MessageBox.Show(
-        "Not yet implemented: CreateGroupTile()",
-        "Work in progress",
-        MessageBoxButton.OK,
-        MessageBoxImage.Warning);
-      // reminder: activate it if successful?
+      var editModel = new GroupEditViewModel(
+        Host!);
+      editModel.IsActive = true;
     }
   }
 }

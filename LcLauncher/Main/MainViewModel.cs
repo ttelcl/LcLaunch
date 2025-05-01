@@ -101,9 +101,12 @@ public class MainViewModel: ViewModelBase
 
   public void RackQueueActivating(IconLoadQueue queue)
   {
-    Trace.TraceInformation(
-      $"Rack Queue is now active");
-    _iconJobTimer.IsEnabled = true;
+    if(!_iconJobTimer.IsEnabled)
+    {
+      Trace.TraceInformation(
+        $"Rack Queue is now active");
+      _iconJobTimer.IsEnabled = true;
+    }
   }
 
   public bool ProcessNextIconJob()

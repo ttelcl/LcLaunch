@@ -286,7 +286,7 @@ public class ShelfViewModel:
     this.EnqueueAllIconJobs(reload);
     var after = IconLoadQueue.JobCount();
     Trace.TraceInformation(
-      $"Queued {after - before} icon load jobs ({after} - {before}) for {Model.Id}");
+      $"Queued {after - before} icon load jobs ({after} - {before}) for shelf {Model.Id}");
   }
 
   public bool IsDirty { get => Model.IsDirty; }

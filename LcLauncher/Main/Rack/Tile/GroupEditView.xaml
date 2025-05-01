@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="LcLauncher.Main.Rack.Tile.LaunchDocumentView"
+    x:Class="LcLauncher.Main.Rack.Tile.GroupEditView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -8,7 +8,7 @@
     mc:Ignorable="d" 
     xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-    d:DataContext="{d:DesignInstance local:LaunchDocumentViewModel, IsDesignTimeCreatable=False}"
+    d:DataContext="{d:DesignInstance local:GroupEditViewModel, IsDesignTimeCreatable=False}"
     d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -21,28 +21,24 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-
         <Border
             Grid.Row="0"
+            Grid.Column="0"
             Padding="10,5"
             BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
             BorderThickness="1">
-            <TextBlock Text="Target" HorizontalAlignment="Right"/>
+            <TextBlock Text="Group ID" HorizontalAlignment="Right"/>
         </Border>
-        <DockPanel
+        <TextBox
             Grid.Row="0"
-            Grid.Column="1">
-            <!-- TODO: file open button -->
-            <!-- The main dockpanel filler: -->
-            <TextBox
-                Text="{Binding TargetPath, Mode=OneWay}"
-                IsReadOnly="True"
-                IsReadOnlyCaretVisible="True"
-                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                Foreground="{DynamicResource MahApps.Brushes.Gray5}"
-                Background="{DynamicResource MahApps.Brushes.Gray8}"
-                Padding="5,5"/>
-        </DockPanel>
+            Grid.Column="1"
+            Text="{Binding GroupId, Mode=OneWay}"
+            IsReadOnly="True"
+            IsReadOnlyCaretVisible="True"
+            BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+            Foreground="{DynamicResource MahApps.Brushes.Gray5}"
+            Background="{DynamicResource MahApps.Brushes.Gray8}"
+            Padding="5,5"/>
 
         <Border
             Grid.Row="1"
@@ -56,6 +52,7 @@
             Grid.Column="1"
             Text="{Binding Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
             BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+            mah:TextBoxHelper.Watermark="Group title (required)"
             Padding="5,5"/>
 
         <Border
@@ -70,6 +67,7 @@
             Grid.Column="1"
             Text="{Binding Tooltip, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
             BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+            mah:TextBoxHelper.Watermark="Tooltip (optional)"
             Padding="5,5"/>
 
     </Grid>

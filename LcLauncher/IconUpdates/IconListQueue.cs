@@ -89,6 +89,8 @@ public class IconListQueue
     // Remove existing actor first, adding the new one at the end.
     _postLoadActors.Remove(actor.PostIconLoadId);
     _postLoadActors.Add(actor.PostIconLoadId, actor);
+    // make sure this queue is active, even if there are no jobs for it
+    Parent.ActivateListQueue(this);
   }
 
   public int JobCount()
