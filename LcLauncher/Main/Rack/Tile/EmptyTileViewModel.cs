@@ -41,6 +41,9 @@ public class EmptyTileViewModel: TileViewModel
     CreateExecutableTileCommand = new DelegateCommand(
       p => CreateExecutableTile(),
       p => CanCreateTile());
+    CreateGroupTileCommand = new DelegateCommand(
+      p => CreateGroupTile(),
+      p => CanCreateTile());
   }
 
   /// <summary>
@@ -79,6 +82,8 @@ public class EmptyTileViewModel: TileViewModel
   }
 
   public ICommand DeleteEmptyTileCommand { get; }
+
+  public ICommand CreateGroupTileCommand { get; }
 
   public ICommand CreateShortcutTileCommand { get; }
 
@@ -281,5 +286,22 @@ public class EmptyTileViewModel: TileViewModel
       "Work in progress",
       MessageBoxButton.OK,
       MessageBoxImage.Warning);
+  }
+
+  private void CreateGroupTile()
+  {
+    if(CanCreateTile())
+    {
+      //var editModel = new GroupEditorViewModel(
+      //  Host!,
+      //  null);
+      //editModel.IsActive = true;
+      MessageBox.Show(
+        "Not yet implemented: CreateGroupTile()",
+        "Work in progress",
+        MessageBoxButton.OK,
+        MessageBoxImage.Warning);
+      // reminder: activate it if successful?
+    }
   }
 }

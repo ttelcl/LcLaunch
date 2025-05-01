@@ -40,7 +40,7 @@
                 Header="Edit ..."
                 Command="{Binding EditCommand}">
                 <MenuItem.Icon>
-                    <iconPacks:PackIconMaterial Kind="Pencil" Width="20" Height="20"/>
+                    <iconPacks:PackIconMaterial Kind="Cog" Width="20" Height="20"/>
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem
