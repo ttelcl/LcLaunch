@@ -11,11 +11,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 
 using LcLauncher.Models;
 using LcLauncher.Persistence;
+using LcLauncher.WpfUtilities;
 
 using MahApps.Metro.Controls;
+
+using Microsoft.Win32;
 
 namespace LcLauncher.Main.Rack.Tile;
 
@@ -29,6 +33,7 @@ public class LaunchExeViewModel: EditorViewModelBase
         tileHost.Shelf.Theme)
   {
     TileHost = tileHost;
+    InitCommands();
     Arguments = [];
     Environment = [];
     PathEnvironment = [];
@@ -49,6 +54,7 @@ public class LaunchExeViewModel: EditorViewModelBase
         Title = rawLaunch.Title ?? String.Empty;
         Tooltip = rawLaunch.Tooltip ?? String.Empty;
         WorkingDirectory = rawLaunch.WorkingDirectory ?? String.Empty;
+        IconSource = rawLaunch.IconSource ?? String.Empty;
         rawLaunch.Arguments.ForEach(arg => Arguments.Add(arg));
         foreach(var env in rawLaunch.Environment)
         {
@@ -85,6 +91,7 @@ public class LaunchExeViewModel: EditorViewModelBase
         tileHost.Shelf.Theme)
   {
     TileHost = tileHost;
+    InitCommands();
     Model = newModel;
     _model = Model;
     Tile = null;
@@ -92,10 +99,23 @@ public class LaunchExeViewModel: EditorViewModelBase
     Title = newModel.Title ?? String.Empty;
     Tooltip = newModel.Tooltip ?? String.Empty;
     WorkingDirectory = newModel.WorkingDirectory ?? String.Empty;
+    IconSource = newModel.IconSource ?? String.Empty;
     // Assume arguments and environments are empty
     Arguments = [];
     Environment = [];
     PathEnvironment = [];
+  }
+
+  private void InitCommands()
+  {
+    PickIconCommand = new DelegateCommand(
+      p => PickIconOverride());
+    ClearIconCommand = new DelegateCommand(
+      p => ClearIconOverride());
+    PickWorkingDirectoryCommand = new DelegateCommand(
+      p => PickWorkingDirectory());
+    ClearWorkingDirectoryCommand = new DelegateCommand(
+      p => ClearWorkingDirectory());
   }
 
   public static LaunchExeViewModel? CreateFromFile(
@@ -150,6 +170,13 @@ public class LaunchExeViewModel: EditorViewModelBase
       rawLaunch);
   }
 
+  public ICommand PickIconCommand { get; private set; } = null!;
+
+  public ICommand ClearIconCommand { get; private set; } = null!;
+
+  public ICommand PickWorkingDirectoryCommand { get; private set; } = null!;
+
+  public ICommand ClearWorkingDirectoryCommand { get; private set; } = null!;
 
   public TileHostViewModel TileHost { get; }
 
@@ -220,6 +247,16 @@ public class LaunchExeViewModel: EditorViewModelBase
   }
   private string _workingDirectory = string.Empty;
 
+  public string IconSource {
+    get => _iconSource;
+    set {
+      if(SetValueProperty(ref _iconSource, value))
+      {
+      }
+    }
+  }
+  private string _iconSource = string.Empty;
+
   public ObservableCollection<string> Arguments { get; }
 
   /// <summary>
@@ -231,6 +268,63 @@ public class LaunchExeViewModel: EditorViewModelBase
   /// Edits to PATH-like environment variables. Just preserving the original for now.
   /// </summary>
   public Dictionary<string, PathEdit> PathEnvironment { get; }
+
+  private void PickIconOverride()
+  {
+    var dialog = new OpenFileDialog();
+    dialog.Filter = "Any file (*.*)|*.*";
+    dialog.Title = "Select a file to derive the tile icon from";
+    dialog.CustomPlaces.Add(FileDialogCustomPlaces.StartMenu);
+    dialog.CustomPlaces.Add(EmptyTileViewModel.CommonStartMenuFolder);
+    dialog.CustomPlaces.Add(FileDialogCustomPlaces.Desktop);
+    dialog.CustomPlaces.Add(FileDialogCustomPlaces.ProgramFiles);
+    dialog.CustomPlaces.Add(FileDialogCustomPlaces.ProgramFilesCommon);
+    dialog.CustomPlaces.Add(FileDialogCustomPlaces.Documents);
+    dialog.CustomPlaces.Add(FileDialogCustomPlaces.LocalApplicationData);
+    dialog.CustomPlaces.Add(FileDialogCustomPlaces.RoamingApplicationData);
+    dialog.DereferenceLinks = false;
+    var result = dialog.ShowDialog();
+    if(result != true
+      || String.IsNullOrEmpty(dialog.FileName)
+      || !File.Exists(dialog.FileName))
+    {
+      return;
+    }
+    IconSource = dialog.FileName;
+  }
+
+  private void ClearIconOverride()
+  {
+    IconSource = String.Empty;
+  }
+
+  private void PickWorkingDirectory()
+  {
+    var dialog = new OpenFolderDialog();
+    dialog.Title = "Select a working directory";
+    dialog.CustomPlaces.Add(FileDialogCustomPlaces.StartMenu);
+    dialog.CustomPlaces.Add(EmptyTileViewModel.CommonStartMenuFolder);
+    dialog.CustomPlaces.Add(FileDialogCustomPlaces.Desktop);
+    dialog.CustomPlaces.Add(FileDialogCustomPlaces.ProgramFiles);
+    dialog.CustomPlaces.Add(FileDialogCustomPlaces.ProgramFilesCommon);
+    dialog.CustomPlaces.Add(FileDialogCustomPlaces.Documents);
+    dialog.CustomPlaces.Add(FileDialogCustomPlaces.LocalApplicationData);
+    dialog.CustomPlaces.Add(FileDialogCustomPlaces.RoamingApplicationData);
+    dialog.InitialDirectory = Path.GetDirectoryName(TargetPath);
+    var result = dialog.ShowDialog();
+    if(result != true
+      || String.IsNullOrEmpty(dialog.FolderName)
+      || !Directory.Exists(dialog.FolderName))
+    {
+      return;
+    }
+    WorkingDirectory = dialog.FolderName;
+  }
+
+  private void ClearWorkingDirectory()
+  {
+    WorkingDirectory = string.Empty;
+  }
 
   public override bool CanAcceptEditor()
   {
@@ -248,9 +342,10 @@ public class LaunchExeViewModel: EditorViewModelBase
     {
       var model = Model;
       model.TargetPath = TargetPath;
-      model.Title = Title;
-      model.Tooltip = Tooltip;
-      model.WorkingDirectory = WorkingDirectory;
+      model.Title = String.IsNullOrEmpty(Title) ? null : Title;
+      model.Tooltip = String.IsNullOrEmpty(Tooltip) ? null : Tooltip;
+      model.WorkingDirectory = String.IsNullOrEmpty(WorkingDirectory) ? null : WorkingDirectory;
+      model.IconSource = String.IsNullOrEmpty(IconSource) ? null : IconSource;
       model.Arguments.Clear();
       model.Arguments.AddRange(Arguments);
       model.Environment.Clear();

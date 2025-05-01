@@ -24,6 +24,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
@@ -87,6 +88,22 @@
         <DockPanel
             Grid.Row="3"
             Grid.Column="1">
+            <Button
+                DockPanel.Dock="Right"
+                Command="{Binding PickWorkingDirectoryCommand}"
+                Margin="5,0,0,0"
+                Width="30"
+                Height="30">
+                <iconPacks:PackIconMaterial Kind="Folder" Width="16" Height="16"/>
+            </Button>
+            <Button
+                DockPanel.Dock="Right"
+                Command="{Binding ClearWorkingDirectoryCommand}"
+                Margin="5,0,0,0"
+                Width="30"
+                Height="30">
+                <iconPacks:PackIconMaterial Kind="Close" Width="16" Height="16"/>
+            </Button>
             <TextBox
                 Text="{Binding WorkingDirectory, Mode=OneWay}"
                 IsReadOnly="True"
@@ -103,10 +120,47 @@
             Padding="10,5"
             BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
             BorderThickness="1">
+            <TextBlock Text="Icon Override" HorizontalAlignment="Right"/>
+        </Border>
+        <DockPanel
+            Grid.Row="4"
+            Grid.Column="1">
+            <Button
+                DockPanel.Dock="Right"
+                Command="{Binding PickIconCommand}"
+                Margin="5,0,0,0"
+                Width="30"
+                Height="30">
+                <iconPacks:PackIconMaterial Kind="Folder" Width="16" Height="16"/>
+            </Button>
+            <Button
+                DockPanel.Dock="Right"
+                Command="{Binding ClearIconCommand}"
+                Margin="5,0,0,0"
+                Width="30"
+                Height="30">
+                <iconPacks:PackIconMaterial Kind="Close" Width="16" Height="16"/>
+            </Button>
+            <TextBox
+                Text="{Binding IconSource, Mode=OneWay}"
+                IsReadOnly="True"
+                IsReadOnlyCaretVisible="True"
+                mah:TextBoxHelper.Watermark="File to derive icon from. Leave empty to use target."
+                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+                Foreground="{DynamicResource MahApps.Brushes.Gray5}"
+                Background="{DynamicResource MahApps.Brushes.Gray8}"
+                Padding="5,5"/>
+        </DockPanel>
+
+        <Border
+            Grid.Row="5"
+            Padding="10,5"
+            BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+            BorderThickness="1">
             <TextBlock Text="Arguments" HorizontalAlignment="Right"/>
         </Border>
         <Border
-            Grid.Row="4" Grid.Column="1"
+            Grid.Row="5" Grid.Column="1"
             Padding="10,5"
             BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
             BorderThickness="1">
@@ -116,14 +170,14 @@
         </Border>
 
         <Border
-            Grid.Row="5"
+            Grid.Row="6"
             Padding="10,5"
             BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
             BorderThickness="1">
             <TextBlock Text="Environment Variables" HorizontalAlignment="Right"/>
         </Border>
         <Border
-            Grid.Row="5" Grid.Column="1"
+            Grid.Row="6" Grid.Column="1"
             Padding="10,5"
             BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
             BorderThickness="1">
@@ -133,14 +187,14 @@
         </Border>
 
         <Border
-            Grid.Row="6"
+            Grid.Row="7"
             Padding="10,5"
             BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
             BorderThickness="1">
             <TextBlock Text="Environment list edits" HorizontalAlignment="Right"/>
         </Border>
         <Border
-            Grid.Row="6" Grid.Column="1"
+            Grid.Row="7" Grid.Column="1"
             Padding="10,5"
             BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
             BorderThickness="1">
@@ -150,14 +204,14 @@
         </Border>
 
         <Border
-            Grid.Row="7"
+            Grid.Row="8"
             Padding="10,5"
             BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
             BorderThickness="1">
             <TextBlock Text="Tiles list and index" HorizontalAlignment="Right" FontStyle="Italic"/>
         </Border>
         <Border
-            Grid.Row="7" Grid.Column="1"
+            Grid.Row="8" Grid.Column="1"
             Padding="10,5"
             BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
             BorderThickness="1">

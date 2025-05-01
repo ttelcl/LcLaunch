@@ -28,7 +28,7 @@
                 HorizontalAlignment="Center"
                 MinWidth="150">
                 <mah:SplitButton.Icon>
-                    <iconPacks:PackIconMaterial Kind="ViewGridPlusOutline" />
+                    <iconPacks:PackIconMaterial Kind="Bookshelf" />
                 </mah:SplitButton.Icon>
             </mah:SplitButton>
         </mah:WindowCommands>
