@@ -13,15 +13,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace LcLauncher.Main.Rack.Tile;
-
-/// <summary>
-/// Interaction logic for GroupTileView.xaml
-/// </summary>
-public partial class GroupTileView: UserControl
+namespace LcLauncher.Main.Rack.Tile
 {
-  public GroupTileView()
+  /// <summary>
+  /// Interaction logic for GroupEditView.xaml
+  /// </summary>
+  public partial class GroupEditView: UserControl
   {
-    InitializeComponent();
+    public GroupEditView()
+    {
+      InitializeComponent();
+    }
   }
 }

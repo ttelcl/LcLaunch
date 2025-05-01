@@ -8,10 +8,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
 using LcLauncher.IconUpdates;
+using LcLauncher.Launching;
 using LcLauncher.Models;
 using LcLauncher.Persistence;
 using LcLauncher.WpfUtilities;
@@ -50,6 +52,16 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
     EditCommand = new DelegateCommand(
       p => StartEdit(),
       p => CanEdit());
+    FixIconCommand = new DelegateCommand(
+      p => LoadIcon(IconLoadLevel.LoadIfMissing),
+      p => Host != null && !Host.Rack.HasMarkedItems);
+    ForceIconCommand = new DelegateCommand(
+      p => LoadIcon(IconLoadLevel.LoadAlways),
+      p => Host != null && !Host.Rack.HasMarkedItems);
+    RunCommand = new DelegateCommand(
+      p => RunTile(),
+      p => Host != null && !Host.Rack.HasMarkedItems);
+    ClickActionCommand = RunCommand;
   }
 
   public static LaunchTileViewModel FromShell(
@@ -67,6 +79,12 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
   }
 
   public ICommand EditCommand { get; }
+
+  public ICommand FixIconCommand { get; }
+
+  public ICommand ForceIconCommand { get; }
+
+  public ICommand RunCommand { get; }
 
   /// <summary>
   /// The model for this tile. This is either equal to
@@ -254,7 +272,6 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
 
   public override string PlainIcon { get => FallbackIcon; }
 
-
   /// <summary>
   /// This implementation returns zero or one icon load job
   /// </summary>
@@ -304,8 +321,12 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
     }
     else if(RawModel != null)
     {
-      // NYI
-      return false;
+      return Classification switch {
+        LaunchKind.Document => false, // should never happen
+        LaunchKind.ShellApplication => false, // should never happen
+        LaunchKind.Raw => true,
+        _ => false,
+      };
     }
     else
     {
@@ -319,8 +340,25 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
     {
       return;
     }
-    var editor = new LaunchDocumentViewModel(
-      Host!);
+    EditorViewModelBase editor;
+    if(ShellModel != null)
+    {
+      editor = new LaunchDocumentViewModel(Host!);
+    }
+    else if(RawModel != null)
+    {
+      editor = new LaunchExeViewModel(Host!);
+    }
+    else
+    {
+      throw new InvalidOperationException(
+        "Invalid tile type - this constructor expects a tile with an existing launch tile");
+    }
     editor.IsActive = true;
+  }
+
+  private void RunTile()
+  {
+    Launcher.Launch(Model);
   }
 }

@@ -14,18 +14,16 @@
         <ContextMenu>
             <MenuItem
                 Header="{Binding Host.MarkTileText}"
-                Command="{Binding ToggleCutCommand}"
-                IsChecked="{Binding Host.IsKeyTile}">
+                Command="{Binding ToggleCutCommand}">
                 <MenuItem.Icon>
-                    <iconPacks:PackIconMaterial Kind="MapMarkerOutline" Width="20" Height="20"/>
+                    <iconPacks:PackIconMaterial Kind="{Binding Host.MarkTileIcon}" Width="20" Height="20"/>
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem
-                Header="Toggle (Shortcut: Left Click)"
-                Command="{Binding ToggleGroupCommand}"
-                IsChecked="{Binding IsActive}">
+                Header="{Binding ToggleGroupText}"
+                Command="{Binding ToggleGroupCommand}">
                 <MenuItem.Icon>
-                    <iconPacks:PackIconMaterial Kind="ArrowExpandDown" Width="20" Height="20"/>
+                    <iconPacks:PackIconMaterial Kind="{Binding ToggleGroupIcon}" Width="20" Height="20"/>
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem
@@ -37,10 +35,10 @@
             </MenuItem>
             <Separator/>
             <MenuItem
-                Header="Edit Title..."
-                IsEnabled="False">
+                Header="Properties..."
+                Command="{Binding EditGroupCommand}">
                 <MenuItem.Icon>
-                    <iconPacks:PackIconMaterial Kind="Pencil" Width="20" Height="20"/>
+                    <iconPacks:PackIconMaterial Kind="Cog" Width="20" Height="20"/>
                 </MenuItem.Icon>
             </MenuItem>
             <Separator/>
@@ -59,7 +57,21 @@
                 </MenuItem.Icon>
             </MenuItem>
             <Separator/>
-            <MenuItem Header="Target tile list Info">
+            <MenuItem Header="Other">
+                <MenuItem Header="Update Icons"
+                          Command="{Binding EnqueueIconJobsCommand}">
+                    <MenuItem.Icon>
+                        <iconPacks:PackIconMaterial Kind="Reload" Width="20" Height="20"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Reload All Icons"
+                          Command="{Binding RefreshIconJobsCommand}">
+                    <MenuItem.Icon>
+                        <iconPacks:PackIconMaterial Kind="ReloadAlert" Width="20" Height="20"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+            <!--<MenuItem Header="Target tile list Info">
                 <MenuItem.Icon>
                     <iconPacks:PackIconMaterial Kind="InformationSlabCircleOutline" Width="20" Height="20"/>
                 </MenuItem.Icon>
@@ -70,7 +82,7 @@
                         <iconPacks:PackIconMaterial Kind="InformationSlabCircleOutline" Width="20" Height="20"/>
                     </MenuItem.Icon>
                 </MenuItem>
-            </MenuItem>
+            </MenuItem>-->
             <MenuItem Header="Danger Zone">
                 <MenuItem.Icon>
                     <iconPacks:PackIconMaterial Kind="AlertOutline" Width="20" Height="20"
@@ -90,16 +102,16 @@
     <Grid
         Background="{DynamicResource MahApps.Brushes.Accent4}"
         ToolTip="{Binding EffectiveTooltip}">
-        <Grid.InputBindings>
-            <MouseBinding
-                Gesture="LeftClick"
-                Command="{Binding ToggleGroupCommand}"/>
-        </Grid.InputBindings>
         <Border
             Margin="2,2"
             Background="{DynamicResource MahApps.Brushes.Accent2}"
             Width="100" Height="100"
             Visibility="{Binding IsActive, Converter={StaticResource VisibleIf}}"/>
+        <Border
+            Margin="2,2"
+            Background="{DynamicResource MahApps.Brushes.Accent3}"
+            Width="100" Height="100"
+            Visibility="{Binding IsPrimed, Converter={StaticResource VisibleIf}}"/>
         <ItemsControl
             ItemsSource="{Binding GroupIcons}">
             <ItemsControl.ItemsPanel>

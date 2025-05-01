@@ -81,6 +81,17 @@ public class IconLoadQueue
     }
   }
 
+  public void ActivateListQueue(IconListQueue queue)
+  {
+    if(!_queues.ContainsKey(queue.QueueId))
+    {
+      // Handles the case of a queue that only has post load tasks but no jobs,
+      // e.g. a group tile out of sync with its tile list
+      _queues[queue.QueueId] = queue;
+      _activate?.Invoke(this); // start timer
+    }
+  }
+
   public void EnqueueAll(IIconLoadJobSource source, bool reload)
   {
     foreach(var job in source.GetIconLoadJobs(reload))

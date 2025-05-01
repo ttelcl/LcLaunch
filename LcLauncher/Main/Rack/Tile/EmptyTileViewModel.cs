@@ -41,6 +41,9 @@ public class EmptyTileViewModel: TileViewModel
     CreateExecutableTileCommand = new DelegateCommand(
       p => CreateExecutableTile(),
       p => CanCreateTile());
+    CreateGroupTileCommand = new DelegateCommand(
+      p => CreateGroupTile(),
+      p => CanCreateTile());
   }
 
   /// <summary>
@@ -80,6 +83,8 @@ public class EmptyTileViewModel: TileViewModel
 
   public ICommand DeleteEmptyTileCommand { get; }
 
+  public ICommand CreateGroupTileCommand { get; }
+
   public ICommand CreateShortcutTileCommand { get; }
 
   public ICommand CreateDocumentTileCommand { get; }
@@ -109,7 +114,7 @@ public class EmptyTileViewModel: TileViewModel
 
   //static Guid AppsFolderId = Guid.Parse("1e87508d-89c2-42f0-8a7e-645a0f50ca58");
   static Guid CommonStartMenuId = Guid.Parse("A4115719-D62E-491D-AA7C-E74B8BE3B067");
-  static FileDialogCustomPlace CommonStartMenuFolder =
+  public static FileDialogCustomPlace CommonStartMenuFolder =
     new FileDialogCustomPlace(CommonStartMenuId);
 
   /// <summary>
@@ -276,10 +281,30 @@ public class EmptyTileViewModel: TileViewModel
     }
     Trace.TraceInformation(
       $"Creating EXECUTABLE tile for: '{Path.GetFileName(fileName)}' ({fileName})");
-    MessageBox.Show(
-      $"Not yet implemented: CreateExecutableTileFor('{Path.GetFileName(fileName)}')",
-      "Work in progress",
-      MessageBoxButton.OK,
-      MessageBoxImage.Warning);
+
+    var editModel = LaunchExeViewModel.CreateFromFile(
+      Host!,
+      fileName);
+
+    if(editModel == null)
+    {
+      MessageBox.Show(
+        $"Failed to create executable tile for {fileName}",
+        "Error",
+        MessageBoxButton.OK,
+        MessageBoxImage.Error);
+      return;
+    }
+    editModel.IsActive = true;
+  }
+
+  private void CreateGroupTile()
+  {
+    if(CanCreateTile())
+    {
+      var editModel = new GroupEditViewModel(
+        Host!);
+      editModel.IsActive = true;
+    }
   }
 }

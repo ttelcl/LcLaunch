@@ -14,28 +14,34 @@
         <ContextMenu>
             <MenuItem
                 Header="{Binding Host.MarkTileText}"
-                Command="{Binding Host.ToggleCutCommand}"
-                IsChecked="{Binding Host.IsKeyTile}">
+                Command="{Binding Host.ToggleCutCommand}">
                 <MenuItem.Icon>
-                    <iconPacks:PackIconMaterial Kind="MapMarkerOutline" Width="20" Height="20"/>
+                    <iconPacks:PackIconMaterial Kind="{Binding Host.MarkTileIcon}" Width="20" Height="20"/>
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem
-                Header="Swap with Marked Tile"
+                Header="Swap Marked Tile Here"
                 Command="{Binding Host.SwapMarkedTileHereCommand}">
                 <MenuItem.Icon>
-                    <iconPacks:PackIconMaterial Kind="MapMarkerDown" Width="20" Height="20"/>
+                    <iconPacks:PackIconMaterial Kind="ApplicationImport" Width="20" Height="20"/>
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem
-                Header="Duplicate Marked Tile Here"
+                Header="Copy Marked Tile Here"
                 Command="{Binding Host.CopyMarkedTileHereCommand}">
                 <MenuItem.Icon>
-                    <iconPacks:PackIconMaterial Kind="MapMarkerPlus" Width="20" Height="20"/>
+                    <iconPacks:PackIconMaterial Kind="ContentDuplicate" Width="20" Height="20"/>
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem
-                Header="Insert Another Empty Tile Here"
+                Header="Create New Group Tile Here"
+                Command="{Binding CreateGroupTileCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="DotsGrid" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem
+                Header="Insert New Empty Tile Here"
                 Command="{Binding Host.InsertEmptyTileCommand}">
                 <MenuItem.Icon>
                     <iconPacks:PackIconMaterial Kind="Egg" Width="20" Height="20"/>

@@ -41,5 +41,21 @@ namespace LcLauncher.Main.Rack.Tile
       }
     }
 
+    private void TileHost_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+    {
+      if(e.ChangedButton == MouseButton.Left && DataContext is TileHostViewModel tile)
+      {
+        tile.HostMouseButtonChanged(true);
+      }
+    }
+
+    private void TileHost_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+    {
+      if(e.ChangedButton == MouseButton.Left && DataContext is TileHostViewModel tile)
+      {
+        tile.HostMouseButtonChanged(false);
+      }
+    }
+
   }
 }

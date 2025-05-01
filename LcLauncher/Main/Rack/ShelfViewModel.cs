@@ -29,12 +29,13 @@ public class ShelfViewModel:
     ShelfModel model)
   {
     Rack = rack;
+    _theme = Rack.Owner.DefaultTheme;
     ClaimTracker = Rack.Model.GetClaimTracker(model.Id);
     Store = Rack.Store;
     Model = model;
     _model = Model;
     SetThemeCommand = new DelegateCommand(
-      p => Theme = (p as string) ?? "Olive");
+      p => Theme = (p as string) ?? Rack.Owner.DefaultTheme);
     ToggleExpandedCommand = new DelegateCommand(
       p => IsExpanded = !IsExpanded);
     PrimaryTiles = new TileListViewModel(
@@ -104,7 +105,7 @@ public class ShelfViewModel:
             $"'{ClaimTracker.Owner?.TileListOwnerLabel ?? String.Empty}'");
         }
         Title = value.Shelf.Title;
-        Theme = value.Shelf.Theme ?? "Olive";
+        Theme = value.Shelf.Theme ?? Rack.Owner.DefaultTheme;
         IsExpanded = !value.Shelf.Collapsed;
         ActiveSecondaryTile = null;
         RaisePropertyChanged(nameof(PrimaryTiles));
@@ -202,7 +203,7 @@ public class ShelfViewModel:
       }
     }
   }
-  private string _theme = "Olive";
+  private string _theme;
 
   public string Title {
     get => _title;
@@ -285,7 +286,7 @@ public class ShelfViewModel:
     this.EnqueueAllIconJobs(reload);
     var after = IconLoadQueue.JobCount();
     Trace.TraceInformation(
-      $"Queued {after - before} icon load jobs ({after} - {before}) for {Model.Id}");
+      $"Queued {after - before} icon load jobs ({after} - {before}) for shelf {Model.Id}");
   }
 
   public bool IsDirty { get => Model.IsDirty; }

@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace LcLauncher.Main.Rack.Tile;
 
 /// <summary>
-/// Interaction logic for GroupTileView.xaml
+/// Interaction logic for LaunchExeView.xaml
 /// </summary>
-public partial class GroupTileView: UserControl
+public partial class LaunchExeView: UserControl
 {
-  public GroupTileView()
+  public LaunchExeView()
   {
     InitializeComponent();
   }

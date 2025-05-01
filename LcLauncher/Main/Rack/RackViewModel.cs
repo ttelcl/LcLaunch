@@ -246,6 +246,7 @@ public class RackViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
           Trace.TraceInformation(
             $"Key shelf cleared");
         }
+        RaisePropertyChanged(nameof(HasMarkedItems));
       }
     }
   }
@@ -274,10 +275,16 @@ public class RackViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
           Trace.TraceInformation(
             $"Key tile cleared");
         }
+        RaisePropertyChanged(nameof(HasMarkedItems));
       }
     }
   }
   private TileHostViewModel? _keyTile;
+
+  public bool HasMarkedItems {
+    get => KeyTile != null
+      || KeyShelf != null;
+  }
 
   public void MarkDirty()
   {
@@ -300,8 +307,9 @@ public class RackViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
   internal ShelfViewModel CreateNewShelf(
     ShelfLocation location,
     string? title = null,
-    string initialTheme = "Olive")
+    string? initialTheme = null)
   {
+    initialTheme ??= Owner.DefaultTheme;
     var columnVm = Columns[location.ColumnIndex];
     if(location.ShelfIndex < 0
       || location.ShelfIndex > columnVm.Shelves.Count)

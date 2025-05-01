@@ -15,14 +15,19 @@ using LcLauncher.Persistence;
 using LcLauncher.Storage;
 using LcLauncher.WpfUtilities;
 
+using Microsoft.Extensions.Configuration;
+
 namespace LcLauncher.Main;
 
 public class MainViewModel: ViewModelBase
 {
   private readonly DispatcherTimer _iconJobTimer;
 
-  public MainViewModel()
+  public MainViewModel(IConfigurationRoot configuration)
   {
+    Configuration = configuration;
+    DefaultTheme = configuration["defaultTheme"] ?? "Olive";
+    ShowDevPane = configuration.GetValue<bool>("showDevPane", false);
     var fileStore = new JsonDataStore();
     var storeImplementation = new JsonLcLaunchStore(fileStore);
     StoreImplementation = storeImplementation;
@@ -47,6 +52,8 @@ public class MainViewModel: ViewModelBase
       }
     };
   }
+
+  public IConfigurationRoot Configuration { get; }
 
   public ICommand ProcessNextIconJobCommand { get; }
 
@@ -78,13 +85,28 @@ public class MainViewModel: ViewModelBase
   }
   private RackViewModel? _currentRack;
 
+  public string DefaultTheme { get; }
+
+  public bool ShowDevPane {
+    get => _showDevPane;
+    set {
+      if(SetValueProperty(ref _showDevPane, value))
+      {
+      }
+    }
+  }
+  private bool _showDevPane;
+
   public RackListViewModel RackList { get; }
 
   public void RackQueueActivating(IconLoadQueue queue)
   {
-    Trace.TraceInformation(
-      $"Rack Queue is now active");
-    _iconJobTimer.IsEnabled = true;
+    if(!_iconJobTimer.IsEnabled)
+    {
+      Trace.TraceInformation(
+        $"Rack Queue is now active");
+      _iconJobTimer.IsEnabled = true;
+    }
   }
 
   public bool ProcessNextIconJob()

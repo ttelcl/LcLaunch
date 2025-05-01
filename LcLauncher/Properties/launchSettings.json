@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "LcLauncher": {
+      "commandName": "Project",
+      "commandLineArgs": "c:\\Users\\ttelcl\\AppData\\Local\\Lcl\\launcher\\rack-demo-dev.rack-json"
+    }
+  }
+}

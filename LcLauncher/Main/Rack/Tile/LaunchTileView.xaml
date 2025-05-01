@@ -13,11 +13,19 @@
     <UserControl.ContextMenu>
         <ContextMenu>
             <MenuItem
-                Header="{Binding Host.MarkTileText}"
-                Command="{Binding Host.ToggleCutCommand}"
-                IsChecked="{Binding Host.IsKeyTile}">
+                Header="Launch"
+                Command="{Binding RunCommand}">
                 <MenuItem.Icon>
-                    <iconPacks:PackIconMaterial Kind="MapMarkerOutline" Width="20" Height="20"/>
+                    <iconPacks:PackIconMaterial
+                        Kind="RocketLaunch" Width="20" Height="20" />
+                    <!-- Foreground="{DynamicResource MahApps.Brushes.AccentBase}" -->
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem
+                Header="{Binding Host.MarkTileText}"
+                Command="{Binding Host.ToggleCutCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="{Binding Host.MarkTileIcon}" Width="20" Height="20"/>
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem
@@ -32,7 +40,7 @@
                 Header="Edit ..."
                 Command="{Binding EditCommand}">
                 <MenuItem.Icon>
-                    <iconPacks:PackIconMaterial Kind="ApplicationEditOutline" Width="20" Height="20"/>
+                    <iconPacks:PackIconMaterial Kind="Cog" Width="20" Height="20"/>
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem
@@ -58,6 +66,22 @@
                 </MenuItem.Icon>
             </MenuItem>
             <Separator/>
+            <MenuItem Header="Other">
+                <MenuItem
+                    Header="Fix missing icon"
+                    Command="{Binding FixIconCommand}">
+                    <MenuItem.Icon>
+                        <iconPacks:PackIconMaterial Kind="Reload" Width="20" Height="20"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem
+                    Header="Reload icon"
+                    Command="{Binding ForceIconCommand}">
+                    <MenuItem.Icon>
+                        <iconPacks:PackIconMaterial Kind="ReloadAlert" Width="20" Height="20"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
             <MenuItem Header="Danger Zone">
                 <MenuItem.Icon>
                     <iconPacks:PackIconMaterial Kind="AlertOutline" Width="20" Height="20"

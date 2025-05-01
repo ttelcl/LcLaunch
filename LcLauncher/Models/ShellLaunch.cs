@@ -49,6 +49,7 @@ public class ShellLaunch: LaunchData
     string? tooltip = null,
     ProcessWindowStyle windowStyle = ProcessWindowStyle.Normal,
     string? iconSource = null,
+    IEnumerable<string>? arguments = null,
     string? icon48 = null,
     string? icon32 = null,
     string? icon16 = null,
@@ -57,6 +58,7 @@ public class ShellLaunch: LaunchData
            iconSource, icon48, icon32, icon16)
   {
     Verb = verb;
+    Arguments = new(arguments ?? []);
   }
 
   /// <summary>
@@ -68,4 +70,10 @@ public class ShellLaunch: LaunchData
     NullValueHandling = NullValueHandling.Ignore)]
   [DefaultValue("")]
   public string Verb { get; set; }
+
+  [JsonProperty("arguments")]
+  public List<string> Arguments { get; }
+
+  public bool ShouldSerializeArguments() => Arguments.Count > 0;
+
 }

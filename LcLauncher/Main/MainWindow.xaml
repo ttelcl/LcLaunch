@@ -28,13 +28,18 @@
                 HorizontalAlignment="Center"
                 MinWidth="150">
                 <mah:SplitButton.Icon>
-                    <iconPacks:PackIconMaterial Kind="ViewGridPlusOutline" />
+                    <iconPacks:PackIconMaterial Kind="Bookshelf" />
                 </mah:SplitButton.Icon>
             </mah:SplitButton>
         </mah:WindowCommands>
     </mah:MetroWindow.RightWindowCommands>
     <DockPanel>
-        <local:TestPane DockPanel.Dock="Top" DataContext="{Binding TestPane}"/>
+        <Grid
+            DockPanel.Dock="Top"
+            Visibility="{Binding ShowDevPane, Converter={StaticResource VisibleIf}}">
+            <local:TestPane
+                DataContext="{Binding TestPane}"/>
+        </Grid>
         <Grid>
             <ScrollViewer
                 Visibility="{Binding CurrentRack, Converter={StaticResource VisibleIfNotNull}}"

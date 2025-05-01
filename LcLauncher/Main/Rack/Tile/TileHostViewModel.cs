@@ -105,10 +105,26 @@ public class TileHostViewModel: ViewModelBase
       if(SetValueProperty(ref _hovering, value))
       {
         RaisePropertyChanged(nameof(Hovering));
+        if(Tile != null)
+        {
+          Tile.HostHovering = value;
+        }
       }
     }
   }
   private bool _hovering = false;
+
+  /// <summary>
+  /// Callback from the host view. Forwards to the tile,
+  /// if any and able to handle clicks.
+  /// </summary>
+  public void HostMouseButtonChanged(bool down)
+  {
+    if(Tile != null && Tile.ClickActionCommand != null)
+    {
+      Tile.MouseButtonChange(down);
+    }
+  }
 
   public bool IsKeyTile {
     get => _isKeyTile;
@@ -127,12 +143,19 @@ public class TileHostViewModel: ViewModelBase
           Rack.KeyTile = null;
         } // else: don't affect Rack.KeyTile
         RaisePropertyChanged(nameof(MarkTileText));
+        RaisePropertyChanged(nameof(MarkTileIcon));
       }
     }
   }
   private bool _isKeyTile = false;
 
-  public string MarkTileText { get => IsKeyTile ? "Unmark Tile" : "Mark Tile"; }
+  public string MarkTileText {
+    get => IsKeyTile 
+      ? "Deselect Tile"
+      : "Select Tile";
+  }
+
+  public string MarkTileIcon { get => IsKeyTile ? "SelectOff" : "Select"; }
 
   public int GetTileIndex()
   {
@@ -208,6 +231,11 @@ public class TileHostViewModel: ViewModelBase
         MessageBoxImage.Warning);
       if(result == MessageBoxResult.Yes)
       {
+        if(Tile is GroupTileViewModel groupTile 
+          && Shelf.ActiveSecondaryTile == groupTile)
+        {
+          Shelf.ActiveSecondaryTile = null;
+        }
         return ClearTile();
       }
       else

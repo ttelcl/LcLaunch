@@ -24,7 +24,9 @@ public class ShelfEditViewModel: EditorViewModelBase
   {
     Target = target;
     Title = target.Title;
-    ThemePicker = new ThemePickerViewModel(this);
+    ThemePicker = new ThemePickerViewModel(
+      Target.Theme,
+      this);
   }
 
   public static void Show(

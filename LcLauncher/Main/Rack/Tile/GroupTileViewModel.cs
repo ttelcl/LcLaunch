@@ -35,9 +35,13 @@ public class GroupTileViewModel: TileViewModel, IPostIconLoadActor, ITileListOwn
            && !IsActive
            && !GetIsKeyTile(),
       p => !IsConflicted && !GetIsKeyTile());
+    ClickActionCommand = ToggleGroupCommand;
     FixGraphCommand = new DelegateCommand(
       p => { ConditionalReplaceWithClone(); },
       p => IsConflicted);
+    EditGroupCommand = new DelegateCommand(
+      p => EditGroup(),
+      p => !IsConflicted && !GetIsKeyTile());
     ToggleCutCommand = new DelegateCommand(
       p => {
         if(Host != null)
@@ -46,6 +50,10 @@ public class GroupTileViewModel: TileViewModel, IPostIconLoadActor, ITileListOwn
         }
       },
       p => Host!=null && !IsActive);
+    EnqueueIconJobsCommand = new DelegateCommand(
+      p => QueueIcons(false));
+    RefreshIconJobsCommand = new DelegateCommand(
+      p => QueueIcons(true));
     GroupIcons = new ObservableCollection<GroupIconViewModel>();
     var childModel = TileListModel.Load(ownerList.Shelf.Rack.Model, model.TileList);
     if(childModel == null)
@@ -69,7 +77,13 @@ public class GroupTileViewModel: TileViewModel, IPostIconLoadActor, ITileListOwn
 
   public ICommand ToggleGroupCommand { get; }
 
+  public ICommand EditGroupCommand { get; }
+
   public ICommand FixGraphCommand { get; }
+
+  public ICommand EnqueueIconJobsCommand { get; }
+
+  public ICommand RefreshIconJobsCommand { get; }
 
   public Guid PostIconLoadId { get; }
 
@@ -149,14 +163,24 @@ public class GroupTileViewModel: TileViewModel, IPostIconLoadActor, ITileListOwn
           if(Host != null && ChildTiles.ContainsKeyTile())
           {
             // Make sure the key tile does not go invisible
-            // 'Uncut' it instead.
+            // 'Unselect' it instead.
             Host.Rack.KeyTile = null;
           }
         }
+        RaisePropertyChanged(nameof(ToggleGroupIcon));
+        RaisePropertyChanged(nameof(ToggleGroupText));
       }
     }
   }
   private bool _isActive = false;
+
+  public string ToggleGroupIcon {
+    get => IsActive ? "ArchiveArrowUpOutline" : "ArchiveArrowDownOutline";
+  }
+
+  public string ToggleGroupText {
+    get => IsActive ? "Hide Group" : "Show Group";
+  }
 
   public TileListViewModel ChildTiles { get; }
 
@@ -220,6 +244,25 @@ public class GroupTileViewModel: TileViewModel, IPostIconLoadActor, ITileListOwn
   public bool ClaimPriority { get => false; }
 
   public bool IsConflicted { get => !this.OwnsTileList(); }
+
+  public void EditGroup()
+  {
+    if(Host != null)
+    {
+      var editor = new GroupEditViewModel(Host); // automatically picks up 'this'
+      editor.IsActive = true;
+    }
+  }
+
+  private void QueueIcons(bool reload)
+  {
+    var before = IconLoadQueue.JobCount();
+    this.EnqueueAllIconJobs(reload);
+    var after = IconLoadQueue.JobCount();
+    Trace.TraceInformation(
+      $"Queued {after - before} icon load jobs ({after} - {before}) for group {ChildTiles.TileListId}");
+  }
+
 
   protected override void OnHostChanged(
     TileHostViewModel? oldHost, TileHostViewModel? newHost)
