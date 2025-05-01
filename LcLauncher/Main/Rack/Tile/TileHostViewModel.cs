@@ -114,6 +114,18 @@ public class TileHostViewModel: ViewModelBase
   }
   private bool _hovering = false;
 
+  /// <summary>
+  /// Callback from the host view. Forwards to the tile,
+  /// if any and able to handle clicks.
+  /// </summary>
+  public void HostMouseButtonChanged(bool down)
+  {
+    if(Tile != null && Tile.ClickActionCommand != null)
+    {
+      Tile.MouseButtonChange(down);
+    }
+  }
+
   public bool IsKeyTile {
     get => _isKeyTile;
     set {

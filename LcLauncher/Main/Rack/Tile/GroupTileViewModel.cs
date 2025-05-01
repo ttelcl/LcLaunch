@@ -35,6 +35,7 @@ public class GroupTileViewModel: TileViewModel, IPostIconLoadActor, ITileListOwn
            && !IsActive
            && !GetIsKeyTile(),
       p => !IsConflicted && !GetIsKeyTile());
+    ClickActionCommand = ToggleGroupCommand;
     FixGraphCommand = new DelegateCommand(
       p => { ConditionalReplaceWithClone(); },
       p => IsConflicted);
@@ -149,14 +150,24 @@ public class GroupTileViewModel: TileViewModel, IPostIconLoadActor, ITileListOwn
           if(Host != null && ChildTiles.ContainsKeyTile())
           {
             // Make sure the key tile does not go invisible
-            // 'Uncut' it instead.
+            // 'Unselect' it instead.
             Host.Rack.KeyTile = null;
           }
         }
+        RaisePropertyChanged(nameof(ToggleGroupIcon));
+        RaisePropertyChanged(nameof(ToggleGroupText));
       }
     }
   }
   private bool _isActive = false;
+
+  public string ToggleGroupIcon {
+    get => IsActive ? "ArchiveArrowUpOutline" : "ArchiveArrowDownOutline";
+  }
+
+  public string ToggleGroupText {
+    get => IsActive ? "Hide Group" : "Show Group";
+  }
 
   public TileListViewModel ChildTiles { get; }
 
@@ -220,38 +231,6 @@ public class GroupTileViewModel: TileViewModel, IPostIconLoadActor, ITileListOwn
   public bool ClaimPriority { get => false; }
 
   public bool IsConflicted { get => !this.OwnsTileList(); }
-
-  public void MouseButtonChange(bool down)
-  {
-    //Trace.TraceInformation(
-    //  $"GroupTileViewModel: MouseButtonChange {down}");
-    var trigger = !down && IsPrimed && HostHovering && Host!=null;
-    IsPrimed = down && HostHovering;
-    if(trigger && ToggleGroupCommand.CanExecute(null))
-    {
-      ToggleGroupCommand.Execute(null);
-    }
-  }
-
-  private bool _isPrimed;
-  public bool IsPrimed {
-    get => _isPrimed;
-    set {
-      if(SetValueProperty(ref _isPrimed, value))
-      {
-        Trace.TraceInformation(
-          $"GroupTileViewModel: IsPrimed changed to {value}");
-      }
-    }
-  }
-
-  public override void OnHoveringChanged(bool hovering)
-  {
-    if(!hovering)
-    {
-      IsPrimed = false;
-    }
-  }
 
   protected override void OnHostChanged(
     TileHostViewModel? oldHost, TileHostViewModel? newHost)

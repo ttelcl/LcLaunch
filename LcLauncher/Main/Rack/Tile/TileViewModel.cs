@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 using LcLauncher.IconUpdates;
 using LcLauncher.Models;
@@ -103,7 +104,54 @@ public abstract class TileViewModel: ViewModelBase, IIconLoadJobSource
     set {
       if(SetValueProperty(ref _hostHovering, value))
       {
-        OnHoveringChanged(value);
+        if(!_hostHovering)
+        {
+          // reset priming if mouse leaves the host tile before going up again
+          IsPrimed = false;
+        }
+        OnHoveringChanged(_hostHovering);
+      }
+    }
+  }
+
+  /// <summary>
+  /// The click action for this tile (one of the other
+  /// commands). Or null to not act like a button.
+  /// </summary>
+  public ICommand? ClickActionCommand { get; protected set; } = null;
+
+  /// <summary>
+  /// Called by host tile when the mouse button state changes and
+  /// <see cref="ClickActionCommand"/> is not null.
+  /// </summary>
+  /// <param name="down">
+  /// True at mouse-down, false at mouse-up.
+  /// </param>
+  public void MouseButtonChange(bool down)
+  {
+    //Trace.TraceInformation(
+    //  $"TileViewModel: MouseButtonChange {down}");
+    var trigger =
+      !down
+      && IsPrimed
+      && HostHovering
+      && Host!=null
+      && ClickActionCommand!=null;
+    IsPrimed = down && HostHovering && ClickActionCommand!=null;
+    if(trigger && ClickActionCommand!.CanExecute(null))
+    {
+      ClickActionCommand!.Execute(null);
+    }
+  }
+
+  private bool _isPrimed;
+  public bool IsPrimed {
+    get => _isPrimed;
+    set {
+      if(SetValueProperty(ref _isPrimed, value))
+      {
+        //Trace.TraceInformation(
+        //  $"TileViewModel: IsPrimed changed to {value}");
       }
     }
   }

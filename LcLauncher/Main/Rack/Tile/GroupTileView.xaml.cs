@@ -24,20 +24,4 @@ public partial class GroupTileView: UserControl
   {
     InitializeComponent();
   }
-
-  private void GroupTileView_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-  {
-    if(e.ChangedButton == MouseButton.Left && DataContext is GroupTileViewModel tile)
-    {
-      tile.MouseButtonChange(true);
-    }
-  }
-
-  private void GroupTileView_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-  {
-    if(e.ChangedButton == MouseButton.Left && DataContext is GroupTileViewModel tile)
-    {
-      tile.MouseButtonChange(false);
-    }
-  }
 }

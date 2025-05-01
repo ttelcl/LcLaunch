@@ -8,8 +8,6 @@
     xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     mc:Ignorable="d" 
-    MouseLeftButtonDown="GroupTileView_MouseLeftButtonDown"
-    MouseLeftButtonUp="GroupTileView_MouseLeftButtonUp"
     d:DataContext="{d:DesignInstance local:GroupTileViewModel, IsDesignTimeCreatable=False}"
     d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.ContextMenu>
@@ -22,11 +20,10 @@
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem
-                Header="Toggle (Shortcut: Left Click)"
-                Command="{Binding ToggleGroupCommand}"
-                IsChecked="{Binding IsActive}">
+                Header="{Binding ToggleGroupText}"
+                Command="{Binding ToggleGroupCommand}">
                 <MenuItem.Icon>
-                    <iconPacks:PackIconMaterial Kind="ArrowExpandDown" Width="20" Height="20"/>
+                    <iconPacks:PackIconMaterial Kind="{Binding ToggleGroupIcon}" Width="20" Height="20"/>
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem
@@ -38,10 +35,10 @@
             </MenuItem>
             <Separator/>
             <MenuItem
-                Header="Edit Title..."
+                Header="Properties..."
                 IsEnabled="False">
                 <MenuItem.Icon>
-                    <iconPacks:PackIconMaterial Kind="Pencil" Width="20" Height="20"/>
+                    <iconPacks:PackIconMaterial Kind="Cog" Width="20" Height="20"/>
                 </MenuItem.Icon>
             </MenuItem>
             <Separator/>
