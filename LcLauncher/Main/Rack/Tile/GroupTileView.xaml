@@ -57,20 +57,21 @@
                 </MenuItem.Icon>
             </MenuItem>
             <Separator/>
-            <MenuItem Header="Update Icons"
-                      Command="{Binding EnqueueIconJobsCommand}">
-                <MenuItem.Icon>
-                    <iconPacks:PackIconMaterial Kind="Reload" Width="20" Height="20"/>
-                </MenuItem.Icon>
+            <MenuItem Header="Other">
+                <MenuItem Header="Update Icons"
+                          Command="{Binding EnqueueIconJobsCommand}">
+                    <MenuItem.Icon>
+                        <iconPacks:PackIconMaterial Kind="Reload" Width="20" Height="20"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Reload All Icons"
+                          Command="{Binding RefreshIconJobsCommand}">
+                    <MenuItem.Icon>
+                        <iconPacks:PackIconMaterial Kind="ReloadAlert" Width="20" Height="20"/>
+                    </MenuItem.Icon>
+                </MenuItem>
             </MenuItem>
-            <MenuItem Header="Reload All Icons"
-                      Command="{Binding RefreshIconJobsCommand}">
-                <MenuItem.Icon>
-                    <iconPacks:PackIconMaterial Kind="ReloadAlert" Width="20" Height="20"/>
-                </MenuItem.Icon>
-            </MenuItem>
-            <Separator/>
-            <MenuItem Header="Target tile list Info">
+            <!--<MenuItem Header="Target tile list Info">
                 <MenuItem.Icon>
                     <iconPacks:PackIconMaterial Kind="InformationSlabCircleOutline" Width="20" Height="20"/>
                 </MenuItem.Icon>
@@ -81,7 +82,7 @@
                         <iconPacks:PackIconMaterial Kind="InformationSlabCircleOutline" Width="20" Height="20"/>
                     </MenuItem.Icon>
                 </MenuItem>
-            </MenuItem>
+            </MenuItem>-->
             <MenuItem Header="Danger Zone">
                 <MenuItem.Icon>
                     <iconPacks:PackIconMaterial Kind="AlertOutline" Width="20" Height="20"

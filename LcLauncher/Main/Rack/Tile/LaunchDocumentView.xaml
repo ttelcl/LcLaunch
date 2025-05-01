@@ -20,6 +20,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
@@ -79,10 +80,48 @@
             Padding="10,5"
             BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
             BorderThickness="1">
-            <TextBlock Text="Verb" HorizontalAlignment="Right"/>
+            <TextBlock Text="Icon Override" HorizontalAlignment="Right"/>
         </Border>
         <DockPanel
             Grid.Row="3"
+            Grid.Column="1">
+            <!-- The main dockpanel filler: -->
+            <Button
+                DockPanel.Dock="Right"
+                Command="{Binding PickIconCommand}"
+                Margin="5,0,0,0"
+                Width="30"
+                Height="30">
+                <iconPacks:PackIconMaterial Kind="Folder" Width="16" Height="16"/>
+            </Button>
+            <Button
+                DockPanel.Dock="Right"
+                Command="{Binding ClearIconCommand}"
+                Margin="5,0,0,0"
+                Width="30"
+                Height="30">
+                <iconPacks:PackIconMaterial Kind="Close" Width="16" Height="16"/>
+            </Button>
+            <TextBox
+                Text="{Binding IconSource, Mode=OneWay}"
+                IsReadOnly="True"
+                IsReadOnlyCaretVisible="True"
+                mah:TextBoxHelper.Watermark="File to derive icon from. Leave empty to use target."
+                BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+                Foreground="{DynamicResource MahApps.Brushes.Gray5}"
+                Background="{DynamicResource MahApps.Brushes.Gray8}"
+                Padding="5,5"/>
+        </DockPanel>
+
+        <Border
+            Grid.Row="4"
+            Padding="10,5"
+            BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+            BorderThickness="1">
+            <TextBlock Text="Verb" HorizontalAlignment="Right"/>
+        </Border>
+        <DockPanel
+            Grid.Row="4"
             Grid.Column="1">
             <!-- TODO: implement dropdown -->
             

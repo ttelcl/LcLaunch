@@ -10,9 +10,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 
 using LcLauncher.Models;
 using LcLauncher.Persistence;
+using LcLauncher.WpfUtilities;
+
+using Microsoft.Win32;
 
 namespace LcLauncher.Main.Rack.Tile;
 
@@ -22,6 +26,7 @@ namespace LcLauncher.Main.Rack.Tile;
 /// </summary>
 public class LaunchDocumentViewModel: EditorViewModelBase
 {
+
   /// <summary>
   /// Create a new LaunchEditorViewModel
   /// </summary>
@@ -33,6 +38,10 @@ public class LaunchDocumentViewModel: EditorViewModelBase
         tileHost.Shelf.Theme)
   {
     TileHost = tileHost;
+    PickIconCommand = new DelegateCommand(
+      p => PickIconOverride());
+    ClearIconCommand = new DelegateCommand(
+      p => ClearIconOverride());
     if(tileHost.Tile is LaunchTileViewModel launchTile)
     {
       if(launchTile.Classification != LaunchKind.Document)
@@ -50,6 +59,7 @@ public class LaunchDocumentViewModel: EditorViewModelBase
         Title = shellLaunch.Title ?? String.Empty;
         Tooltip = shellLaunch.Tooltip ?? String.Empty;
         Verb = shellLaunch.Verb;
+        IconSource = shellLaunch.IconSource ?? String.Empty;
       }
       else
       {
@@ -73,14 +83,23 @@ public class LaunchDocumentViewModel: EditorViewModelBase
         tileHost.Shelf.Theme)
   {
     TileHost = tileHost;
+    PickIconCommand = new DelegateCommand(
+      p => PickIconOverride());
+    ClearIconCommand = new DelegateCommand(
+      p => ClearIconOverride());
     Model = newModel;
     _model = Model;
     Tile = null;
     TargetPath = newModel.TargetPath;
     Title = newModel.Title ?? String.Empty;
     Tooltip = newModel.Tooltip ?? String.Empty;
+    IconSource = newModel.IconSource ?? String.Empty;
     Verb = newModel.Verb;
   }
+
+  public ICommand PickIconCommand { get; }
+
+  public ICommand ClearIconCommand { get; }
 
   public static LaunchDocumentViewModel? CreateFromFile(
     TileHostViewModel tileHost,
@@ -181,6 +200,16 @@ public class LaunchDocumentViewModel: EditorViewModelBase
   }
   private string _tooltip = string.Empty;
 
+  public string IconSource {
+    get => _iconSource;
+    set {
+      if(SetValueProperty(ref _iconSource, value))
+      {
+      }
+    }
+  }
+  private string _iconSource = string.Empty;
+
   public string Verb {
     get => _verb;
     set {
@@ -190,6 +219,35 @@ public class LaunchDocumentViewModel: EditorViewModelBase
     }
   }
   private string _verb = string.Empty;
+
+  private void PickIconOverride()
+  {
+    var dialog = new OpenFileDialog();
+    dialog.Filter = "Any file (*.*)|*.*";
+    dialog.Title = "Select a file to derive the tile icon from";
+    dialog.CustomPlaces.Add(FileDialogCustomPlaces.StartMenu);
+    dialog.CustomPlaces.Add(EmptyTileViewModel.CommonStartMenuFolder);
+    dialog.CustomPlaces.Add(FileDialogCustomPlaces.Desktop);
+    dialog.CustomPlaces.Add(FileDialogCustomPlaces.ProgramFiles);
+    dialog.CustomPlaces.Add(FileDialogCustomPlaces.ProgramFilesCommon);
+    dialog.CustomPlaces.Add(FileDialogCustomPlaces.Documents);
+    dialog.CustomPlaces.Add(FileDialogCustomPlaces.LocalApplicationData);
+    dialog.CustomPlaces.Add(FileDialogCustomPlaces.RoamingApplicationData);
+    dialog.DereferenceLinks = false;
+    var result = dialog.ShowDialog();
+    if(result != true
+      || String.IsNullOrEmpty(dialog.FileName)
+      || !File.Exists(dialog.FileName))
+    {
+      return;
+    }
+    IconSource = dialog.FileName;
+  }
+
+  private void ClearIconOverride()
+  {
+    IconSource = string.Empty;
+  }
 
   public override bool CanAcceptEditor()
   {
@@ -204,9 +262,9 @@ public class LaunchDocumentViewModel: EditorViewModelBase
   {
     var model = Model;
     model.TargetPath = TargetPath;
-    model.Title = Title;
-    model.Tooltip = Tooltip;
-    //model.IconSource = null;
+    model.Title = String.IsNullOrEmpty(Title) ? null : Title;
+    model.Tooltip = String.IsNullOrEmpty(Tooltip) ? null : Tooltip;
+    model.IconSource = String.IsNullOrEmpty(IconSource) ? null : IconSource;
     //model.Icon48 = null;
     //model.Icon32 = null;
     //model.Icon16 = null;
