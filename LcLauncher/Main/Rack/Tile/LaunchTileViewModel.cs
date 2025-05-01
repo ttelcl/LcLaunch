@@ -61,6 +61,7 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
     RunCommand = new DelegateCommand(
       p => RunTile(),
       p => Host != null && !Host.Rack.HasMarkedItems);
+    ClickActionCommand = RunCommand;
   }
 
   public static LaunchTileViewModel FromShell(
