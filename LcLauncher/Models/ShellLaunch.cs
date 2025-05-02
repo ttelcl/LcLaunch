@@ -41,7 +41,7 @@ namespace LcLauncher.Models;
 /// Tile content for traditional application launcher,
 /// using the shell to launch it.
 /// </summary>
-public class ShellLaunch: LaunchData
+public class ShellLaunch: LaunchDataBase
 {
   public ShellLaunch(
     string target,

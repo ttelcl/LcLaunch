@@ -16,7 +16,7 @@ namespace LcLauncher.Models;
 /// <summary>
 /// Description of RawLaunch
 /// </summary>
-public class RawLaunch: LaunchData
+public class RawLaunch: LaunchDataBase
 {
   /// <summary>
   /// Create a new RawLaunch

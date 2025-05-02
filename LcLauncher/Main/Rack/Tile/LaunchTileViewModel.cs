@@ -27,19 +27,19 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
 {
   private LaunchTileViewModel(
     TileListViewModel ownerList,
-    LaunchData model)
+    LaunchDataBase model)
     : base(ownerList)
   {
     IconHostId = Guid.NewGuid();
     Model = model;
     if(model is ShellLaunch)
     {
-      Classification = LaunchData.GetLaunchKind(
+      Classification = LaunchDataBase.GetLaunchKind(
         model.TargetPath, false);
     }
     else if(model is RawLaunch)
     {
-      Classification = LaunchData.GetLaunchKind(
+      Classification = LaunchDataBase.GetLaunchKind(
         model.TargetPath, true);
     }
     else
@@ -91,7 +91,7 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
   /// <see cref="ShellModel"/> or <see cref="RawModel"/>
   /// (the one that is not null).
   /// </summary>
-  public LaunchData Model { get; }
+  public LaunchDataBase Model { get; }
 
   /// <summary>
   /// The model for this tile, if it is a shell launch.

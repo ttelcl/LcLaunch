@@ -180,7 +180,7 @@ public class IconCache
   public static BitmapSource?[]? IconsForSource(
     string source, IconSize sizes)
   {
-    bool useAppIcon = source.StartsWith(LaunchData.ShellAppsFolderPrefix);
+    bool useAppIcon = source.StartsWith(LaunchDataBase.ShellAppsFolderPrefix);
     try
     {
       var icons = new BitmapSource?[4];

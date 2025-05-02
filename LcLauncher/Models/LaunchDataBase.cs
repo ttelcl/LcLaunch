@@ -20,12 +20,12 @@ namespace LcLauncher.Models;
 /// Abstract base class for both variants of launch tile
 /// configuration data.
 /// </summary>
-public abstract class LaunchData
+public abstract class LaunchDataBase
 {
   /// <summary>
   /// Create a new LaunchData
   /// </summary>
-  protected LaunchData(
+  protected LaunchDataBase(
     string target,
     string? title = null,
     string? tooltip = null,
@@ -167,7 +167,7 @@ public abstract class LaunchData
     }
     else
     {
-      if(target.StartsWith(LaunchData.ShellAppsFolderPrefix))
+      if(target.StartsWith(LaunchDataBase.ShellAppsFolderPrefix))
       {
         // This is deffinitely a shell app. It may be missing, but
         // that's something to figure out later.

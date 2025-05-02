@@ -16,7 +16,7 @@ namespace LcLauncher.Launching;
 
 public static class Launcher
 {
-  public static void Launch(LaunchData launchData)
+  public static void Launch(LaunchDataBase launchData)
   {
     if(launchData is RawLaunch rawLaunch)
     {
