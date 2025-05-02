@@ -121,6 +121,9 @@ public abstract class LaunchDataBase: ILaunchData
   [JsonProperty("icon16", NullValueHandling = NullValueHandling.Ignore)]
   public string? Icon16 { get; set; }
 
+  [JsonIgnore]
+  public abstract bool ShellMode { get; }
+
   /// <summary>
   /// Get the effective icon source, based on <see cref="IconSource"/> and
   /// <see cref="TargetPath"/>.

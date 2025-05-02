@@ -36,24 +36,20 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
     {
       ShellModel = shell;
       RawModel = null;
+      Classification = LaunchData.GetLaunchKind(
+        model.TargetPath, false);
     }
     else if(model is RawLaunch raw)
     {
       ShellModel = null;
       RawModel = raw;
-    }
-    if(model is ShellLaunch)
-    {
-      Classification = LaunchDataBase.GetLaunchKind(
-        model.TargetPath, false);
-    }
-    else if(model is RawLaunch)
-    {
-      Classification = LaunchDataBase.GetLaunchKind(
+      Classification = LaunchData.GetLaunchKind(
         model.TargetPath, true);
     }
     else
     {
+      ShellModel = null;
+      RawModel = null;
       Classification = LaunchKind.Invalid;
     }
     _title = Model.GetEffectiveTitle();

@@ -60,4 +60,7 @@ public class RawLaunch: LaunchDataBase, IRawLaunchData
   public Dictionary<string, PathEdit> PathEnvironment { get; }
 
   public bool ShouldSerializePathEnvironment() => PathEnvironment.Count > 0;
+
+  [JsonIgnore]
+  public override bool ShellMode => false;
 }

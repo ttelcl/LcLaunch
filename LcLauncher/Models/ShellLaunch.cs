@@ -76,4 +76,6 @@ public class ShellLaunch: LaunchDataBase, IShellLaunchData
 
   public bool ShouldSerializeArguments() => Arguments.Count > 0;
 
+  [JsonIgnore]
+  public override bool ShellMode => true;
 }
