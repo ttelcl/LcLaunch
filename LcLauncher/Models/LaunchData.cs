@@ -6,11 +6,13 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -18,25 +20,29 @@ using Newtonsoft.Json.Converters;
 namespace LcLauncher.Models;
 
 /// <summary>
-/// Abstract base class for both variants of launch tile
-/// configuration data.
+/// New universal launch data design, merging the previous
+/// <see cref="ShellLaunch"/> and <see cref="RawLaunch"/>.
 /// </summary>
-public abstract class LaunchDataBase: ILaunchData
+public class LaunchData
 {
-  /// <summary>
-  /// Create a new LaunchData
-  /// </summary>
-  protected LaunchDataBase(
+  public LaunchData(
     string target,
+    bool shellmode,
     string? title = null,
     string? tooltip = null,
     ProcessWindowStyle windowStyle = ProcessWindowStyle.Normal,
     string? iconSource = null,
     string? icon48 = null,
     string? icon32 = null,
-    string? icon16 = null)
+    string? icon16 = null,
+    string verb = "",
+    string? workingDirectory = null,
+    IEnumerable<string>? arguments = null,
+    IDictionary<string, string?>? env = null,
+    IDictionary<string, PathEdit>? pathenv = null)
   {
-    TargetPath = target;
+    Target = target;
+    ShellMode = shellmode;
     Tooltip = tooltip;
     Title = title;
     WindowStyle = windowStyle;
@@ -44,16 +50,28 @@ public abstract class LaunchDataBase: ILaunchData
     Icon48 = icon48;
     Icon32 = icon32;
     Icon16 = icon16;
+    Verb = verb;
+    WorkingDirectory = workingDirectory;
+    Arguments = new(arguments ?? []);
+    Environment = new(env ?? new Dictionary<string, string?>());
+    PathEnvironment = new(pathenv ?? new Dictionary<string, PathEdit>());
   }
 
   /// <summary>
-  /// The target path (the file to be launched). Which values are
-  /// valid depends on the subclass. <see cref="ShellLaunch"/> can
-  /// launch pretty much anything, while <see cref="RawLaunch"/>
-  /// can only launch *.exe files.
+  /// The target. This can be a file, an URI, or an application tag
+  /// (which is an URI, really, starting with "shell:AppsFolder\")
   /// </summary>
   [JsonProperty("target")]
-  public string TargetPath { get; set; }
+  public string Target { get; set; }
+
+  /// <summary>
+  /// Shell launnch vs. raw launch. Greatly affects what valid values for
+  /// other properties are. E.g., when false, the target must be an existing
+  /// *.exe file. Or when true, environment variables are not supported and
+  /// arguments are usually not supported, unless the target is an executable.
+  /// </summary>
+  [JsonProperty("shellmode")]
+  public bool ShellMode { get; set; }
 
   /// <summary>
   /// The tile title. If null, the title will be inferred from the target.
@@ -63,29 +81,6 @@ public abstract class LaunchDataBase: ILaunchData
 
   [JsonProperty("tooltip", NullValueHandling = NullValueHandling.Ignore)]
   public string? Tooltip { get; set; }
-
-  public string GetEffectiveTitle()
-  {
-    if(!String.IsNullOrEmpty(Title))
-    {
-      return Title;
-    }
-    return Path.GetFileNameWithoutExtension(TargetPath);
-  }
-
-  public string GetEffectiveTooltip()
-  {
-    if(!String.IsNullOrEmpty(Tooltip))
-    {
-      return Tooltip;
-    }
-    if(!String.IsNullOrEmpty(Title))
-    {
-      return Title;
-    }
-    return Path.GetFileName(TargetPath);
-    //return null;
-  }
 
   /// <summary>
   /// The startup window style. Default is Normal. Other options are
@@ -122,17 +117,94 @@ public abstract class LaunchDataBase: ILaunchData
   public string? Icon16 { get; set; }
 
   /// <summary>
+  /// The verb to use when launching the target. Default is empty (default action).
+  /// Only valid when ShellMode is true.
+  /// </summary>
+  [JsonProperty("verb", DefaultValueHandling = DefaultValueHandling.Ignore,
+    NullValueHandling = NullValueHandling.Ignore)]
+  [DefaultValue("")]
+  public string Verb { get; set; }
+
+  [JsonProperty("workingDirectory", NullValueHandling = NullValueHandling.Ignore)]
+  public string? WorkingDirectory { get; set; }
+
+  [JsonProperty("arguments")]
+  public List<string> Arguments { get; }
+
+  public bool ShouldSerializeArguments() => Arguments.Count > 0;
+
+  [JsonProperty("env")]
+  public Dictionary<string, string?> Environment { get; }
+
+  public bool ShouldSerializeEnvironment() => Environment.Count > 0;
+
+  [JsonProperty("pathenv")]
+  public Dictionary<string, PathEdit> PathEnvironment { get; }
+
+  public bool ShouldSerializePathEnvironment() => PathEnvironment.Count > 0;
+
+
+  public string GetEffectiveTitle()
+  {
+    if(!String.IsNullOrEmpty(Title))
+    {
+      return Title;
+    }
+    return Path.GetFileNameWithoutExtension(Target);
+  }
+
+  public string GetEffectiveTooltip()
+  {
+    if(!String.IsNullOrEmpty(Tooltip))
+    {
+      return Tooltip;
+    }
+    if(!String.IsNullOrEmpty(Title))
+    {
+      return Title;
+    }
+    return Path.GetFileName(Target);
+    //return null;
+  }
+
+  /// <summary>
   /// Get the effective icon source, based on <see cref="IconSource"/> and
-  /// <see cref="TargetPath"/>.
+  /// <see cref="Target"/>.
   /// </summary>
   /// <returns></returns>
   public string GetIconSource()
   {
-    return String.IsNullOrEmpty(IconSource) ? TargetPath : IconSource;
+    return String.IsNullOrEmpty(IconSource) ? Target : IconSource;
   }
 
   public const string ShellAppsFolderPrefix =
     "shell:AppsFolder\\";
+
+  // some limited documentation link:
+  // https://stackoverflow.com/questions/3605148/where-can-i-learn-about-the-shell-uri
+  // https://superuser.com/a/1690194/142895 suggests looking at
+  //   HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions
+  //   but that doesn't seem right
+
+  public const string ShellAppsFolderPrefix2 =
+    "shell:::{4234d49b-0245-4df3-B780-3893943456e1}\\";
+
+  public static bool HasShellAppsFolderPrefix(string? target)
+  {
+    if(String.IsNullOrEmpty(target)
+      || !target.StartsWith("shell:")) // case sensitive!
+    {
+      return false;
+    }
+    return
+      target.StartsWith(
+        ShellAppsFolderPrefix,
+        StringComparison.InvariantCultureIgnoreCase)
+      || target.StartsWith(
+        ShellAppsFolderPrefix2,
+        StringComparison.InvariantCultureIgnoreCase);
+  }
+
 
   public static LaunchKind GetLaunchKind(
     string target, bool raw)
@@ -205,4 +277,7 @@ public abstract class LaunchDataBase: ILaunchData
       }
     }
   }
+
+
+
 }

@@ -16,7 +16,7 @@ namespace LcLauncher.Models;
 /// <summary>
 /// Description of RawLaunch
 /// </summary>
-public class RawLaunch: LaunchDataBase
+public class RawLaunch: LaunchDataBase, IRawLaunchData
 {
   /// <summary>
   /// Create a new RawLaunch
@@ -60,25 +60,4 @@ public class RawLaunch: LaunchDataBase
   public Dictionary<string, PathEdit> PathEnvironment { get; }
 
   public bool ShouldSerializePathEnvironment() => PathEnvironment.Count > 0;
-}
-
-public class PathEdit
-{
-  public PathEdit(
-    IEnumerable<string>? prepend = null,
-    IEnumerable<string>? append = null)
-  {
-    Prepend = new (prepend ?? []);
-    Append = new (append ?? []);
-  }
-
-  [JsonProperty("prepend")]
-  public List<string> Prepend { get; }
-
-  public bool ShouldSerializePrepend() => Prepend.Count > 0;
-
-  [JsonProperty("append")]
-  public List<string> Append { get; }
-
-  public bool ShouldSerializeAppend() => Append.Count > 0;
 }

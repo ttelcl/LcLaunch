@@ -32,6 +32,16 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
   {
     IconHostId = Guid.NewGuid();
     Model = model;
+    if(model is ShellLaunch shell)
+    {
+      ShellModel = shell;
+      RawModel = null;
+    }
+    else if(model is RawLaunch raw)
+    {
+      ShellModel = null;
+      RawModel = raw;
+    }
     if(model is ShellLaunch)
     {
       Classification = LaunchDataBase.GetLaunchKind(
@@ -87,25 +97,19 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
   public ICommand RunCommand { get; }
 
   /// <summary>
-  /// The model for this tile. This is either equal to
-  /// <see cref="ShellModel"/> or <see cref="RawModel"/>
-  /// (the one that is not null).
+  /// The model for this tile.
   /// </summary>
   public LaunchDataBase Model { get; }
 
   /// <summary>
   /// The model for this tile, if it is a shell launch.
-  /// Exactly one of <see cref="ShellModel"/> or 
-  /// <see cref="RawModel"/> is not null.
   /// </summary>
-  public ShellLaunch? ShellModel { get => Model as ShellLaunch; }
+  public IShellLaunchData? ShellModel { get; }
 
   /// <summary>
   /// The model for this tile, if it is a raw launch.
-  /// Exactly one of <see cref="ShellModel"/> or
-  /// <see cref="RawModel"/> is not null.
   /// </summary>
-  public RawLaunch? RawModel { get => Model as RawLaunch; }
+  public IRawLaunchData? RawModel { get; }
 
   public LaunchKind Classification { get; }
 
