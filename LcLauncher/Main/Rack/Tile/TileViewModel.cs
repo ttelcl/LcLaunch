@@ -30,13 +30,19 @@ public abstract class TileViewModel: ViewModelBase, IIconLoadJobSource
   {
     return model switch {
       null => new EmptyTileViewModel(ownerList, null),
+      { Launch: { } launch } =>
+        LaunchTileViewModel.FromLaunch(ownerList, launch),
+      { Group: { } group } =>
+        new GroupTileViewModel(ownerList, group),
+      { Quad: { } quadTile } =>
+        new QuadTileViewModel(ownerList, quadTile),
+
+      // Backward compat stubs
       { ShellLaunch: { } shellLaunch } =>
         LaunchTileViewModel.FromShell(ownerList, shellLaunch),
       { RawLaunch: { } rawLaunch } =>
         LaunchTileViewModel.FromRaw(ownerList, rawLaunch),
-      { Group: { } group } =>
-        new GroupTileViewModel(ownerList, group),
-      { Quad: { } quadTile } => new QuadTileViewModel(ownerList, quadTile),
+
       _ => new EmptyTileViewModel(ownerList, model)
     };
   }

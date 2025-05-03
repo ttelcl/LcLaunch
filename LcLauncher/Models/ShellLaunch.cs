@@ -41,7 +41,7 @@ namespace LcLauncher.Models;
 /// Tile content for traditional application launcher,
 /// using the shell to launch it.
 /// </summary>
-public class ShellLaunch: LaunchData
+public class ShellLaunch: LaunchDataBase, IShellLaunchData
 {
   public ShellLaunch(
     string target,
@@ -71,9 +71,14 @@ public class ShellLaunch: LaunchData
   [DefaultValue("")]
   public string Verb { get; set; }
 
+  /// <summary>
+  /// The arguments. Only valid when the target is an executable.
+  /// </summary>
   [JsonProperty("arguments")]
   public List<string> Arguments { get; }
 
   public bool ShouldSerializeArguments() => Arguments.Count > 0;
 
+  [JsonIgnore]
+  public override bool ShellMode => true;
 }

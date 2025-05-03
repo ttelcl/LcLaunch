@@ -50,7 +50,15 @@ public class LaunchDocumentViewModel: EditorViewModelBase
           "Invalid tile type - this constructor expects a tile with a *document* launch tile");
       }
 
-      if(launchTile.Model is ShellLaunch shellLaunch)
+      var model = launchTile.OldModel;
+
+      if(model is LaunchData launchData)
+      {
+        // Patch to old model
+        model = launchData.ToShellLaunch();
+      }
+
+      if(model is ShellLaunch shellLaunch)
       {
         Model = shellLaunch;
         _model = Model;
@@ -268,22 +276,14 @@ public class LaunchDocumentViewModel: EditorViewModelBase
     //model.Icon48 = null;
     //model.Icon32 = null;
     //model.Icon16 = null;
-    //model.Verb = string.Empty;
+    model.Verb = Verb;
     //model.WindowStyle = ProcessWindowStyle.Normal;
-    var tile = Tile;
-    if(tile == null)
-    {
-      tile = LaunchTileViewModel.FromShell(
-        TileHost.TileList,
-        model);
-      TileHost.Tile = tile;
-    }
-    else
-    {
-      // force update
-      TileHost.Tile = null;
-      TileHost.Tile = tile;
-    }
+
+    // Create a new tile or recreate the modified one
+    var tile = LaunchTileViewModel.FromShell(
+      TileHost.TileList,
+      model);
+    TileHost.Tile = tile;
     TileHost.TileList.MarkDirty();
     if(String.IsNullOrEmpty(model.Icon48))
     {

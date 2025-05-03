@@ -45,7 +45,14 @@ public class LaunchExeViewModel: EditorViewModelBase
           "Invalid tile type - this constructor expects a tile with a *exe* launch tile");
       }
 
-      if(launchTile.Model is RawLaunch rawLaunch)
+      var model = launchTile.OldModel;
+      if(model is LaunchData launch)
+      {
+        // Patch to old model
+        model = launch.ToRawLaunch();
+      }
+
+      if(model is RawLaunch rawLaunch)
       {
         Model = rawLaunch;
         _model = Model;
@@ -362,20 +369,10 @@ public class LaunchExeViewModel: EditorViewModelBase
         model.PathEnvironment.Add(env.Key, edit);
       }
 
-      var tile = Tile;
-      if(tile is null)
-      {
-        tile = LaunchTileViewModel.FromRaw(
-          TileHost.TileList, model);
-        TileHost.Tile = tile;
-      }
-      else
-      {
-        // Recreate the tile from the modified model
-        tile = LaunchTileViewModel.FromRaw(
-          TileHost.TileList, model);
-        TileHost.Tile = tile;
-      }
+      // Create a new tile or recreate the modified one
+      var tile = LaunchTileViewModel.FromRaw(
+        TileHost.TileList, model);
+      TileHost.Tile = tile;
       TileHost.TileList.MarkDirty();
       if(String.IsNullOrEmpty(model.Icon48))
       {

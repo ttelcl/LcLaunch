@@ -6,10 +6,13 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -17,25 +20,29 @@ using Newtonsoft.Json.Converters;
 namespace LcLauncher.Models;
 
 /// <summary>
-/// Abstract base class for both variants of launch tile
-/// configuration data.
+/// New universal launch data design, merging the previous
+/// <see cref="ShellLaunch"/> and <see cref="RawLaunch"/>.
 /// </summary>
-public abstract class LaunchData
+public class LaunchData: ILaunchData
 {
-  /// <summary>
-  /// Create a new LaunchData
-  /// </summary>
-  protected LaunchData(
+  public LaunchData(
     string target,
+    bool shellmode,
     string? title = null,
     string? tooltip = null,
     ProcessWindowStyle windowStyle = ProcessWindowStyle.Normal,
     string? iconSource = null,
     string? icon48 = null,
     string? icon32 = null,
-    string? icon16 = null)
+    string? icon16 = null,
+    string verb = "",
+    string? workingDirectory = null,
+    IEnumerable<string>? arguments = null,
+    IDictionary<string, string?>? env = null,
+    IDictionary<string, PathEdit>? pathenv = null)
   {
-    TargetPath = target;
+    Target = target;
+    ShellMode = shellmode;
     Tooltip = tooltip;
     Title = title;
     WindowStyle = windowStyle;
@@ -43,16 +50,42 @@ public abstract class LaunchData
     Icon48 = icon48;
     Icon32 = icon32;
     Icon16 = icon16;
+    Verb = verb;
+    WorkingDirectory = workingDirectory;
+    Arguments = new(arguments ?? []);
+    Environment = new(env ?? new Dictionary<string, string?>());
+    PathEnvironment = [];
+    foreach(var kv in pathenv ?? new Dictionary<string, PathEdit>())
+    {
+      // clone the PathEdit objects
+      var edit = new PathEdit(
+        kv.Value.Prepend,
+        kv.Value.Append);
+      PathEnvironment.Add(kv.Key, edit);
+    }
   }
 
   /// <summary>
-  /// The target path (the file to be launched). Which values are
-  /// valid depends on the subclass. <see cref="ShellLaunch"/> can
-  /// launch pretty much anything, while <see cref="RawLaunch"/>
-  /// can only launch *.exe files.
+  /// The target. This can be a file, an URI, or an application tag
+  /// (which is an URI, really, starting with "shell:AppsFolder\")
   /// </summary>
   [JsonProperty("target")]
-  public string TargetPath { get; set; }
+  public string Target { get; set; }
+
+  [JsonIgnore]
+  public string TargetPath {
+    get => Target;
+    set => Target = value;
+  }
+
+  /// <summary>
+  /// Shell launnch vs. raw launch. Greatly affects what valid values for
+  /// other properties are. E.g., when false, the target must be an existing
+  /// *.exe file. Or when true, environment variables are not supported and
+  /// arguments are usually not supported, unless the target is an executable.
+  /// </summary>
+  [JsonProperty("shellmode")]
+  public bool ShellMode { get; set; }
 
   /// <summary>
   /// The tile title. If null, the title will be inferred from the target.
@@ -62,29 +95,6 @@ public abstract class LaunchData
 
   [JsonProperty("tooltip", NullValueHandling = NullValueHandling.Ignore)]
   public string? Tooltip { get; set; }
-
-  public string GetEffectiveTitle()
-  {
-    if(!String.IsNullOrEmpty(Title))
-    {
-      return Title;
-    }
-    return Path.GetFileNameWithoutExtension(TargetPath);
-  }
-
-  public string GetEffectiveTooltip()
-  {
-    if(!String.IsNullOrEmpty(Tooltip))
-    {
-      return Tooltip;
-    }
-    if(!String.IsNullOrEmpty(Title))
-    {
-      return Title;
-    }
-    return Path.GetFileName(TargetPath);
-    //return null;
-  }
 
   /// <summary>
   /// The startup window style. Default is Normal. Other options are
@@ -121,17 +131,98 @@ public abstract class LaunchData
   public string? Icon16 { get; set; }
 
   /// <summary>
+  /// The verb to use when launching the target. Default is empty (default action).
+  /// Only valid when ShellMode is true.
+  /// </summary>
+  [JsonProperty("verb", DefaultValueHandling = DefaultValueHandling.Ignore,
+    NullValueHandling = NullValueHandling.Ignore)]
+  [DefaultValue("")]
+  public string Verb { get; set; }
+
+  [JsonProperty("workingDirectory", NullValueHandling = NullValueHandling.Ignore)]
+  public string? WorkingDirectory { get; set; }
+
+  [JsonProperty("arguments")]
+  public List<string> Arguments { get; }
+
+  public bool ShouldSerializeArguments() => Arguments.Count > 0;
+
+  [JsonProperty("env")]
+  public Dictionary<string, string?> Environment { get; }
+
+  public bool ShouldSerializeEnvironment() => Environment.Count > 0;
+
+  [JsonProperty("pathenv")]
+  public Dictionary<string, PathEdit> PathEnvironment { get; }
+
+  public bool ShouldSerializePathEnvironment() => PathEnvironment.Count > 0;
+
+
+  public string GetEffectiveTitle()
+  {
+    if(!String.IsNullOrEmpty(Title))
+    {
+      return Title;
+    }
+    return Path.GetFileNameWithoutExtension(Target);
+  }
+
+  public string GetEffectiveTooltip()
+  {
+    if(!String.IsNullOrEmpty(Tooltip))
+    {
+      return Tooltip;
+    }
+    if(!String.IsNullOrEmpty(Title))
+    {
+      return Title;
+    }
+    return Path.GetFileName(Target);
+    //return null;
+  }
+
+  /// <summary>
   /// Get the effective icon source, based on <see cref="IconSource"/> and
-  /// <see cref="TargetPath"/>.
+  /// <see cref="Target"/>.
   /// </summary>
   /// <returns></returns>
   public string GetIconSource()
   {
-    return String.IsNullOrEmpty(IconSource) ? TargetPath : IconSource;
+    return String.IsNullOrEmpty(IconSource) ? Target : IconSource;
   }
 
+  /// <summary>
+  /// The prefix for the shell apps folder. Technically,
+  /// this is case insensitive. Use <see cref="HasShellAppsFolderPrefix(string?)"/>
+  /// to test for this prefix and its alternate form.
+  /// </summary>
   public const string ShellAppsFolderPrefix =
     "shell:AppsFolder\\";
+
+  // some limited documentation link:
+  // https://stackoverflow.com/questions/3605148/where-can-i-learn-about-the-shell-uri
+  // https://superuser.com/a/1690194/142895 suggests looking at
+  //   HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions
+  //   but that doesn't seem right
+
+  public const string ShellAppsFolderPrefix2 =
+    "shell:::{4234d49b-0245-4df3-B780-3893943456e1}\\";
+
+  public static bool HasShellAppsFolderPrefix(string? target)
+  {
+    if(String.IsNullOrEmpty(target)
+      || !target.StartsWith("shell:")) // case sensitive!
+    {
+      return false;
+    }
+    return
+      target.StartsWith(
+        ShellAppsFolderPrefix,
+        StringComparison.InvariantCultureIgnoreCase)
+      || target.StartsWith(
+        ShellAppsFolderPrefix2,
+        StringComparison.InvariantCultureIgnoreCase);
+  }
 
   public static LaunchKind GetLaunchKind(
     string target, bool raw)
@@ -158,16 +249,10 @@ public abstract class LaunchData
       // Looks like a path. At this point we don't care if it exists
       // (too expensive to check here)
       return LaunchKind.Raw;
-      //if(File.Exists(target))
-      //{
-      //  // File exists
-      //  return LaunchKind.Raw;
-      //}
-      //return LaunchKind.Missing;
     }
     else
     {
-      if(target.StartsWith(LaunchData.ShellAppsFolderPrefix))
+      if(LaunchData.HasShellAppsFolderPrefix(target))
       {
         // This is deffinitely a shell app. It may be missing, but
         // that's something to figure out later.
@@ -180,8 +265,26 @@ public abstract class LaunchData
         || (target[2] != Path.DirectorySeparatorChar &&
             target[2] != Path.AltDirectorySeparatorChar))
       {
-        // Not a valid path, so not a document. Could still be a raw
-        // shell app, but let's require the special prefix for that.
+        // test if it looks like an URI
+        var colonIndex = target.IndexOf(':');
+        if(colonIndex >= 2)
+        {
+          // Scheme does allow upper case letters according to RFC 3986,
+          // but is case insensitive, and should be lower case.
+          // We require a minimum of 2 characters for the scheme so we
+          // can distinguish between a scheme and a drive letter.
+          if(Regex.IsMatch(
+              target.Substring(0, colonIndex),
+              @"^[a-zA-Z][-+a-zA-Z0-9.]+:"))
+          {
+            // Looks like a URI
+            return LaunchKind.UriKind;
+          }
+        }
+
+        // Not a valid path, so not a document. Not an URI either. Could
+        // still be a raw shell app, but let's require the special prefix
+        // for that.
         return LaunchKind.Invalid;
       }
       else
@@ -191,5 +294,99 @@ public abstract class LaunchData
         return LaunchKind.Document;
       }
     }
+  }
+
+}
+
+/// <summary>
+/// (temporary) extension methods for converting between
+/// old and new launch data.
+/// </summary>
+public static class LaunchExtensions
+{
+  public static LaunchData? ToLaunch(this ShellLaunch? shell)
+  {
+    if(shell == null)
+    {
+      return null;
+    }
+    return new LaunchData(
+      shell.TargetPath,
+      true,
+      shell.Title,
+      shell.Tooltip,
+      shell.WindowStyle,
+      shell.IconSource,
+      shell.Icon48,
+      shell.Icon32,
+      shell.Icon16,
+      shell.Verb,
+      null, // no working directory
+      shell.Arguments,
+      null, // no environment variables
+      null); // no path environment variables
+  }
+
+  public static LaunchData? ToLaunch(this RawLaunch? raw)
+  {
+    if(raw == null)
+    {
+      return null;
+    }
+    return new LaunchData(
+      raw.TargetPath,
+      false,
+      raw.Title,
+      raw.Tooltip,
+      raw.WindowStyle,
+      raw.IconSource,
+      raw.Icon48,
+      raw.Icon32,
+      raw.Icon16,
+      string.Empty, // no verb
+      raw.WorkingDirectory,
+      raw.Arguments,
+      raw.Environment,
+      raw.PathEnvironment);
+  }
+
+  public static ShellLaunch? ToShellLaunch(this LaunchData? launch)
+  {
+    if(launch == null || !launch.ShellMode)
+    {
+      return null;
+    }
+    return new ShellLaunch(
+      launch.Target,
+      launch.Title,
+      launch.Tooltip,
+      launch.WindowStyle,
+      launch.IconSource,
+      launch.Arguments,
+      launch.Icon48,
+      launch.Icon32,
+      launch.Icon16,
+      launch.Verb);
+  }
+
+  public static RawLaunch? ToRawLaunch(this LaunchData? launch)
+  {
+    if(launch == null || launch.ShellMode)
+    {
+      return null;
+    }
+    return new RawLaunch(
+      launch.Target,
+      launch.Title,
+      launch.Tooltip,
+      launch.WindowStyle,
+      launch.IconSource,
+      launch.Icon48,
+      launch.Icon32,
+      launch.Icon16,
+      launch.WorkingDirectory,
+      launch.Arguments,
+      launch.Environment,
+      launch.PathEnvironment);
   }
 }

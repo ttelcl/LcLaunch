@@ -39,6 +39,11 @@ public enum LaunchKind
   /// </summary>
   ShellApplication,
 
+  /// <summary>
+  /// Some URI other than a shell app.
+  /// </summary>
+  UriKind,
+
   ///// <summary>
   ///// Looks like a valid absolute file path, but it is missing
   ///// </summary>

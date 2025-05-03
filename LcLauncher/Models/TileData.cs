@@ -20,15 +20,40 @@ namespace LcLauncher.Models;
 /// fields will be non-null (except for the quad field, which
 /// can be an empty list as equivalent).
 /// </summary>
-public class TileData: LaunchTile
+public class TileData
 {
   public TileData(
-    ShellLaunch? shellLaunch = null,
-    RawLaunch? rawLaunch = null,
+    LaunchData? launch = null,
     TileGroup? group = null,
-    IEnumerable<LaunchTile>? quad = null)
-    : base(shellLaunch, rawLaunch)
+    IEnumerable<LaunchData?>? quad = null,
+    ShellLaunch? shellLaunch = null,
+    RawLaunch? rawLaunch = null)
   {
+    if(launch != null)
+    {
+      Launch = launch;
+      // ignore the other launch type arguments!
+      ShellLaunch = launch.ToShellLaunch();
+      RawLaunch = launch.ToRawLaunch();
+    }
+    else if(shellLaunch != null)
+    {
+      Launch = shellLaunch.ToLaunch();
+      ShellLaunch = shellLaunch;
+      RawLaunch = null;
+    }
+    else if(rawLaunch != null)
+    {
+      Launch = rawLaunch.ToLaunch();
+      RawLaunch = rawLaunch;
+      ShellLaunch = null;
+    }
+    else
+    {
+      Launch = null;
+      ShellLaunch = null;
+      RawLaunch = null;
+    }
     Group = group;
     Quad = quad == null ? null : quad.ToList();
   }
@@ -40,12 +65,20 @@ public class TileData: LaunchTile
 
   public static TileData ShellTile(ShellLaunch shellLaunch)
   {
-    return new TileData(shellLaunch: shellLaunch);
+    return new TileData(
+      launch: shellLaunch.ToLaunch());
   }
 
   public static TileData RawTile(RawLaunch rawLaunch)
   {
-    return new TileData(rawLaunch: rawLaunch);
+    return new TileData(
+      launch: rawLaunch.ToLaunch());
+  }
+
+  public static TileData LaunchTile(LaunchData launch)
+  {
+    return new TileData(
+      launch: launch);
   }
 
   public static TileData GroupTile(TileGroup group)
@@ -61,22 +94,50 @@ public class TileData: LaunchTile
     return new TileData(group: new TileGroup(tilelist, title, tooltip));
   }
 
-  public static TileData QuadTile(IEnumerable<LaunchTile> quad)
+  public static TileData QuadTile(IEnumerable<LaunchData?> quad)
   {
     return new TileData(quad: quad);
   }
 
+  /// <summary>
+  /// Shell based launch tile.
+  /// </summary>
+  [JsonProperty("shellLaunch")]
+  public ShellLaunch? ShellLaunch { get; }
+
+  public bool ShouldSerializeShellLaunch()
+  {
+    return ShellLaunch != null && Launch == null;
+  }
+
+  [JsonProperty("rawLaunch")]
+  public RawLaunch? RawLaunch { get; }
+
+  public bool ShouldSerializeRawLaunch()
+  {
+    return RawLaunch != null && Launch == null;
+  }
+
+  [JsonProperty("launch", NullValueHandling = NullValueHandling.Ignore)]
+  public LaunchData? Launch { get; }
+
+  public bool HasLaunch()
+  {
+    return ShellLaunch != null || RawLaunch != null || Launch != null;
+  }
+
   [JsonProperty("group", NullValueHandling = NullValueHandling.Ignore)]
-  public TileGroup? Group { get; set; }
+  public TileGroup? Group { get; }
 
   [JsonProperty("quad", NullValueHandling = NullValueHandling.Ignore)]
-  public List<LaunchTile>? Quad { get; }
+  public List<LaunchData?>? Quad { get; }
 
   public bool IsEmpty()
   {
     return
       ShellLaunch == null &&
       RawLaunch == null &&
+      Launch == null &&
       Group == null &&
       Quad == null;
   }
