@@ -71,6 +71,9 @@ public class ShellLaunch: LaunchDataBase, IShellLaunchData
   [DefaultValue("")]
   public string Verb { get; set; }
 
+  /// <summary>
+  /// The arguments. Only valid when the target is an executable.
+  /// </summary>
   [JsonProperty("arguments")]
   public List<string> Arguments { get; }
 

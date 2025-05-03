@@ -50,7 +50,7 @@ public class LaunchDocumentViewModel: EditorViewModelBase
           "Invalid tile type - this constructor expects a tile with a *document* launch tile");
       }
 
-      if(launchTile.Model is ShellLaunch shellLaunch)
+      if(launchTile.OldModel is ShellLaunch shellLaunch)
       {
         Model = shellLaunch;
         _model = Model;

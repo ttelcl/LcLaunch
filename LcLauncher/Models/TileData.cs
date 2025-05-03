@@ -25,9 +25,10 @@ public class TileData: LaunchTile
   public TileData(
     ShellLaunch? shellLaunch = null,
     RawLaunch? rawLaunch = null,
+    LaunchData? launch = null,
     TileGroup? group = null,
     IEnumerable<LaunchTile>? quad = null)
-    : base(shellLaunch, rawLaunch)
+    : base(shellLaunch, rawLaunch, launch)
   {
     Group = group;
     Quad = quad == null ? null : quad.ToList();
@@ -40,12 +41,16 @@ public class TileData: LaunchTile
 
   public static TileData ShellTile(ShellLaunch shellLaunch)
   {
-    return new TileData(shellLaunch: shellLaunch);
+    return new TileData(
+      shellLaunch: shellLaunch,
+      launch: shellLaunch.ToLaunch());
   }
 
   public static TileData RawTile(RawLaunch rawLaunch)
   {
-    return new TileData(rawLaunch: rawLaunch);
+    return new TileData(
+      rawLaunch: rawLaunch,
+      launch: rawLaunch.ToLaunch());
   }
 
   public static TileData GroupTile(TileGroup group)

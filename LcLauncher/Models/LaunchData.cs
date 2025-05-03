@@ -54,7 +54,15 @@ public class LaunchData
     WorkingDirectory = workingDirectory;
     Arguments = new(arguments ?? []);
     Environment = new(env ?? new Dictionary<string, string?>());
-    PathEnvironment = new(pathenv ?? new Dictionary<string, PathEdit>());
+    PathEnvironment = [];
+    foreach(var kv in pathenv ?? new Dictionary<string, PathEdit>())
+    {
+      // clone the PathEdit objects
+      var edit = new PathEdit(
+        kv.Value.Prepend,
+        kv.Value.Append);
+      PathEnvironment.Add(kv.Key, edit);
+    }
   }
 
   /// <summary>
@@ -177,6 +185,11 @@ public class LaunchData
     return String.IsNullOrEmpty(IconSource) ? Target : IconSource;
   }
 
+  /// <summary>
+  /// The prefix for the shell apps folder. Technically,
+  /// this is case insensitive. Use <see cref="HasShellAppsFolderPrefix(string?)"/>
+  /// to test for this prefix and its alternate form.
+  /// </summary>
   public const string ShellAppsFolderPrefix =
     "shell:AppsFolder\\";
 
@@ -204,7 +217,6 @@ public class LaunchData
         ShellAppsFolderPrefix2,
         StringComparison.InvariantCultureIgnoreCase);
   }
-
 
   public static LaunchKind GetLaunchKind(
     string target, bool raw)
@@ -278,6 +290,97 @@ public class LaunchData
     }
   }
 
+}
 
+/// <summary>
+/// (temporary) extension methods for converting between
+/// old and new launch data.
+/// </summary>
+public static class LaunchExtensions
+{
+  public static LaunchData? ToLaunch(this ShellLaunch? shell)
+  {
+    if(shell == null)
+    {
+      return null;
+    }
+    return new LaunchData(
+      shell.TargetPath,
+      true,
+      shell.Title,
+      shell.Tooltip,
+      shell.WindowStyle,
+      shell.IconSource,
+      shell.Icon48,
+      shell.Icon32,
+      shell.Icon16,
+      shell.Verb,
+      null, // no working directory
+      shell.Arguments,
+      null, // no environment variables
+      null); // no path environment variables
+  }
 
+  public static LaunchData? ToLaunch(this RawLaunch? raw)
+  {
+    if(raw == null)
+    {
+      return null;
+    }
+    return new LaunchData(
+      raw.TargetPath,
+      false,
+      raw.Title,
+      raw.Tooltip,
+      raw.WindowStyle,
+      raw.IconSource,
+      raw.Icon48,
+      raw.Icon32,
+      raw.Icon16,
+      string.Empty, // no verb
+      raw.WorkingDirectory,
+      raw.Arguments,
+      raw.Environment,
+      raw.PathEnvironment);
+  }
+
+  public static ShellLaunch? ToShellLaunch(this LaunchData? launch)
+  {
+    if(launch == null || !launch.ShellMode)
+    {
+      return null;
+    }
+    return new ShellLaunch(
+      launch.Target,
+      launch.Title,
+      launch.Tooltip,
+      launch.WindowStyle,
+      launch.IconSource,
+      launch.Arguments,
+      launch.Icon48,
+      launch.Icon32,
+      launch.Icon16,
+      launch.Verb);
+  }
+
+  public static RawLaunch? ToRawLaunch(this LaunchData? launch)
+  {
+    if(launch == null || launch.ShellMode)
+    {
+      return null;
+    }
+    return new RawLaunch(
+      launch.Target,
+      launch.Title,
+      launch.Tooltip,
+      launch.WindowStyle,
+      launch.IconSource,
+      launch.Icon48,
+      launch.Icon32,
+      launch.Icon16,
+      launch.WorkingDirectory,
+      launch.Arguments,
+      launch.Environment,
+      launch.PathEnvironment);
+  }
 }

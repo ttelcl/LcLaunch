@@ -25,7 +25,7 @@ public class QuadTileViewModel: TileViewModel
     var rawModel = model.ToList();
     while(rawModel.Count < 4)
     {
-      rawModel.Add(new LaunchTile(null, null));
+      rawModel.Add(LaunchTile.EmptyLaunch());
     }
     // silently ignore excess tiles
     RawModel = rawModel;
