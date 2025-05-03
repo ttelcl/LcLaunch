@@ -84,12 +84,23 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
     TileListViewModel ownerList,
     ShellLaunch model)
   {
+    Trace.TraceWarning(
+      $"OBSOLETE! Creating launch tile from shell launch");
     return new LaunchTileViewModel(ownerList, model);
   }
 
   public static LaunchTileViewModel FromRaw(
     TileListViewModel ownerList,
     RawLaunch model)
+  {
+    Trace.TraceWarning(
+      $"OBSOLETE! Creating launch tile from raw launch");
+    return new LaunchTileViewModel(ownerList, model);
+  }
+
+  public static LaunchTileViewModel FromLaunch(
+    TileListViewModel ownerList,
+    LaunchData model)
   {
     return new LaunchTileViewModel(ownerList, model);
   }
@@ -148,6 +159,7 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
   public override TileData? GetModel()
   {
     return OldModel switch {
+      LaunchData launch => TileData.LaunchTile(launch),
       ShellLaunch shell => TileData.ShellTile(shell),
       RawLaunch raw => TileData.RawTile(raw),
       _ => throw new InvalidOperationException(
