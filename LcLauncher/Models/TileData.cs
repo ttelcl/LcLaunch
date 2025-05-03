@@ -27,7 +27,7 @@ public class TileData: LaunchTile
     RawLaunch? rawLaunch = null,
     LaunchData? launch = null,
     TileGroup? group = null,
-    IEnumerable<LaunchTile>? quad = null)
+    IEnumerable<LaunchData?>? quad = null)
     : base(shellLaunch, rawLaunch, launch)
   {
     Group = group;
@@ -74,7 +74,7 @@ public class TileData: LaunchTile
     return new TileData(group: new TileGroup(tilelist, title, tooltip));
   }
 
-  public static TileData QuadTile(IEnumerable<LaunchTile> quad)
+  public static TileData QuadTile(IEnumerable<LaunchData?> quad)
   {
     return new TileData(quad: quad);
   }
@@ -83,7 +83,7 @@ public class TileData: LaunchTile
   public TileGroup? Group { get; set; }
 
   [JsonProperty("quad", NullValueHandling = NullValueHandling.Ignore)]
-  public List<LaunchTile>? Quad { get; }
+  public List<LaunchData?>? Quad { get; }
 
   public bool IsEmpty()
   {

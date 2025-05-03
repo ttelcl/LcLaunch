@@ -36,14 +36,6 @@ public class LaunchTile
   }
 
   /// <summary>
-  /// Empty launch tile. Used for empty quad sub-tiles.
-  /// </summary>
-  public static LaunchTile EmptyLaunch()
-  {
-    return new LaunchTile(null, null, null);
-  }
-
-  /// <summary>
   /// Shell based launch tile.
   /// </summary>
   [JsonProperty("shellLaunch", NullValueHandling = NullValueHandling.Ignore)]
