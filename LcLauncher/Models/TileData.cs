@@ -20,7 +20,7 @@ namespace LcLauncher.Models;
 /// fields will be non-null (except for the quad field, which
 /// can be an empty list as equivalent).
 /// </summary>
-public class TileData: LaunchTile
+public class TileData
 {
   public TileData(
     ShellLaunch? shellLaunch = null,
@@ -28,8 +28,10 @@ public class TileData: LaunchTile
     LaunchData? launch = null,
     TileGroup? group = null,
     IEnumerable<LaunchData?>? quad = null)
-    : base(shellLaunch, rawLaunch, launch)
   {
+    ShellLaunch = shellLaunch;
+    RawLaunch = rawLaunch;
+    Launch = launch;
     Group = group;
     Quad = quad == null ? null : quad.ToList();
   }
@@ -77,6 +79,24 @@ public class TileData: LaunchTile
   public static TileData QuadTile(IEnumerable<LaunchData?> quad)
   {
     return new TileData(quad: quad);
+  }
+
+
+  /// <summary>
+  /// Shell based launch tile.
+  /// </summary>
+  [JsonProperty("shellLaunch", NullValueHandling = NullValueHandling.Ignore)]
+  public ShellLaunch? ShellLaunch { get; set; }
+
+  [JsonProperty("rawLaunch", NullValueHandling = NullValueHandling.Ignore)]
+  public RawLaunch? RawLaunch { get; set; }
+
+  [JsonProperty("launch", NullValueHandling = NullValueHandling.Ignore)]
+  public LaunchData? Launch { get; set; }
+
+  public bool HasLaunch()
+  {
+    return ShellLaunch != null || RawLaunch != null || Launch != null;
   }
 
   [JsonProperty("group", NullValueHandling = NullValueHandling.Ignore)]
