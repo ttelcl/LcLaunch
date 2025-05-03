@@ -64,29 +64,6 @@ public abstract class LaunchDataBase: ILaunchData
   [JsonProperty("tooltip", NullValueHandling = NullValueHandling.Ignore)]
   public string? Tooltip { get; set; }
 
-  public string GetEffectiveTitle()
-  {
-    if(!String.IsNullOrEmpty(Title))
-    {
-      return Title;
-    }
-    return Path.GetFileNameWithoutExtension(TargetPath);
-  }
-
-  public string GetEffectiveTooltip()
-  {
-    if(!String.IsNullOrEmpty(Tooltip))
-    {
-      return Tooltip;
-    }
-    if(!String.IsNullOrEmpty(Title))
-    {
-      return Title;
-    }
-    return Path.GetFileName(TargetPath);
-    //return null;
-  }
-
   /// <summary>
   /// The startup window style. Default is Normal. Other options are
   /// Hidden, Minimized, and Maximized.
@@ -123,16 +100,6 @@ public abstract class LaunchDataBase: ILaunchData
 
   [JsonIgnore]
   public abstract bool ShellMode { get; }
-
-  /// <summary>
-  /// Get the effective icon source, based on <see cref="IconSource"/> and
-  /// <see cref="TargetPath"/>.
-  /// </summary>
-  /// <returns></returns>
-  public string GetIconSource()
-  {
-    return String.IsNullOrEmpty(IconSource) ? TargetPath : IconSource;
-  }
 
   public const string ShellAppsFolderPrefix =
     "shell:AppsFolder\\";

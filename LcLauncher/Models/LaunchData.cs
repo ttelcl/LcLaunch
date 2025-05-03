@@ -23,7 +23,7 @@ namespace LcLauncher.Models;
 /// New universal launch data design, merging the previous
 /// <see cref="ShellLaunch"/> and <see cref="RawLaunch"/>.
 /// </summary>
-public class LaunchData
+public class LaunchData: ILaunchData
 {
   public LaunchData(
     string target,
@@ -71,6 +71,12 @@ public class LaunchData
   /// </summary>
   [JsonProperty("target")]
   public string Target { get; set; }
+
+  [JsonIgnore]
+  public string TargetPath {
+    get => Target;
+    set => Target = value;
+  }
 
   /// <summary>
   /// Shell launnch vs. raw launch. Greatly affects what valid values for

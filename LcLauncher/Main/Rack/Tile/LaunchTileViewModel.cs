@@ -27,7 +27,7 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
 {
   private LaunchTileViewModel(
     TileListViewModel ownerList,
-    LaunchDataBase model)
+    ILaunchData model)
     : base(ownerList)
   {
     IconHostId = Guid.NewGuid();
@@ -36,6 +36,7 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
     {
       ShellModel = shell;
       RawModel = null;
+      NewModel = shell.ToLaunch();
       Classification = LaunchData.GetLaunchKind(
         model.TargetPath, false);
     }
@@ -43,8 +44,17 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
     {
       ShellModel = null;
       RawModel = raw;
+      NewModel = raw.ToLaunch();
       Classification = LaunchData.GetLaunchKind(
         model.TargetPath, true);
+    }
+    else if(model is LaunchData launch)
+    {
+      ShellModel = launch.ToShellLaunch();
+      RawModel = launch.ToRawLaunch();
+      NewModel = launch;
+      Classification = LaunchData.GetLaunchKind(
+        model.TargetPath, !launch.ShellMode);
     }
     else
     {
@@ -95,7 +105,7 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
   /// <summary>
   /// The model for this tile.
   /// </summary>
-  public LaunchDataBase OldModel { get; }
+  public ILaunchData OldModel { get; }
 
   /// <summary>
   /// The model for this tile, if it is a shell launch.
@@ -106,6 +116,8 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
   /// The model for this tile, if it is a raw launch.
   /// </summary>
   public IRawLaunchData? RawModel { get; }
+
+  public LaunchData? NewModel { get; }
 
   public LaunchKind Classification { get; }
 
@@ -352,13 +364,29 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
     else
     {
       throw new InvalidOperationException(
-        "Invalid tile type - this constructor expects a tile with an existing launch tile");
+        "Unrecognized launch tile data type");
     }
     editor.IsActive = true;
   }
 
   private void RunTile()
   {
-    Launcher.Launch(OldModel);
+    if(OldModel is ShellLaunch shell)
+    {
+      Launcher.Launch(shell);
+    }
+    else if(OldModel is RawLaunch raw)
+    {
+      Launcher.Launch(raw);
+    }
+    else if(OldModel is LaunchData launch)
+    {
+      Launcher.Launch(launch);
+    }
+    else
+    {
+      throw new InvalidOperationException(
+        "Unrecognized launch tile data type");
+    }
   }
 }

@@ -36,6 +36,42 @@ public static class Launcher
     }
   }
 
+  public static void Launch(LaunchData launchData)
+  {
+    if(launchData.ShellMode)
+    {
+      var shellLaunch = launchData.ToShellLaunch();
+      if(shellLaunch != null)
+      {
+        Launch(shellLaunch);
+      }
+      else
+      {
+        MessageBox.Show(
+          "Unrecognized shell launch type",
+          "Error",
+          MessageBoxButton.OK,
+          MessageBoxImage.Error);
+      }
+    }
+    else
+    {
+      var rawLaunch = launchData.ToRawLaunch();
+      if(rawLaunch != null)
+      {
+        Launch(rawLaunch);
+      }
+      else
+      {
+        MessageBox.Show(
+          "Unrecognized raw launch type",
+          "Error",
+          MessageBoxButton.OK,
+          MessageBoxImage.Error);
+      }
+    }
+  }
+
   public static void Launch(RawLaunch rawLaunch)
   {
     var startInfo = new ProcessStartInfo {

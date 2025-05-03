@@ -53,6 +53,14 @@ public class TileData: LaunchTile
       launch: rawLaunch.ToLaunch());
   }
 
+  public static TileData LaunchTile(LaunchData launch)
+  {
+    return new TileData(
+      launch: launch,
+      shellLaunch: launch.ToShellLaunch(),
+      rawLaunch: launch.ToRawLaunch());
+  }
+
   public static TileData GroupTile(TileGroup group)
   {
     return new TileData(group: group);
