@@ -278,26 +278,12 @@ public class LaunchDocumentViewModel: EditorViewModelBase
     //model.Icon16 = null;
     model.Verb = Verb;
     //model.WindowStyle = ProcessWindowStyle.Normal;
-    var tile = Tile;
-    if(tile == null)
-    {
-      tile = LaunchTileViewModel.FromShell(
-        TileHost.TileList,
-        model);
-      TileHost.Tile = tile;
-    }
-    else
-    {
-      // Recreate the tile from the modified model
-      tile = LaunchTileViewModel.FromShell(
-        TileHost.TileList,
-        model);
 
-      //// force update
-      //TileHost.Tile = null;
-
-      TileHost.Tile = tile;
-    }
+    // Create a new tile or recreate the modified one
+    var tile = LaunchTileViewModel.FromShell(
+      TileHost.TileList,
+      model);
+    TileHost.Tile = tile;
     TileHost.TileList.MarkDirty();
     if(String.IsNullOrEmpty(model.Icon48))
     {

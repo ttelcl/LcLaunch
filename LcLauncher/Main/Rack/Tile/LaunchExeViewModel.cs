@@ -369,20 +369,10 @@ public class LaunchExeViewModel: EditorViewModelBase
         model.PathEnvironment.Add(env.Key, edit);
       }
 
-      var tile = Tile;
-      if(tile is null)
-      {
-        tile = LaunchTileViewModel.FromRaw(
-          TileHost.TileList, model);
-        TileHost.Tile = tile;
-      }
-      else
-      {
-        // Recreate the tile from the modified model
-        tile = LaunchTileViewModel.FromRaw(
-          TileHost.TileList, model);
-        TileHost.Tile = tile;
-      }
+      // Create a new tile or recreate the modified one
+      var tile = LaunchTileViewModel.FromRaw(
+        TileHost.TileList, model);
+      TileHost.Tile = tile;
       TileHost.TileList.MarkDirty();
       if(String.IsNullOrEmpty(model.Icon48))
       {
