@@ -23,15 +23,37 @@ namespace LcLauncher.Models;
 public class TileData
 {
   public TileData(
-    ShellLaunch? shellLaunch = null,
-    RawLaunch? rawLaunch = null,
     LaunchData? launch = null,
     TileGroup? group = null,
-    IEnumerable<LaunchData?>? quad = null)
+    IEnumerable<LaunchData?>? quad = null,
+    ShellLaunch? shellLaunch = null,
+    RawLaunch? rawLaunch = null)
   {
-    ShellLaunch = shellLaunch;
-    RawLaunch = rawLaunch;
-    Launch = launch;
+    if(launch != null)
+    {
+      Launch = launch;
+      // ignore the other launch type arguments!
+      ShellLaunch = launch.ToShellLaunch();
+      RawLaunch = launch.ToRawLaunch();
+    }
+    else if(shellLaunch != null)
+    {
+      Launch = shellLaunch.ToLaunch();
+      ShellLaunch = shellLaunch;
+      RawLaunch = null;
+    }
+    else if(rawLaunch != null)
+    {
+      Launch = rawLaunch.ToLaunch();
+      RawLaunch = rawLaunch;
+      ShellLaunch = null;
+    }
+    else
+    {
+      Launch = null;
+      ShellLaunch = null;
+      RawLaunch = null;
+    }
     Group = group;
     Quad = quad == null ? null : quad.ToList();
   }
@@ -44,23 +66,19 @@ public class TileData
   public static TileData ShellTile(ShellLaunch shellLaunch)
   {
     return new TileData(
-      shellLaunch: shellLaunch,
       launch: shellLaunch.ToLaunch());
   }
 
   public static TileData RawTile(RawLaunch rawLaunch)
   {
     return new TileData(
-      rawLaunch: rawLaunch,
       launch: rawLaunch.ToLaunch());
   }
 
   public static TileData LaunchTile(LaunchData launch)
   {
     return new TileData(
-      launch: launch,
-      shellLaunch: launch.ToShellLaunch(),
-      rawLaunch: launch.ToRawLaunch());
+      launch: launch);
   }
 
   public static TileData GroupTile(TileGroup group)
@@ -81,18 +99,27 @@ public class TileData
     return new TileData(quad: quad);
   }
 
-
   /// <summary>
   /// Shell based launch tile.
   /// </summary>
-  [JsonProperty("shellLaunch", NullValueHandling = NullValueHandling.Ignore)]
-  public ShellLaunch? ShellLaunch { get; set; }
+  [JsonProperty("shellLaunch")]
+  public ShellLaunch? ShellLaunch { get; }
 
-  [JsonProperty("rawLaunch", NullValueHandling = NullValueHandling.Ignore)]
-  public RawLaunch? RawLaunch { get; set; }
+  public bool ShouldSerializeShellLaunch()
+  {
+    return ShellLaunch != null && Launch == null;
+  }
+
+  [JsonProperty("rawLaunch")]
+  public RawLaunch? RawLaunch { get; }
+
+  public bool ShouldSerializeRawLaunch()
+  {
+    return RawLaunch != null && Launch == null;
+  }
 
   [JsonProperty("launch", NullValueHandling = NullValueHandling.Ignore)]
-  public LaunchData? Launch { get; set; }
+  public LaunchData? Launch { get; }
 
   public bool HasLaunch()
   {
@@ -100,7 +127,7 @@ public class TileData
   }
 
   [JsonProperty("group", NullValueHandling = NullValueHandling.Ignore)]
-  public TileGroup? Group { get; set; }
+  public TileGroup? Group { get; }
 
   [JsonProperty("quad", NullValueHandling = NullValueHandling.Ignore)]
   public List<LaunchData?>? Quad { get; }
@@ -110,6 +137,7 @@ public class TileData
     return
       ShellLaunch == null &&
       RawLaunch == null &&
+      Launch == null &&
       Group == null &&
       Quad == null;
   }
