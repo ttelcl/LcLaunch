@@ -37,8 +37,15 @@
             </MenuItem>
             <Separator/>
             <MenuItem
-                Header="Edit ..."
+                Header="Edit (old) ..."
                 Command="{Binding EditCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="Cog" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem
+                Header="Edit ..."
+                Command="{Binding EditCommandNew}">
                 <MenuItem.Icon>
                     <iconPacks:PackIconMaterial Kind="Cog" Width="20" Height="20"/>
                 </MenuItem.Icon>

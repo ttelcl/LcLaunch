@@ -55,6 +55,9 @@
                         <DataTemplate DataType="{x:Type rack:ShelfEditViewModel}">
                             <rack:ShelfEditView/>
                         </DataTemplate>
+                        <DataTemplate DataType="{x:Type tile:LaunchEditViewModel}">
+                            <tile:LaunchEditView/>
+                        </DataTemplate>
                         <DataTemplate DataType="{x:Type tile:LaunchDocumentViewModel}">
                             <tile:LaunchDocumentView/>
                         </DataTemplate>

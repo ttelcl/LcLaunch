@@ -45,7 +45,7 @@ public class LaunchExeViewModel: EditorViewModelBase
           "Invalid tile type - this constructor expects a tile with a *exe* launch tile");
       }
 
-      var model = launchTile.OldModel;
+      var model = launchTile.Model;
       if(model is LaunchData launch)
       {
         // Patch to old model
