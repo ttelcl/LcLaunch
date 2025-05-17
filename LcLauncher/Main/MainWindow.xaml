@@ -13,7 +13,7 @@
     d:DataContext="{d:DesignInstance local:MainViewModel, IsDesignTimeCreatable=False}"
     Icon="/LcLauncher;component/lclaunch.ico"
     WindowStartupLocation="CenterScreen"
-    ResizeMode="NoResize"
+    ResizeMode="CanMinimize"
     Title="Luc's Application Launchpad"
     Height="920" Width="1285"
     Activated="WindowActivated"

@@ -73,7 +73,7 @@ public class LaunchData: ILaunchData
   public string Target { get; set; }
 
   [JsonIgnore]
-  public string TargetPath {
+  string ILaunchData.TargetPath {
     get => Target;
     set => Target = value;
   }
@@ -295,7 +295,6 @@ public class LaunchData: ILaunchData
       }
     }
   }
-
 }
 
 /// <summary>

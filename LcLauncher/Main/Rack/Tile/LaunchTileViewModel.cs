@@ -31,7 +31,7 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
     : base(ownerList)
   {
     IconHostId = Guid.NewGuid();
-    OldModel = model;
+    Model = model;
     if(model is ShellLaunch shell)
     {
       ShellModel = shell;
@@ -54,20 +54,24 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
       RawModel = launch.ToRawLaunch();
       NewModel = launch;
       Classification = LaunchData.GetLaunchKind(
-        model.TargetPath, !launch.ShellMode);
+        launch.Target, !launch.ShellMode);
     }
     else
     {
       ShellModel = null;
       RawModel = null;
+      NewModel = null;
       Classification = LaunchKind.Invalid;
     }
-    _title = OldModel.GetEffectiveTitle();
-    _tooltip = OldModel.GetEffectiveTooltip();
+    _title = Model.GetEffectiveTitle();
+    _tooltip = Model.GetEffectiveTooltip();
     LoadIcon(IconLoadLevel.FromCache);
     EditCommand = new DelegateCommand(
       p => StartEdit(),
       p => CanEdit());
+    EditCommandNew = new DelegateCommand(
+      p => StartEditNew(),
+      p => CanEditNew());
     FixIconCommand = new DelegateCommand(
       p => LoadIcon(IconLoadLevel.LoadIfMissing),
       p => Host != null && !Host.Rack.HasMarkedItems);
@@ -107,6 +111,8 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
 
   public ICommand EditCommand { get; }
 
+  public ICommand EditCommandNew { get; }
+
   public ICommand FixIconCommand { get; }
 
   public ICommand ForceIconCommand { get; }
@@ -116,7 +122,7 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
   /// <summary>
   /// The model for this tile.
   /// </summary>
-  public ILaunchData OldModel { get; }
+  public ILaunchData Model { get; }
 
   /// <summary>
   /// The model for this tile, if it is a shell launch.
@@ -138,7 +144,7 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
       if(SetValueProperty(ref _title, value))
       {
         // TODO: feed back to original and save
-        OldModel.Title = value;
+        Model.Title = value;
       }
     }
   }
@@ -150,7 +156,7 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
       if(SetValueProperty(ref _tooltip, value))
       {
         // TODO: feed back to original and save
-        OldModel.Tooltip = value;
+        Model.Tooltip = value;
       }
     }
   }
@@ -158,12 +164,12 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
 
   public override TileData? GetModel()
   {
-    return OldModel switch {
+    return Model switch {
       LaunchData launch => TileData.LaunchTile(launch),
       ShellLaunch shell => TileData.ShellTile(shell),
       RawLaunch raw => TileData.RawTile(raw),
       _ => throw new InvalidOperationException(
-        $"Invalid launch data type {OldModel.GetType().FullName}")
+        $"Invalid launch data type {Model.GetType().FullName}")
     };
   }
 
@@ -200,7 +206,7 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
   public void LoadIcon(IconLoadLevel level)
   {
     //var hasIcon = Icon != null;
-    var hasHash = OldModel.Icon48 != null;
+    var hasHash = Model.Icon48 != null;
     var iconCache = OwnerList.IconCache;
     switch(level)
     {
@@ -210,10 +216,10 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
           {
             return;
           }
-          var icon = iconCache.LoadCachedIcon(OldModel.Icon48);
+          var icon = iconCache.LoadCachedIcon(Model.Icon48);
           Icon = icon;
-          IconSmall = iconCache.LoadCachedIcon(OldModel.Icon16);
-          IconMedium = iconCache.LoadCachedIcon(OldModel.Icon32);
+          IconSmall = iconCache.LoadCachedIcon(Model.Icon16);
+          IconMedium = iconCache.LoadCachedIcon(Model.Icon32);
           return;
         }
       case IconLoadLevel.LoadIfMissing:
@@ -224,12 +230,12 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
           //}
           if(hasHash)
           {
-            var icon = iconCache.LoadCachedIcon(OldModel.Icon48);
+            var icon = iconCache.LoadCachedIcon(Model.Icon48);
             if(icon != null)
             {
               Icon = icon;
-              IconSmall = iconCache.LoadCachedIcon(OldModel.Icon16);
-              IconMedium = iconCache.LoadCachedIcon(OldModel.Icon32);
+              IconSmall = iconCache.LoadCachedIcon(Model.Icon16);
+              IconMedium = iconCache.LoadCachedIcon(Model.Icon32);
               return;
             }
           }
@@ -252,43 +258,43 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
   private void HardLoadIcon()
   {
     var iconCache = OwnerList.IconCache;
-    var iconSource = OldModel.GetIconSource();
+    var iconSource = Model.GetIconSource();
     var hashes = iconCache.CacheIcons(iconSource, IconSize.Normal);
     if(hashes == null)
     {
       // Clear all icons - they are no longer valid
-      if(!String.IsNullOrEmpty(OldModel.Icon16)
-        || !String.IsNullOrEmpty(OldModel.Icon32)
-        || !String.IsNullOrEmpty(OldModel.Icon48))
+      if(!String.IsNullOrEmpty(Model.Icon16)
+        || !String.IsNullOrEmpty(Model.Icon32)
+        || !String.IsNullOrEmpty(Model.Icon48))
       {
         OwnerList.MarkDirty();
       }
-      OldModel.Icon48 = null;
-      OldModel.Icon32 = null;
-      OldModel.Icon16 = null;
+      Model.Icon48 = null;
+      Model.Icon32 = null;
+      Model.Icon16 = null;
       Trace.TraceError(
         $"Failed to load icon for {iconSource}");
       Icon = null;
       return;
     }
-    if(OldModel.Icon48 != hashes.Large)
+    if(Model.Icon48 != hashes.Large)
     {
-      OldModel.Icon48 = hashes.Large;
+      Model.Icon48 = hashes.Large;
       OwnerList.MarkDirty();
     }
-    if(OldModel.Icon32 != hashes.Medium)
+    if(Model.Icon32 != hashes.Medium)
     {
-      OldModel.Icon32 = hashes.Medium;
+      Model.Icon32 = hashes.Medium;
       OwnerList.MarkDirty();
     }
-    if(OldModel.Icon16 != hashes.Small)
+    if(Model.Icon16 != hashes.Small)
     {
-      OldModel.Icon16 = hashes.Small;
+      Model.Icon16 = hashes.Small;
       OwnerList.MarkDirty();
     }
   }
 
-  public string FallbackIcon => OldModel switch {
+  public string FallbackIcon => Model switch {
     ShellLaunch => "RocketLaunch",
     RawLaunch => "RocketLaunchOutline",
     _ => "Help"
@@ -381,17 +387,48 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
     editor.IsActive = true;
   }
 
+  private bool CanEditNew()
+  {
+    if(Host == null)
+    {
+      return false;
+    }
+    if(GetIsKeyTile())
+    {
+      return false;
+    }
+    return Classification switch {
+      LaunchKind.Invalid => false,
+      LaunchKind.Document => true,
+      LaunchKind.ShellApplication => true,
+      LaunchKind.Raw => true,
+      LaunchKind.UriKind => true,
+      _ => false,
+    };
+  }
+
+  private void StartEditNew()
+  {
+    if(!CanEditNew())
+    {
+      return;
+    }
+    EditorViewModelBase editor;
+    editor = new LaunchEditViewModel(Host!);
+    editor.IsActive = true;
+  }
+
   private void RunTile()
   {
-    if(OldModel is ShellLaunch shell)
+    if(Model is ShellLaunch shell)
     {
       Launcher.Launch(shell);
     }
-    else if(OldModel is RawLaunch raw)
+    else if(Model is RawLaunch raw)
     {
       Launcher.Launch(raw);
     }
-    else if(OldModel is LaunchData launch)
+    else if(Model is LaunchData launch)
     {
       Launcher.Launch(launch);
     }
