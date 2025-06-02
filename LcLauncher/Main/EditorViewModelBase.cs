@@ -67,7 +67,7 @@ public class EditorViewModelBase: ViewModelBase, IHasTheme
       }
     }
   }
-  private string _theme = "Olive";
+  private string _theme = MainViewModel.DefaultDefaultTheme;
 
   /// <summary>
   /// Indicates if this editor is the current editor.

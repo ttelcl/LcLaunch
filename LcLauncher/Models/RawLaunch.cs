@@ -14,7 +14,7 @@ using Newtonsoft.Json;
 namespace LcLauncher.Models;
 
 /// <summary>
-/// Description of RawLaunch
+/// (To be deprecated!) Old launch model specific for non-shell launcher
 /// </summary>
 public class RawLaunch: LaunchDataBase, IRawLaunchData
 {

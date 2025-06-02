@@ -26,7 +26,7 @@ public class MainViewModel: ViewModelBase
   public MainViewModel(IConfigurationRoot configuration)
   {
     Configuration = configuration;
-    DefaultTheme = configuration["defaultTheme"] ?? "Olive";
+    DefaultTheme = configuration["defaultTheme"] ?? DefaultDefaultTheme;
     ShowDevPane = configuration.GetValue<bool>("showDevPane", false);
     var fileStore = new JsonDataStore();
     var storeImplementation = new JsonLcLaunchStore(fileStore);
@@ -86,6 +86,8 @@ public class MainViewModel: ViewModelBase
   private RackViewModel? _currentRack;
 
   public string DefaultTheme { get; }
+
+  public const string DefaultDefaultTheme = "Olive";
 
   public bool ShowDevPane {
     get => _showDevPane;
