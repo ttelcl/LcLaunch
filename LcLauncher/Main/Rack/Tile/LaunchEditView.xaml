@@ -277,7 +277,34 @@
                         FontStyle="Italic"/>
                 </Border>
             </Grid>
-            
+
+            <Grid MinHeight="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Border
+                    Padding="10,5"
+                    BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+                    BorderThickness="1">
+                    <TextBlock
+                        Text="Launch type"
+                        TextWrapping="Wrap"
+                        HorizontalAlignment="Right"
+                        FontStyle="Italic"/>
+                </Border>
+                <Border
+                    Grid.Column="1"
+                    Padding="10,5"
+                    BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+                    BorderThickness="1">
+                    <TextBlock
+                        Text="{Binding Classification}"
+                        Foreground="#FFCCAA"
+                        FontStyle="Italic"/>
+                </Border>
+            </Grid>
+
         </StackPanel>
     </ScrollViewer>
 </UserControl>
