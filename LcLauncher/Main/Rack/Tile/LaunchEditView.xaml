@@ -32,7 +32,22 @@
                         HorizontalAlignment="Right"/>
                 </Border>
                 <DockPanel
-                    Grid.Column="1">
+                    Grid.Column="1"
+                    Background="{DynamicResource MahApps.Brushes.Control.Background}">
+                    <iconPacks:PackIconMaterial
+                        DockPanel.Dock="Left"
+                        Kind="{Binding ClassificationIcon}"
+                        VerticalAlignment="Center"
+                        Foreground="{DynamicResource MahApps.Brushes.AccentBase}"
+                        Margin="4,0,0,0"/>
+                    <TextBlock
+                        DockPanel.Dock="Left"
+                        Text="{Binding ClassificationText}"
+                        Foreground="{DynamicResource MahApps.Brushes.AccentBase}"
+                        FontStyle="Italic"
+                        FontSize="12"
+                        VerticalAlignment="Center"
+                        Margin="3,0,4,0"/>
                     <TextBox
                         Text="{Binding Target, Mode=OneWay}"
                         IsReadOnly="True"
@@ -43,7 +58,41 @@
                         Padding="5,5"/>
                 </DockPanel>
             </Grid>
-            
+
+            <!--<Grid MinHeight="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Border
+                    Padding="10,5"
+                    BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+                    BorderThickness="1">
+                    <TextBlock
+                        Text="Launch type"
+                        TextWrapping="Wrap"
+                        HorizontalAlignment="Right"
+                        FontStyle="Italic"/>
+                </Border>
+                <Border
+                    Grid.Column="1"
+                    Padding="10,5"
+                    BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+                    BorderThickness="1">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconMaterial
+                            Kind="{Binding ClassificationIcon}"
+                            VerticalAlignment="Center"
+                            Foreground="#FFCCAA"
+                            Margin="0,0,10,0"/>
+                        <TextBlock
+                            Text="{Binding ClassificationText}"
+                            Foreground="#FFCCAA"
+                            FontStyle="Italic"/>
+                    </StackPanel>
+                </Border>
+            </Grid>-->
+
             <Grid MinHeight="10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="150"/>
@@ -274,33 +323,6 @@
                     <TextBlock
                         Text="{Binding TileHost}"
                         Foreground="#FFFFAA"
-                        FontStyle="Italic"/>
-                </Border>
-            </Grid>
-
-            <Grid MinHeight="10">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="150"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Border
-                    Padding="10,5"
-                    BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                    BorderThickness="1">
-                    <TextBlock
-                        Text="Launch type"
-                        TextWrapping="Wrap"
-                        HorizontalAlignment="Right"
-                        FontStyle="Italic"/>
-                </Border>
-                <Border
-                    Grid.Column="1"
-                    Padding="10,5"
-                    BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                    BorderThickness="1">
-                    <TextBlock
-                        Text="{Binding Classification}"
-                        Foreground="#FFCCAA"
                         FontStyle="Italic"/>
                 </Border>
             </Grid>

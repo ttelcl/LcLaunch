@@ -14,6 +14,7 @@ using System.Windows;
 using System.Windows.Input;
 
 using LcLauncher.Models;
+using LcLauncher.Persistence;
 using LcLauncher.WpfUtilities;
 
 using Microsoft.Win32;
@@ -213,10 +214,66 @@ public class LaunchEditViewModel: EditorViewModelBase
     set {
       if(SetValueProperty(ref _classification, value))
       {
+        ClassificationChanged();
+        RaisePropertyChanged(nameof(ClassificationIcon));
+        RaisePropertyChanged(nameof(ClassificationText));
       }
     }
   }
   private LaunchKind _classification = LaunchKind.Invalid;
+
+  public string ClassificationIcon { get; private set; } = "HelpRhobusOutline";
+
+  public string ClassificationText { get; private set; } = "Unknown";
+
+  private void ClassificationChanged()
+  {
+    switch(Classification)
+    {
+      case LaunchKind.Raw:
+        ClassificationIcon = "ApplicationCogOutline";
+        ClassificationText = "executable";
+        break;
+      case LaunchKind.ShellApplication:
+        ClassificationIcon = "ApplicationOutline";
+        ClassificationText = "application";
+        break;
+      case LaunchKind.Document:
+        if(Target.EndsWith(".lnk", StringComparison.OrdinalIgnoreCase))
+        {
+          ClassificationIcon = "ShareCircle";
+          ClassificationText = "shortcut";
+        }
+        else
+        {
+          ClassificationIcon = "FileDocumentOutline";
+          ClassificationText = "document";
+        }
+        break;
+      case LaunchKind.UriKind:
+        if(Target.StartsWith("http://") || Target.StartsWith("https://"))
+        {
+          ClassificationIcon = "Web";
+          ClassificationText = "web link";
+        }
+        else if(Target.StartsWith("onenote:"))
+        {
+          ClassificationIcon = "MicrosoftOnenote";
+          ClassificationText = "onenote";
+        }
+        else
+        {
+          ClassificationIcon = "LinkBoxVariantOutline";
+          ClassificationText = "URI";
+        }
+        break;
+      case LaunchKind.Invalid:
+      default:
+        ClassificationIcon = "HelpRhombusOutline";
+        ClassificationText = "Unknown";
+        break;
+    }
+  }
 
   public string Title {
     get => _title;
@@ -433,13 +490,39 @@ public class LaunchEditViewModel: EditorViewModelBase
     var reason = WhyNotValid();
     if(reason == null)
     {
-      // valid
-      // NYI
-      MessageBox.Show(
-        "This editor is not yet implemented",
-        "Not implemented",
-        MessageBoxButton.OK,
-        MessageBoxImage.Warning);
+      var model = Model;
+      model.Target = Target;
+      model.Title = String.IsNullOrEmpty(Title) ? null : Title;
+      model.Tooltip = String.IsNullOrEmpty(Tooltip) ? null : Tooltip;
+      model.WorkingDirectory = String.IsNullOrEmpty(WorkingDirectory) ? null : WorkingDirectory;
+      model.IconSource = String.IsNullOrEmpty(IconSource) ? null : IconSource;
+      model.Verb = Verb;
+      model.Arguments.Clear();
+      model.Arguments.AddRange(Arguments);
+      model.Environment.Clear();
+      foreach(var env in Environment)
+      {
+        model.Environment.Add(env.Key, env.Value);
+      }
+      model.PathEnvironment.Clear();
+      foreach(var env in PathEnvironment)
+      {
+        var edit = new PathEdit(
+          env.Value.Prepend,
+          env.Value.Append);
+        model.PathEnvironment.Add(env.Key, edit);
+      }
+
+      // Create a new tile or recreate the modified one
+      var tile = LaunchTileViewModel.FromLaunch(
+        TileHost.TileList, model);
+      TileHost.Tile = tile;
+      TileHost.TileList.MarkDirty();
+      if(String.IsNullOrEmpty(model.Icon48))
+      {
+        tile.LoadIcon(IconLoadLevel.LoadIfMissing);
+      }
+      IsActive = false;
     }
     else
     {

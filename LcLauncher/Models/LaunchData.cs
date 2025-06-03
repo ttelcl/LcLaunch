@@ -274,8 +274,8 @@ public class LaunchData: ILaunchData
           // We require a minimum of 2 characters for the scheme so we
           // can distinguish between a scheme and a drive letter.
           if(Regex.IsMatch(
-              target.Substring(0, colonIndex),
-              @"^[a-zA-Z][-+a-zA-Z0-9.]+:"))
+              target.Substring(0, colonIndex+1),
+              @"^[a-zA-Z][-+a-zA-Z0-9.]+:$"))
           {
             // Looks like a URI
             return LaunchKind.UriKind;
