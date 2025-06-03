@@ -36,13 +36,13 @@
                     Background="{DynamicResource MahApps.Brushes.Control.Background}">
                     <iconPacks:PackIconMaterial
                         DockPanel.Dock="Left"
-                        Kind="{Binding ClassificationIcon}"
+                        Kind="{Binding KindInfo.Icon}"
                         VerticalAlignment="Center"
                         Foreground="{DynamicResource MahApps.Brushes.AccentBase}"
                         Margin="4,0,0,0"/>
                     <TextBlock
                         DockPanel.Dock="Left"
-                        Text="{Binding ClassificationText}"
+                        Text="{Binding KindInfo.Text}"
                         Foreground="{DynamicResource MahApps.Brushes.AccentBase}"
                         FontStyle="Italic"
                         FontSize="12"
@@ -58,40 +58,6 @@
                         Padding="5,5"/>
                 </DockPanel>
             </Grid>
-
-            <!--<Grid MinHeight="10">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="150"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Border
-                    Padding="10,5"
-                    BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                    BorderThickness="1">
-                    <TextBlock
-                        Text="Launch type"
-                        TextWrapping="Wrap"
-                        HorizontalAlignment="Right"
-                        FontStyle="Italic"/>
-                </Border>
-                <Border
-                    Grid.Column="1"
-                    Padding="10,5"
-                    BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                    BorderThickness="1">
-                    <StackPanel Orientation="Horizontal">
-                        <iconPacks:PackIconMaterial
-                            Kind="{Binding ClassificationIcon}"
-                            VerticalAlignment="Center"
-                            Foreground="#FFCCAA"
-                            Margin="0,0,10,0"/>
-                        <TextBlock
-                            Text="{Binding ClassificationText}"
-                            Foreground="#FFCCAA"
-                            FontStyle="Italic"/>
-                    </StackPanel>
-                </Border>
-            </Grid>-->
 
             <Grid MinHeight="10">
                 <Grid.ColumnDefinitions>
@@ -136,51 +102,7 @@
                     BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
                     Padding="5,5"/>
             </Grid>
-            
-            <Grid MinHeight="10">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="150"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Border
-                    Padding="10,5"
-                    BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                    BorderThickness="1">
-                    <TextBlock
-                        Text="Working Directory"
-                        TextWrapping="Wrap"
-                        HorizontalAlignment="Right"/>
-                </Border>
-                <DockPanel
-                    Grid.Column="1">
-                    <Button
-                        DockPanel.Dock="Right"
-                        Command="{Binding PickWorkingDirectoryCommand}"
-                        Margin="5,0,0,0"
-                        Width="30"
-                        Height="30">
-                        <iconPacks:PackIconMaterial Kind="Folder" Width="16" Height="16"/>
-                    </Button>
-                    <Button
-                        DockPanel.Dock="Right"
-                        Command="{Binding ClearWorkingDirectoryCommand}"
-                        Margin="5,0,0,0"
-                        Width="30"
-                        Height="30">
-                        <iconPacks:PackIconMaterial Kind="Close" Width="16" Height="16"/>
-                    </Button>
-                    <TextBox
-                        Text="{Binding WorkingDirectory, Mode=OneWay}"
-                        IsReadOnly="True"
-                        IsReadOnlyCaretVisible="True"
-                        mah:TextBoxHelper.Watermark="(optional - a default is used if left empty)"
-                        BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                        Foreground="{DynamicResource MahApps.Brushes.Gray5}"
-                        Background="{DynamicResource MahApps.Brushes.Gray8}"
-                        Padding="5,5"/>
-                </DockPanel>
-            </Grid>
-            
+
             <Grid MinHeight="10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="150"/>
@@ -224,8 +146,77 @@
                         Padding="5,5"/>
                 </DockPanel>
             </Grid>
+
+            <Grid MinHeight="10" Visibility="{Binding KindInfo.VerbVisible}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Border
+                    Padding="10,5"
+                    BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+                    BorderThickness="1">
+                    <TextBlock
+                        Text="Verb"
+                        TextWrapping="Wrap"
+                        HorizontalAlignment="Right"/>
+                </Border>
+                <Border
+                    Grid.Column="1"
+                    Padding="10,5"
+                    BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+                    BorderThickness="1">
+                    <TextBlock
+                        Text="Editing the 'verb' not yet implemented. Edit the tiles-json file directly"
+                        FontStyle="Italic"/>
+                </Border>
+            </Grid>
+
+            <Grid MinHeight="10" Visibility="{Binding KindInfo.WorkDirVisible}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Border
+                    Padding="10,5"
+                    BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+                    BorderThickness="1">
+                    <TextBlock
+                        Text="Working Directory"
+                        TextWrapping="Wrap"
+                        HorizontalAlignment="Right"/>
+                </Border>
+                <DockPanel
+                    Grid.Column="1">
+                    <Button
+                        DockPanel.Dock="Right"
+                        Command="{Binding PickWorkingDirectoryCommand}"
+                        Margin="5,0,0,0"
+                        Width="30"
+                        Height="30">
+                        <iconPacks:PackIconMaterial Kind="Folder" Width="16" Height="16"/>
+                    </Button>
+                    <Button
+                        DockPanel.Dock="Right"
+                        Command="{Binding ClearWorkingDirectoryCommand}"
+                        Margin="5,0,0,0"
+                        Width="30"
+                        Height="30">
+                        <iconPacks:PackIconMaterial Kind="Close" Width="16" Height="16"/>
+                    </Button>
+                    <TextBox
+                        Text="{Binding WorkingDirectory, Mode=OneWay}"
+                        IsReadOnly="True"
+                        IsReadOnlyCaretVisible="True"
+                        mah:TextBoxHelper.Watermark="(optional - a default is used if left empty)"
+                        BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
+                        Foreground="{DynamicResource MahApps.Brushes.Gray5}"
+                        Background="{DynamicResource MahApps.Brushes.Gray8}"
+                        Padding="5,5"/>
+                </DockPanel>
+            </Grid>
             
-            <Grid MinHeight="10">
+            <Grid MinHeight="10" Visibility="{Binding KindInfo.ArgumentsVisible}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="150"/>
                     <ColumnDefinition Width="*"/>
@@ -250,7 +241,7 @@
                 </Border>
             </Grid>
             
-            <Grid MinHeight="10">
+            <Grid MinHeight="10" Visibility="{Binding KindInfo.EnvironmentVisible}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="150"/>
                     <ColumnDefinition Width="*"/>
@@ -274,8 +265,8 @@
                         FontStyle="Italic"/>
                 </Border>
             </Grid>
-            
-            <Grid MinHeight="10">
+
+            <Grid MinHeight="10" Visibility="{Binding KindInfo.EnvironmentVisible}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="150"/>
                     <ColumnDefinition Width="*"/>

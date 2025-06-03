@@ -214,66 +214,21 @@ public class LaunchEditViewModel: EditorViewModelBase
     set {
       if(SetValueProperty(ref _classification, value))
       {
-        ClassificationChanged();
-        RaisePropertyChanged(nameof(ClassificationIcon));
-        RaisePropertyChanged(nameof(ClassificationText));
+        KindInfo = new LaunchKindInfo(Classification, Target);
       }
     }
   }
   private LaunchKind _classification = LaunchKind.Invalid;
 
-  public string ClassificationIcon { get; private set; } = "HelpRhobusOutline";
-
-  public string ClassificationText { get; private set; } = "Unknown";
-
-  private void ClassificationChanged()
-  {
-    switch(Classification)
-    {
-      case LaunchKind.Raw:
-        ClassificationIcon = "ApplicationCogOutline";
-        ClassificationText = "executable";
-        break;
-      case LaunchKind.ShellApplication:
-        ClassificationIcon = "ApplicationOutline";
-        ClassificationText = "application";
-        break;
-      case LaunchKind.Document:
-        if(Target.EndsWith(".lnk", StringComparison.OrdinalIgnoreCase))
-        {
-          ClassificationIcon = "ShareCircle";
-          ClassificationText = "shortcut";
-        }
-        else
-        {
-          ClassificationIcon = "FileDocumentOutline";
-          ClassificationText = "document";
-        }
-        break;
-      case LaunchKind.UriKind:
-        if(Target.StartsWith("http://") || Target.StartsWith("https://"))
-        {
-          ClassificationIcon = "Web";
-          ClassificationText = "web link";
-        }
-        else if(Target.StartsWith("onenote:"))
-        {
-          ClassificationIcon = "MicrosoftOnenote";
-          ClassificationText = "onenote";
-        }
-        else
-        {
-          ClassificationIcon = "LinkBoxVariantOutline";
-          ClassificationText = "URI";
-        }
-        break;
-      case LaunchKind.Invalid:
-      default:
-        ClassificationIcon = "HelpRhombusOutline";
-        ClassificationText = "Unknown";
-        break;
+  public LaunchKindInfo KindInfo {
+    get => _kindInfo;
+    set { 
+      if (SetInstanceProperty(ref _kindInfo, value))
+      {
+      }
     }
   }
+  private LaunchKindInfo _kindInfo = new LaunchKindInfo(LaunchKind.Invalid, "");
 
   public string Title {
     get => _title;
@@ -291,6 +246,8 @@ public class LaunchEditViewModel: EditorViewModelBase
       if(SetValueProperty(ref _target, value))
       {
         Classification = LaunchData.GetLaunchKind(value, !Model.ShellMode);
+        // Recalculate KindInfo even if Classification didn't change
+        KindInfo = new LaunchKindInfo(Classification, Target);
       }
     }
   }
