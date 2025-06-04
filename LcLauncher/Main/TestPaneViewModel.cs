@@ -358,13 +358,25 @@ public class TestPaneViewModel: ViewModelBase
       var text = Clipboard.GetText();
       var lines = text.Split(["\r\n", "\n"], StringSplitOptions.None).ToList();
       Trace.TraceInformation($"Clipboard contains {lines.Count} lines of text");
-      if(lines.Count >= 2 && lines[1].StartsWith("onenote:"))
+      var onenoteLine =
+        lines.Take(2).FirstOrDefault(s => s.StartsWith("onenote:"));
+      if(onenoteLine != null)
       {
-        Trace.TraceInformation($"Found a onenote link on line 2: {lines[1]}");
-      }
-      else if(lines.Count >= 1 && lines[0].StartsWith("onenote:"))
-      {
-        Trace.TraceInformation($"Found a onenote link on line 1: {lines[0]}");
+        Trace.TraceInformation($"Found a onenote link: {onenoteLine}");
+        var fragmentStartIndex = onenoteLine.IndexOf('#');
+        if(fragmentStartIndex != -1)
+        {
+          fragmentStartIndex++;
+          var fragmentEndIndex = onenoteLine.IndexOf('&', fragmentStartIndex);
+          if(fragmentEndIndex != -1)
+          { 
+            var fragment = onenoteLine.Substring(
+              fragmentStartIndex,
+              fragmentEndIndex - fragmentStartIndex);
+            fragment = Uri.UnescapeDataString(fragment);
+            Trace.TraceInformation($"The title is: {fragment}");
+          }
+        }
       }
       else if(lines.Count == 1 && (lines[0].StartsWith("http://") || lines[0].StartsWith("https://")))
       {
