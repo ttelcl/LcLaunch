@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
@@ -19,8 +20,8 @@ using Microsoft.WindowsAPICodePack.Shell;
 using Newtonsoft.Json;
 
 using LcLauncher.Models;
-using LcLauncher.WpfUtilities;
 using LcLauncher.IconUpdates;
+using LcLauncher.WpfUtilities;
 
 namespace LcLauncher.Main;
 
@@ -348,7 +349,75 @@ public class TestPaneViewModel: ViewModelBase
 
   private void ClipboardTest()
   {
-    Trace.TraceInformation($"Clipboard test");
+    var dataObject = Clipboard.GetDataObject();
+    var formats = dataObject.GetFormats();
+    var formatsList = String.Join(", ", formats);
+    Trace.TraceInformation($"There are {formats.Length} formats on the clipboard: {formatsList}");
+    if(Clipboard.ContainsText())
+    {
+      var text = Clipboard.GetText();
+      var lines = text.Split(["\r\n", "\n"], StringSplitOptions.None).ToList();
+      Trace.TraceInformation($"Clipboard contains {lines.Count} lines of text");
+      if(lines.Count >= 2 && lines[1].StartsWith("onenote:"))
+      {
+        Trace.TraceInformation($"Found a onenote link on line 2: {lines[1]}");
+      }
+      else if(lines.Count >= 1 && lines[0].StartsWith("onenote:"))
+      {
+        Trace.TraceInformation($"Found a onenote link on line 1: {lines[0]}");
+      }
+      else if(lines.Count == 1 && (lines[0].StartsWith("http://") || lines[0].StartsWith("https://")))
+      {
+        Trace.TraceInformation($"Found a web link on line 1: {lines[0]}");
+      }
+      else if(lines.Count == 1)
+      {
+        Trace.TraceInformation($"Didn't recognize line '{lines[0]}'");
+      }
+      else
+      {
+        Trace.TraceInformation($"Didn't recognize text content '{text}'");
+      }
+    }
+    else
+    {
+      Trace.TraceInformation($"Clipboard does not contain text");
+    }
+    if(Clipboard.ContainsFileDropList())
+    {
+      var dropList = Clipboard.GetFileDropList();
+      if(dropList != null)
+      {
+        var count = dropList.Count;
+        Trace.TraceInformation($"Clipboard contains a file drop list with {count} files");
+        if(count == 1)
+        {
+          var file = dropList[0];
+          Trace.TraceInformation($"the one file is {file}");
+        }
+      }
+    }
+    if(dataObject.GetDataPresent("HTML Format"))
+    {
+      Trace.TraceInformation("HTML content is present");
+      var htmlObject = dataObject.GetData("HTML Format");
+      if(htmlObject is string htmlTextItem)
+      {
+        Trace.TraceInformation($"HTML object text is {htmlTextItem}");
+        var fragmentStart = htmlTextItem.IndexOf("<!--StartFragment-->");
+        if(fragmentStart >= 0)
+        {
+          fragmentStart += "<!--StartFragment-->".Length;
+          var fragmentEnd = htmlTextItem.LastIndexOf("<!--EndFragment-->");
+          if(fragmentEnd > fragmentStart)
+          {
+            //Trace.TraceInformation($"fragment: {fragmentStart} - {fragmentEnd}");
+            var fragment = htmlTextItem.Substring(fragmentStart, fragmentEnd - fragmentStart);
+            Trace.TraceInformation($"Found HTML fragment: {fragment}");
+          }
+        }
+      }
+    }
   }
 }
 
