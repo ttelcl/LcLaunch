@@ -35,6 +35,8 @@
                             Command="{Binding TestEditorCommand}"/>
                     <Button Content="Save Logos"
                             Command="{Binding SaveLogosCommand}"/>
+                    <Button Content="Clipboard Test"
+                            Command="{Binding TestClipboardCommand}"/>
                 </WrapPanel>
                 <DockPanel DockPanel.Dock="Top">
                     <Button

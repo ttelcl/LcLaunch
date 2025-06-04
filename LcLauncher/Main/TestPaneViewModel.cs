@@ -40,6 +40,8 @@ public class TestPaneViewModel: ViewModelBase
         p => EditorViewModelBase.ShowTest(host));
     SaveLogosCommand = new DelegateCommand(
       p => SaveLogoPngs());
+    TestClipboardCommand = new DelegateCommand(
+      p => ClipboardTest());
   }
 
   public MainViewModel Host { get; }
@@ -223,6 +225,8 @@ public class TestPaneViewModel: ViewModelBase
 
   public ICommand SaveLogosCommand { get; }
 
+  public ICommand TestClipboardCommand { get; }
+
   private readonly Guid AppsFolderId =
     new("{1e87508d-89c2-42f0-8a7e-645a0f50ca58}");
 
@@ -340,6 +344,11 @@ public class TestPaneViewModel: ViewModelBase
           $"Logo {logo.Name} ({size}) rejected: does not match size");
       }
     }
+  }
+
+  private void ClipboardTest()
+  {
+    Trace.TraceInformation($"Clipboard test");
   }
 }
 
