@@ -12,6 +12,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
+using LcLauncher.ShellApps;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -132,7 +134,7 @@ public abstract class LaunchDataBase: ILaunchData
     }
     else
     {
-      if(LaunchData.HasShellAppsFolderPrefix(target))
+      if(ShellAppDescriptor.HasShellAppsFolderPrefix(target))
       {
         // This is deffinitely a shell app. It may be missing, but
         // that's something to figure out later.

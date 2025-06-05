@@ -14,6 +14,8 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 
+using LcLauncher.ShellApps;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -191,39 +193,6 @@ public class LaunchData: ILaunchData
     return String.IsNullOrEmpty(IconSource) ? Target : IconSource;
   }
 
-  /// <summary>
-  /// The prefix for the shell apps folder. Technically,
-  /// this is case insensitive. Use <see cref="HasShellAppsFolderPrefix(string?)"/>
-  /// to test for this prefix and its alternate form.
-  /// </summary>
-  public const string ShellAppsFolderPrefix =
-    "shell:AppsFolder\\";
-
-  // some limited documentation link:
-  // https://stackoverflow.com/questions/3605148/where-can-i-learn-about-the-shell-uri
-  // https://superuser.com/a/1690194/142895 suggests looking at
-  //   HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions
-  //   but that doesn't seem right
-
-  public const string ShellAppsFolderPrefix2 =
-    "shell:::{4234d49b-0245-4df3-B780-3893943456e1}\\";
-
-  public static bool HasShellAppsFolderPrefix(string? target)
-  {
-    if(String.IsNullOrEmpty(target)
-      || !target.StartsWith("shell:")) // case sensitive!
-    {
-      return false;
-    }
-    return
-      target.StartsWith(
-        ShellAppsFolderPrefix,
-        StringComparison.InvariantCultureIgnoreCase)
-      || target.StartsWith(
-        ShellAppsFolderPrefix2,
-        StringComparison.InvariantCultureIgnoreCase);
-  }
-
   public static LaunchKind GetLaunchKind(
     string target, bool raw)
   {
@@ -252,7 +221,7 @@ public class LaunchData: ILaunchData
     }
     else
     {
-      if(LaunchData.HasShellAppsFolderPrefix(target))
+      if(ShellAppDescriptor.HasShellAppsFolderPrefix(target))
       {
         // This is definitely a shell app. It may be missing, but
         // that's something to figure out later.
