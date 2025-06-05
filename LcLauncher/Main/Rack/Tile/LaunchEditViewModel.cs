@@ -299,7 +299,7 @@ public class LaunchEditViewModel: EditorViewModelBase
             return null;
           }
         }
-        string? appid = null;
+        AppIdLike? appid = null;
         if(kind == LaunchKind.ShellApplication)
         {
           var candidate = line;
@@ -307,33 +307,21 @@ public class LaunchEditViewModel: EditorViewModelBase
           {
             candidate = candidate.Substring("shell:AppsFolder\\".Length);
           }
-          if(LaunchData.LooksLikeAppId(candidate))
-          {
-            appid = candidate;
-            // further processed later
-          }
+          appid = AppIdLike.TryParse(candidate);
           //// Unlikely to happen, since the prefix is unlikely to be present
-          //// Waiting for shared app-related infrastructure.
-          //// Reminder: publisher IDs match [a-hj-km-np-tv-z0-9]{13}
-          //// PFNs (the first part) can use characters [-_.a-zA-Z0-9]{3,50}
-          //// Observed parse names match ^[.a-zA-Z0-9]{3,50}_[a-hj-km-np-tv-z0-9]{13}![.a-zA-Z0-9]{3,50}$
-          //MessageBox.Show(
-          //  "Not Implemented: Store App Support",
-          //  "Not Implemented",
-          //  MessageBoxButton.OK,
-          //  MessageBoxImage.Information);
-          //return null;
         }
         if(kind == LaunchKind.Invalid)
         {
-          if(LaunchData.LooksLikeAppId(line))
-          {
-            appid = line;
-          }
+          appid = AppIdLike.TryParse(line);
         }
         if(appid != null)
         {
-          var levm = CreateFromApp(tileHost, appid, appid /*placeholder*/);
+          // 'name' is a placeholder until we have a way to get the real name
+          var name = $"{appid.FamilyName} - {appid.ApplicationName}";
+          var levm = CreateFromApp(
+            tileHost,
+            name,
+            appid.FullName);
           return levm;
         }
 
