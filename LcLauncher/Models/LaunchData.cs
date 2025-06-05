@@ -224,13 +224,6 @@ public class LaunchData: ILaunchData
         StringComparison.InvariantCultureIgnoreCase);
   }
 
-  public static bool LooksLikeAppId(string appid)
-  {
-    return Regex.IsMatch(
-      appid,
-      "^[.a-zA-Z0-9]{3,50}_[a-hj-km-np-tv-z0-9]{13}![.a-zA-Z0-9]{3,50}$");
-  }
-
   public static LaunchKind GetLaunchKind(
     string target, bool raw)
   {

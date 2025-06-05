@@ -72,7 +72,7 @@
             </MenuItem>
             <Separator/>
             <MenuItem
-                Header="Paste as tile"
+                Header="Paste as launcher tile..."
                 ToolTip="(Try to paste your clipboard content as a launcher tile)"
                 ToolTipService.ShowOnDisabled="True"
                 Command="{Binding TryPasteAsTileCommand}">
