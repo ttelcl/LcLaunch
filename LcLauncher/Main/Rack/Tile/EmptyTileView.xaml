@@ -72,6 +72,15 @@
             </MenuItem>
             <Separator/>
             <MenuItem
+                Header="Paste as tile"
+                ToolTip="(Try to paste your clipboard content as a launcher tile)"
+                ToolTipService.ShowOnDisabled="True"
+                Command="{Binding TryPasteAsTileCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="ContentPaste" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem
                 Header="Bind to Shortcut..."
                 ToolTip="(from your Start Menu or elsewhere)"
                 ToolTipService.ShowOnDisabled="True"

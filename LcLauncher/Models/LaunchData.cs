@@ -224,6 +224,13 @@ public class LaunchData: ILaunchData
         StringComparison.InvariantCultureIgnoreCase);
   }
 
+  public static bool LooksLikeAppId(string appid)
+  {
+    return Regex.IsMatch(
+      appid,
+      "^[.a-zA-Z0-9]{3,50}_[a-hj-km-np-tv-z0-9]{13}![.a-zA-Z0-9]{3,50}$");
+  }
+
   public static LaunchKind GetLaunchKind(
     string target, bool raw)
   {
@@ -254,7 +261,7 @@ public class LaunchData: ILaunchData
     {
       if(LaunchData.HasShellAppsFolderPrefix(target))
       {
-        // This is deffinitely a shell app. It may be missing, but
+        // This is definitely a shell app. It may be missing, but
         // that's something to figure out later.
         return LaunchKind.ShellApplication;
       }
@@ -274,8 +281,8 @@ public class LaunchData: ILaunchData
           // We require a minimum of 2 characters for the scheme so we
           // can distinguish between a scheme and a drive letter.
           if(Regex.IsMatch(
-              target.Substring(0, colonIndex),
-              @"^[a-zA-Z][-+a-zA-Z0-9.]+:"))
+              target.Substring(0, colonIndex+1),
+              @"^[a-zA-Z][-+a-zA-Z0-9.]+:$"))
           {
             // Looks like a URI
             return LaunchKind.UriKind;

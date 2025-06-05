@@ -9,11 +9,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
 using LcLauncher.Models;
+using LcLauncher.Persistence;
 using LcLauncher.WpfUtilities;
 
 using Microsoft.Win32;
@@ -126,7 +128,7 @@ public class LaunchEditViewModel: EditorViewModelBase
     // environment variables, or path variable edits.
   }
 
-  public static  LaunchEditViewModel CreateEmpty(
+  public static LaunchEditViewModel CreateEmpty(
     TileHostViewModel tileHost)
   {
     var model = new LaunchData(
@@ -164,6 +166,247 @@ public class LaunchEditViewModel: EditorViewModelBase
       applicationName,
       null);
     return new LaunchEditViewModel(tileHost, model);
+  }
+
+  public static LaunchEditViewModel? TryFromUri(
+    TileHostViewModel tileHost,
+    string uri,
+    string? title,
+    string? tooltip = null)
+  {
+    var kind = LaunchData.GetLaunchKind(uri, false);
+    if(kind != LaunchKind.UriKind)
+    {
+      MessageBox.Show(
+        "The provided argument is not a valid URI",
+        "Invalid argument",
+        MessageBoxButton.OK,
+        MessageBoxImage.Error);
+      return null;
+    }
+    var model = new LaunchData(
+      uri,
+      true,
+      title,
+      tooltip);
+    return new LaunchEditViewModel(tileHost, model);
+  }
+
+  public static LaunchEditViewModel? TryFromOneNote(
+    TileHostViewModel tileHost,
+    string onenoteUri)
+  {
+    if(!onenoteUri.StartsWith("onenote:"))
+    {
+      MessageBox.Show(
+        "The provided argument is not a valid OneNote URI",
+        "Invalid argument",
+        MessageBoxButton.OK,
+        MessageBoxImage.Error);
+      return null;
+    }
+    string? title = null;
+    string? tooltip = null;
+    var fragmentStartIndex = onenoteUri.IndexOf('#');
+    if(fragmentStartIndex != -1)
+    {
+      tooltip = onenoteUri.Substring(0, fragmentStartIndex);
+      tooltip = tooltip["onenote:".Length..];
+      fragmentStartIndex++;
+      var fragmentEndIndex = onenoteUri.IndexOf('&', fragmentStartIndex);
+      if(fragmentEndIndex != -1)
+      {
+        var fragment = onenoteUri.Substring(
+          fragmentStartIndex,
+          fragmentEndIndex - fragmentStartIndex);
+        title = Uri.UnescapeDataString(fragment);
+      }
+    }
+    return TryFromUri(tileHost, onenoteUri, title);
+  }
+
+  public static LaunchEditViewModel? TryFromClipboard(
+    TileHostViewModel tileHost)
+  {
+    if(Clipboard.ContainsFileDropList())
+    {
+      // One or more file were copied in explorer or similar tools
+      // (not just plain text that may be a filename)
+      var fileDropList = Clipboard.GetFileDropList();
+      if(fileDropList != null && fileDropList.Count > 0)
+      {
+        foreach(var file in fileDropList)
+        {
+          // find first valid one, or fall through to other clipboard content
+          if(!String.IsNullOrEmpty(file) && File.Exists(file))
+          {
+            return CreateFromFile(tileHost, file);
+          }
+        }
+      }
+    }
+    if(Clipboard.ContainsText())
+    {
+      var text = Clipboard.GetText();
+      var lines = text.Split(["\r\n", "\n"], StringSplitOptions.None);
+      if(lines.Length > 0)
+      {
+        // Prioritize onenote links (these normally also have a valid
+        // https link first, but we want to ignore that if there is a local link)
+        var onenoteLine =
+          lines.Take(2).FirstOrDefault(s => s.StartsWith("onenote:"));
+        if(onenoteLine != null)
+        {
+          var levm = TryFromOneNote(tileHost, onenoteLine);
+          if(levm != null)
+          {
+            return levm;
+          }
+        }
+        // For the rest of plain text content we are only interested in cases
+        // that have a single line: URIs and file names
+        var line = lines[0];
+        // Preliminary check using existing code. Note that the outcome is
+        // only limiting what is possible, not a guaranteed valid input.
+        var kind = LaunchData.GetLaunchKind(line, false);
+        if(kind == LaunchKind.Document)
+        {
+          // This is includes 'raw' executables. CreateFromFile will handle that.
+          if(File.Exists(line))
+          {
+            return CreateFromFile(tileHost, line);
+          }
+          else
+          {
+            MessageBox.Show(
+              $"Failed: This looks like a file name, but that file doesn't exist:\n{line}",
+              "Failed",
+              MessageBoxButton.OK,
+              MessageBoxImage.Stop);
+            return null;
+          }
+        }
+        if(kind == LaunchKind.UriKind)
+        {
+          var levm = TryFromUri(tileHost, line, "[please edit title]");
+          if(levm != null)
+          {
+            return levm;
+          }
+          else
+          {
+            // a message was shown already
+            return null;
+          }
+        }
+        string? appid = null;
+        if(kind == LaunchKind.ShellApplication)
+        {
+          var candidate = line;
+          if(line.StartsWith("shell:AppsFolder\\", StringComparison.OrdinalIgnoreCase))
+          {
+            candidate = candidate.Substring("shell:AppsFolder\\".Length);
+          }
+          if(LaunchData.LooksLikeAppId(candidate))
+          {
+            appid = candidate;
+            // further processed later
+          }
+          //// Unlikely to happen, since the prefix is unlikely to be present
+          //// Waiting for shared app-related infrastructure.
+          //// Reminder: publisher IDs match [a-hj-km-np-tv-z0-9]{13}
+          //// PFNs (the first part) can use characters [-_.a-zA-Z0-9]{3,50}
+          //// Observed parse names match ^[.a-zA-Z0-9]{3,50}_[a-hj-km-np-tv-z0-9]{13}![.a-zA-Z0-9]{3,50}$
+          //MessageBox.Show(
+          //  "Not Implemented: Store App Support",
+          //  "Not Implemented",
+          //  MessageBoxButton.OK,
+          //  MessageBoxImage.Information);
+          //return null;
+        }
+        if(kind == LaunchKind.Invalid)
+        {
+          if(LaunchData.LooksLikeAppId(line))
+          {
+            appid = line;
+          }
+        }
+        if(appid != null)
+        {
+          var levm = CreateFromApp(tileHost, appid, appid /*placeholder*/);
+          return levm;
+        }
+
+        // Fall through - it may still be usable HTML
+
+        //MessageBox.Show(
+        //  $"Clipboard text content not recognized:\n{line}",
+        //  "Not Recognized",
+        //  MessageBoxButton.OK,
+        //  MessageBoxImage.Warning);
+        //return null;
+      }
+    }
+    var dataObject = Clipboard.GetDataObject();
+    if(dataObject.GetDataPresent("HTML Format"))
+    {
+      var htmlObject = dataObject.GetData("HTML Format");
+      if(htmlObject is string htmlText)
+      {
+        var fragmentStart = htmlText.IndexOf("<!--StartFragment-->");
+        if(fragmentStart >= 0)
+        {
+          fragmentStart += "<!--StartFragment-->".Length;
+          var fragmentEnd = htmlText.LastIndexOf("<!--EndFragment-->");
+          if(fragmentEnd > fragmentStart)
+          {
+            var fragment = htmlText.Substring(
+              fragmentStart, fragmentEnd - fragmentStart);
+            var levm = TryFromFirstHtmlLink(tileHost, fragment);
+            if(levm != null)
+            {
+              return levm;
+            }
+            else
+            {
+              MessageBox.Show(
+                $"Failed: Found HTML content on Clipboard, but there were no links in it.",
+                "Failed",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+              return null;
+            }
+          }
+        }
+      }
+    }
+    MessageBox.Show(
+      $"No suitable content found on Clipboard",
+      "Not Recognized",
+      MessageBoxButton.OK,
+      MessageBoxImage.Error);
+    return null;
+  }
+
+  public static LaunchEditViewModel? TryFromFirstHtmlLink(
+    TileHostViewModel tileHost,
+    string html)
+  {
+    var match =
+      Regex.Match(
+        html,
+        "<a\\s+[^>]*href=\"([^\"]+)\"[^>]*>([^<]*)</a\\s*>");
+    if(match.Success)
+    {
+      var href = match.Groups[1].Value;
+      var title = match.Groups[2].Value;
+      var levm = TryFromUri(tileHost, href, title, href);
+      if(levm != null)
+      {
+        return levm;
+      }
+    }
+    return null;
   }
 
   public ICommand PickIconCommand { get; private set; } = null!;
@@ -213,10 +456,21 @@ public class LaunchEditViewModel: EditorViewModelBase
     set {
       if(SetValueProperty(ref _classification, value))
       {
+        KindInfo = new LaunchKindInfo(Classification, Target);
       }
     }
   }
   private LaunchKind _classification = LaunchKind.Invalid;
+
+  public LaunchKindInfo KindInfo {
+    get => _kindInfo;
+    set {
+      if(SetInstanceProperty(ref _kindInfo, value))
+      {
+      }
+    }
+  }
+  private LaunchKindInfo _kindInfo = new LaunchKindInfo(LaunchKind.Invalid, "");
 
   public string Title {
     get => _title;
@@ -234,6 +488,8 @@ public class LaunchEditViewModel: EditorViewModelBase
       if(SetValueProperty(ref _target, value))
       {
         Classification = LaunchData.GetLaunchKind(value, !Model.ShellMode);
+        // Recalculate KindInfo even if Classification didn't change
+        KindInfo = new LaunchKindInfo(Classification, Target);
       }
     }
   }
@@ -360,7 +616,7 @@ public class LaunchEditViewModel: EditorViewModelBase
 
   private bool AllowWorkingDirectory()
   {
-    return Classification == LaunchKind.Raw; 
+    return Classification == LaunchKind.Raw;
   }
 
   private void ClearWorkingDirectory()
@@ -433,13 +689,39 @@ public class LaunchEditViewModel: EditorViewModelBase
     var reason = WhyNotValid();
     if(reason == null)
     {
-      // valid
-      // NYI
-      MessageBox.Show(
-        "This editor is not yet implemented",
-        "Not implemented",
-        MessageBoxButton.OK,
-        MessageBoxImage.Warning);
+      var model = Model;
+      model.Target = Target;
+      model.Title = String.IsNullOrEmpty(Title) ? null : Title;
+      model.Tooltip = String.IsNullOrEmpty(Tooltip) ? null : Tooltip;
+      model.WorkingDirectory = String.IsNullOrEmpty(WorkingDirectory) ? null : WorkingDirectory;
+      model.IconSource = String.IsNullOrEmpty(IconSource) ? null : IconSource;
+      model.Verb = Verb;
+      model.Arguments.Clear();
+      model.Arguments.AddRange(Arguments);
+      model.Environment.Clear();
+      foreach(var env in Environment)
+      {
+        model.Environment.Add(env.Key, env.Value);
+      }
+      model.PathEnvironment.Clear();
+      foreach(var env in PathEnvironment)
+      {
+        var edit = new PathEdit(
+          env.Value.Prepend,
+          env.Value.Append);
+        model.PathEnvironment.Add(env.Key, edit);
+      }
+
+      // Create a new tile or recreate the modified one
+      var tile = LaunchTileViewModel.FromLaunch(
+        TileHost.TileList, model);
+      TileHost.Tile = tile;
+      TileHost.TileList.MarkDirty();
+      if(String.IsNullOrEmpty(model.Icon48))
+      {
+        tile.LoadIcon(IconLoadLevel.LoadIfMissing);
+      }
+      IsActive = false;
     }
     else
     {

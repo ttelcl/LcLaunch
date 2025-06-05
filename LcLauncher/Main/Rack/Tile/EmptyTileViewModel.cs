@@ -44,6 +44,9 @@ public class EmptyTileViewModel: TileViewModel
     CreateGroupTileCommand = new DelegateCommand(
       p => CreateGroupTile(),
       p => CanCreateTile());
+    TryPasteAsTileCommand = new DelegateCommand(
+      p => CreateLauncherFromClipboard(),
+      p => CanCreateTile());
   }
 
   /// <summary>
@@ -90,6 +93,8 @@ public class EmptyTileViewModel: TileViewModel
   public ICommand CreateDocumentTileCommand { get; }
 
   public ICommand CreateExecutableTileCommand { get; }
+
+  public ICommand TryPasteAsTileCommand { get; }
 
   private void DeleteTile()
   {
@@ -307,4 +312,18 @@ public class EmptyTileViewModel: TileViewModel
       editModel.IsActive = true;
     }
   }
+
+  private void CreateLauncherFromClipboard()
+  {
+    if(CanCreateTile())
+    {
+      var editModel = LaunchEditViewModel.TryFromClipboard(Host!);
+      if(editModel != null)
+      {
+        // else: a message was shown already
+        editModel.IsActive = true;
+      }
+    }
+  }
+
 }

@@ -36,7 +36,7 @@ public partial class App: Application
     var defaultTheme = configuration["defaultTheme"];
     if(String.IsNullOrEmpty(defaultTheme))
     {
-      defaultTheme = "Olive";
+      defaultTheme = MainViewModel.DefaultDefaultTheme;
     }
 
     ThemeManager.Current.ChangeTheme(this, "Dark." + defaultTheme);

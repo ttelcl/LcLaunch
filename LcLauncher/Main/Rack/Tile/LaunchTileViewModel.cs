@@ -38,7 +38,8 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
       RawModel = null;
       NewModel = shell.ToLaunch();
       Classification = LaunchData.GetLaunchKind(
-        model.TargetPath, false);
+        shell.TargetPath, false);
+      KindInfo = new LaunchKindInfo(Classification, shell.TargetPath);
     }
     else if(model is RawLaunch raw)
     {
@@ -46,7 +47,8 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
       RawModel = raw;
       NewModel = raw.ToLaunch();
       Classification = LaunchData.GetLaunchKind(
-        model.TargetPath, true);
+        raw.TargetPath, true);
+      KindInfo = new LaunchKindInfo(Classification, raw.TargetPath);
     }
     else if(model is LaunchData launch)
     {
@@ -55,6 +57,7 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
       NewModel = launch;
       Classification = LaunchData.GetLaunchKind(
         launch.Target, !launch.ShellMode);
+      KindInfo = new LaunchKindInfo(Classification, launch.Target);
     }
     else
     {
@@ -62,6 +65,7 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
       RawModel = null;
       NewModel = null;
       Classification = LaunchKind.Invalid;
+      KindInfo = new LaunchKindInfo(LaunchKind.Invalid, "");
     }
     _title = Model.GetEffectiveTitle();
     _tooltip = Model.GetEffectiveTooltip();
@@ -137,6 +141,8 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
   public LaunchData? NewModel { get; }
 
   public LaunchKind Classification { get; }
+
+  public LaunchKindInfo KindInfo { get; }
 
   public string Title {
     get => _title;
@@ -297,6 +303,7 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
   public string FallbackIcon => Model switch {
     ShellLaunch => "RocketLaunch",
     RawLaunch => "RocketLaunchOutline",
+    LaunchData => "RocketLaunchOutline",
     _ => "Help"
   };
 

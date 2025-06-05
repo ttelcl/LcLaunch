@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
@@ -19,8 +20,8 @@ using Microsoft.WindowsAPICodePack.Shell;
 using Newtonsoft.Json;
 
 using LcLauncher.Models;
-using LcLauncher.WpfUtilities;
 using LcLauncher.IconUpdates;
+using LcLauncher.WpfUtilities;
 
 namespace LcLauncher.Main;
 
@@ -40,6 +41,8 @@ public class TestPaneViewModel: ViewModelBase
         p => EditorViewModelBase.ShowTest(host));
     SaveLogosCommand = new DelegateCommand(
       p => SaveLogoPngs());
+    TestClipboardCommand = new DelegateCommand(
+      p => ClipboardTest());
   }
 
   public MainViewModel Host { get; }
@@ -223,6 +226,8 @@ public class TestPaneViewModel: ViewModelBase
 
   public ICommand SaveLogosCommand { get; }
 
+  public ICommand TestClipboardCommand { get; }
+
   private readonly Guid AppsFolderId =
     new("{1e87508d-89c2-42f0-8a7e-645a0f50ca58}");
 
@@ -338,6 +343,91 @@ public class TestPaneViewModel: ViewModelBase
       {
         Trace.TraceWarning(
           $"Logo {logo.Name} ({size}) rejected: does not match size");
+      }
+    }
+  }
+
+  private void ClipboardTest()
+  {
+    var dataObject = Clipboard.GetDataObject();
+    var formats = dataObject.GetFormats();
+    var formatsList = String.Join(", ", formats);
+    Trace.TraceInformation($"There are {formats.Length} formats on the clipboard: {formatsList}");
+    if(Clipboard.ContainsText())
+    {
+      var text = Clipboard.GetText();
+      var lines = text.Split(["\r\n", "\n"], StringSplitOptions.None).ToList();
+      Trace.TraceInformation($"Clipboard contains {lines.Count} lines of text");
+      var onenoteLine =
+        lines.Take(2).FirstOrDefault(s => s.StartsWith("onenote:"));
+      if(onenoteLine != null)
+      {
+        Trace.TraceInformation($"Found a onenote link: {onenoteLine}");
+        var fragmentStartIndex = onenoteLine.IndexOf('#');
+        if(fragmentStartIndex != -1)
+        {
+          fragmentStartIndex++;
+          var fragmentEndIndex = onenoteLine.IndexOf('&', fragmentStartIndex);
+          if(fragmentEndIndex != -1)
+          { 
+            var fragment = onenoteLine.Substring(
+              fragmentStartIndex,
+              fragmentEndIndex - fragmentStartIndex);
+            fragment = Uri.UnescapeDataString(fragment);
+            Trace.TraceInformation($"The title is: {fragment}");
+          }
+        }
+      }
+      else if(lines.Count == 1 && (lines[0].StartsWith("http://") || lines[0].StartsWith("https://")))
+      {
+        Trace.TraceInformation($"Found a web link on line 1: {lines[0]}");
+      }
+      else if(lines.Count == 1)
+      {
+        Trace.TraceInformation($"Didn't recognize line '{lines[0]}'");
+      }
+      else
+      {
+        Trace.TraceInformation($"Didn't recognize text content '{text}'");
+      }
+    }
+    else
+    {
+      Trace.TraceInformation($"Clipboard does not contain text");
+    }
+    if(Clipboard.ContainsFileDropList())
+    {
+      var dropList = Clipboard.GetFileDropList();
+      if(dropList != null)
+      {
+        var count = dropList.Count;
+        Trace.TraceInformation($"Clipboard contains a file drop list with {count} files");
+        if(count == 1)
+        {
+          var file = dropList[0];
+          Trace.TraceInformation($"the one file is {file}");
+        }
+      }
+    }
+    if(dataObject.GetDataPresent("HTML Format"))
+    {
+      Trace.TraceInformation("HTML content is present");
+      var htmlObject = dataObject.GetData("HTML Format");
+      if(htmlObject is string htmlTextItem)
+      {
+        Trace.TraceInformation($"HTML object text is {htmlTextItem}");
+        var fragmentStart = htmlTextItem.IndexOf("<!--StartFragment-->");
+        if(fragmentStart >= 0)
+        {
+          fragmentStart += "<!--StartFragment-->".Length;
+          var fragmentEnd = htmlTextItem.LastIndexOf("<!--EndFragment-->");
+          if(fragmentEnd > fragmentStart)
+          {
+            //Trace.TraceInformation($"fragment: {fragmentStart} - {fragmentEnd}");
+            var fragment = htmlTextItem.Substring(fragmentStart, fragmentEnd - fragmentStart);
+            Trace.TraceInformation($"Found HTML fragment: {fragment}");
+          }
+        }
       }
     }
   }

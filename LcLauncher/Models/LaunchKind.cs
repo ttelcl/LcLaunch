@@ -40,7 +40,8 @@ public enum LaunchKind
   ShellApplication,
 
   /// <summary>
-  /// Some URI other than a shell app.
+  /// Some URI other than a shell app. E.g. https://... or
+  /// onenote:...
   /// </summary>
   UriKind,
 
