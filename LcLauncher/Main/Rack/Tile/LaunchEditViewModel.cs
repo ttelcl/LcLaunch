@@ -16,6 +16,7 @@ using System.Windows.Input;
 
 using LcLauncher.Models;
 using LcLauncher.Persistence;
+using LcLauncher.ShellApps;
 using LcLauncher.WpfUtilities;
 
 using Microsoft.Win32;
@@ -155,10 +156,10 @@ public class LaunchEditViewModel: EditorViewModelBase
     string applicationName,
     string applicationIdentifier)
   {
-    if(!LaunchData.HasShellAppsFolderPrefix(applicationIdentifier))
+    if(!ShellAppDescriptor.HasShellAppsFolderPrefix(applicationIdentifier))
     {
       applicationIdentifier =
-        LaunchData.ShellAppsFolderPrefix + applicationIdentifier;
+        ShellAppDescriptor.ShellAppsFolderPrefix + applicationIdentifier;
     }
     var model = new LaunchData(
       applicationIdentifier,
@@ -300,39 +301,62 @@ public class LaunchEditViewModel: EditorViewModelBase
           }
         }
         AppIdLike? appid = null;
+        string? parsingName = null;
         if(kind == LaunchKind.ShellApplication)
         {
           var candidate = line;
-          if(line.StartsWith("shell:AppsFolder\\", StringComparison.OrdinalIgnoreCase))
-          {
-            candidate = candidate.Substring("shell:AppsFolder\\".Length);
-          }
+          candidate = ShellAppDescriptor.StripShellAppsPrefix(candidate);
           appid = AppIdLike.TryParse(candidate);
-          //// Unlikely to happen, since the prefix is unlikely to be present
+          parsingName = line;
         }
         if(kind == LaunchKind.Invalid)
         {
           appid = AppIdLike.TryParse(line);
+          if(appid != null)
+          {
+            parsingName = appid.FullName;
+          }
         }
-        if(appid != null)
+        if(parsingName != null)
         {
+          var descriptor = ShellAppDescriptor.TryFromParsingName(parsingName);
+          if(descriptor == null)
+          {
+            if(appid == null)
+            {
+              // probably a mistake anyway - just abort
+              MessageBox.Show(
+                "This app descriptor was not recognized as valid.",
+                "Error",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+              return null;
+            }
+            var result = MessageBox.Show(
+              "This app was not recognized as installed on this system.\n" +
+              "The tile you are about to create probably won't work.\n" +
+              "Continue anyway?",
+              "Warning",
+              MessageBoxButton.OKCancel,
+              MessageBoxImage.Warning);
+            if(result != MessageBoxResult.OK)
+            {
+              return null;
+            }
+          }
           // 'name' is a placeholder until we have a way to get the real name
-          var name = $"{appid.FamilyName} - {appid.ApplicationName}";
+          var name =
+            descriptor == null 
+            ? $"{appid!.FamilyName} - {appid.ApplicationName}"
+            : descriptor.Name;
           var levm = CreateFromApp(
             tileHost,
             name,
-            appid.FullName);
+            parsingName);
           return levm;
         }
 
         // Fall through - it may still be usable HTML
-
-        //MessageBox.Show(
-        //  $"Clipboard text content not recognized:\n{line}",
-        //  "Not Recognized",
-        //  MessageBoxButton.OK,
-        //  MessageBoxImage.Warning);
-        //return null;
       }
     }
     var dataObject = Clipboard.GetDataObject();
