@@ -12,6 +12,7 @@ using System.Windows.Threading;
 using LcLauncher.IconUpdates;
 using LcLauncher.Main.Rack;
 using LcLauncher.Persistence;
+using LcLauncher.ShellApps;
 using LcLauncher.Storage;
 using LcLauncher.WpfUtilities;
 
@@ -25,6 +26,7 @@ public class MainViewModel: ViewModelBase
 
   public MainViewModel(IConfigurationRoot configuration)
   {
+    AppCache = new ShellAppCache(false);
     Configuration = configuration;
     DefaultTheme = configuration["defaultTheme"] ?? DefaultDefaultTheme;
     ShowDevPane = configuration.GetValue<bool>("showDevPane", false);
@@ -51,9 +53,18 @@ public class MainViewModel: ViewModelBase
           $"Rack Queue is now stopped");
       }
     };
+    DevReloadAppsCommand = new DelegateCommand(
+      p => { AppCache.Refill(TimeSpan.FromMinutes(1)); }
+    );
+    DevDumpAppsCommand = new DelegateCommand(
+      p => { DevDumpApps(); });
   }
 
   public IConfigurationRoot Configuration { get; }
+
+  public ICommand DevReloadAppsCommand { get; }
+
+  public ICommand DevDumpAppsCommand { get; }
 
   public ICommand ProcessNextIconJobCommand { get; }
 
@@ -64,6 +75,8 @@ public class MainViewModel: ViewModelBase
   public JsonDataStore FileStore { get => StoreImplementation.Provider; }
 
   public TestPaneViewModel TestPane { get; }
+
+  public ShellAppCache AppCache { get; }
 
   public RackViewModel? CurrentRack {
     get => _currentRack;
@@ -115,6 +128,13 @@ public class MainViewModel: ViewModelBase
   {
     var processed = CurrentRack?.IconLoadQueue.ProcessNextJob() ?? false;
     return processed;
+  }
+
+  private void DevDumpApps()
+  {
+    AppCache.Refill(TimeSpan.FromMinutes(5));
+    var apps = AppCache.Descriptors.ToList();
+    StoreImplementation.Provider.SaveData("appdump2", ".json", apps);
   }
 
   public bool CanProcessNextIconJob()

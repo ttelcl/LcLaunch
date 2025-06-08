@@ -156,11 +156,7 @@ public class LaunchEditViewModel: EditorViewModelBase
     string applicationName,
     string applicationIdentifier)
   {
-    if(!ShellAppDescriptor.HasShellAppsFolderPrefix(applicationIdentifier))
-    {
-      applicationIdentifier =
-        ShellAppDescriptor.ShellAppsFolderPrefix + applicationIdentifier;
-    }
+    applicationIdentifier = ShellAppDescriptor.WithShellAppsPrefix(applicationIdentifier);
     var model = new LaunchData(
       applicationIdentifier,
       true,
