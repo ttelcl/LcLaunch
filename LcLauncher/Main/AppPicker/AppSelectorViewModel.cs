@@ -178,7 +178,11 @@ public class AppSelectorViewModel: EditorViewModelBase
   {
     AppCache.Refill(minAge);
     Applications.Clear();
-    foreach(var descriptor in AppCache.Descriptors)
+    var descriptors =
+      from descriptor in AppCache.Descriptors
+      orderby descriptor.Label
+      select descriptor;
+    foreach(var descriptor in descriptors)
     {
       var app = new AppViewModel(descriptor);
       Applications.Add(app);
