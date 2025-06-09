@@ -102,7 +102,7 @@
                 Header="Bind to Application..."
                 ToolTip="(from application list)"
                 ToolTipService.ShowOnDisabled="True"
-                IsEnabled="False">
+                Command="{Binding CreateAppTileCommand}">
                 <MenuItem.Icon>
                     <iconPacks:PackIconMaterial Kind="ApplicationOutline" Width="20" Height="20"/>
                 </MenuItem.Icon>

@@ -16,6 +16,7 @@ using Microsoft.Win32;
 
 using LcLauncher.Models;
 using LcLauncher.WpfUtilities;
+using LcLauncher.Main.AppPicker;
 
 namespace LcLauncher.Main.Rack.Tile;
 
@@ -46,6 +47,9 @@ public class EmptyTileViewModel: TileViewModel
       p => CanCreateTile());
     TryPasteAsTileCommand = new DelegateCommand(
       p => CreateLauncherFromClipboard(),
+      p => CanCreateTile());
+    CreateAppTileCommand = new DelegateCommand(
+      p => CreateAppTile(),
       p => CanCreateTile());
   }
 
@@ -93,6 +97,8 @@ public class EmptyTileViewModel: TileViewModel
   public ICommand CreateDocumentTileCommand { get; }
 
   public ICommand CreateExecutableTileCommand { get; }
+
+  public ICommand CreateAppTileCommand { get; }
 
   public ICommand TryPasteAsTileCommand { get; }
 
@@ -310,6 +316,15 @@ public class EmptyTileViewModel: TileViewModel
       var editModel = new GroupEditViewModel(
         Host!);
       editModel.IsActive = true;
+    }
+  }
+
+  private void CreateAppTile()
+  {
+    if(CanCreateTile())
+    {
+      var selectorModel = Host!.Rack.Owner.GetAppSelector(Host!);
+      selectorModel.IsActive = true;
     }
   }
 

@@ -108,6 +108,64 @@ public class ShellAppDescriptor
   [JsonIgnore]
   public AppIdLike? AppId { get; private set; }
 
+  /// <summary>
+  /// True if <see cref="FileSystemPath"/> points to an existing file
+  /// (and not a folder, nor is undefined)
+  /// </summary>
+  [JsonIgnore]
+  public bool HasFile {
+    get {
+      return
+        Kind switch {
+          ShellAppKind.PlainFileApp => FileSystemPath != null,
+          ShellAppKind.FolderFileApp => FileSystemPath != null,
+          _ => false
+        };
+    }
+  }
+
+  /// <summary>
+  /// True if <see cref="FileSystemPath"/> points to an existing folder
+  /// (and not a file, nor is undefined). This is a very unusual case.
+  /// </summary>
+  [JsonIgnore]
+  public bool HasFolder {
+    get {
+      return
+        Kind switch {
+          ShellAppKind.PlainFolderApp => FileSystemPath != null,
+          _ => false
+        };
+    }
+  }
+
+  /// <summary>
+  /// True if this app is an accessible file that is an executable.
+  /// If true, this app can be used by raw tiles, doc tiles and app tiles.
+  /// </summary>
+  [JsonIgnore]
+  public bool IsExe {
+    get => HasFile && FileSystemPath!.EndsWith(".exe", StringComparison.OrdinalIgnoreCase);
+  }
+
+  /// <summary>
+  /// True if this app is an accessible file that is NOT an executable
+  /// If true, this app can be used by doc tiles and app tiles, but not by raw tiles
+  /// </summary>
+  [JsonIgnore]
+  public bool IsDoc {
+    get => HasFile && !FileSystemPath!.EndsWith(".exe", StringComparison.OrdinalIgnoreCase);
+  }
+
+  /// <summary>
+  /// True if this app can be launched directly as URI, without being wrapped as an app
+  /// first.
+  /// </summary>
+  [JsonIgnore]
+  public bool IsUri {
+    get => Kind == ShellAppKind.UriKind;
+  }
+
   private void Classify()
   {
     // WIP!

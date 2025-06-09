@@ -10,7 +10,9 @@ using System.Windows.Input;
 using System.Windows.Threading;
 
 using LcLauncher.IconUpdates;
+using LcLauncher.Main.AppPicker;
 using LcLauncher.Main.Rack;
+using LcLauncher.Main.Rack.Tile;
 using LcLauncher.Persistence;
 using LcLauncher.ShellApps;
 using LcLauncher.Storage;
@@ -77,6 +79,12 @@ public class MainViewModel: ViewModelBase
   public TestPaneViewModel TestPane { get; }
 
   public ShellAppCache AppCache { get; }
+
+  public AppSelectorViewModel GetAppSelector(
+    TileHostViewModel target)
+  {
+    return new AppSelectorViewModel(this, target);
+  }
 
   public RackViewModel? CurrentRack {
     get => _currentRack;

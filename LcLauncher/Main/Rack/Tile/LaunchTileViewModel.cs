@@ -21,7 +21,8 @@ using LcLauncher.WpfUtilities;
 namespace LcLauncher.Main.Rack.Tile;
 
 /// <summary>
-/// Shared tile view model for both launch tiles.
+/// Shared tile view model for both kinds of old launch tiles, as well
+/// as for the new launch tile model.
 /// </summary>
 public class LaunchTileViewModel: TileViewModel, IIconHost
 {
