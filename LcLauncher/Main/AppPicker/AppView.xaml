@@ -8,23 +8,12 @@
     mc:Ignorable="d" 
     xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-    Height="52" Width="1080"
+    Height="52"
     d:DataContext="{d:DesignInstance local:AppViewModel, IsDesignTimeCreatable=False}"
     d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="50"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+    <DockPanel>
         <Border
-            Grid.Column="0"
-            Grid.Row="0"
-            Grid.RowSpan="2"
+            DockPanel.Dock="Left"
             BorderThickness="1"
             BorderBrush="{DynamicResource MahApps.Brushes.Accent}"
             Margin="0,0,15,0"
@@ -33,38 +22,40 @@
             <!-- space for icon? -->
         </Border>
         <TextBlock
-            Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2"
+            DockPanel.Dock="Top"
             FontSize="18"
+            Margin="0,3,0,0"
             Text="{Binding Label}"/>
         <TextBlock
-            Grid.Row="1" Grid.Column="1"
+            DockPanel.Dock="Left" Width="60"
+            TextAlignment="Right"
             Visibility="{Binding Descriptor.FileSystemPath, Converter={StaticResource VisibleIfNull}}"
             FontStyle="Italic"
             FontSize="12"
             Foreground="{DynamicResource MahApps.Brushes.Gray6}"
-            HorizontalAlignment="Right"
             Text="App ID: "/>
         <TextBlock
-            Grid.Row="1" Grid.Column="2"
+            DockPanel.Dock="Left" Width="60"
+            TextAlignment="Right"
+            Visibility="{Binding Descriptor.FileSystemPath, Converter={StaticResource VisibleIfNotNull}}"
+            FontStyle="Italic"
+            FontSize="12"
+            Foreground="{DynamicResource MahApps.Brushes.Gray6}"
+            Text="Path: "/>
+        <TextBlock
+            DockPanel.Dock="Left"
             Visibility="{Binding Descriptor.FileSystemPath, Converter={StaticResource VisibleIfNull}}"
             FontStyle="Italic"
             FontSize="12"
             Foreground="{DynamicResource MahApps.Brushes.Gray}"
             Text="{Binding Descriptor.ParsingName}"/>
         <TextBlock
-            Grid.Row="1" Grid.Column="1"
-            Visibility="{Binding Descriptor.FileSystemPath, Converter={StaticResource VisibleIfNotNull}}"
-            FontStyle="Italic"
-            FontSize="12"
-            Foreground="{DynamicResource MahApps.Brushes.Gray6}"
-            HorizontalAlignment="Right"
-            Text="Path: "/>
-        <TextBlock
-            Grid.Row="1" Grid.Column="2"
+            DockPanel.Dock="Left"
             Visibility="{Binding Descriptor.FileSystemPath, Converter={StaticResource VisibleIfNotNull}}"
             FontStyle="Italic"
             FontSize="12"
             Foreground="{DynamicResource MahApps.Brushes.Gray}"
             Text="{Binding Descriptor.FileSystemPath}"/>
-    </Grid>
+        <Grid/>
+    </DockPanel>
 </UserControl>
