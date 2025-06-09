@@ -134,7 +134,15 @@ public class MainViewModel: ViewModelBase
   {
     AppCache.Refill(TimeSpan.FromMinutes(5));
     var apps = AppCache.Descriptors.ToList();
-    StoreImplementation.Provider.SaveData("appdump2", ".json", apps);
+    var appsSorted =
+      from app in apps
+      orderby app.Kind, app.Label
+      select app;
+    var grouped =
+      appsSorted
+      .GroupBy(descriptor => descriptor.Kind)
+      .ToDictionary(g => g.Key.ToString(), g => g.ToList());
+    StoreImplementation.Provider.SaveData("app-dump", ".json", grouped);
   }
 
   public bool CanProcessNextIconJob()

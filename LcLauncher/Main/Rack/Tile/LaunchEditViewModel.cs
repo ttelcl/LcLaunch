@@ -344,7 +344,7 @@ public class LaunchEditViewModel: EditorViewModelBase
           var name =
             descriptor == null 
             ? $"{appid!.FamilyName} - {appid.ApplicationName}"
-            : descriptor.Name;
+            : descriptor.Label;
           var levm = CreateFromApp(
             tileHost,
             name,

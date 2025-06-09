@@ -30,10 +30,10 @@ public class ShellAppDescriptor
   /// Create a new ShellAppDescriptor
   /// </summary>
   public ShellAppDescriptor(
-    string name,
+    string label,
     string parsingName)
   {
-    Name = name;
+    Label = label;
     if(HasShellAppsFolderPrefix(parsingName))
     {
       FullParsingName = parsingName;
@@ -75,15 +75,21 @@ public class ShellAppDescriptor
     }
   }
 
-  /// <summary>
-  /// The friendly display name of the app
-  /// </summary>
-  public string Name { get; }
+  [JsonConverter(typeof(StringEnumConverter))]
+  [JsonProperty("kind")]
+  public ShellAppKind Kind { get; private set; }
 
   /// <summary>
   /// The parsing name relative to the apps folder
   /// </summary>
+  [JsonProperty("parsingname")]
   public string ParsingName { get; }
+
+  /// <summary>
+  /// The friendly display name of the app
+  /// </summary>
+  [JsonProperty("label")]
+  public string Label { get; }
 
   /// <summary>
   /// The absolute parsing name (including the apps folder)
@@ -91,12 +97,16 @@ public class ShellAppDescriptor
   [JsonIgnore]
   public string FullParsingName { get; }
 
+  [JsonProperty("path")]
   public string? FileSystemPath { get; private set; }
 
-  public AppIdLike? AppId { get; private set; }
+  public bool ShouldSerializeFileSystemPath()
+  {
+    return FileSystemPath != null; 
+  }
 
-  [JsonConverter(typeof(StringEnumConverter))] 
-  public ShellAppKind Kind { get; private set; }
+  [JsonIgnore]
+  public AppIdLike? AppId { get; private set; }
 
   private void Classify()
   {
@@ -165,6 +175,15 @@ public class ShellAppDescriptor
         return;
       }
     }
+    if(Regex.IsMatch(
+      ParsingName,
+      @"^[a-z][a-z0-9]+([-_][a-z0-9]+)*(\.[a-z0-9]+([-_][a-z0-9]+)*)*$",
+      RegexOptions.IgnoreCase))
+    {
+      Kind = ShellAppKind.DottedName;
+      return;
+    }
+    Kind = ShellAppKind.Other;
   }
 
   /// <summary>

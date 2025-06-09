@@ -45,8 +45,18 @@ public class ShellAppCache
   /// Return the collection of all descriptors in this cache
   /// (in no particular order)
   /// </summary>
-  public IReadOnlyCollection<ShellAppDescriptor> Descriptors {
-    get => _descriptorCache.Values;
+  public IEnumerable<ShellAppDescriptor> Descriptors {
+    get {
+      // Avoid duplicates by only emitting the cases where
+      // the key is the ParsingName, not the FullParsingName
+      foreach(var kvp in _descriptorCache)
+      {
+        if(kvp.Key == kvp.Value.ParsingName)
+        {
+          yield return kvp.Value;
+        }
+      }
+    }
   }
 
   /// <summary>
