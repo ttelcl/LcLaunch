@@ -80,6 +80,39 @@ public class AppSelectorViewModel: EditorViewModelBase
   }
   private AppCategory? _appCategory;
 
+  public AppViewModel? SelectedApp {
+    get => _selectedApp;
+    set {
+      if(SetNullableInstanceProperty(ref _selectedApp, value))
+      {
+        SelectionTileKind = _selectedApp?.Category.DefaultTileKind;
+        RaisePropertyChanged(nameof(SupportsExeTile));
+        RaisePropertyChanged(nameof(SupportsDocTile));
+        RaisePropertyChanged(nameof(SupportsUriTile));
+        RaisePropertyChanged(nameof(SupportsAppTile));
+      }
+    }
+  }
+  private AppViewModel? _selectedApp;
+
+  public TileKind? SelectionTileKind {
+    get => _tileKind;
+    set {
+      if(SetValueProperty(ref _tileKind, value))
+      {
+      }
+    }
+  }
+  private TileKind? _tileKind;
+
+  public bool SupportsExeTile { get => SelectedApp != null && SelectedApp.SupportsRawTile; }
+
+  public bool SupportsDocTile { get => SelectedApp != null && SelectedApp.SupportsDocTile; }
+
+  public bool SupportsUriTile { get => SelectedApp != null && SelectedApp.SupportsUriTile; }
+
+  public bool SupportsAppTile { get => SelectedApp != null && SelectedApp.SupportsAppTile; }
+
   public string FilterText {
     get => _filterText;
     set {
@@ -132,13 +165,15 @@ public class AppSelectorViewModel: EditorViewModelBase
 
   public bool MatchFilterText(AppViewModel appViewModel)
   {
-    if(String.IsNullOrEmpty(FilterText))
-    {
-      return true;
-    }
     return
-      appViewModel.Label
-      .Contains(FilterText, StringComparison.OrdinalIgnoreCase);
+      String.IsNullOrEmpty(FilterText)
+      || appViewModel.Label
+         .Contains(FilterText, StringComparison.OrdinalIgnoreCase)
+      || appViewModel.Descriptor.ParsingName
+         .Contains(FilterText, StringComparison.OrdinalIgnoreCase)
+      || (appViewModel.Descriptor.FileSystemPath != null &&
+          appViewModel.Descriptor.FileSystemPath
+          .Contains(FilterText, StringComparison.OrdinalIgnoreCase));
   }
 
   public AppCategoryViewModel SelectedCategory { 

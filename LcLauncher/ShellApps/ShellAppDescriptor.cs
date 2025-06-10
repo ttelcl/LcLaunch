@@ -149,12 +149,21 @@ public class ShellAppDescriptor
   }
 
   /// <summary>
-  /// True if this app is an accessible file that is NOT an executable
-  /// If true, this app can be used by doc tiles and app tiles, but not by raw tiles
+  /// True if this app is an accessible file that is NOT an executable.
+  /// If true, this app can be used by doc tiles and app tiles, but not by raw tiles.
   /// </summary>
   [JsonIgnore]
   public bool IsDoc {
     get => HasFile && !FileSystemPath!.EndsWith(".exe", StringComparison.OrdinalIgnoreCase);
+  }
+
+  /// <summary>
+  /// True if this app is an accessible folder.
+  /// If true, this app can be used by doc tiles and app tiles, but not by raw tiles.
+  /// </summary>
+  [JsonIgnore]
+  public bool IsFolder {
+    get => HasFolder;
   }
 
   /// <summary>

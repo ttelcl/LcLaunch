@@ -37,11 +37,22 @@ public class AppViewModel: ViewModelBase
 
   public bool SupportsRawTile => Descriptor.IsExe;
 
-  public bool SupportsDocTile => Descriptor.IsExe || Descriptor.IsDoc;
+  public bool SupportsDocTile => Descriptor.IsExe || Descriptor.IsDoc || Descriptor.IsFolder;
 
   public bool SupportsUriTile => Descriptor.IsUri;
 
   public bool SupportsAppTile => true; // for now: always true, but may be refined in future
+
+  public bool SupportsTile(TileKind tk)
+  {
+    return tk switch {
+      TileKind.ExecutableTile => SupportsRawTile,
+      TileKind.DocumentTile => SupportsDocTile,
+      TileKind.ModernAppTile => SupportsAppTile,
+      TileKind.UriTile => SupportsUriTile,
+      _ => false,
+    };
+  }
 
   public AppCategory Category =>
     Descriptor.Kind switch {
