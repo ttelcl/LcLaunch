@@ -16,6 +16,7 @@ using Microsoft.Win32;
 
 using LcLauncher.Models;
 using LcLauncher.WpfUtilities;
+using LcLauncher.Main.AppPicker;
 
 namespace LcLauncher.Main.Rack.Tile;
 
@@ -46,6 +47,9 @@ public class EmptyTileViewModel: TileViewModel
       p => CanCreateTile());
     TryPasteAsTileCommand = new DelegateCommand(
       p => CreateLauncherFromClipboard(),
+      p => CanCreateLauncherFromClipboardPrepared());
+    CreateAppTileCommand = new DelegateCommand(
+      p => CreateAppTile(),
       p => CanCreateTile());
   }
 
@@ -93,6 +97,8 @@ public class EmptyTileViewModel: TileViewModel
   public ICommand CreateDocumentTileCommand { get; }
 
   public ICommand CreateExecutableTileCommand { get; }
+
+  public ICommand CreateAppTileCommand { get; }
 
   public ICommand TryPasteAsTileCommand { get; }
 
@@ -313,17 +319,46 @@ public class EmptyTileViewModel: TileViewModel
     }
   }
 
-  private void CreateLauncherFromClipboard()
+  private void CreateAppTile()
   {
     if(CanCreateTile())
     {
-      var editModel = LaunchEditViewModel.TryFromClipboard(Host!);
+      var selectorModel = Host!.Rack.Owner.GetAppSelector(Host!);
+      selectorModel.IsActive = true;
+    }
+  }
+
+  private void CreateLauncherFromClipboard()
+  {
+    if(CanCreateTile())
+      // allow call even if not yet prepared
+    {
+      var editModel =
+        _preparedClipboardView
+        ?? LaunchEditViewModel.TryFromClipboard(Host!, false);
       if(editModel != null)
       {
         // else: a message was shown already
         editModel.IsActive = true;
       }
     }
+  }
+
+  private bool CanCreateLauncherFromClipboardPrepared()
+  {
+    return CanCreateTile() && _preparedClipboardView != null;
+  }
+
+  private LaunchEditViewModel? _preparedClipboardView;
+
+  public void PrepareFromClipboard()
+  {
+    _preparedClipboardView =
+      CanCreateTile()
+      ? LaunchEditViewModel.TryFromClipboard(Host!, true)
+      : null;
+    Trace.TraceInformation(
+      $"Clipboard tile enable = {_preparedClipboardView != null}");
   }
 
 }

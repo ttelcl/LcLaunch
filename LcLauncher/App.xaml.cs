@@ -1,6 +1,9 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 using System.Data;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Windows;
 
 using Microsoft.Extensions.Configuration;
@@ -8,9 +11,7 @@ using Microsoft.Extensions.Configuration;
 using ControlzEx.Theming;
 
 using LcLauncher.Main;
-using System;
-using System.Linq;
-using System.IO;
+using LcLauncher.Persistence;
 
 namespace LcLauncher;
 
@@ -43,6 +44,7 @@ public partial class App: Application
     var mainWindow = new MainWindow();
     MainModel = new MainViewModel(
       configuration);
+    var rackSet = false;
     foreach(var arg in e.Args)
     {
       if(arg.EndsWith(".rack-json"))
@@ -54,12 +56,45 @@ public partial class App: Application
           Trace.TraceInformation(
             $"Selecting rack '{rack}' specified on command line (as '{pseudofile}')");
           MainModel.RackList.SelectedRack = rack;
+          rackSet = true;
         }
         else
         {
           Trace.TraceError(
             $"Rack '{arg}' not found");
         }
+      }
+    }
+    if(!rackSet)
+    {
+      var defaultRack = configuration["defaultRack"];
+      if(String.IsNullOrEmpty(defaultRack))
+      {
+        defaultRack = "default";
+      }
+      else
+      {
+        var errorMessage = LcLaunchStore.TestValidRackName(defaultRack);
+        if(errorMessage != null)
+        {
+          Trace.TraceError(
+            $"Default rack name '{defaultRack}' is not valid, using 'default' instead: {errorMessage}");
+          defaultRack = "default";
+        }
+      }
+      var pseudofile = $"{defaultRack}.rack-json";
+      var rack = MainModel.RackList.FindRackByPseudoFile(pseudofile);
+      if(rack != null)
+      {
+        Trace.TraceInformation(
+          $"Selecting default rack '{rack}' because none were specified on command line");
+        MainModel.RackList.SelectedRack = rack;
+        rackSet = true;
+      }
+      else
+      {
+        Trace.TraceError(
+          $"Not selecting any rack: none specified and '{pseudofile}' does not exist");
       }
     }
     mainWindow.DataContext = MainModel;

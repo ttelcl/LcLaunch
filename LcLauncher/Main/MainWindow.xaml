@@ -21,6 +21,13 @@
     Closing="WindowClosing">
     <mah:MetroWindow.RightWindowCommands>
         <mah:WindowCommands>
+            <Menu>
+                <MenuItem Header="Dev">
+                    <MenuItem Header="Reload apps" Command="{Binding DevReloadAppsCommand}"/>
+                    <MenuItem Header="Dump apps" Command="{Binding DevDumpAppsCommand}"/>
+                    <MenuItem Header="Toggle Dev Pane" Command="{Binding DevTogglePaneCommand}"/>
+                </MenuItem>
+            </Menu>
             <mah:SplitButton
                 ItemsSource="{Binding RackList.Racks}"
                 SelectedItem="{Binding RackList.SelectedRack, Mode=TwoWay}"

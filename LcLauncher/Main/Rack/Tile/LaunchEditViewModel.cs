@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -14,8 +15,10 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
+using LcLauncher.Main.AppPicker;
 using LcLauncher.Models;
 using LcLauncher.Persistence;
+using LcLauncher.ShellApps;
 using LcLauncher.WpfUtilities;
 
 using Microsoft.Win32;
@@ -153,35 +156,114 @@ public class LaunchEditViewModel: EditorViewModelBase
   public static LaunchEditViewModel CreateFromApp(
     TileHostViewModel tileHost,
     string applicationName,
-    string applicationIdentifier)
+    string applicationIdentifier,
+    string? tooltip = null)
   {
-    if(!LaunchData.HasShellAppsFolderPrefix(applicationIdentifier))
-    {
-      applicationIdentifier =
-        LaunchData.ShellAppsFolderPrefix + applicationIdentifier;
-    }
+    applicationIdentifier = ShellAppDescriptor.WithShellAppsPrefix(applicationIdentifier);
     var model = new LaunchData(
       applicationIdentifier,
       true,
       applicationName,
-      null);
+      tooltip);
     return new LaunchEditViewModel(tileHost, model);
+  }
+
+  public static LaunchEditViewModel? CreateFromAppSelector(
+    TileHostViewModel tileHost,
+    AppViewModel appModel,
+    TileKind tileKind)
+  {
+    switch(tileKind)
+    {
+      case TileKind.ModernAppTile:
+        // no need to validate - all apps support this mode
+        return CreateFromApp(
+          tileHost,
+          appModel.Label,
+          appModel.Descriptor.FullParsingName,
+          appModel.Descriptor.ParsingName);
+      case TileKind.ExecutableTile:
+        if(!appModel.SupportsRawTile)
+        {
+          MessageBox.Show(
+            "This app does not support 'executable' tiles",
+            "Unsupported",
+            MessageBoxButton.OK,
+            MessageBoxImage.Error);
+          return null;
+        }
+        {
+          var model = new LaunchData(
+            appModel.FilePath!,
+            false,
+            appModel.Label,
+            Path.GetFileName(appModel.FilePath));
+          return new LaunchEditViewModel(tileHost, model);
+        }
+      case TileKind.DocumentTile:
+        if(!appModel.SupportsDocTile)
+        {
+          MessageBox.Show(
+            "This app does not support 'document' tiles",
+            "Unsupported",
+            MessageBoxButton.OK,
+            MessageBoxImage.Error);
+          return null;
+        }
+        {
+          var model = new LaunchData(
+            appModel.Descriptor.FileSystemPath!,
+            true,
+            appModel.Label,
+            Path.GetFileName(appModel.FilePath));
+          return new LaunchEditViewModel(tileHost, model);
+        }
+      case TileKind.UriTile:
+        if(!appModel.SupportsUriTile)
+        {
+          MessageBox.Show(
+            "This app does not support 'URI / URL' tiles",
+            "Unsupported",
+            MessageBoxButton.OK,
+            MessageBoxImage.Error);
+          return null;
+        }
+        {
+          var model = TryFromUri(
+            tileHost,
+            appModel.Descriptor.ParsingName,
+            appModel.Label,
+            appModel.Descriptor.ParsingName,
+            false);
+          return model;
+        }
+    }
+    MessageBox.Show(
+      "This app does not support the requested tile kind (Internal Error)",
+      "Internal Error",
+      MessageBoxButton.OK,
+      MessageBoxImage.Error);
+    return null;
   }
 
   public static LaunchEditViewModel? TryFromUri(
     TileHostViewModel tileHost,
     string uri,
     string? title,
-    string? tooltip = null)
+    string? tooltip,
+    bool silent)
   {
     var kind = LaunchData.GetLaunchKind(uri, false);
     if(kind != LaunchKind.UriKind)
     {
-      MessageBox.Show(
+      if(!silent)
+      {
+        MessageBox.Show(
         "The provided argument is not a valid URI",
         "Invalid argument",
         MessageBoxButton.OK,
         MessageBoxImage.Error);
+      }
       return null;
     }
     var model = new LaunchData(
@@ -194,15 +276,19 @@ public class LaunchEditViewModel: EditorViewModelBase
 
   public static LaunchEditViewModel? TryFromOneNote(
     TileHostViewModel tileHost,
-    string onenoteUri)
+    string onenoteUri,
+    bool silent)
   {
     if(!onenoteUri.StartsWith("onenote:"))
     {
-      MessageBox.Show(
+      if(!silent)
+      {
+        MessageBox.Show(
         "The provided argument is not a valid OneNote URI",
         "Invalid argument",
         MessageBoxButton.OK,
         MessageBoxImage.Error);
+      }
       return null;
     }
     string? title = null;
@@ -222,11 +308,12 @@ public class LaunchEditViewModel: EditorViewModelBase
         title = Uri.UnescapeDataString(fragment);
       }
     }
-    return TryFromUri(tileHost, onenoteUri, title);
+    return TryFromUri(tileHost, onenoteUri, title, tooltip, silent);
   }
 
   public static LaunchEditViewModel? TryFromClipboard(
-    TileHostViewModel tileHost)
+    TileHostViewModel tileHost,
+    bool silent)
   {
     if(Clipboard.ContainsFileDropList())
     {
@@ -257,7 +344,7 @@ public class LaunchEditViewModel: EditorViewModelBase
           lines.Take(2).FirstOrDefault(s => s.StartsWith("onenote:"));
         if(onenoteLine != null)
         {
-          var levm = TryFromOneNote(tileHost, onenoteLine);
+          var levm = TryFromOneNote(tileHost, onenoteLine, silent);
           if(levm != null)
           {
             return levm;
@@ -278,17 +365,25 @@ public class LaunchEditViewModel: EditorViewModelBase
           }
           else
           {
-            MessageBox.Show(
+            if(!silent)
+            {
+              MessageBox.Show(
               $"Failed: This looks like a file name, but that file doesn't exist:\n{line}",
               "Failed",
               MessageBoxButton.OK,
               MessageBoxImage.Stop);
+            }
             return null;
           }
         }
         if(kind == LaunchKind.UriKind)
         {
-          var levm = TryFromUri(tileHost, line, "[please edit title]");
+          var levm = TryFromUri(
+            tileHost,
+            line,
+            "[please edit title]",
+            line,
+            silent);
           if(levm != null)
           {
             return levm;
@@ -299,52 +394,70 @@ public class LaunchEditViewModel: EditorViewModelBase
             return null;
           }
         }
-        string? appid = null;
+        AppIdLike? appid = null;
+        string? parsingName = null;
         if(kind == LaunchKind.ShellApplication)
         {
           var candidate = line;
-          if(line.StartsWith("shell:AppsFolder\\", StringComparison.OrdinalIgnoreCase))
-          {
-            candidate = candidate.Substring("shell:AppsFolder\\".Length);
-          }
-          if(LaunchData.LooksLikeAppId(candidate))
-          {
-            appid = candidate;
-            // further processed later
-          }
-          //// Unlikely to happen, since the prefix is unlikely to be present
-          //// Waiting for shared app-related infrastructure.
-          //// Reminder: publisher IDs match [a-hj-km-np-tv-z0-9]{13}
-          //// PFNs (the first part) can use characters [-_.a-zA-Z0-9]{3,50}
-          //// Observed parse names match ^[.a-zA-Z0-9]{3,50}_[a-hj-km-np-tv-z0-9]{13}![.a-zA-Z0-9]{3,50}$
-          //MessageBox.Show(
-          //  "Not Implemented: Store App Support",
-          //  "Not Implemented",
-          //  MessageBoxButton.OK,
-          //  MessageBoxImage.Information);
-          //return null;
+          candidate = ShellAppDescriptor.StripShellAppsPrefix(candidate);
+          appid = AppIdLike.TryParse(candidate);
+          parsingName = line;
         }
         if(kind == LaunchKind.Invalid)
         {
-          if(LaunchData.LooksLikeAppId(line))
+          appid = AppIdLike.TryParse(line);
+          if(appid != null)
           {
-            appid = line;
+            parsingName = appid.FullName;
           }
         }
-        if(appid != null)
+        if(parsingName != null)
         {
-          var levm = CreateFromApp(tileHost, appid, appid /*placeholder*/);
+          var descriptor = ShellAppDescriptor.TryFromParsingName(parsingName);
+          if(descriptor == null)
+          {
+            if(appid == null)
+            {
+              // probably a mistake anyway - just abort
+              if(!silent)
+              {
+                MessageBox.Show(
+                "This app descriptor was not recognized as valid.",
+                "Error",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+              }
+              return null;
+            }
+            if(silent)
+            {
+              return null;
+            }
+            var result = MessageBox.Show(
+              "This app was not recognized as installed on this system.\n" +
+              "The tile you are about to create probably won't work.\n" +
+              "Continue anyway?",
+              "Warning",
+              MessageBoxButton.OKCancel,
+              MessageBoxImage.Warning);
+            if(result != MessageBoxResult.OK)
+            {
+              return null;
+            }
+          }
+          // 'name' is a placeholder until we have a way to get the real name
+          var name =
+            descriptor == null
+            ? $"{appid!.FamilyName} - {appid.ApplicationName}"
+            : descriptor.Label;
+          var levm = CreateFromApp(
+            tileHost,
+            name,
+            parsingName);
           return levm;
         }
 
         // Fall through - it may still be usable HTML
-
-        //MessageBox.Show(
-        //  $"Clipboard text content not recognized:\n{line}",
-        //  "Not Recognized",
-        //  MessageBoxButton.OK,
-        //  MessageBoxImage.Warning);
-        //return null;
       }
     }
     var dataObject = Clipboard.GetDataObject();
@@ -362,35 +475,42 @@ public class LaunchEditViewModel: EditorViewModelBase
           {
             var fragment = htmlText.Substring(
               fragmentStart, fragmentEnd - fragmentStart);
-            var levm = TryFromFirstHtmlLink(tileHost, fragment);
+            var levm = TryFromFirstHtmlLink(tileHost, fragment, silent);
             if(levm != null)
             {
               return levm;
             }
             else
             {
-              MessageBox.Show(
+              if(!silent)
+              {
+                MessageBox.Show(
                 $"Failed: Found HTML content on Clipboard, but there were no links in it.",
                 "Failed",
                 MessageBoxButton.OK,
                 MessageBoxImage.Error);
+              }
               return null;
             }
           }
         }
       }
     }
-    MessageBox.Show(
+    if(!silent)
+    {
+      MessageBox.Show(
       $"No suitable content found on Clipboard",
       "Not Recognized",
       MessageBoxButton.OK,
       MessageBoxImage.Error);
+    }
     return null;
   }
 
   public static LaunchEditViewModel? TryFromFirstHtmlLink(
     TileHostViewModel tileHost,
-    string html)
+    string html,
+    bool silent)
   {
     var match =
       Regex.Match(
@@ -400,7 +520,7 @@ public class LaunchEditViewModel: EditorViewModelBase
     {
       var href = match.Groups[1].Value;
       var title = match.Groups[2].Value;
-      var levm = TryFromUri(tileHost, href, title, href);
+      var levm = TryFromUri(tileHost, href, title, href, silent);
       if(levm != null)
       {
         return levm;
@@ -646,9 +766,10 @@ public class LaunchEditViewModel: EditorViewModelBase
       }
       if(
         Classification == LaunchKind.Document
-        && !File.Exists(Target))
+        && !File.Exists(Target)
+        && !Directory.Exists(Target))
       {
-        return "The target looks like a file name, but does not exist";
+        return "The target looks like a file or folder name, but does not exist";
       }
       if(Classification == LaunchKind.Raw)
       {
