@@ -60,47 +60,40 @@ public class TestPaneViewModel: ViewModelBase
 
   private void ProbeIconFile()
   {
-    if(true /*File.Exists(IconFile)*/)
+    try
     {
-      try
+      using(var iconShell = ShellObject.FromParsingName(IconFile))
       {
-        using(var iconShell = ShellObject.FromParsingName(IconFile))
-        {
-          Trace.TraceInformation(
-            $"Parsing Name: {iconShell.ParsingName}");
-          Trace.TraceInformation(
-            $"Display Name: {iconShell.Name}");
-          var thumbnail = iconShell.Thumbnail;
-          thumbnail.FormatOption = ShellThumbnailFormatOption.IconOnly;
-          IconSmall = thumbnail.SmallBitmapSource;
-          Trace.TraceInformation(
-            $"Small Icon: {IconSmall.Width}"); // 16
-          IconMedium = thumbnail.MediumBitmapSource;
-          Trace.TraceInformation(
-            $"Medium Icon: {IconMedium.Width}"); // 32
-          IconLarge = thumbnail.LargeBitmapSource;
-          Trace.TraceInformation(
-            $"Large Icon: {IconLarge.Width}"); // 48
-          IconExtraLarge = thumbnail.ExtraLargeBitmapSource;
-          Trace.TraceInformation(
-            $"Extra Large Icon: {IconExtraLarge.Width}"); // 256
-          thumbnail.FormatOption = ShellThumbnailFormatOption.Default;
-          thumbnail.AllowBiggerSize = false;
-          IconSmallFixed = thumbnail.SmallBitmapSource;
-          IconMediumFixed = thumbnail.MediumBitmapSource;
-          IconLargeFixed = thumbnail.LargeBitmapSource;
-          //IconExtraLarge = thumbnail.ExtraLargeBitmapSource;
-        }
-      }
-      catch(Exception ex)
-      {
-        Trace.TraceError(
-          $"ProbeIconFile: Error probing icon file: {ex}");
-        ClearIcons();
+        Trace.TraceInformation(
+          $"Parsing Name: {iconShell.ParsingName}");
+        Trace.TraceInformation(
+          $"Display Name: {iconShell.Name}");
+        var thumbnail = iconShell.Thumbnail;
+        thumbnail.FormatOption = ShellThumbnailFormatOption.IconOnly;
+        IconSmall = thumbnail.SmallBitmapSource;
+        Trace.TraceInformation(
+          $"Small Icon: {IconSmall.Width}"); // 16
+        IconMedium = thumbnail.MediumBitmapSource;
+        Trace.TraceInformation(
+          $"Medium Icon: {IconMedium.Width}"); // 32
+        IconLarge = thumbnail.LargeBitmapSource;
+        Trace.TraceInformation(
+          $"Large Icon: {IconLarge.Width}"); // 48
+        IconExtraLarge = thumbnail.ExtraLargeBitmapSource;
+        Trace.TraceInformation(
+          $"Extra Large Icon: {IconExtraLarge.Width}"); // 256
+        thumbnail.FormatOption = ShellThumbnailFormatOption.Default;
+        thumbnail.AllowBiggerSize = false;
+        IconSmallFixed = thumbnail.SmallBitmapSource;
+        IconMediumFixed = thumbnail.MediumBitmapSource;
+        IconLargeFixed = thumbnail.LargeBitmapSource;
+        //IconExtraLarge = thumbnail.ExtraLargeBitmapSource;
       }
     }
-    else
+    catch(Exception ex)
     {
+      Trace.TraceError(
+        $"ProbeIconFile: Error probing icon file: {ex}");
       ClearIcons();
     }
   }
@@ -369,7 +362,7 @@ public class TestPaneViewModel: ViewModelBase
           fragmentStartIndex++;
           var fragmentEndIndex = onenoteLine.IndexOf('&', fragmentStartIndex);
           if(fragmentEndIndex != -1)
-          { 
+          {
             var fragment = onenoteLine.Substring(
               fragmentStartIndex,
               fragmentEndIndex - fragmentStartIndex);

@@ -243,11 +243,20 @@ public class AppSelectorViewModel: EditorViewModelBase
   {
     if(CanAcceptEditor())
     {
-      MessageBox.Show(
-        "Not Implemented",
-        "Not Implemented",
-        MessageBoxButton.OK,
-        MessageBoxImage.Error);
+      var app = SelectedApp!;
+      var tileKind = SelectionTileKind!.Value;
+      var editor2 = LaunchEditViewModel.CreateFromAppSelector(Target, app, tileKind);
+      if(editor2 != null)
+      {
+        IsActive = false;
+        editor2.IsActive = true;
+      }
+      else
+      {
+        Trace.TraceError(
+          "Failed to create tile specific editor");
+        IsActive = false;
+      }
     }
   }
 }

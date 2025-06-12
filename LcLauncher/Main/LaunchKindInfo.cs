@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -51,6 +52,11 @@ public class LaunchKindInfo
         {
           Icon = "ShareCircle";
           Text = "shortcut";
+        }
+        else if(Directory.Exists(target))
+        {
+          Icon = "FolderOutline";
+          Text = "folder";
         }
         else
         {

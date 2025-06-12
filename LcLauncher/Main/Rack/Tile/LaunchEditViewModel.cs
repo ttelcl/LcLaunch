@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -14,6 +15,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
+using LcLauncher.Main.AppPicker;
 using LcLauncher.Models;
 using LcLauncher.Persistence;
 using LcLauncher.ShellApps;
@@ -154,15 +156,93 @@ public class LaunchEditViewModel: EditorViewModelBase
   public static LaunchEditViewModel CreateFromApp(
     TileHostViewModel tileHost,
     string applicationName,
-    string applicationIdentifier)
+    string applicationIdentifier,
+    string? tooltip = null)
   {
     applicationIdentifier = ShellAppDescriptor.WithShellAppsPrefix(applicationIdentifier);
     var model = new LaunchData(
       applicationIdentifier,
       true,
       applicationName,
-      null);
+      tooltip);
     return new LaunchEditViewModel(tileHost, model);
+  }
+
+  public static LaunchEditViewModel? CreateFromAppSelector(
+    TileHostViewModel tileHost,
+    AppViewModel appModel,
+    TileKind tileKind)
+  {
+    switch(tileKind)
+    {
+      case TileKind.ModernAppTile:
+        // no need to validate - all apps support this mode
+        return CreateFromApp(
+          tileHost,
+          appModel.Label,
+          appModel.Descriptor.FullParsingName,
+          appModel.Descriptor.ParsingName);
+      case TileKind.ExecutableTile:
+        if(!appModel.SupportsRawTile)
+        {
+          MessageBox.Show(
+            "This app does not support 'executable' tiles",
+            "Unsupported",
+            MessageBoxButton.OK,
+            MessageBoxImage.Error);
+          return null;
+        }
+        {
+          var model = new LaunchData(
+            appModel.FilePath!,
+            false,
+            appModel.Label,
+            Path.GetFileName(appModel.FilePath));
+            return new LaunchEditViewModel(tileHost, model);
+        }
+      case TileKind.DocumentTile:
+        if(!appModel.SupportsDocTile)
+        {
+          MessageBox.Show(
+            "This app does not support 'document' tiles",
+            "Unsupported",
+            MessageBoxButton.OK,
+            MessageBoxImage.Error);
+          return null;
+        }
+        {
+          var model = new LaunchData(
+            appModel.Descriptor.FileSystemPath!,
+            true,
+            appModel.Label,
+            Path.GetFileName(appModel.FilePath));
+            return new LaunchEditViewModel(tileHost, model);
+        }
+      case TileKind.UriTile:
+        if(!appModel.SupportsUriTile)
+        {
+          MessageBox.Show(
+            "This app does not support 'URI / URL' tiles",
+            "Unsupported",
+            MessageBoxButton.OK,
+            MessageBoxImage.Error);
+          return null;
+        }
+        {
+          var model = TryFromUri(
+            tileHost,
+            appModel.Descriptor.ParsingName,
+            appModel.Label,
+            appModel.Descriptor.ParsingName);
+          return model;
+        }
+    }
+    MessageBox.Show(
+      "This app does not support the requested tile kind (Internal Error)",
+      "Internal Error",
+      MessageBoxButton.OK,
+      MessageBoxImage.Error);
+    return null;
   }
 
   public static LaunchEditViewModel? TryFromUri(
@@ -654,9 +734,10 @@ public class LaunchEditViewModel: EditorViewModelBase
       }
       if(
         Classification == LaunchKind.Document
-        && !File.Exists(Target))
+        && !File.Exists(Target)
+        && !Directory.Exists(Target))
       {
-        return "The target looks like a file name, but does not exist";
+        return "The target looks like a file or folder name, but does not exist";
       }
       if(Classification == LaunchKind.Raw)
       {
