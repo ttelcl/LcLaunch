@@ -60,6 +60,8 @@ public class MainViewModel: ViewModelBase
     );
     DevDumpAppsCommand = new DelegateCommand(
       p => { DevDumpApps(); });
+    DevTogglePaneCommand = new DelegateCommand(
+      p => { ShowDevPane = !ShowDevPane; });
   }
 
   public IConfigurationRoot Configuration { get; }
@@ -67,6 +69,8 @@ public class MainViewModel: ViewModelBase
   public ICommand DevReloadAppsCommand { get; }
 
   public ICommand DevDumpAppsCommand { get; }
+
+  public ICommand DevTogglePaneCommand { get; }
 
   public ICommand ProcessNextIconJobCommand { get; }
 

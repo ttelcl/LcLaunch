@@ -60,7 +60,7 @@ public class TestPaneViewModel: ViewModelBase
 
   private void ProbeIconFile()
   {
-    if(File.Exists(IconFile))
+    if(true /*File.Exists(IconFile)*/)
     {
       try
       {

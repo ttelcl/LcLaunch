@@ -10,6 +10,7 @@ using System.Linq;
 using System.Runtime.Intrinsics.X86;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Data;
 
 using LcLauncher.Main.Rack.Tile;
@@ -176,7 +177,7 @@ public class AppSelectorViewModel: EditorViewModelBase
           .Contains(FilterText, StringComparison.OrdinalIgnoreCase));
   }
 
-  public AppCategoryViewModel SelectedCategory { 
+  public AppCategoryViewModel SelectedCategory {
     get => _selectedCategory;
     set {
       var oldCategory = _selectedCategory;
@@ -208,7 +209,7 @@ public class AppSelectorViewModel: EditorViewModelBase
   {
     Refill(TimeSpan.FromMinutes(30));
   }
-  
+
   public void Refill(TimeSpan minAge)
   {
     AppCache.Refill(minAge);
@@ -223,5 +224,30 @@ public class AppSelectorViewModel: EditorViewModelBase
       Applications.Add(app);
     }
     RecountAll();
+  }
+
+  public override bool CanAcceptEditor()
+  {
+    if(SelectedApp == null || SelectionTileKind == null)
+    {
+      return false;
+    }
+    if(!SelectedApp.SupportsTile(SelectionTileKind.Value))
+    {
+      return false;
+    }
+    return true;
+  }
+
+  public override void AcceptEditor()
+  {
+    if(CanAcceptEditor())
+    {
+      MessageBox.Show(
+        "Not Implemented",
+        "Not Implemented",
+        MessageBoxButton.OK,
+        MessageBoxImage.Error);
+    }
   }
 }
