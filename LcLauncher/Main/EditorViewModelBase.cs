@@ -69,6 +69,27 @@ public class EditorViewModelBase: ViewModelBase, IHasTheme
   }
   private string _theme = MainViewModel.DefaultDefaultTheme;
 
+  public GridLength HorizontalMargin {
+    get => _horizontalMargin;
+    private set {
+      if(SetValueProperty(ref _horizontalMargin, value))
+      {
+      }
+    }
+  }
+  private GridLength _horizontalMargin = new GridLength(200.0);
+
+  public bool Wide {
+    get => _wide;
+    set {
+      if(SetValueProperty(ref _wide, value))
+      {
+        HorizontalMargin = value ? new GridLength(75.0) : new GridLength(200.0);
+      }
+    }
+  }
+  private bool _wide = false;
+
   /// <summary>
   /// Indicates if this editor is the current editor.
   /// Setting this manipulates the Owner.CurrentEditor property.

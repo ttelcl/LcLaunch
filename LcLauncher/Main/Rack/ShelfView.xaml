@@ -210,15 +210,6 @@
                         </MenuItem>
                     </ContextMenu>
                 </Border.ContextMenu>
-                <!--<TextBlock
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Top"
-                    Foreground="#FFFFFF88"
-                    FontSize="20"
-                    FontStyle="Italic"
-                    Background="#33444444">
-                    This shelf is cut, ready to be pasted elsewhere
-                </TextBlock>-->
             </Border>
         </Grid>
     </StackPanel>

@@ -13,24 +13,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace LcLauncher.Main.Rack.Tile
+namespace LcLauncher.Main.AppPicker
 {
   /// <summary>
-  /// Interaction logic for EmptyTileView.xaml
+  /// Interaction logic for AppView.xaml
   /// </summary>
-  public partial class EmptyTileView: UserControl
+  public partial class AppView: UserControl
   {
-    public EmptyTileView()
+    public AppView()
     {
       InitializeComponent();
-    }
-
-    private void UserControl_ContextMenuOpening(object sender, ContextMenuEventArgs e)
-    {
-      if(DataContext is EmptyTileViewModel model)
-      {
-        model.PrepareFromClipboard();
-      }
     }
   }
 }
