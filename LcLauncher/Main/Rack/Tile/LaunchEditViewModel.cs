@@ -198,7 +198,7 @@ public class LaunchEditViewModel: EditorViewModelBase
             false,
             appModel.Label,
             Path.GetFileName(appModel.FilePath));
-            return new LaunchEditViewModel(tileHost, model);
+          return new LaunchEditViewModel(tileHost, model);
         }
       case TileKind.DocumentTile:
         if(!appModel.SupportsDocTile)
@@ -216,7 +216,7 @@ public class LaunchEditViewModel: EditorViewModelBase
             true,
             appModel.Label,
             Path.GetFileName(appModel.FilePath));
-            return new LaunchEditViewModel(tileHost, model);
+          return new LaunchEditViewModel(tileHost, model);
         }
       case TileKind.UriTile:
         if(!appModel.SupportsUriTile)
@@ -233,7 +233,8 @@ public class LaunchEditViewModel: EditorViewModelBase
             tileHost,
             appModel.Descriptor.ParsingName,
             appModel.Label,
-            appModel.Descriptor.ParsingName);
+            appModel.Descriptor.ParsingName,
+            false);
           return model;
         }
     }
@@ -249,16 +250,20 @@ public class LaunchEditViewModel: EditorViewModelBase
     TileHostViewModel tileHost,
     string uri,
     string? title,
-    string? tooltip = null)
+    string? tooltip,
+    bool silent)
   {
     var kind = LaunchData.GetLaunchKind(uri, false);
     if(kind != LaunchKind.UriKind)
     {
-      MessageBox.Show(
+      if(!silent)
+      {
+        MessageBox.Show(
         "The provided argument is not a valid URI",
         "Invalid argument",
         MessageBoxButton.OK,
         MessageBoxImage.Error);
+      }
       return null;
     }
     var model = new LaunchData(
@@ -271,15 +276,19 @@ public class LaunchEditViewModel: EditorViewModelBase
 
   public static LaunchEditViewModel? TryFromOneNote(
     TileHostViewModel tileHost,
-    string onenoteUri)
+    string onenoteUri,
+    bool silent)
   {
     if(!onenoteUri.StartsWith("onenote:"))
     {
-      MessageBox.Show(
+      if(!silent)
+      {
+        MessageBox.Show(
         "The provided argument is not a valid OneNote URI",
         "Invalid argument",
         MessageBoxButton.OK,
         MessageBoxImage.Error);
+      }
       return null;
     }
     string? title = null;
@@ -299,11 +308,12 @@ public class LaunchEditViewModel: EditorViewModelBase
         title = Uri.UnescapeDataString(fragment);
       }
     }
-    return TryFromUri(tileHost, onenoteUri, title);
+    return TryFromUri(tileHost, onenoteUri, title, tooltip, silent);
   }
 
   public static LaunchEditViewModel? TryFromClipboard(
-    TileHostViewModel tileHost)
+    TileHostViewModel tileHost,
+    bool silent)
   {
     if(Clipboard.ContainsFileDropList())
     {
@@ -334,7 +344,7 @@ public class LaunchEditViewModel: EditorViewModelBase
           lines.Take(2).FirstOrDefault(s => s.StartsWith("onenote:"));
         if(onenoteLine != null)
         {
-          var levm = TryFromOneNote(tileHost, onenoteLine);
+          var levm = TryFromOneNote(tileHost, onenoteLine, silent);
           if(levm != null)
           {
             return levm;
@@ -355,17 +365,25 @@ public class LaunchEditViewModel: EditorViewModelBase
           }
           else
           {
-            MessageBox.Show(
+            if(!silent)
+            {
+              MessageBox.Show(
               $"Failed: This looks like a file name, but that file doesn't exist:\n{line}",
               "Failed",
               MessageBoxButton.OK,
               MessageBoxImage.Stop);
+            }
             return null;
           }
         }
         if(kind == LaunchKind.UriKind)
         {
-          var levm = TryFromUri(tileHost, line, "[please edit title]");
+          var levm = TryFromUri(
+            tileHost,
+            line,
+            "[please edit title]",
+            line,
+            silent);
           if(levm != null)
           {
             return levm;
@@ -401,11 +419,18 @@ public class LaunchEditViewModel: EditorViewModelBase
             if(appid == null)
             {
               // probably a mistake anyway - just abort
-              MessageBox.Show(
+              if(!silent)
+              {
+                MessageBox.Show(
                 "This app descriptor was not recognized as valid.",
                 "Error",
                 MessageBoxButton.OK,
                 MessageBoxImage.Error);
+              }
+              return null;
+            }
+            if(silent)
+            {
               return null;
             }
             var result = MessageBox.Show(
@@ -422,7 +447,7 @@ public class LaunchEditViewModel: EditorViewModelBase
           }
           // 'name' is a placeholder until we have a way to get the real name
           var name =
-            descriptor == null 
+            descriptor == null
             ? $"{appid!.FamilyName} - {appid.ApplicationName}"
             : descriptor.Label;
           var levm = CreateFromApp(
@@ -450,35 +475,42 @@ public class LaunchEditViewModel: EditorViewModelBase
           {
             var fragment = htmlText.Substring(
               fragmentStart, fragmentEnd - fragmentStart);
-            var levm = TryFromFirstHtmlLink(tileHost, fragment);
+            var levm = TryFromFirstHtmlLink(tileHost, fragment, silent);
             if(levm != null)
             {
               return levm;
             }
             else
             {
-              MessageBox.Show(
+              if(!silent)
+              {
+                MessageBox.Show(
                 $"Failed: Found HTML content on Clipboard, but there were no links in it.",
                 "Failed",
                 MessageBoxButton.OK,
                 MessageBoxImage.Error);
+              }
               return null;
             }
           }
         }
       }
     }
-    MessageBox.Show(
+    if(!silent)
+    {
+      MessageBox.Show(
       $"No suitable content found on Clipboard",
       "Not Recognized",
       MessageBoxButton.OK,
       MessageBoxImage.Error);
+    }
     return null;
   }
 
   public static LaunchEditViewModel? TryFromFirstHtmlLink(
     TileHostViewModel tileHost,
-    string html)
+    string html,
+    bool silent)
   {
     var match =
       Regex.Match(
@@ -488,7 +520,7 @@ public class LaunchEditViewModel: EditorViewModelBase
     {
       var href = match.Groups[1].Value;
       var title = match.Groups[2].Value;
-      var levm = TryFromUri(tileHost, href, title, href);
+      var levm = TryFromUri(tileHost, href, title, href, silent);
       if(levm != null)
       {
         return levm;

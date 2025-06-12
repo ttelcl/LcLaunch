@@ -15,14 +15,22 @@ using System.Windows.Shapes;
 
 namespace LcLauncher.Main.Rack.Tile
 {
-    /// <summary>
-    /// Interaction logic for EmptyTileView.xaml
-    /// </summary>
-    public partial class EmptyTileView : UserControl
+  /// <summary>
+  /// Interaction logic for EmptyTileView.xaml
+  /// </summary>
+  public partial class EmptyTileView: UserControl
+  {
+    public EmptyTileView()
     {
-        public EmptyTileView()
-        {
-            InitializeComponent();
-        }
+      InitializeComponent();
     }
+
+    private void UserControl_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+    {
+      if(DataContext is EmptyTileViewModel model)
+      {
+        model.PrepareFromClipboard();
+      }
+    }
+  }
 }
