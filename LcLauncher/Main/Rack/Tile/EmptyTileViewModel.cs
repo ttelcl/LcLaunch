@@ -323,7 +323,7 @@ public class EmptyTileViewModel: TileViewModel
   {
     if(CanCreateTile())
     {
-      var selectorModel = Host!.Rack.Owner.GetAppSelector(Host!);
+      var selectorModel = Host!.GetAppSelector();
       selectorModel.IsActive = true;
     }
   }

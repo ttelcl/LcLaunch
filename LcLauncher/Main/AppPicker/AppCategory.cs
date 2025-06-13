@@ -93,8 +93,8 @@ public class AppCategory
   public static IReadOnlyList<AppCategory> AppCategoryList { get; } =
     new List<AppCategory>() {
       ModernApp,
-      ExecutableApp,
       ClassicApp,
+      ExecutableApp,
       DocumentApp,
       ProtocolApp,
       FolderApp,

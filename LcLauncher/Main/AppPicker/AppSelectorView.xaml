@@ -18,6 +18,12 @@
         </Grid.RowDefinitions>
         <DockPanel Grid.Row="0">
             <!-- Filter Buttons and Text Filter -->
+            <TextBlock
+                DockPanel.Dock="Bottom"
+                FontStyle="Italic"
+                TextAlignment="Center"
+                Margin="0,10,0,0"
+                Text="{Binding SelectedCategory.Category.Description}"/>
             <ItemsControl
                 DockPanel.Dock="Right"
                 ItemsSource="{Binding Categories}">
@@ -49,7 +55,7 @@
             Grid.Row="1"
             Margin="0,10,0,0"
             MinHeight="400"
-            Height="580"
+            Height="524"
             BorderThickness="1"
             BorderBrush="{DynamicResource MahApps.Brushes.Accent}"
             SelectedItem="{Binding SelectedApp, Mode=TwoWay}"
@@ -65,6 +71,7 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
+        <!-- Bottom zone -->
         <Border
             Grid.Row="2"
             BorderThickness="0"
@@ -73,8 +80,13 @@
             <DockPanel>
                 <Border
                     DockPanel.Dock="Left"
-                    Background="{DynamicResource MahApps.Brushes.Accent4}"
-                    Width="60" MinHeight="60">
+                    Width="52" MinHeight="52">
+                    <Image
+                        Visibility="{Binding SelectedApp.Icon, Converter={StaticResource VisibleIfNotNull}}"
+                        Source="{Binding SelectedApp.Icon}"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Stretch="None"/>
                 </Border>
                 <Grid>
                     <Grid.RowDefinitions>

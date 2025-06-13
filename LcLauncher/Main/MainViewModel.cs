@@ -84,12 +84,6 @@ public class MainViewModel: ViewModelBase
 
   public ShellAppCache AppCache { get; }
 
-  public AppSelectorViewModel GetAppSelector(
-    TileHostViewModel target)
-  {
-    return new AppSelectorViewModel(this, target);
-  }
-
   public RackViewModel? CurrentRack {
     get => _currentRack;
     set {

@@ -9,21 +9,31 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 
+using LcLauncher.IconUpdates;
+using LcLauncher.Persistence;
 using LcLauncher.ShellApps;
+using LcLauncher.Storage;
 using LcLauncher.WpfUtilities;
 
 namespace LcLauncher.Main.AppPicker;
 
-public class AppViewModel: ViewModelBase
+public class AppViewModel: ViewModelBase, IIconHost
 {
   public AppViewModel(
+    AppSelectorViewModel owner,
     ShellAppDescriptor descriptor)
   {
+    IconHostId = Guid.NewGuid();
+    Owner = owner;
     Descriptor = descriptor;
+    Icon = descriptor.Icon;
   }
 
   public ShellAppDescriptor Descriptor { get; }
+
+  public AppSelectorViewModel Owner { get; }
 
   public string Label => Descriptor.Label;
 
@@ -81,4 +91,47 @@ public class AppViewModel: ViewModelBase
       _ => AppCategory.OtherApp,
     };
 
+  private void RequestIcon()
+  {
+    if(!_iconRequested)
+    {
+      _iconRequested = true;
+      Trace.TraceInformation($"Requesting missing icon {Descriptor.ParsingName}");
+      var job = new IconLoadJob(Owner.IconJobQueue, this, LoadIcon);
+      var mainQueue = Owner.IconJobQueue.Parent;
+      mainQueue.EnqueueJob(job);
+    }
+  }
+
+  // Callback from the icon loader queue. This actually tries to load the icon
+  private void LoadIcon()
+  {
+    var fullParsingName = Descriptor.FullParsingName;
+    var icons = IconCache.IconsForSource(fullParsingName, IconSize.Large);
+    if(icons != null)
+    {
+      Icon = icons[2];
+    }
+  }
+
+  private bool _iconRequested;
+  
+  public BitmapSource? Icon {
+    get {
+      if (_icon == null)
+      {
+        RequestIcon();
+      }
+      return _icon;
+    }
+    set {
+      if(SetNullableInstanceProperty(ref _icon, value))
+      {
+        Descriptor.Icon = value;
+      }
+    }
+  }
+  private BitmapSource? _icon;
+
+  public Guid IconHostId { get; }
 }
