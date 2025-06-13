@@ -82,6 +82,14 @@ public class ShellAppCache
     foreach(var app in appsVf)
     {
       var descriptor = ShellAppDescriptor.FromShellObject(app);
+      if(_descriptorCache.TryGetValue(descriptor.ParsingName, out var existing)
+        && existing.Label == descriptor.Label)
+      {
+        // Preserve descriptors that look unchanged.
+        // In particular this will preserve the icon data, avoiding an
+        // (expensive) icon reload
+        descriptor = existing;
+      }
       tmpList.Add(descriptor);
     }
     _descriptorCache.Clear();

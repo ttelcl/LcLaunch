@@ -14,12 +14,16 @@
     <DockPanel>
         <Border
             DockPanel.Dock="Left"
-            BorderThickness="1"
-            BorderBrush="{DynamicResource MahApps.Brushes.Accent}"
             Margin="0,0,15,0"
-            Width="48"
-            Height="48">
+            Width="52"
+            Height="52">
             <!-- space for icon? -->
+            <iconPacks:PackIconMaterial
+                Kind="Help"
+                Foreground="{DynamicResource MahApps.Brushes.Gray9}"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Width="48" Height="48"/>
         </Border>
         <TextBlock
             DockPanel.Dock="Top"
