@@ -18,7 +18,7 @@ using LcLauncher.Main;
 namespace LcLauncher.ShellApps;
 
 /// <summary>
-/// Description of ShellAppCache
+/// Caches information about applications installed on the system
 /// </summary>
 public class ShellAppCache
 {

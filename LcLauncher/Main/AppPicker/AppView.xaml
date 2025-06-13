@@ -18,12 +18,18 @@
             Width="52"
             Height="52">
             <!-- space for icon? -->
-            <iconPacks:PackIconMaterial
+            <!--<iconPacks:PackIconMaterial
                 Kind="Help"
                 Foreground="{DynamicResource MahApps.Brushes.Gray9}"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                Width="48" Height="48"/>
+                Width="48" Height="48"/>-->
+            <Image
+                Visibility="{Binding Icon, Converter={StaticResource VisibleIfNotNull}}"
+                Source="{Binding Icon}"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Stretch="None"/>
         </Border>
         <TextBlock
             DockPanel.Dock="Top"

@@ -13,22 +13,26 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 
+using LcLauncher.IconUpdates;
+using LcLauncher.Main.Rack;
 using LcLauncher.Main.Rack.Tile;
+using LcLauncher.Persistence;
 using LcLauncher.ShellApps;
 using LcLauncher.WpfUtilities;
 
 namespace LcLauncher.Main.AppPicker;
 
-public class AppSelectorViewModel: EditorViewModelBase
+public class AppSelectorViewModel: EditorViewModelBase, IPersisted
 {
   public AppSelectorViewModel(
-    MainViewModel owner,
+    RackViewModel rack,
     TileHostViewModel target)
-    : base(owner, "Application Selector", target.Shelf.Theme)
+    : base(rack.Owner, "Application Selector", target.Shelf.Theme)
   {
     Wide = true;
+    IconTargetId = Guid.NewGuid();
     Target = target;
-    AppCache = owner.AppCache;
+    AppCache = rack.Owner.AppCache;
     Applications = [];
     ViewSource = new CollectionViewSource();
     ViewSource.Source = Applications;
@@ -51,6 +55,7 @@ public class AppSelectorViewModel: EditorViewModelBase
     }
     Categories.Add(new AppCategoryViewModel(this, null));
     SelectedCategory = Categories[0];
+    IconJobQueue = new IconListQueue(rack.IconLoadQueue, this, IconTargetId);
     Refill();
   }
 
@@ -220,7 +225,7 @@ public class AppSelectorViewModel: EditorViewModelBase
       select descriptor;
     foreach(var descriptor in descriptors)
     {
-      var app = new AppViewModel(descriptor);
+      var app = new AppViewModel(this, descriptor);
       Applications.Add(app);
     }
     RecountAll();
@@ -257,6 +262,37 @@ public class AppSelectorViewModel: EditorViewModelBase
           "Failed to create tile specific editor");
         IsActive = false;
       }
+    }
+  }
+
+  /// <summary>
+  /// This selector view model ID in the icon load system
+  /// </summary>
+  public Guid IconTargetId { get; }
+
+  public IconListQueue IconJobQueue { get; }
+
+  /// <summary>
+  /// Dummy implementation (because <see cref="SaveIfDirty"/> is a dummy implementation)
+  /// </summary>
+  public bool IsDirty { get; private set; }
+
+  /// <summary>
+  /// Dummy implementation (because <see cref="SaveIfDirty"/> is a dummy implementation)
+  /// </summary>
+  public void MarkDirty()
+  {
+    IsDirty = true;
+  }
+
+  /// <summary>
+  /// Dummy implementation (doesn't do anything beyond marking as not dirty)
+  /// </summary>
+  public void SaveIfDirty()
+  {
+    if(IsDirty)
+    {
+      IsDirty = false;
     }
   }
 }
