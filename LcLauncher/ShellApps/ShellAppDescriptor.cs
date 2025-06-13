@@ -18,6 +18,7 @@ using LcLauncher.Models;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json;
+using System.Windows.Media.Imaging;
 
 namespace LcLauncher.ShellApps;
 
@@ -309,4 +310,7 @@ public class ShellAppDescriptor
       return parsingName;
     }
   }
+
+  [JsonIgnore]
+  public BitmapSource? Icon { get; set; }
 }

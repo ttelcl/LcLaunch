@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
+using LcLauncher.Main.AppPicker;
 using LcLauncher.Models;
 using LcLauncher.Persistence;
 using LcLauncher.WpfUtilities;
@@ -338,5 +339,10 @@ public class TileHostViewModel: ViewModelBase
     return
       other != null
       && other != this;
+  }
+
+  public AppSelectorViewModel GetAppSelector()
+  {
+    return new AppSelectorViewModel(Rack, this);
   }
 }

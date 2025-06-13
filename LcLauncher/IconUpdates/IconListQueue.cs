@@ -17,7 +17,7 @@ using LcLauncher.Persistence;
 namespace LcLauncher.IconUpdates;
 
 /// <summary>
-/// Pending icon loads for one single tile list.
+/// Pending icon loads for one single tile list or other target.
 /// </summary>
 public class IconListQueue
 {
@@ -29,15 +29,26 @@ public class IconListQueue
   /// </summary>
   public IconListQueue(
     IconLoadQueue parent,
-    TileListViewModel target)
+    IPersisted target,
+    Guid targetId)
   {
     _jobs = [];
     _postLoadActors = [];
     // do not use target ID: the same list may be used in multiple view models!
     QueueId = Guid.NewGuid();
-    TargetId = target.Model.Id;
+    TargetId = targetId;
     Parent = parent;
-    Target = target;    
+    Target = target;
+  }
+
+  /// <summary>
+  /// Create a new IconListQueue
+  /// </summary>
+  public IconListQueue(
+    IconLoadQueue parent,
+    TileListViewModel target)
+    : this(parent, target, target.Model.Id)
+  {
   }
 
   public Guid QueueId { get; }
@@ -66,21 +77,27 @@ public class IconListQueue
   // Called from IconLoadQueue
   internal IconLoadJob? TryDequeueJob()
   {
-    if(_jobs.Count == 0)
+    lock(_jobs)
     {
-      return null;
+      if(_jobs.Count == 0)
+      {
+        return null;
+      }
+      var kvp = _jobs.First();
+      _jobs.Remove(kvp.Key);
+      return kvp.Value;
     }
-    var kvp = _jobs.First();
-    _jobs.Remove(kvp.Key);
-    return kvp.Value;
   }
 
   // Called from IconLoadQueue
   internal void EnqueueJob(
     IconLoadJob job)
   {
-    // Don't care if this replaces an existing job!
-    _jobs[job.IconHost.IconHostId] = job;
+    lock(_jobs)
+    {
+      // Don't care if this replaces an existing job!
+      _jobs[job.IconHost.IconHostId] = job;
+    }
   }
 
   public void QueuePostLoadActor(
