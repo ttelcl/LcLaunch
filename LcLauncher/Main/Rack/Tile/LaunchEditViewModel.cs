@@ -332,6 +332,29 @@ public class LaunchEditViewModel: EditorViewModelBase
         }
       }
     }
+    if(Clipboard.ContainsData("OneNote Link"))
+    {
+      // As of mid 2025 this must be processed BEFORE text format,
+      // since OneNote no longer includes the 'onenote:' link in 
+      // the text format.
+      // The "OneNote Link" clipboard format is a MemoryStream containing
+      // an HTML fragment with the usual clipboard headers prepended
+      var dobject = Clipboard.GetDataObject();
+      if(dobject.GetDataPresent("OneNote Link"))
+      {
+        var linkObject = dobject.GetData("OneNote Link");
+        if(linkObject is MemoryStream stream)
+        {
+          var bytes = stream.ToArray();
+          var content = UTF8Encoding.UTF8.GetString(bytes, 0, bytes.Length);
+          var levm = TryFromHtmlClipboardText(tileHost, content, silent);
+          if(levm != null)
+          {
+            return levm;
+          }
+        }
+      }
+    }
     if(Clipboard.ContainsText())
     {
       var text = Clipboard.GetText();
@@ -466,33 +489,10 @@ public class LaunchEditViewModel: EditorViewModelBase
       var htmlObject = dataObject.GetData("HTML Format");
       if(htmlObject is string htmlText)
       {
-        var fragmentStart = htmlText.IndexOf("<!--StartFragment-->");
-        if(fragmentStart >= 0)
+        var levm = TryFromHtmlClipboardText(tileHost, htmlText, silent);
+        if(levm != null)
         {
-          fragmentStart += "<!--StartFragment-->".Length;
-          var fragmentEnd = htmlText.LastIndexOf("<!--EndFragment-->");
-          if(fragmentEnd > fragmentStart)
-          {
-            var fragment = htmlText.Substring(
-              fragmentStart, fragmentEnd - fragmentStart);
-            var levm = TryFromFirstHtmlLink(tileHost, fragment, silent);
-            if(levm != null)
-            {
-              return levm;
-            }
-            else
-            {
-              if(!silent)
-              {
-                MessageBox.Show(
-                $"Failed: Found HTML content on Clipboard, but there were no links in it.",
-                "Failed",
-                MessageBoxButton.OK,
-                MessageBoxImage.Error);
-              }
-              return null;
-            }
-          }
+          return levm;
         }
       }
     }
@@ -503,6 +503,42 @@ public class LaunchEditViewModel: EditorViewModelBase
       "Not Recognized",
       MessageBoxButton.OK,
       MessageBoxImage.Error);
+    }
+    return null;
+  }
+
+  public static LaunchEditViewModel? TryFromHtmlClipboardText(
+    TileHostViewModel tileHost,
+    string clipboardText,
+    bool silent)
+  {
+    var fragmentStart = clipboardText.IndexOf("<!--StartFragment-->");
+    if(fragmentStart >= 0)
+    {
+      fragmentStart += "<!--StartFragment-->".Length;
+      var fragmentEnd = clipboardText.LastIndexOf("<!--EndFragment-->");
+      if(fragmentEnd > fragmentStart)
+      {
+        var fragment = clipboardText.Substring(
+          fragmentStart, fragmentEnd - fragmentStart);
+        var levm = TryFromFirstHtmlLink(tileHost, fragment, silent);
+        if(levm != null)
+        {
+          return levm;
+        }
+        else
+        {
+          if(!silent)
+          {
+            MessageBox.Show(
+              $"Failed: Found HTML content on Clipboard, but there were no links in it.",
+              "Failed",
+              MessageBoxButton.OK,
+              MessageBoxImage.Error);
+          }
+          return null;
+        }
+      }
     }
     return null;
   }

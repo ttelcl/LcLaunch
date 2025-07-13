@@ -22,6 +22,7 @@ using Newtonsoft.Json;
 using LcLauncher.Models;
 using LcLauncher.IconUpdates;
 using LcLauncher.WpfUtilities;
+using System.Text.Unicode;
 
 namespace LcLauncher.Main;
 
@@ -346,6 +347,44 @@ public class TestPaneViewModel: ViewModelBase
     var formats = dataObject.GetFormats();
     var formatsList = String.Join(", ", formats);
     Trace.TraceInformation($"There are {formats.Length} formats on the clipboard: {formatsList}");
+    if(dataObject.GetDataPresent("OneNote Link"))
+    {
+      Trace.TraceInformation("Found a 'OneNote Link' on the clipboard!");
+      var onenoteLink = dataObject.GetData("OneNote Link");
+      Trace.TraceInformation($"the type of the 'OneNote Link' is '{onenoteLink.GetType().FullName}'");
+      if(onenoteLink is Stream stream) // MemoryStream, really
+      {
+        var bytes = new byte[stream.Length];
+        stream.ReadExactly(bytes.AsSpan());
+        if(Utf8.IsValid(bytes))
+        {
+          var streamTxt = UTF8Encoding.UTF8.GetString(bytes);
+          Trace.TraceInformation($"Stream content: {streamTxt}");
+          // the content appears to be HTML, wrapped in a standard clipboard wrapper.
+          var startKey = "<!--StartFragment-->";
+          var endKey = "<!--EndFragment-->";
+          var fragmentStart = streamTxt.IndexOf(startKey);
+          var fragmentEnd = streamTxt.LastIndexOf(endKey);
+          if(fragmentStart >= 0 && fragmentEnd > fragmentStart)
+          {
+            var fragment = streamTxt.Substring(
+              fragmentStart +  startKey.Length,
+              fragmentEnd - (fragmentStart + startKey.Length));
+            Trace.TraceInformation("----- Found the following fragment: -----");
+            Trace.TraceInformation(fragment);
+            Trace.TraceInformation("----- End of fragment: -----");
+          }
+        }
+        else
+        {
+          Trace.TraceError("The content is not valid UTF8");
+        }
+      }
+      else
+      {
+        Trace.TraceWarning("Format was not a stream");
+      }
+    }
     if(Clipboard.ContainsText())
     {
       var text = Clipboard.GetText();
