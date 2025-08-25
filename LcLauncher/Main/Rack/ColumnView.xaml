@@ -10,7 +10,9 @@
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     d:DataContext="{d:DesignInstance local:ColumnViewModel, IsDesignTimeCreatable=False}"
     d:DesignHeight="450" d:DesignWidth="800"
+    Width="415"
     Background="{DynamicResource MahApps.Brushes.Control.Background}">
+    <!-- Setting a fixed width makes things quite a bit simpler -->
     <UserControl.ContextMenu>
         <ContextMenu>
             <MenuItem Header="Insert Marked Shelf Here"

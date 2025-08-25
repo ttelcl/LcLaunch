@@ -113,7 +113,8 @@
             Width="100" Height="100"
             Visibility="{Binding IsPrimed, Converter={StaticResource VisibleIf}}"/>
         <ItemsControl
-            ItemsSource="{Binding GroupIcons}">
+            ItemsSource="{Binding GroupIcons}"
+            Width="80" Height="80">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <UniformGrid Columns="4" Rows="4"/>

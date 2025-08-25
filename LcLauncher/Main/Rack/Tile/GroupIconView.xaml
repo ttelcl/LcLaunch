@@ -11,8 +11,8 @@
     d:DataContext="{d:DesignInstance local:GroupIconViewModel, IsDesignTimeCreatable=False}"
     d:DesignHeight="450" d:DesignWidth="800">
     <Grid
-        Width="24"
-        Height="24"
+        Width="20"
+        Height="20"
         >
         <iconPacks:PackIconMaterial
             Kind="{Binding PlainIcon}"
