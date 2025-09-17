@@ -16,7 +16,7 @@ namespace Ttelcl.Persistence.API;
 /// but the intended primary use case is CAS mode, where
 /// IDs are a hash of the stored blobs
 /// </summary>
-public interface IBlobBucketStore
+public interface IBlobBucketStore: IBucketStore
 {
   /// <summary>
   /// Get a blob bucket by bucket name. If not found,
@@ -26,7 +26,7 @@ public interface IBlobBucketStore
   /// <param name="bucketName"></param>
   /// <param name="create"></param>
   /// <returns></returns>
-  IBlobBucket GetBucket(string bucketName, bool create);
+  IBlobBucket? GetBlobBucket(string bucketName, bool create = false);
 }
 
 /// <summary>

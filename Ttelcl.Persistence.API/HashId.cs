@@ -80,6 +80,22 @@ public record struct HashId
 
   /// <summary>
   /// Create a <see cref="HashId"/> from the SHA1 hash of the blob.
+  /// Also returns the full hash in binary form
+  /// </summary>
+  /// <param name="blob"></param>
+  /// <param name="fullHash"></param>
+  /// <returns></returns>
+  public static HashId FromBlob(
+    ReadOnlySpan<byte> blob,
+    out byte[] fullHash)
+  {
+    fullHash = new byte[20];
+    SHA1.HashData(blob, fullHash);
+    return FromHash(fullHash);
+  }
+
+  /// <summary>
+  /// Create a <see cref="HashId"/> from the SHA1 hash of the blob.
   /// </summary>
   /// <param name="blob"></param>
   /// <returns></returns>

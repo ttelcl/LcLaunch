@@ -11,31 +11,6 @@ using System.Threading.Tasks;
 namespace Ttelcl.Persistence.API;
 
 /// <summary>
-/// The untyped common base class for all strongly typed
-/// <see cref="IJsonBucket{T}"/>s in a <see cref="IJsonBucketStore"/>
-/// as well as <see cref="IBlobBucket"/>s.
-/// </summary>
-public interface IBucketBase
-{
-  /// <summary>
-  /// The name of the bucket
-  /// </summary>
-  string BucketName { get; }
-
-  /// <summary>
-  /// The type stored by the strongly typed implementation
-  /// </summary>
-  Type BucketType { get; }
-
-  /// <summary>
-  /// Enumerate the available keys. This is a function rather than
-  /// a property to emphasize that this may be an expensive call.
-  /// </summary>
-  /// <returns></returns>
-  IEnumerable<TickId> Keys();
-}
-
-/// <summary>
 /// Stores and retrieves JSON serializable instances. 
 /// </summary>
 /// <typeparam name="T"></typeparam>
@@ -50,12 +25,18 @@ public interface IJsonBucket<T>: IBucketBase
   /// <param name="key"></param>
   /// <returns></returns>
   T? this[TickId key] { get; set; }
+
+  /// <summary>
+  /// Checks if the element with the specified key is in the store
+  /// (without actually loading it)
+  /// </summary>
+  bool ContainsKey(TickId key);
 }
 
 /// <summary>
 /// An abstract data storage API
 /// </summary>
-public interface IJsonBucketStore
+public interface IJsonBucketStore: IBucketStore
 {
   /// <summary>
   /// Get the bucket within this <see cref="IJsonBucketStore"/> with
@@ -70,7 +51,7 @@ public interface IJsonBucketStore
   /// <param name="bucketName"></param>
   /// <param name="create"></param>
   /// <returns></returns>
-  IJsonBucket<T> GetBucket<T>(string bucketName, bool create)
+  IJsonBucket<T>? GetJsonBucket<T>(string bucketName, bool create = false)
     where T : class;
 }
 
