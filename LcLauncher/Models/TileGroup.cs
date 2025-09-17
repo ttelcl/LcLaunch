@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 
 using Newtonsoft.Json;
+using Ttelcl.Persistence.API;
 
 namespace LcLauncher.Models;
 
@@ -28,6 +29,9 @@ public class TileGroup
   [JsonProperty("title")]
   public string Title { get; set; }
 
+  /// <summary>
+  /// The tiles list ID in the original model
+  /// </summary>
   [JsonProperty("tilelist")]
   public Guid TileList { get; set; }
 

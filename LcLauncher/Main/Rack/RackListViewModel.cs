@@ -66,6 +66,11 @@ public class RackListViewModel: ViewModelBase
           }
           var rackModel = new RackModel(store, _selectedRack);
           var rackVm = new RackViewModel(Owner, rackModel);
+          if(rackModel.RackData.Upgrading)
+          {
+            rackVm.MarkDirty();
+            rackVm.SaveIfDirty();
+          }
           Owner.CurrentRack = rackVm;
         }
       }

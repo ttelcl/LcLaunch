@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 using LcLauncher.Persistence;
+using Ttelcl.Persistence.API;
 
 namespace LcLauncher.Models;
 
@@ -46,12 +47,20 @@ public class ShelfModel
       shelf = new ShelfData(
         "MISSING Shelf " + id.ToString(),
         true, // Start out collapsed in this unusual case
-        "Cobalt");
+        "Cobalt",
+        id,
+        TickId.New());
       needsSave = true;
     }
     if(String.IsNullOrEmpty(shelf.Title))
     {
       shelf.Title = "Untitled Shelf " + id.ToString();
+    }
+    if(shelf.IdOld != id)
+    {
+      shelf.IdOld = id;
+      shelf.Tid = TickId.New();
+      needsSave = true;
     }
     if(needsSave)
     {
