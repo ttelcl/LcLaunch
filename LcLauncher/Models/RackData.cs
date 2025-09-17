@@ -13,6 +13,9 @@ using Newtonsoft.Json;
 
 namespace LcLauncher.Models;
 
+/// <summary>
+/// The serializable Rack Content
+/// </summary>
 public class RackData
 {
   public RackData(
