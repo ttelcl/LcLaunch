@@ -6,17 +6,21 @@ using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
+using Newtonsoft.Json;
+
 namespace Ttelcl.Persistence.API;
 
 /// <summary>
 /// A 'hopefully unique' identifier for a blob, based
-/// on its SHA1 hash
+/// on the first 8 bytes (63 bits, really) of its SHA1 hash
 /// </summary>
+[JsonConverter(typeof(HashIdConverter))]
 public record struct HashId
 {
   private readonly long _id;
@@ -132,5 +136,25 @@ public record struct HashId
   public override string ToString()
   {
     return _id.ToString("X16");
+  }
+
+  /// <summary>
+  /// Parse the <see cref="HashId"/> from its hexadecimal representation
+  /// </summary>
+  /// <param name="s"></param>
+  /// <returns></returns>
+  /// <exception cref="ArgumentException"></exception>
+  public static HashId Parse(string s)
+  {
+    if(s.Length != 16 || !Int64.TryParse(
+      s,
+      NumberStyles.AllowHexSpecifier,
+      CultureInfo.InvariantCulture,
+      out var l))
+    {
+      throw new ArgumentException(
+        $"Expecting a 16 character hexedecimal string but got '{s}'");
+    }
+    return (HashId)l;
   }
 }

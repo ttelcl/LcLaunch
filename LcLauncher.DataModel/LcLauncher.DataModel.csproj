@@ -7,4 +7,8 @@
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Ttelcl.Persistence.API\Ttelcl.Persistence.API.csproj" />
+  </ItemGroup>
+
 </Project>
