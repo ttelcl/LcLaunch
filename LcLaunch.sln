@@ -16,6 +16,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ttelcl.Persistence.API", "T
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ttelcl.Persistence.Filesystem", "Ttelcl.Persistence.Filesystem\Ttelcl.Persistence.Filesystem.csproj", "{991743ED-5C38-4C9E-966F-9996C965FA5B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps", "Apps", "{40092E14-15F3-4F30-BFF6-81434924B68C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +41,11 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{83D5C713-E0F4-4031-9700-10A90339BB6E} = {40092E14-15F3-4F30-BFF6-81434924B68C}
+		{2D4F0A4F-DF4E-45A6-A9D2-5646F0268EFF} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{991743ED-5C38-4C9E-966F-9996C965FA5B} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5535931B-8931-40BA-AC04-80DF0BC17378}
