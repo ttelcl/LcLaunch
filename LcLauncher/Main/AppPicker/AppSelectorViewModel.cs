@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 
+using LcLauncher.DataModel;
 using LcLauncher.IconUpdates;
 using LcLauncher.Main.Rack;
 using LcLauncher.Main.Rack.Tile;

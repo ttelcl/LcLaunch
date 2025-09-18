@@ -13,6 +13,7 @@ using System.Windows.Input;
 
 using ControlzEx.Theming;
 
+using LcLauncher.DataModel;
 using LcLauncher.IconUpdates;
 using LcLauncher.Main.Rack.Tile;
 using LcLauncher.Models;

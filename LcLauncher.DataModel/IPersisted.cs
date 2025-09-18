@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LcLauncher.Persistence;
+namespace LcLauncher.DataModel;
 
 /// <summary>
 /// An item that tracks a dirty state and can save itself

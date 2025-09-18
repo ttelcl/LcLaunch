@@ -30,6 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\LcLauncher.DataModel\LcLauncher.DataModel.csproj" />
     <ProjectReference Include="..\Ttelcl.Persistence.API\Ttelcl.Persistence.API.csproj" />
     <ProjectReference Include="..\Ttelcl.Persistence.Filesystem\Ttelcl.Persistence.Filesystem.csproj" />
   </ItemGroup>
