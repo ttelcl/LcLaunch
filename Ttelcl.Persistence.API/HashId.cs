@@ -124,4 +124,13 @@ public record struct HashId
   {
     return hid._id;
   }
+
+  /// <summary>
+  /// Returns the hexadecimal representation of this <see cref="HashId"/>
+  /// </summary>
+  /// <returns></returns>
+  public override string ToString()
+  {
+    return _id.ToString("X16");
+  }
 }

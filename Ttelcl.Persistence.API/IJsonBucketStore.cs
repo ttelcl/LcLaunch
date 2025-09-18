@@ -14,7 +14,7 @@ namespace Ttelcl.Persistence.API;
 /// Stores and retrieves JSON serializable instances. 
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public interface IJsonBucket<T>: IBucketBase
+public interface IJsonBucket<T>: IBucketBase<TickId>
   where T : class
 {
   /// <summary>
@@ -25,12 +25,6 @@ public interface IJsonBucket<T>: IBucketBase
   /// <param name="key"></param>
   /// <returns></returns>
   T? this[TickId key] { get; set; }
-
-  /// <summary>
-  /// Checks if the element with the specified key is in the store
-  /// (without actually loading it)
-  /// </summary>
-  bool ContainsKey(TickId key);
 }
 
 /// <summary>

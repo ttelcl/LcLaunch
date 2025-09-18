@@ -17,7 +17,9 @@ using Ttelcl.Persistence.API;
 namespace Ttelcl.Persistence.Filesystem;
 
 /// <summary>
-/// Description of FsJsonBucket
+/// Implements <see cref="IJsonBucket{T}"/>, storing each item
+/// as a separate file in the store folder using a file name
+/// that includes the item key and bucket name.
 /// </summary>
 public class FsJsonBucket<T>: IJsonBucket<T> where T : class
 {

@@ -15,7 +15,7 @@ using Ttelcl.Persistence.API;
 namespace Ttelcl.Persistence.Filesystem;
 
 /// <summary>
-/// Description of FsHyperStore
+/// Implements <see cref="IHyperBucketStore"/> in the filesystem
 /// </summary>
 public class FsHyperStore: IHyperBucketStore
 {
@@ -37,12 +37,15 @@ public class FsHyperStore: IHyperBucketStore
   /// <inheritdoc/>
   public IBucketStore GetStore(string storeName)
   {
+    // Store names follow the same rule as bucket names
     if(!BucketStoreExtensions.IsValidBucketName(storeName))
     {
       throw new ArgumentException(
         $"Not a valid child store name: '{storeName}'");
     }
-    return new FsBucketStore(Path.Combine(RootFolder, storeName));
+    var storeFolderName =
+      Path.Combine(RootFolder, "store--"+storeName);
+    return new FsBucketStore(storeFolderName);
   }
 
 }

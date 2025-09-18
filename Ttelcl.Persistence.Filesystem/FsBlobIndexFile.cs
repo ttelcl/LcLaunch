@@ -47,18 +47,6 @@ public class FsBlobIndexFile
   public string FileName { get; }
 
   /// <summary>
-  /// Open the blob index file for reading. Move the read pointer to
-  /// just after the header
-  /// </summary>
-  /// <returns></returns>
-  internal FileStream OpenRead()
-  {
-    var fs = File.OpenRead(FileName);
-    fs.Position = HeaderSize;
-    return fs;
-  }
-
-  /// <summary>
   /// Get a view on the map of blob descriptors
   /// </summary>
   public IReadOnlyDictionary<HashId, FsBlobDescriptor> Descriptors => _entryMap;
@@ -107,6 +95,39 @@ public class FsBlobIndexFile
       _entries.Add(descriptor);
       _entryMap.Add(descriptor.Id, descriptor);
     }
+  }
+
+  internal bool TryAppendBlob(
+    byte[] blob,
+    FileStream blobAppendStream,
+    FileStream indexAppendStream,
+    out IBlobEntry entry)
+  {
+    var id = HashId.FromBlob(blob, out byte[] hash);
+    if(_entryMap.TryGetValue(id, out var e))
+    {
+      entry = e;
+      return false;
+    }
+    var offset = blobAppendStream.Seek(0, SeekOrigin.End);
+    var descriptor = new FsBlobDescriptor(offset, blob.Length, hash);
+    entry = descriptor;
+    descriptor.Write(blobAppendStream, indexAppendStream, blob);
+    _entries.Add(descriptor);
+    _entryMap.Add(id, descriptor);
+    return true;
+  }
+
+  /// <summary>
+  /// Open the blob index file for reading. Move the read pointer to
+  /// just after the header
+  /// </summary>
+  /// <returns></returns>
+  internal FileStream OpenRead()
+  {
+    var fs = File.OpenRead(FileName);
+    fs.Position = HeaderSize;
+    return fs;
   }
 
   /// <summary>

@@ -15,7 +15,8 @@ using Ttelcl.Persistence.API;
 namespace Ttelcl.Persistence.Filesystem;
 
 /// <summary>
-/// Description of FsBucketStore
+/// Implements <see cref="IBucketStore"/> and its specializations using
+/// files and folders directly
 /// </summary>
 public class FsBucketStore: IBucketStore, IJsonBucketStore, IBlobBucketStore
 {

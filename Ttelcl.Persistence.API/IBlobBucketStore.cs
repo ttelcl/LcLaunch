@@ -26,62 +26,95 @@ public interface IBlobBucketStore: IBucketStore
   /// <param name="bucketName"></param>
   /// <param name="create"></param>
   /// <returns></returns>
-  IBlobBucket? GetBlobBucket(string bucketName, bool create = false);
+  IBlobBucket? GetBlobBucket(string bucketName, bool create);
 }
 
 /// <summary>
 /// The buckets in a <see cref="IBlobBucketStore"/>.
 /// <see cref="IBucketBase.BucketType"/> will be byte[].
 /// </summary>
-public interface IBlobBucket: IBucketBase
+public interface IBlobBucket: IBucketBase<HashId>
 {
   /// <summary>
-  /// Get, Put, or delete a blob by its ID. Note
-  /// that for CAS Blob storage, the ID must be calculated
-  /// from the blob upon storing.
+  /// Look up the blob index entry for the given blob <paramref name="id"/>.
+  /// This method is expected to be 'cheap'.
   /// </summary>
-  /// <param name="id"></param>
-  /// <returns></returns>
-  byte[]? this[HashId id] { get; set; }
+  /// <param name="id">
+  /// The blob ID to look for
+  /// </param>
+  /// <param name="entry">
+  /// The blob descriptor if successful, or null if not found.
+  /// </param>
+  /// <returns>
+  /// True if found, false if not found
+  /// </returns>
+  bool TryGetEntry(HashId id, [NotNullWhen(true)] out IBlobEntry? entry);
 
   /// <summary>
-  /// Test if the key is present in the bucket, without actually
-  /// retrieving the blob
+  /// Open a short-lived API for reading blobs. Implementations may choose
+  /// to disallow blob writes until this reader is disposed.
   /// </summary>
-  public bool ContainsKey(HashId id);
+  /// <returns></returns>
+  IBlobBucketReader OpenReader();
+
+  /// <summary>
+  /// Open a short lived API for writing blobs. Implementations may choose
+  /// to disallow blob reads until this writer is closed. Implementations
+  /// may choose to hide the written blobs from reading until this writer
+  /// is closed.
+  /// </summary>
+  /// <returns></returns>
+  IBlobBucketWriter OpenWriter();
 }
 
 /// <summary>
-/// A layer on top of <see cref="IBlobBucket"/> implementing
-/// Content Addressable Store functionality
+/// A short-lived read-only interface to read blobs. While this
+/// is active, blob writing may be disabled
 /// </summary>
-public interface ICasBlobBucket: IBlobBucket
+public interface IBlobBucketReader: IDisposable
 {
+
   /// <summary>
-  /// Look up a blob by ID. On success, true is returned and
-  /// <paramref name="blob"/> is set to the blob found.
-  /// On failure, false is returned and <paramref name="blob"/>
-  /// is set to null
+  /// Load the blob for the given blob <paramref name="id"/>.
+  /// This may be an expensive operation
   /// </summary>
   /// <param name="id"></param>
   /// <param name="blob"></param>
   /// <returns></returns>
-  bool TryFindBlob(HashId id, [NotNullWhen(true)] out byte[]? blob);
+  bool TryGetBlob(HashId id, [NotNullWhen(true)] out byte[]? blob);
+}
+
+/// <summary>
+/// A short-lived write-only API to add new blobs.
+/// </summary>
+public interface IBlobBucketWriter: IDisposable
+{
+  /// <summary>
+  /// Add a blob and generate its ID. If the blob was already
+  /// present nothing is written, and false is returned. Otherwise
+  /// the blob is added and true is returned.
+  /// </summary>
+  /// <param name="blob"></param>
+  /// <param name="id"></param>
+  /// <returns></returns>
+  bool TryPutBlob(byte[] blob, out HashId id);
+}
+
+/// <summary>
+/// Describes an entry in the blob index
+/// </summary>
+public interface IBlobEntry
+{
+  /// <summary>
+  /// The unique identifier of the blob, as derived from the blob's
+  /// hash
+  /// </summary>
+  HashId Id { get; }
 
   /// <summary>
-  /// Put a blob in the store and generate its ID. If the blob
-  /// was already present it is not replaced (it is assumed the
-  /// blob has the exact same content)
+  /// The blob's size
   /// </summary>
-  /// <param name="blob">
-  /// The blob to store
-  /// </param>
-  /// <param name="id">
-  /// Upon return: the ID calculated from the blob
-  /// </param>
-  /// <returns>
-  /// True if the blob was stored, false if it was present already.
-  /// </returns>
-  bool TryPutBlob(byte[] blob, out HashId id);
-
+  int Size { get; }
 }
+
+

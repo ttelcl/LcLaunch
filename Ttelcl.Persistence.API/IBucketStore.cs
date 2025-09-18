@@ -51,13 +51,28 @@ public interface IBucketBase
   /// The type stored by the strongly typed implementation
   /// </summary>
   Type BucketType { get; }
+}
 
+/// <summary>
+/// Extends <see cref="IBucketBase"/> with strongly typed key
+/// related functionality
+/// </summary>
+/// <typeparam name="TKey"></typeparam>
+public interface IBucketBase<TKey>: IBucketBase
+  where TKey : struct
+{
   /// <summary>
   /// Enumerate the available keys. This is a function rather than
   /// a property to emphasize that this may be an expensive call.
   /// </summary>
   /// <returns></returns>
-  IEnumerable<TickId> Keys();
+  IEnumerable<TKey> Keys();
+
+  /// <summary>
+  /// Checks if the element with the specified key is in the store
+  /// (without actually loading it)
+  /// </summary>
+  bool ContainsKey(TKey key);
 }
 
 /// <summary>
