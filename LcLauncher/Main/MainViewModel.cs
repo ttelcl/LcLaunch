@@ -9,6 +9,8 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 
+using Microsoft.Extensions.Configuration;
+
 using LcLauncher.IconUpdates;
 using LcLauncher.Main.AppPicker;
 using LcLauncher.Main.Rack;
@@ -18,7 +20,9 @@ using LcLauncher.ShellApps;
 using LcLauncher.Storage;
 using LcLauncher.WpfUtilities;
 
-using Microsoft.Extensions.Configuration;
+using Ttelcl.Persistence.API;
+using LcLauncher.DataModel.Store;
+using LcLauncher.ModelConversion;
 
 namespace LcLauncher.Main;
 
@@ -32,6 +36,7 @@ public class MainViewModel: ViewModelBase
     Configuration = configuration;
     DefaultTheme = configuration["defaultTheme"] ?? DefaultDefaultTheme;
     ShowDevPane = configuration.GetValue<bool>("showDevPane", false);
+    HyperStore = InitHyperStore();
     var fileStore = new JsonDataStore();
     var storeImplementation = new JsonLcLaunchStore(fileStore);
     StoreImplementation = storeImplementation;
@@ -62,6 +67,10 @@ public class MainViewModel: ViewModelBase
       p => { DevDumpApps(); });
     DevTogglePaneCommand = new DelegateCommand(
       p => { ShowDevPane = !ShowDevPane; });
+    ModelConverter = new ModelConverter(this);
+    ConvertCurrentRackCommand = new DelegateCommand(
+      p => ModelConverter.ConvertCurrentRack(),
+      p => CurrentRack != null);
   }
 
   public IConfigurationRoot Configuration { get; }
@@ -83,6 +92,22 @@ public class MainViewModel: ViewModelBase
   public TestPaneViewModel TestPane { get; }
 
   public ShellAppCache AppCache { get; }
+
+  public LauncherHyperStore HyperStore { get; }
+
+  public ModelConverter ModelConverter { get; }
+
+  public ICommand ConvertCurrentRackCommand { get; }
+
+  private static LauncherHyperStore InitHyperStore()
+  {
+    var fsProvider = new Ttelcl.Persistence.Filesystem.FsBucketProvider();
+    var folder = LauncherHyperStore.DefaultStoreFolder;
+    var hyperBucketStore =
+      new HyperBucketStore(
+        folder, [fsProvider]);
+    return new LauncherHyperStore(hyperBucketStore);
+  }
 
   public RackViewModel? CurrentRack {
     get => _currentRack;

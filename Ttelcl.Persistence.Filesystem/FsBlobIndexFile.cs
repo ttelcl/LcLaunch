@@ -156,6 +156,16 @@ public class FsBlobIndexFile
     }
   }
 
+  internal void Erase()
+  {
+    if(File.Exists(FileName))
+    {
+      var bakName = FileName + ".bak";
+      File.Move(FileName, bakName, true);
+    }
+    InitFile();
+  }
+
   internal const ulong Signature = 0x58444E49424F4C42; // BLOBINDX
 
   internal const int EntrySize = 32;

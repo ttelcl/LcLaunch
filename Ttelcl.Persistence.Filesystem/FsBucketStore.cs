@@ -45,7 +45,7 @@ public class FsBucketStore: IBucketStore, IJsonBucketStore, IBlobBucketStore
   /// <inheritdoc/>
   public IBucketBase? GetBucket(string bucketName)
   {
-    if(!BucketStoreExtensions.IsValidBucketName(bucketName))
+    if(!NamingRules.IsValidBucketName(bucketName))
     {
       throw new ArgumentOutOfRangeException(
         nameof(bucketName), 
@@ -84,6 +84,22 @@ public class FsBucketStore: IBucketStore, IJsonBucketStore, IBlobBucketStore
   public IBlobBucket? GetBlobBucket(
     string bucketName, bool create = false)
   {
-    throw new NotImplementedException();
+    var bucket = this.GetBucket<byte[]>(bucketName);
+    if(bucket == null)
+    {
+      if(create)
+      {
+        var b = new FsBlobBucket(this, bucketName);
+        _bucketRegistry.Add(bucketName, b);
+        return b;
+      }
+      return null;
+    }
+    if(bucket is not IBlobBucket typedBucket)
+    {
+      throw new InvalidOperationException(
+        $"Unexpected implementation type for bucket '{bucketName}' (not a BLOB bucket)");
+    }
+    return typedBucket;
   }
 }

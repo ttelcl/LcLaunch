@@ -130,4 +130,14 @@ public class FsJsonBucket<T>: IJsonBucket<T> where T : class
     var fullName = Path.Combine(Store.StoreFolder, shortName);
     return fullName;
   }
+
+  /// <inheritdoc/>
+  public void Erase()
+  {
+    var ids = Keys().ToList();
+    foreach(var id in ids)
+    {
+      this[id] = null;
+    }
+  }
 }

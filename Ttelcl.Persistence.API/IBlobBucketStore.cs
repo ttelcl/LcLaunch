@@ -117,4 +117,51 @@ public interface IBlobEntry
   int Size { get; }
 }
 
+/// <summary>
+/// Extension methods on blob bucket related interfaces
+/// </summary>
+public static class BlobBucketExtensions
+{
+  /// <summary>
+  /// Put a blob in the blob bucket and return its ID. If the blob
+  /// was already in the bucket it is not put again. This API does
+  /// not tell you if the blob was put in newly, or if it was already
+  /// there.
+  /// </summary>
+  /// <param name="writer">
+  /// The writer opened with <see cref="IBlobBucket.OpenWriter"/>
+  /// </param>
+  /// <param name="blob">
+  /// The blob to write
+  /// </param>
+  /// <returns>
+  /// The <see cref="HashId"/> for the blob that can be used to retrieve
+  /// the blob
+  /// </returns>
+  public static HashId PutBlob(
+    this IBlobBucketWriter writer,
+    byte[] blob)
+  {
+    writer.TryPutBlob(blob, out var id);
+    return id;
+  }
+
+  /// <summary>
+  /// Lookup the blob with the given <paramref name="id"/> in the
+  /// bucket, returning it if found, or returning null if not found
+  /// </summary>
+  /// <param name="reader"></param>
+  /// <param name="id"></param>
+  /// <returns></returns>
+  public static byte[]? GetBlob(
+    this IBlobBucketReader reader,
+    HashId id)
+  {
+    return
+      reader.TryGetBlob(id, out var blob)
+      ? blob
+      : null;
+  }
+}
+
 

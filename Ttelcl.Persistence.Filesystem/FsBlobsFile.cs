@@ -98,6 +98,16 @@ public class FsBlobsFile
     }
   }
 
+  internal void Erase()
+  {
+    if(File.Exists(FileName))
+    {
+      var bakName = FileName + ".bak";
+      File.Move(FileName, bakName, true);
+    }
+    InitFile();
+  }
+
   internal const ulong Signature = 0x524F5453424F4C42; // BLOBSTOR
   internal const int HeaderSize = 8;
 }

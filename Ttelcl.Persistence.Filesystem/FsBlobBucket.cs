@@ -79,6 +79,13 @@ public class FsBlobBucket: IBlobBucket
   }
 
   /// <inheritdoc/>
+  public void Erase()
+  {
+    BlobIndexFile.Erase();
+    BlobsFile.Erase();
+  }
+
+  /// <inheritdoc/>
   public bool TryGetEntry(
     HashId id, [NotNullWhen(true)] out IBlobEntry? entry)
   {
@@ -224,5 +231,4 @@ public class FsBlobBucket: IBlobBucket
       }
     }
   }
-
 }

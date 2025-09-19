@@ -51,6 +51,11 @@ public interface IBucketBase
   /// The type stored by the strongly typed implementation
   /// </summary>
   Type BucketType { get; }
+
+  /// <summary>
+  /// Remove all content from the bucket
+  /// </summary>
+  public void Erase();
 }
 
 /// <summary>
@@ -79,15 +84,8 @@ public interface IBucketBase<TKey>: IBucketBase
 /// Extension methods and static functionality related to
 /// BucketStores
 /// </summary>
-public static partial class BucketStoreExtensions
+public static class BucketStoreExtensions
 {
-  /// <summary>
-  /// Test if a name is a valid bucket name
-  /// </summary>
-  public static bool IsValidBucketName(string bucketName)
-  {
-    return __bucketNameRegex.IsMatch(bucketName);
-  }
 
   /// <summary>
   /// Get the registered bucket and verify it contains items of type
@@ -113,15 +111,6 @@ public static partial class BucketStoreExtensions
     }
     return bucket;
   }
-
-  private static Regex __bucketNameRegex =
-    BucketNameRegex();
-
-  [GeneratedRegex(
-    @"^[a-z][a-z0-9]*([-_][a-z0-9]+)*$",
-    RegexOptions.IgnoreCase,
-    "")] // Culture name empty -> Invariant Culture
-  private static partial Regex BucketNameRegex();
 }
 
 
