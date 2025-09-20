@@ -102,6 +102,11 @@ public static class BucketStoreExtensions
     string bucketName)
     where T : class
   {
+    if(!NamingRules.IsValidBucketName(bucketName))
+    {
+      throw new ArgumentException(
+        $"Not a valid bucket name: '{bucketName}'");
+    }
     var bucket = bucketStore.GetBucket(bucketName);
     if(bucket != null && bucket.BucketType != typeof(T))
     {

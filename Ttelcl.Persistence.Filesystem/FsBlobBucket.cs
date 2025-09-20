@@ -33,9 +33,14 @@ public class FsBlobBucket: IBlobBucket
     FsBucketStore store,
     string bucketName)
   {
+    if(!NamingRules.IsValidBucketName(bucketName))
+    {
+      throw new ArgumentException(
+        $"Not a valid bucket name: '{bucketName}'");
+    }
     BucketName = bucketName;
     Store = store;
-    var blobsFileName = "blobs--" + bucketName + ".blobs";
+    var blobsFileName = "blobs." + bucketName + ".blobs";
     var fullBlobsFileName = Path.Combine(store.StoreFolder, blobsFileName);
     BlobsFile = new FsBlobsFile(fullBlobsFileName);
     BlobIndexFile = new FsBlobIndexFile(BlobsFile);

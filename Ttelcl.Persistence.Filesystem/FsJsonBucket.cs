@@ -30,6 +30,11 @@ public class FsJsonBucket<T>: IJsonBucket<T> where T : class
     FsBucketStore store,
     string bucketName)
   {
+    if(!NamingRules.IsValidBucketName(bucketName))
+    {
+      throw new ArgumentException(
+        $"Not a valid bucket name: '{bucketName}'");
+    }
     Store = store;
     BucketName = bucketName;
   }
@@ -113,7 +118,7 @@ public class FsJsonBucket<T>: IJsonBucket<T> where T : class
   public IEnumerable<TickId> Keys()
   {
     var di = new DirectoryInfo(Store.StoreFolder);
-    var mask = $"????????-??????-???????.{BucketName}.json";
+    var mask = $"????????-??????-???????.{BucketName}-json";
     foreach(var file in di.GetFiles(mask))
     {
       var idtag = file.Name.Substring(0, 23);
@@ -126,7 +131,7 @@ public class FsJsonBucket<T>: IJsonBucket<T> where T : class
 
   private string ItemFileName(TickId id)
   {
-    var shortName = $"{id}.{BucketName}.json";
+    var shortName = $"{id}.{BucketName}-json";
     var fullName = Path.Combine(Store.StoreFolder, shortName);
     return fullName;
   }

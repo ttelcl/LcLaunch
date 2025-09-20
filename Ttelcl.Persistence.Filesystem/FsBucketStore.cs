@@ -61,6 +61,11 @@ public class FsBucketStore: IBucketStore, IJsonBucketStore, IBlobBucketStore
     string bucketName, bool create = false)
     where T : class
   {
+    if(!NamingRules.IsValidBucketName(bucketName))
+    {
+      throw new ArgumentException(
+        $"Not a valid bucket name: '{bucketName}'");
+    }
     var bucket = this.GetBucket<T>(bucketName);
     if(bucket == null)
     {
@@ -84,6 +89,11 @@ public class FsBucketStore: IBucketStore, IJsonBucketStore, IBlobBucketStore
   public IBlobBucket? GetBlobBucket(
     string bucketName, bool create = false)
   {
+    if(!NamingRules.IsValidBucketName(bucketName))
+    {
+      throw new ArgumentException(
+        $"Not a valid bucket name: '{bucketName}'");
+    }
     var bucket = this.GetBucket<byte[]>(bucketName);
     if(bucket == null)
     {
