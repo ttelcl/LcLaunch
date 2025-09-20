@@ -89,7 +89,8 @@ public static class LcLaunchStore
           $"Rack '{rackName}' already exists");
       }
     }
-    var emptyRack = new RackData([[], [], []]);
+    var emptyRack = new RackData(
+      [[], [], []], [[], [], []]);
     Trace.TraceInformation(
       $"Creating new rack '{rackName}'");
     store.SaveRack(rackName, emptyRack);

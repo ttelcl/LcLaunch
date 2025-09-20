@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
+using LcLauncher.DataModel;
 using LcLauncher.IconUpdates;
 using LcLauncher.Main.Rack.Tile;
 using LcLauncher.Models;

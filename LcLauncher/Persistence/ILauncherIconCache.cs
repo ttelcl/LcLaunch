@@ -70,9 +70,22 @@ public interface ILauncherIconCache
   /// result in a null return value.
   /// </param>
   /// <returns>
-  /// The BitmapSource of the icon, if found.
+  /// The <see cref="BitmapSource"/> of the icon, if found.
   /// </returns>
   BitmapSource? LoadCachedIcon(string? hashPrefix);
+
+  /// <summary>
+  /// Try to find the icon by ID in this cache, returning the
+  /// raw icon bytes if found
+  /// </summary>
+  /// The hash (or sufficiently long prefix) of the icon to load.
+  /// For ease of use this may be null or empty, which will always
+  /// result in a null return value.
+  /// </param>
+  /// <returns>
+  /// The raw bytes of the icon, if found.
+  /// </returns>
+  byte[]? LoadCachedBlob(string? hashPrefix);
 
   /// <summary>
   /// Cache icons for the given source in one or more sizes.

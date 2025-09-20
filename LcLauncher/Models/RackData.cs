@@ -11,21 +11,36 @@ using System.Threading.Tasks;
 
 using Newtonsoft.Json;
 
+using Ttelcl.Persistence.API;
+
 namespace LcLauncher.Models;
 
+/// <summary>
+/// The serializable Rack Content
+/// </summary>
 public class RackData
 {
   public RackData(
-    IEnumerable<List<Guid>> columns)
+    IEnumerable<List<Guid>> columns,
+    IEnumerable<List<TickId>>? columns2 = null)
   {
-    Columns = columns.ToList();
-    if(Columns.Count != 3)
+    var columnList = columns.ToList();
+    Columns = columnList;
+    //if(columnList.Count != 3)
+    //{
+    //  throw new ArgumentException("RackData must have exactly 3 columns");
+    //}
+    // Code refactoring in progress. For now make the *Minimum* 3
+    while(columnList.Count < 3)
     {
-      throw new ArgumentException("RackData must have exactly 3 columns");
+      columnList.Add([]);
     }
+    Upgrading = columns2 != null;
   }
 
   [JsonProperty("columns")]
   public IReadOnlyList<List<Guid>> Columns { get; }
 
+  [JsonIgnore]
+  public bool Upgrading { get; }
 }

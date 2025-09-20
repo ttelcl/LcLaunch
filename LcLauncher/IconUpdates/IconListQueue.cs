@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using LcLauncher.DataModel;
 using LcLauncher.Main.Rack.Tile;
 using LcLauncher.Persistence;
 

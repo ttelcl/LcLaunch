@@ -15,47 +15,50 @@ using Newtonsoft.Json;
 
 using Ttelcl.Persistence.API;
 
-namespace LcLauncher.Models;
+namespace LcLauncher.DataModel.Entities;
 
 /// <summary>
 /// The shelf data (serializable)
 /// </summary>
-public class ShelfData
+public class ShelfData: IJsonStorable
 {
+  /// <summary>
+  /// Deserialization constructor
+  /// </summary>
   public ShelfData(
     string? title,
     bool collapsed = false,
     string? theme = null,
-    Guid? guid = null,
-    TickId? tid = null)
+    TickId? id = null)
   {
     Title = title ?? "";
     Theme = theme;
     Collapsed = collapsed;
 
-    IdOld = guid ?? Guid.Empty;
-    Tid = tid ?? TickId.Zero;
+    Id = id ?? TickId.Zero;
   }
 
   /// <summary>
-  /// The new Id
+  /// The shelf Id (model V3)
   /// </summary>
-  [JsonProperty("tid")]
-  public TickId Tid { get; set; }
+  [JsonProperty("id")]
+  public TickId Id { get; set; }
 
   /// <summary>
-  /// Backward compatibility Guid. The external ID is authorative, this
-  /// is merely a copy for clarity.
+  /// The shelf title
   /// </summary>
-  [JsonProperty("guid")]
-  public Guid IdOld { get; set; }
-
   [JsonProperty("title")]
   public string Title { get; set; }
 
+  /// <summary>
+  /// The name of the color theme used for this shelf
+  /// </summary>
   [JsonProperty("theme", NullValueHandling = NullValueHandling.Ignore)]
   public string? Theme { get; set; }
 
+  /// <summary>
+  /// Whether or not the shelf is in its collapsed state
+  /// </summary>
   [JsonProperty("collapsed")]
   public bool Collapsed { get; set; }
 }

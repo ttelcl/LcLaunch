@@ -70,6 +70,18 @@ public class IconCache
     return entry == null ? null : LoadCachedIconEntry(entry);
   }
 
+  public byte[]? LoadCachedBlob(string hashPrefix)
+  {
+    // for use while converting from V2 to V3 model
+    var entry = GetIconStorage()[hashPrefix];
+    if(entry != null)
+    {
+      var iconCache = GetIconStorage();
+      return iconCache.ReadBlob(entry);
+    }
+    return null;
+  }
+
   public IconHashes? CacheIcons(
     string iconSource, IconSize sizes)
   {

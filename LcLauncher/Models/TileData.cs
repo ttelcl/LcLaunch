@@ -19,6 +19,7 @@ namespace LcLauncher.Models;
 /// a few possible kinds of tile content. Only one of the
 /// fields will be non-null (except for the quad field, which
 /// can be an empty list as equivalent).
+/// A list of these is what gets serialized in tile list files.
 /// </summary>
 public class TileData
 {

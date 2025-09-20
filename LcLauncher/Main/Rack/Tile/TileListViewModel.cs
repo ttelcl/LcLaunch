@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
+using LcLauncher.DataModel;
 using LcLauncher.IconUpdates;
 using LcLauncher.Models;
 using LcLauncher.Persistence;
@@ -328,6 +329,11 @@ public class TileListViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
           groupVm.ChildTiles.GatherTileLists(buffer);
         }
       }
+    }
+    else
+    {
+      Trace.TraceError(
+        $"Encountered duplicate tile list reference {TileListId}");
     }
   }
 }

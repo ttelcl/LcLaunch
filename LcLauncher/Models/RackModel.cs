@@ -95,12 +95,19 @@ public class RackModel
   {
     // Note: the outer and inner lists may also be referenced elsewhere,
     // so we can only replace their contents, not the lists themselves.
-    RackData.Columns[0].Clear();
-    RackData.Columns[0].AddRange(Columns[0].Select(s => s.Id));
-    RackData.Columns[1].Clear();
-    RackData.Columns[1].AddRange(Columns[1].Select(s => s.Id));
-    RackData.Columns[2].Clear();
-    RackData.Columns[2].AddRange(Columns[2].Select(s => s.Id));
+
+    if(Columns.Length != RackData.Columns.Count)
+    {
+      // midway through refactoring this ... this method is backcompat
+      throw new NotSupportedException(
+        $"Column count not synchronized: {Columns.Length} vs {RackData.Columns.Count}");
+    }
+
+    for(var i=0; i<Columns.Length; i++)
+    {
+      RackData.Columns[i].Clear();
+      RackData.Columns[i].AddRange(Columns[i].Select(s => s.Id));
+    }
   }
 
   public TileListOwnerTracker GetClaimTracker(Guid id)
