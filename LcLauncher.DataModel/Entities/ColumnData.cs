@@ -32,7 +32,7 @@ public class ColumnData
     Id = id;
     Title =
       String.IsNullOrEmpty(title)
-      ? $"Untitled ({id})"
+      ? $"Column {id}"
       : title;
     Shelves = shelves.ToList();
   }

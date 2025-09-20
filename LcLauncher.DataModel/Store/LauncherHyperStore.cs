@@ -25,14 +25,14 @@ public class LauncherHyperStore
   /// <summary>
   /// Create a new LauncherHyperStore
   /// </summary>
-  /// <param name="bucketStore">
+  /// <param name="backing">
   /// The hyper bucket store, including configured
   /// bucket store providers.
   /// </param>
   public LauncherHyperStore(
-    HyperBucketStore bucketStore)
+    HyperBucketStore backing)
   {
-    HyperStore = bucketStore;
+    Backing = backing;
     _rackStoreCache = [];
   }
 
@@ -40,7 +40,7 @@ public class LauncherHyperStore
   /// The hyperstore, corresponding to the root folder within
   /// which the individual rack store folders will live.
   /// </summary>
-  public HyperBucketStore HyperStore { get; }
+  public HyperBucketStore Backing { get; }
 
   /// <summary>
   /// Returns a list of store keys for rack data stores
@@ -50,7 +50,7 @@ public class LauncherHyperStore
   /// <returns></returns>
   public IEnumerable<StoreKey> FindRackStores()
   {
-    return HyperStore.FindFolderStores("rack");
+    return Backing.FindFolderStores("rack");
   }
 
   /// <summary>

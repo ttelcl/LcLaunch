@@ -23,7 +23,8 @@ public class LauncherRackStore
 {
   /// <summary>
   /// The one <see cref="RackData"/> instance in this store. May be null
-  /// during initialization. Use <see cref="GetRack"/> to safely access.
+  /// during initialization. Use <see cref="FindRack"/> or <see cref="GetRack"/>
+  /// to safely access.
   /// </summary>
   private RackData? _rack;
 
@@ -37,7 +38,7 @@ public class LauncherRackStore
   {
     Owner = owner;
     Key = key;
-    RackStore = Owner.HyperStore.GetStore(Key);
+    RackStore = Owner.Backing.GetStore(Key);
     if(RackStore is not IJsonBucketStore jsonStore)
     {
       throw new InvalidOperationException(
@@ -75,11 +76,38 @@ public class LauncherRackStore
   /// Retrieve or initialize the one <see cref="RackData"/> instance
   /// in this store. If successful before this will return the
   /// cached version that was returned earlier.
-  /// If there was no rack before a new default rack is created.
+  /// Builds on <see cref="FindRack"/> and creates a new empty rack if
+  /// that returned null.
+  /// </summary>
+  public RackData GetRack()
+  {
+    var rack = FindRack();
+    if(rack != null)
+    {
+      return rack;
+    }
+    // Rack not yet initialized: create a new empty one
+    _rack = new RackData(
+      TickId.New(),
+      Key.StoreName,
+      [
+        new ColumnData(TickId.New(), [], "Column 1"),
+        new ColumnData(TickId.New(), [], "Column 2"),
+        new ColumnData(TickId.New(), [], "Column 3"),
+      ]);
+    RackBucket.PutStorable(_rack);
+    return _rack;
+  }
+
+  /// <summary>
+  /// Get the one rack instance in this store. Returns the previously
+  /// cached version if available. Initializes it from the rack bucket
+  /// if possible otherwise. Returns null if still not found.
+  /// Use <see cref="GetRack"/> instead to do all this, but auto-initialize
+  /// a new instance instead of returning null.
   /// </summary>
   /// <returns></returns>
-  /// <exception cref="InvalidOperationException"></exception>
-  public RackData GetRack()
+  public RackData? FindRack()
   {
     if(_rack is not null)
     {
@@ -101,7 +129,7 @@ public class LauncherRackStore
     {
       // we have a problem.
       throw new InvalidOperationException(
-        $"Found {rackIds.Count} distinct top level racks in {Key} (expecting 1)");
+        $"Found {rackIds.Count} distinct top level rack records in {Key} (expecting 1)");
     }
     if(rackIds.Count == 1)
     {
@@ -113,17 +141,9 @@ public class LauncherRackStore
       }
       return _rack;
     }
-    // Rack not yet initialized: create a new empty one
-    _rack = new RackData(
-      TickId.New(),
-      Key.StoreName,
-      [
-        new ColumnData(TickId.New(), [], "Column 1"),
-        new ColumnData(TickId.New(), [], "Column 2"),
-        new ColumnData(TickId.New(), [], "Column 3"),
-      ]);
-    RackBucket.PutStorable(_rack);
-    return _rack;
+    // Rack not yet initialized, neither in this store object, nor in
+    // the persistence layer.
+    return null;
   }
 
   /// <summary>
