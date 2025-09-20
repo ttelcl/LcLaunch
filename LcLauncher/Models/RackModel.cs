@@ -107,8 +107,6 @@ public class RackModel
     {
       RackData.Columns[i].Clear();
       RackData.Columns[i].AddRange(Columns[i].Select(s => s.Id));
-      RackData.Columns2[i].Clear();
-      RackData.Columns2[i].AddRange(Columns[i].Select(s => s.Shelf.Tid));
     }
   }
 
