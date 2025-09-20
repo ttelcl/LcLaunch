@@ -27,6 +27,7 @@
                     <MenuItem Header="Dump apps" Command="{Binding DevDumpAppsCommand}"/>
                     <MenuItem Header="Toggle Dev Pane" Command="{Binding DevTogglePaneCommand}"/>
                     <MenuItem Header="Convert Rack" Command="{Binding ConvertCurrentRackCommand}"/>
+                    <MenuItem Header="Convert Rack With Icons" Command="{Binding ConvertCurrentRackWithIconsCommand}"/>
                 </MenuItem>
             </Menu>
             <mah:SplitButton

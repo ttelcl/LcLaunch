@@ -21,7 +21,7 @@ namespace Ttelcl.Persistence.Filesystem;
 /// Each bucket is implemented as a single file pair. Note that this
 /// implementation does not support deleting blobs.
 /// </summary>
-public class FsBlobBucket: IBlobBucket
+public class FsBlobBucket: IBlobBucket, IHasFolder
 {
   private BlobBucketReader? _currentReader;
   private BlobBucketWriter? _currentWriter;
@@ -50,6 +50,9 @@ public class FsBlobBucket: IBlobBucket
   /// The store this bucket is part of
   /// </summary>
   public FsBucketStore Store { get; }
+
+  /// <inheritdoc/>
+  public string StorageFolder => Store.StorageFolder;
 
   /// <summary>
   /// The name of the bucket
@@ -142,7 +145,7 @@ public class FsBlobBucket: IBlobBucket
     return writer;
   }
 
-  private class BlobBucketReader: IBlobBucketReader
+  private class BlobBucketReader: IBlobBucketReader, IHasFolder
   {
     private FileStream? _blobReadStream = null;
 
@@ -153,6 +156,9 @@ public class FsBlobBucket: IBlobBucket
     }
 
     public FsBlobBucket Owner { get; }
+
+    /// <inheritdoc/>
+    public string StorageFolder => Owner.StorageFolder;
 
     public bool TryGetBlob(HashId id, [NotNullWhen(true)] out byte[]? blob)
     {
@@ -184,7 +190,7 @@ public class FsBlobBucket: IBlobBucket
     }
   }
 
-  private class BlobBucketWriter: IBlobBucketWriter
+  private class BlobBucketWriter: IBlobBucketWriter, IHasFolder
   {
     private FileStream? _blobAppendStream = null;
     private FileStream? _indexAppendStream = null;
@@ -197,6 +203,9 @@ public class FsBlobBucket: IBlobBucket
     }
 
     public FsBlobBucket Owner { get; }
+
+    /// <inheritdoc/>
+    public string StorageFolder => Owner.StorageFolder;
 
     public bool TryPutBlob(byte[] blob, out HashId id)
     {
@@ -216,10 +225,6 @@ public class FsBlobBucket: IBlobBucket
     {
       var bfs = _blobAppendStream;
       var ifs = _indexAppendStream;
-      if(bfs == null && ifs == null)
-      {
-        return;
-      }
       _blobAppendStream = null;
       _indexAppendStream = null;
       if(Owner._currentWriter == this)

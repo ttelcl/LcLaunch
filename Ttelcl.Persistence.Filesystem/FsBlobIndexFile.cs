@@ -163,6 +163,8 @@ public class FsBlobIndexFile
       var bakName = FileName + ".bak";
       File.Move(FileName, bakName, true);
     }
+    _entries.Clear();
+    _entryMap.Clear();
     InitFile();
   }
 

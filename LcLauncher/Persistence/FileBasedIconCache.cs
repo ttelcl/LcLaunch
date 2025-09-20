@@ -45,6 +45,15 @@ public class FileBasedIconCache: ILauncherIconCache
     return Host.LoadCachedIcon(hashPrefix);
   }
 
+  public byte[]? LoadCachedBlob(string? hashPrefix)
+  {
+    if(string.IsNullOrEmpty(hashPrefix))
+    {
+      return null;
+    }
+    return Host.LoadCachedBlob(hashPrefix);
+  }
+
   public IconHashes? CacheIcons(
     string iconSource,
     IconSize sizes = IconSize.Normal)

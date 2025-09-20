@@ -80,6 +80,19 @@ public interface IBucketBase<TKey>: IBucketBase
   bool ContainsKey(TKey key);
 }
 
+
+/// <summary>
+/// Optional interface for IBucketStore: provides access to the filesystem
+/// folder where the store lives
+/// </summary>
+public interface IHasFolder
+{
+  /// <summary>
+  /// The file system folder where the item is materialized.
+  /// </summary>
+  string StorageFolder { get; }
+}
+
 /// <summary>
 /// Extension methods and static functionality related to
 /// BucketStores

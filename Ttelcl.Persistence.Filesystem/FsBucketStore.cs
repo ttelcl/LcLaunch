@@ -18,7 +18,7 @@ namespace Ttelcl.Persistence.Filesystem;
 /// Implements <see cref="IBucketStore"/> and its specializations using
 /// files and folders directly
 /// </summary>
-public class FsBucketStore: IBucketStore, IJsonBucketStore, IBlobBucketStore
+public class FsBucketStore: IBucketStore, IJsonBucketStore, IBlobBucketStore, IHasFolder
 {
   private readonly Dictionary<string, IBucketBase> _bucketRegistry;
 
@@ -41,6 +41,9 @@ public class FsBucketStore: IBucketStore, IJsonBucketStore, IBlobBucketStore
   /// The folder where the store lives
   /// </summary>
   public string StoreFolder { get; }
+
+  /// <inheritdoc/>
+  public string StorageFolder => StoreFolder;
 
   /// <inheritdoc/>
   public IBucketBase? GetBucket(string bucketName)

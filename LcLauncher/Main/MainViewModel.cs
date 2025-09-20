@@ -69,7 +69,10 @@ public class MainViewModel: ViewModelBase
       p => { ShowDevPane = !ShowDevPane; });
     ModelConverter = new ModelConverter(this);
     ConvertCurrentRackCommand = new DelegateCommand(
-      p => ModelConverter.ConvertCurrentRack(),
+      p => ConvertCurrentRack(false),
+      p => CurrentRack != null);
+    ConvertCurrentRackWithIconsCommand = new DelegateCommand(
+      p => ConvertCurrentRack(true),
       p => CurrentRack != null);
   }
 
@@ -98,6 +101,8 @@ public class MainViewModel: ViewModelBase
   public ModelConverter ModelConverter { get; }
 
   public ICommand ConvertCurrentRackCommand { get; }
+
+  public ICommand ConvertCurrentRackWithIconsCommand { get; }
 
   private static LauncherHyperStore InitHyperStore()
   {
@@ -234,4 +239,17 @@ public class MainViewModel: ViewModelBase
     }
   }
   private EditorViewModelBase? _currentEditor;
+
+  private void ConvertCurrentRack(bool dumpIcons)
+  {
+    try
+    {
+      Mouse.OverrideCursor = Cursors.Wait;
+      ModelConverter.ConvertCurrentRack(dumpIcons);
+    }
+    finally
+    {
+      Mouse.OverrideCursor = null;
+    }
+  }
 }

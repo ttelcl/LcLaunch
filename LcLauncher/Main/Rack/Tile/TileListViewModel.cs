@@ -330,5 +330,10 @@ public class TileListViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
         }
       }
     }
+    else
+    {
+      Trace.TraceError(
+        $"Encountered duplicate tile list reference {TileListId}");
+    }
   }
 }

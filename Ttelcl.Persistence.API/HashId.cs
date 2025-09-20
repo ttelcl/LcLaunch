@@ -54,8 +54,11 @@ public record struct HashId
       throw new ArgumentException(
         "Expecting a hash of at least 8 bytes");
     }
+    // Exceptionally, use BigEndian, to stay somewhat compatible
+    // with the older implementation. Or at least make errors more
+    // discoverable.
     var l =
-      BinaryPrimitives.ReadInt64LittleEndian(hashBytes)
+      BinaryPrimitives.ReadInt64BigEndian(hashBytes)
       & Int64.MaxValue;
     return new HashId(l);
   }

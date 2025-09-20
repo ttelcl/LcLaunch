@@ -25,14 +25,10 @@ public class TileListData: IJsonStorable
   /// </summary>
   public TileListData(
     TickId id,
-    IEnumerable<TileData> tiles)
+    IEnumerable<TileData?> tiles)
   {
     Id=id;
     Tiles = tiles.ToList();
-    //while(Tiles.Count < 4)
-    //{
-    //  Tiles.Add(TileData.EmptyTile());
-    //}
   }
 
   /// <summary>
@@ -44,5 +40,5 @@ public class TileListData: IJsonStorable
   /// <summary>
   /// The list of tiles
   /// </summary>
-  public List<TileData> Tiles { get; }
+  public List<TileData?> Tiles { get; }
 }
