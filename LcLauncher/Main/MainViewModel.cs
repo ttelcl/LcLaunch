@@ -86,10 +86,13 @@ public class MainViewModel: ViewModelBase
 
   public ICommand ProcessNextIconJobCommand { get; }
 
+  [Obsolete("Use new persistence backend")]
   public ILcLaunchStore Store => StoreImplementation;
 
+  [Obsolete("Use new persistence backend")]
   public JsonLcLaunchStore StoreImplementation { get; }
 
+  [Obsolete("Use new persistence backend")]
   public JsonDataStore FileStore { get => StoreImplementation.Provider; }
 
   public TestPaneViewModel TestPane { get; }
@@ -103,16 +106,6 @@ public class MainViewModel: ViewModelBase
   public ICommand ConvertCurrentRackCommand { get; }
 
   public ICommand ConvertCurrentRackWithIconsCommand { get; }
-
-  private static LauncherHyperStore InitHyperStore()
-  {
-    var fsProvider = new Ttelcl.Persistence.Filesystem.FsBucketProvider();
-    var folder = LauncherHyperStore.DefaultStoreFolder;
-    var hyperBucketStore =
-      new HyperBucketStore(
-        folder, [fsProvider]);
-    return new LauncherHyperStore(hyperBucketStore);
-  }
 
   public RackViewModel? CurrentRack {
     get => _currentRack;
@@ -251,5 +244,15 @@ public class MainViewModel: ViewModelBase
     {
       Mouse.OverrideCursor = null;
     }
+  }
+
+  private static LauncherHyperStore InitHyperStore()
+  {
+    var fsProvider = new Ttelcl.Persistence.Filesystem.FsBucketProvider();
+    var folder = LauncherHyperStore.DefaultStoreFolder;
+    var hyperBucketStore =
+      new HyperBucketStore(
+        folder, [fsProvider]);
+    return new LauncherHyperStore(hyperBucketStore);
   }
 }

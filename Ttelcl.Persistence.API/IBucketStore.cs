@@ -129,6 +129,42 @@ public static class BucketStoreExtensions
     }
     return bucket;
   }
+
+  /// <summary>
+  /// If the store supports <see cref="IBlobBucketStore"/> then this
+  /// calls <see cref="IBlobBucketStore.GetBlobBucket(string, bool)"/>.
+  /// Otherwise this throws a <see cref="NotSupportedException"/>.
+  /// </summary>
+  public static IBlobBucket? GetBlobBucket(
+    this IBucketStore bucketStore,
+    string bucketName,
+    bool create)
+  {
+    if(bucketStore is not IBlobBucketStore blobBucketStore)
+    {
+      throw new NotSupportedException(
+        "This bucket store does not support blob buckets");
+    }
+    return blobBucketStore.GetBlobBucket(bucketName, create);
+  }
+
+  /// <summary>
+  /// If the store supports <see cref="IJsonBucketStore"/> then this
+  /// calls <see cref="IJsonBucketStore.GetJsonBucket{T}(string, bool)"/>.
+  /// Otherwise this throws a <see cref="NotSupportedException"/>.
+  /// </summary>
+  public static IJsonBucket<T>? GetJsonBucket<T>(
+    this IBucketStore bucketStore,
+    string bucketName, bool create = false)
+    where T : class
+  {
+    if(bucketStore is not IJsonBucketStore jsonBucketStore)
+    {
+      throw new NotSupportedException(
+        "This bucket store does not support json buckets");
+    }
+    return jsonBucketStore.GetJsonBucket<T>(bucketName, create);
+  }
 }
 
 

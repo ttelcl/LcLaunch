@@ -44,17 +44,15 @@ public class LauncherRackStore
       throw new InvalidOperationException(
         "Expecting the rack store to support JSON buckets");
     }
-    RackJsonStore = jsonStore;
     if(RackStore is not IBlobBucketStore blobStore)
     {
       throw new InvalidOperationException(
         "Expecting the rack store to support BLOB buckets");
     }
-    RackBlobStore = blobStore;
-    RackBucket = RackJsonStore.GetJsonBucket<RackData>("rack", true)!;
-    ShelfBucket = RackJsonStore.GetJsonBucket<ShelfData>("shelf", true)!;
-    TileListBucket = RackJsonStore.GetJsonBucket<TileListData>("tiles", true)!;
-    IconBucket = RackBlobStore.GetBlobBucket("icon", true)!;
+    RackBucket = RackStore.GetJsonBucket<RackData>("rack", true)!;
+    ShelfBucket = RackStore.GetJsonBucket<ShelfData>("shelf", true)!;
+    TileListBucket = RackStore.GetJsonBucket<TileListData>("tiles", true)!;
+    IconBucket = RackStore.GetBlobBucket("icon", true)!;
   }
 
   /// <summary>
@@ -265,19 +263,8 @@ public class LauncherRackStore
   public IBlobBucket IconBucket { get; }
 
   /// <summary>
-  /// The basic bucket store for rack data. <see cref="RackJsonStore"/> 
-  /// and <see cref="RackBlobStore"/> are stronger type subinterfaces of this.
+  /// The basic bucket store for rack data.
   /// </summary>
   public IBucketStore RackStore { get; }
-
-  /// <summary>
-  /// The JSON data oriented subinterface of <see cref="RackStore"/>
-  /// </summary>
-  public IJsonBucketStore RackJsonStore { get; }
-
-  /// <summary>
-  /// The Blob data oriented subinterface of <see cref="RackStore"/>
-  /// </summary>
-  public IBlobBucketStore RackBlobStore { get; }
 
 }
