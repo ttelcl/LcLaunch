@@ -37,6 +37,7 @@ public class MainViewModel: ViewModelBase
     DefaultTheme = configuration["defaultTheme"] ?? DefaultDefaultTheme;
     ShowDevPane = configuration.GetValue<bool>("showDevPane", false);
     HyperStore = InitHyperStore();
+    DefaultStore = HyperStore.Backing.GetStore("default");
     var fileStore = new JsonDataStore();
     var storeImplementation = new JsonLcLaunchStore(fileStore);
     StoreImplementation = storeImplementation;
@@ -100,6 +101,11 @@ public class MainViewModel: ViewModelBase
   public ShellAppCache AppCache { get; }
 
   public LauncherHyperStore HyperStore { get; }
+
+  /// <summary>
+  /// A bucket store for miscellaneous stuff
+  /// </summary>
+  public IBucketStore DefaultStore { get; }
 
   public ModelConverter ModelConverter { get; }
 
@@ -171,7 +177,10 @@ public class MainViewModel: ViewModelBase
       appsSorted
       .GroupBy(descriptor => descriptor.Kind)
       .ToDictionary(g => g.Key.ToString(), g => g.ToList());
-    StoreImplementation.Provider.SaveData("app-dump", ".json", grouped);
+    //StoreImplementation.Provider.SaveData("app-dump", ".json", grouped);
+    DefaultStore
+      .GetJsonBucket<Dictionary<string,List<ShellAppDescriptor>>>("app-dump", true)!
+      .Put(TickId.New(), grouped);
   }
 
   public bool CanProcessNextIconJob()
