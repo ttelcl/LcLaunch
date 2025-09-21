@@ -55,7 +55,6 @@ public class LauncherRackStore
         "Expecting the rack store to support singleton storage");
     }
     ByTypeStore = singletonStore;
-    RackBucket = RackStore.GetJsonBucket<RackData>("rack", true)!;
     ShelfBucket = RackStore.GetJsonBucket<ShelfData>("shelf", true)!;
     TileListBucket = RackStore.GetJsonBucket<TileListData>("tiles", true)!;
     IconBucket = RackStore.GetBlobBucket("icon", true)!;
@@ -210,7 +209,6 @@ public class LauncherRackStore
   /// </summary>
   public void Erase()
   {
-    RackBucket.Erase();
     _rack = null;
     ShelfBucket.Erase();
     TileListBucket.Erase();
@@ -222,12 +220,6 @@ public class LauncherRackStore
   /// The store for items that do not have a natural key. Read: RackData.
   /// </summary>
   public ISingletonStore ByTypeStore { get; }
-
-  /// <summary>
-  /// The bucket storing rack top level data (expected to contain 1 item)
-  /// </summary>
-  [Obsolete("to be replaced")]
-  public IJsonBucket<RackData> RackBucket { get; }
 
   /// <summary>
   /// The bucket containing shelf top level data
