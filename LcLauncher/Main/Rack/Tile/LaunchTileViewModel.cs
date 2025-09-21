@@ -28,24 +28,14 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
 {
   private LaunchTileViewModel(
     TileListViewModel ownerList,
-    ILaunchData model)
+    LaunchData model)
     : base(ownerList)
   {
     IconHostId = Guid.NewGuid();
     Model = model;
-    if(model is LaunchData launch)
-    {
-      NewModel = launch;
-      Classification = LaunchData.GetLaunchKind(
-        launch.Target, !launch.ShellMode);
-      KindInfo = new LaunchKindInfo(Classification, launch.Target);
-    }
-    else
-    {
-      NewModel = null;
-      Classification = LaunchKind.Invalid;
-      KindInfo = new LaunchKindInfo(LaunchKind.Invalid, "");
-    }
+    Classification = LaunchData.GetLaunchKind(
+      model.Target, !model.ShellMode);
+    KindInfo = new LaunchKindInfo(Classification, model.Target);
     _title = Model.GetEffectiveTitle();
     _tooltip = Model.GetEffectiveTooltip();
     LoadIcon(IconLoadLevel.FromCache);
@@ -82,9 +72,7 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
   /// <summary>
   /// The model for this tile.
   /// </summary>
-  public ILaunchData Model { get; }
-
-  public LaunchData? NewModel { get; }
+  public LaunchData Model { get; }
 
   public LaunchKind Classification { get; }
 

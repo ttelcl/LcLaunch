@@ -247,20 +247,9 @@ public class ModelConverter
     ILauncherIconCache iconCache,
     IBlobBucketWriter iconWriter)
   {
-    var sourceModel = ltvm.NewModel;
-    // in unexpected upgrade paths, sourceModel could be null
-    if(sourceModel == null)
-    {
-      Trace.TraceWarning(
-        "Launch tile turns out to be null; changing into empty tile." +
-        $" List {ltvm.OwnerList.TileListId}");
-      return Model3.TileData.EmptyTile();
-    }
-    else
-    {
-      return Model3.TileData.LaunchTile(
-        ConvertLaunch(sourceModel, iconCache, iconWriter));
-    }
+    var sourceModel = ltvm.Model;
+    return Model3.TileData.LaunchTile(
+      ConvertLaunch(sourceModel, iconCache, iconWriter));
   }
 
   private Model3.LaunchData ConvertLaunch(
