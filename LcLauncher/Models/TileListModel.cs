@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
+using LcLauncher.ModelsV2;
 using LcLauncher.Persistence;
 using LcLauncher.Storage;
 using LcLauncher.Storage.BlobsStorage;

@@ -12,7 +12,7 @@ using System.Windows;
 using System.Windows.Input;
 
 using LcLauncher.Main.AppPicker;
-using LcLauncher.Models;
+using LcLauncher.ModelsV2;
 using LcLauncher.Persistence;
 using LcLauncher.WpfUtilities;
 

@@ -13,10 +13,9 @@ using System.Windows;
 using System.Windows.Input;
 
 using Microsoft.Win32;
-
-using LcLauncher.Models;
 using LcLauncher.WpfUtilities;
 using LcLauncher.Main.AppPicker;
+using LcLauncher.ModelsV2;
 
 namespace LcLauncher.Main.Rack.Tile;
 

@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 
 using LcLauncher.Storage;
 using LcLauncher.Persistence;
+using LcLauncher.ModelsV2;
 
 namespace LcLauncher.Models;
 

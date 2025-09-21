@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using LcLauncher.Models;
+using LcLauncher.ModelsV2;
 
 namespace LcLauncher.Persistence;
 

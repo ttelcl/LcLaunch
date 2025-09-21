@@ -12,7 +12,7 @@ using System.Diagnostics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace LcLauncher.Models;
+namespace LcLauncher.ModelsV2;
 
 /// <summary>
 /// Polymorphic data for tile content, containing one of

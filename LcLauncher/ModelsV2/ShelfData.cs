@@ -15,7 +15,7 @@ using Newtonsoft.Json;
 
 using Ttelcl.Persistence.API;
 
-namespace LcLauncher.Models;
+namespace LcLauncher.ModelsV2;
 
 /// <summary>
 /// The shelf data (serializable)

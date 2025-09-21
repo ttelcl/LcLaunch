@@ -12,7 +12,7 @@ using System.Diagnostics;
 using Newtonsoft.Json;
 using Ttelcl.Persistence.API;
 
-namespace LcLauncher.Models;
+namespace LcLauncher.ModelsV2;
 
 public class GroupData
 {

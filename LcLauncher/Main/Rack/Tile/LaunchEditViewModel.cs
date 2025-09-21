@@ -19,6 +19,7 @@ using Microsoft.Win32;
 
 using LcLauncher.Main.AppPicker;
 using LcLauncher.Models;
+using LcLauncher.ModelsV2;
 using LcLauncher.Persistence;
 using LcLauncher.ShellApps;
 using LcLauncher.WpfUtilities;

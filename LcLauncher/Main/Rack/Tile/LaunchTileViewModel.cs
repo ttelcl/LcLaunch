@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 
 using LcLauncher.IconUpdates;
 using LcLauncher.Launching;
-using LcLauncher.Models;
+using LcLauncher.ModelsV2;
 using LcLauncher.Persistence;
 using LcLauncher.WpfUtilities;
 

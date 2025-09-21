@@ -11,7 +11,9 @@ using System.Threading.Tasks;
 
 using Newtonsoft.Json;
 
+using LcLauncher.ModelsV2;
 using LcLauncher.Persistence;
+
 using Ttelcl.Persistence.API;
 
 namespace LcLauncher.Models;

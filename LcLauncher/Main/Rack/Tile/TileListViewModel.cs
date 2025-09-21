@@ -14,6 +14,7 @@ using System.Windows.Input;
 using LcLauncher.DataModel;
 using LcLauncher.IconUpdates;
 using LcLauncher.Models;
+using LcLauncher.ModelsV2;
 using LcLauncher.Persistence;
 using LcLauncher.WpfUtilities;
 

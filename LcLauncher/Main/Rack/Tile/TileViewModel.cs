@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 
 using LcLauncher.IconUpdates;
-using LcLauncher.Models;
+using LcLauncher.ModelsV2;
 using LcLauncher.WpfUtilities;
 
 namespace LcLauncher.Main.Rack.Tile;

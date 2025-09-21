@@ -25,7 +25,7 @@ using LaunchKind = LcLauncher.DataModel.Entities.LaunchKind;
 using PathEdit = LcLauncher.DataModel.Entities.PathEdit;
 
 
-namespace LcLauncher.Models;
+namespace LcLauncher.ModelsV2;
 
 /// <summary>
 /// New universal launch data design, merging the previous
@@ -210,8 +210,8 @@ public class LaunchData
         || target[1] != ':'
         || Char.ToUpper(target[0]) < 'A'
         || Char.ToUpper(target[0]) > 'Z'
-        || (target[2] != Path.DirectorySeparatorChar &&
-            target[2] != Path.AltDirectorySeparatorChar))
+        || target[2] != Path.DirectorySeparatorChar &&
+            target[2] != Path.AltDirectorySeparatorChar)
       {
         return LaunchKind.Invalid;
       }
@@ -231,8 +231,8 @@ public class LaunchData
         || target[1] != ':'
         || Char.ToUpper(target[0]) < 'A'
         || Char.ToUpper(target[0]) > 'Z'
-        || (target[2] != Path.DirectorySeparatorChar &&
-            target[2] != Path.AltDirectorySeparatorChar))
+        || target[2] != Path.DirectorySeparatorChar &&
+            target[2] != Path.AltDirectorySeparatorChar)
       {
         // test if it looks like an URI
         var colonIndex = target.IndexOf(':');
