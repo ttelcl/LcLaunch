@@ -77,6 +77,6 @@ public class LauncherHyperStore
     Path.Combine(
       Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
       "Lcl",
-      "launcher3");
+      "launcher");
 
 }
