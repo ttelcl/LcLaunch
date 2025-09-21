@@ -37,7 +37,7 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
   {
     IconHostId = Guid.NewGuid();
     Model = model;
-    Classification = LaunchData.GetLaunchKind(
+    Classification = LaunchKinds.GetLaunchKind(
       model.Target, !model.ShellMode);
     KindInfo = new LaunchKindInfo(Classification, model.Target);
     _title = Model.GetEffectiveTitle();

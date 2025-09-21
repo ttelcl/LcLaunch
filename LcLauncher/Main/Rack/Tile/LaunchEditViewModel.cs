@@ -254,7 +254,7 @@ public class LaunchEditViewModel: EditorViewModelBase
     string? tooltip,
     bool silent)
   {
-    var kind = LaunchData.GetLaunchKind(uri, false);
+    var kind = LaunchKinds.GetLaunchKind(uri, false);
     if(kind != LaunchKind.UriKind)
     {
       if(!silent)
@@ -379,7 +379,7 @@ public class LaunchEditViewModel: EditorViewModelBase
         var line = lines[0];
         // Preliminary check using existing code. Note that the outcome is
         // only limiting what is possible, not a guaranteed valid input.
-        var kind = LaunchData.GetLaunchKind(line, false);
+        var kind = LaunchKinds.GetLaunchKind(line, false);
         if(kind == LaunchKind.Document)
         {
           // This is includes 'raw' executables. CreateFromFile will handle that.
@@ -644,7 +644,7 @@ public class LaunchEditViewModel: EditorViewModelBase
     set {
       if(SetValueProperty(ref _target, value))
       {
-        Classification = LaunchData.GetLaunchKind(value, !Model.ShellMode);
+        Classification = LaunchKinds.GetLaunchKind(value, !Model.ShellMode);
         // Recalculate KindInfo even if Classification didn't change
         KindInfo = new LaunchKindInfo(Classification, Target);
       }
@@ -697,7 +697,7 @@ public class LaunchEditViewModel: EditorViewModelBase
     set {
       if(SetValueProperty(ref _isShellMode, value))
       {
-        Classification = LaunchData.GetLaunchKind(
+        Classification = LaunchKinds.GetLaunchKind(
           Target, !value);
       }
     }
