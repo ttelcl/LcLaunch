@@ -10,6 +10,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Ttelcl.Persistence.API;
+
+using LcLauncher.DataModel.Store;
+
 using Model2 = LcLauncher.ModelsV2;
 using Model3 = LcLauncher.DataModel.Entities;
 
@@ -48,6 +52,10 @@ public static class LcLaunchStore
     {
       return "Rack name cannot contain multiple consecutive '.' characters";
     }
+    if(!NamingRules.IsValidStoreName(rackName))
+    {
+      return "That rack name is not valid (please only use letters, numbers and '-')";
+    }
     return null;
   }
 
@@ -61,18 +69,6 @@ public static class LcLaunchStore
     }
     throw new InvalidOperationException(
       $"Invalid rack name: {errorMessage}");
-  }
-
-  public static bool RackExists(
-    this ILcLaunchStore store,
-    string rackName)
-  {
-    if(TestValidRackName(rackName) != null)
-    {
-      return false;
-    }
-    var rack = store.LoadRack(rackName);
-    return rack != null;
   }
 
   public static Model2.RackData CreateRack(
@@ -110,4 +106,5 @@ public static class LcLaunchStore
     }
     return store.CreateRack(rackName, false);
   }
+
 }
