@@ -41,8 +41,4 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="ModelsV2\" />
-  </ItemGroup>
-
 </Project>

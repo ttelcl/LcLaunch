@@ -13,6 +13,10 @@ using System.Windows;
 
 using LcLauncher.Models;
 
+using Model3 = LcLauncher.DataModel.Entities;
+
+using LaunchKind = LcLauncher.DataModel.Entities.LaunchKind;
+
 namespace LcLauncher.Main;
 
 /// <summary>

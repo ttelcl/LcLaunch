@@ -14,10 +14,16 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 
-using LcLauncher.ShellApps;
-
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+
+using LcLauncher.ShellApps;
+
+using Model3 = LcLauncher.DataModel.Entities;
+
+using LaunchKind = LcLauncher.DataModel.Entities.LaunchKind;
+using PathEdit = LcLauncher.DataModel.Entities.PathEdit;
+
 
 namespace LcLauncher.Models;
 

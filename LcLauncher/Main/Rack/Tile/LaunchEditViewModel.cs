@@ -15,13 +15,18 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
+using Microsoft.Win32;
+
 using LcLauncher.Main.AppPicker;
 using LcLauncher.Models;
 using LcLauncher.Persistence;
 using LcLauncher.ShellApps;
 using LcLauncher.WpfUtilities;
 
-using Microsoft.Win32;
+using Model3 = LcLauncher.DataModel.Entities;
+
+using LaunchKind = LcLauncher.DataModel.Entities.LaunchKind;
+using PathEdit = LcLauncher.DataModel.Entities.PathEdit;
 
 namespace LcLauncher.Main.Rack.Tile;
 

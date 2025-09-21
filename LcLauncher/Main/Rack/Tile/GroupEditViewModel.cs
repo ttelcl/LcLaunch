@@ -99,7 +99,7 @@ public class GroupEditViewModel: EditorViewModelBase
       else
       {
         // create new group
-        var tileData = new TileGroup(
+        var tileData = new GroupData(
           GroupId,
           Title,
           String.IsNullOrEmpty(Tooltip) ? null : Tooltip);

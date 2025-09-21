@@ -14,9 +14,9 @@ using Ttelcl.Persistence.API;
 
 namespace LcLauncher.Models;
 
-public class TileGroup
+public class GroupData
 {
-  public TileGroup(
+  public GroupData(
     Guid tilelist,
     string? title = null,
     string? tooltip = null)

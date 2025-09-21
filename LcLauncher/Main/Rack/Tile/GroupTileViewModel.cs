@@ -21,7 +21,7 @@ public class GroupTileViewModel: TileViewModel, IPostIconLoadActor, ITileListOwn
 {
   public GroupTileViewModel(
     TileListViewModel ownerList,
-    TileGroup model)
+    GroupData model)
     : base(ownerList)
   {
     PostIconLoadId = Guid.NewGuid();
@@ -89,7 +89,7 @@ public class GroupTileViewModel: TileViewModel, IPostIconLoadActor, ITileListOwn
 
   public override string PlainIcon { get => "DotsGrid"; }
 
-  public TileGroup Model { get; }
+  public GroupData Model { get; }
 
   public string Title {
     get => Model.Title;
@@ -215,7 +215,7 @@ public class GroupTileViewModel: TileViewModel, IPostIconLoadActor, ITileListOwn
   private Guid ReplaceWithClone()
   {
     var targetClone = ChildTiles.CreateClone();
-    var modelClone = new TileGroup(
+    var modelClone = new GroupData(
       targetClone.Model.Id,
       Model.Title,
       Model.Tooltip);

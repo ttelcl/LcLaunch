@@ -25,7 +25,7 @@ public class TileData
 {
   public TileData(
     LaunchData? launch = null,
-    TileGroup? group = null,
+    GroupData? group = null,
     IEnumerable<LaunchData?>? quad = null)
   {
     Launch = launch;
@@ -44,7 +44,7 @@ public class TileData
       launch: launch);
   }
 
-  public static TileData GroupTile(TileGroup group)
+  public static TileData GroupTile(GroupData group)
   {
     return new TileData(group: group);
   }
@@ -54,7 +54,7 @@ public class TileData
     string? title = null,
     string? tooltip = null)
   {
-    return new TileData(group: new TileGroup(tilelist, title, tooltip));
+    return new TileData(group: new GroupData(tilelist, title, tooltip));
   }
 
   public static TileData QuadTile(IEnumerable<LaunchData?> quad)
@@ -71,7 +71,7 @@ public class TileData
   }
 
   [JsonProperty("group", NullValueHandling = NullValueHandling.Ignore)]
-  public TileGroup? Group { get; }
+  public GroupData? Group { get; }
 
   [JsonProperty("quad", NullValueHandling = NullValueHandling.Ignore)]
   public List<LaunchData?>? Quad { get; }
