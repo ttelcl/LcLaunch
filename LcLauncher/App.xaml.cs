@@ -50,11 +50,13 @@ public partial class App: Application
       if(arg.EndsWith(".rack-json"))
       {
         var pseudofile = Path.GetFileName(arg);
-        var rack = MainModel.RackList.FindRackByPseudoFile(pseudofile);
+        // V3 rack name discovery without reliance on looking inside the rack file
+        // requires the folder name as well
+        var rack = MainModel.RackList.FindRackByFile(arg);
         if(rack != null)
         {
           Trace.TraceInformation(
-            $"Selecting rack '{rack}' specified on command line (as '{pseudofile}')");
+            $"Selecting rack '{rack}' specified on command line (as '{arg}')");
           MainModel.RackList.SelectedRack = rack;
           rackSet = true;
         }
@@ -82,8 +84,7 @@ public partial class App: Application
           defaultRack = "default";
         }
       }
-      var pseudofile = $"{defaultRack}.rack-json";
-      var rack = MainModel.RackList.FindRackByPseudoFile(pseudofile);
+      var rack = MainModel.RackList.FindRackByName(defaultRack);
       if(rack != null)
       {
         Trace.TraceInformation(
@@ -94,7 +95,7 @@ public partial class App: Application
       else
       {
         Trace.TraceError(
-          $"Not selecting any rack: none specified and '{pseudofile}' does not exist");
+          $"Not selecting any rack: none specified and '{defaultRack}' not found");
       }
     }
     mainWindow.DataContext = MainModel;

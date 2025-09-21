@@ -58,6 +58,20 @@ public static partial class NamingRules
     return ProviderNameRegex().IsMatch(name);
   }
 
+  /// <summary>
+  /// test if a name is a valid singleton key name.
+  /// A singleton key name takes the form of a bucket name
+  /// (<see cref="IsValidBucketName(string)"/>), optionally
+  /// prefixed by a store tag (<see cref="IsValidStoreTagName(string)"/>)
+  /// separated by '--'.
+  /// </summary>
+  /// <param name="name"></param>
+  /// <returns></returns>
+  public static bool IsValidSingletonKey(string name)
+  {
+    return SingletonKeyRegex().IsMatch(name);
+  }
+
   [GeneratedRegex(
     @"^[a-z][a-z0-9]{0,3}$",
     RegexOptions.IgnoreCase,
@@ -75,4 +89,10 @@ public static partial class NamingRules
     RegexOptions.IgnoreCase,
     "")] // Culture name empty -> Invariant Culture
   private static partial Regex BucketNameRegex();
+
+  [GeneratedRegex(
+    @"^([a-z][a-z0-9]*--)?[a-z][a-z0-9]*([-_][a-z0-9]+)*$",
+    RegexOptions.IgnoreCase,
+    "")] // Culture name empty -> Invariant Culture
+  private static partial Regex SingletonKeyRegex();
 }

@@ -160,4 +160,22 @@ public record struct HashId
     }
     return (HashId)l;
   }
+
+  /// <summary>
+  /// Try to parse the <see cref="HashId"/> from its hexadecimal representation
+  /// </summary>
+  public static bool TryParse(string s, out HashId? hashId)
+  {
+    if(s.Length != 16 || !Int64.TryParse(
+      s,
+      NumberStyles.AllowHexSpecifier,
+      CultureInfo.InvariantCulture,
+      out var l))
+    {
+      hashId = default;
+      return false;
+    }
+    hashId = (HashId)l;
+    return true;
+  }
 }

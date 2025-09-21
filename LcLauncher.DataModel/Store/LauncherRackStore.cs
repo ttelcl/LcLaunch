@@ -49,6 +49,12 @@ public class LauncherRackStore
       throw new InvalidOperationException(
         "Expecting the rack store to support BLOB buckets");
     }
+    if(RackStore is not ISingletonStore singletonStore)
+    {
+      throw new InvalidOperationException(
+        "Expecting the rack store to support singleton storage");
+    }
+    ByTypeStore = singletonStore;
     RackBucket = RackStore.GetJsonBucket<RackData>("rack", true)!;
     ShelfBucket = RackStore.GetJsonBucket<ShelfData>("shelf", true)!;
     TileListBucket = RackStore.GetJsonBucket<TileListData>("tiles", true)!;
@@ -93,13 +99,13 @@ public class LauncherRackStore
         new ColumnData(TickId.New(), [], "Column 2"),
         new ColumnData(TickId.New(), [], "Column 3"),
       ]);
-    RackBucket.PutStorable(_rack);
+    PutRack(_rack);
     return _rack;
   }
 
   /// <summary>
   /// Get the one rack instance in this store. Returns the previously
-  /// cached version if available. Initializes it from the rack bucket
+  /// cached version if available. Initializes it from the rack singleton
   /// if possible otherwise. Returns null if still not found.
   /// Use <see cref="GetRack"/> instead to do all this, but auto-initialize
   /// a new instance instead of returning null.
@@ -109,55 +115,24 @@ public class LauncherRackStore
   {
     if(_rack is not null)
     {
-      if(!RackBucket.ContainsKey(_rack.Id))
-      {
-        // Somehow the rack object was lost. Erase the cached Rack.
-        _rack = null;
-      }
-      else
-      {
-        // cache is still valid
-        return _rack;
-      }
+      return _rack;
     }
-    // _rack is now null (either because it was null at the start or because
-    // we cleared it.
-    var rackIds = RackBucket.Keys().ToList();
-    if(rackIds.Count > 1)
+    if(ByTypeStore.TryGetSingleton("rack", out _rack, RackName))
     {
-      // we have a problem.
-      throw new InvalidOperationException(
-        $"Found {rackIds.Count} distinct top level rack records in {Key} (expecting 1)");
-    }
-    if(rackIds.Count == 1)
-    {
-      var id = rackIds[0];
-      if(!RackBucket.TryFind(id, out _rack))
-      {
-        throw new InvalidOperationException(
-          $"Rack data corrupted. Rack {id} both exists and does not exist in {Key}");
-      }
       return _rack;
     }
     // Rack not yet initialized, neither in this store object, nor in
     // the persistence layer.
-    return null;
+    return _rack; // will be null
   }
 
   /// <summary>
-  /// Replace the one rack instance (saving it). The ID should match the existing
-  /// rack.
+  /// Replace the one rack instance (saving it)
   /// </summary>
   /// <param name="rack"></param>
   public void PutRack(RackData rack)
   {
-    if(_rack != null && rack.Id != _rack.Id)
-    {
-      Trace.TraceWarning("Replacing rack with rack with different ID");
-      RackBucket[_rack.Id] = null; // delete!
-      _rack = null;
-    }
-    RackBucket.PutStorable(rack);
+    ByTypeStore.PutSingleton("rack", rack, RackName);
     _rack = rack;
   }
 
@@ -240,11 +215,18 @@ public class LauncherRackStore
     ShelfBucket.Erase();
     TileListBucket.Erase();
     IconBucket.Erase();
+    ByTypeStore.EraseSingletons();
   }
+
+  /// <summary>
+  /// The store for items that do not have a natural key. Read: RackData.
+  /// </summary>
+  public ISingletonStore ByTypeStore { get; }
 
   /// <summary>
   /// The bucket storing rack top level data (expected to contain 1 item)
   /// </summary>
+  [Obsolete("to be replaced")]
   public IJsonBucket<RackData> RackBucket { get; }
 
   /// <summary>

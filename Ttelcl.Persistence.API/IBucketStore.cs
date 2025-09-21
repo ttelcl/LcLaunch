@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -12,8 +13,8 @@ namespace Ttelcl.Persistence.API;
 
 /// <summary>
 /// A generic bucket store, expected to implement 
-/// <see cref="IJsonBucketStore"/> and / or <see cref="IBlobBucketStore"/>
-/// as refinements
+/// <see cref="IJsonBucketStore"/> and / or <see cref="IBlobBucketStore"/>,
+/// and possibly <see cref="ISingletonStore"/>, as refinements
 /// </summary>
 public interface IBucketStore
 {
@@ -165,6 +166,47 @@ public static class BucketStoreExtensions
     }
     return jsonBucketStore.GetJsonBucket<T>(bucketName, create);
   }
+
+  /// <summary>
+  /// If the store supports <see cref="ISingletonStore"/> then this
+  /// calls <see cref="ISingletonStore.TryGetSingleton"/>.
+  /// Otherwise this throws a <see cref="NotSupportedException"/>.
+  /// </summary>
+  public static bool TryGetSingleton<T>(
+    this IBucketStore bucketStore,
+    string? typename,
+    [NotNullWhen(true)] out T? value,
+    string key = "singleton")
+    where T : class
+  {
+    if(bucketStore is not ISingletonStore singletonStore)
+    {
+      throw new NotSupportedException(
+        "This bucket store does not support singleton operations");
+    }
+    return singletonStore.TryGetSingleton<T>(typename, out value, key);
+  }
+
+  /// <summary>
+  /// If the store supports <see cref="ISingletonStore"/> then this
+  /// calls <see cref="ISingletonStore.PutSingleton"/>.
+  /// Otherwise this throws a <see cref="NotSupportedException"/>.
+  /// </summary>
+  public static void PutSingleton<T>(
+    this IBucketStore bucketStore,
+    string? typename,
+    T? value,
+    string key = "singleton")
+    where T : class
+  {
+    if(bucketStore is not ISingletonStore singletonStore)
+    {
+      throw new NotSupportedException(
+        "This bucket store does not support singleton operations");
+    }
+    singletonStore.PutSingleton<T>(typename, value, key);
+  }
+
 }
 
 
