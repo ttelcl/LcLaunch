@@ -13,9 +13,9 @@ using System.Windows;
 
 using LcLauncher.Models;
 
-using Model3 = LcLauncher.DataModel.Entities;
+using LcLauncher.DataModel.Utilities;
 
-using LaunchKind = LcLauncher.DataModel.Entities.LaunchKind;
+using Model3 = LcLauncher.DataModel.Entities;
 
 namespace LcLauncher.Main;
 

@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
 
-namespace LcLauncher.DataModel.Entities;
+namespace LcLauncher.DataModel.Utilities;
 
 /// <summary>
 /// Different ways to launch an executable

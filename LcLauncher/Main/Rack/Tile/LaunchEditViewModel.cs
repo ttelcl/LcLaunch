@@ -28,7 +28,6 @@ using LcLauncher.DataModel.Utilities;
 
 using Model3 = LcLauncher.DataModel.Entities;
 
-using LaunchKind = LcLauncher.DataModel.Entities.LaunchKind;
 using PathEdit = LcLauncher.DataModel.Entities.PathEdit;
 
 namespace LcLauncher.Main.Rack.Tile;

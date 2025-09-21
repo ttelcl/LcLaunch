@@ -18,9 +18,9 @@ using LcLauncher.ModelsV2;
 using LcLauncher.Persistence;
 using LcLauncher.WpfUtilities;
 
-using Model3 = LcLauncher.DataModel.Entities;
+using LcLauncher.DataModel.Utilities;
 
-using LaunchKind = LcLauncher.DataModel.Entities.LaunchKind;
+using Model3 = LcLauncher.DataModel.Entities;
 
 namespace LcLauncher.Main.Rack.Tile;
 
