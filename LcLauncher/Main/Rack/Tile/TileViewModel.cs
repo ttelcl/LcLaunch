@@ -37,12 +37,6 @@ public abstract class TileViewModel: ViewModelBase, IIconLoadJobSource
       { Quad: { } quadTile } =>
         new QuadTileViewModel(ownerList, quadTile),
 
-      // Backward compat stubs
-      { ShellLaunch: { } shellLaunch } =>
-        LaunchTileViewModel.FromShell(ownerList, shellLaunch),
-      { RawLaunch: { } rawLaunch } =>
-        LaunchTileViewModel.FromRaw(ownerList, rawLaunch),
-
       _ => new EmptyTileViewModel(ownerList, model)
     };
   }

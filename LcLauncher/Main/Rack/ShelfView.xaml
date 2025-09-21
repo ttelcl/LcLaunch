@@ -59,7 +59,7 @@
                             </MenuItem.Icon>
                         </MenuItem>
                         <MenuItem Header="Properties..."
-                                  Command="{Binding EditCommand}">
+                                  Command="{Binding EditShelfCommand}">
                             <MenuItem.Icon>
                                 <iconPacks:PackIconMaterial Kind="Cog" Width="20" Height="20"/>
                             </MenuItem.Icon>
@@ -151,7 +151,7 @@
                     MinWidth="20" MinHeight="20"
                     BorderThickness="0"
                     Margin="0,0,8,0"
-                    Command="{Binding EditCommand}"
+                    Command="{Binding EditShelfCommand}"
                     Style="{DynamicResource MahApps.Styles.Button.Circle}">
                     <iconPacks:PackIconMaterial
                         Kind="Cog"

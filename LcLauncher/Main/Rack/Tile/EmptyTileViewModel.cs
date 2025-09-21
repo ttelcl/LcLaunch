@@ -80,8 +80,8 @@ public class EmptyTileViewModel: TileViewModel
   {
     return Model switch {
       null => "EggOutline",
-      { ShellLaunch: { } } => "RocketLaunch",
-      { RawLaunch: { } } => "RocketLaunchOutline",
+      { Launch: { ShellMode: true } } => "RocketLaunch",
+      { Launch: { ShellMode: false } } => "RocketLaunchOutline",
       { Group: { } } => "DotsGrid",
       { Quad: { } } => "ViewGrid",
       _ => "Egg",
@@ -262,9 +262,14 @@ public class EmptyTileViewModel: TileViewModel
     Trace.TraceInformation(
       $"Creating DOCUMENT tile for: '{Path.GetFileName(fileName)}' ({fileName})");
 
-    var editModel = LaunchDocumentViewModel.CreateFromFile(
+    //var editModel = LaunchDocumentViewModel.CreateFromFile(
+    //  Host!,
+    //  fileName);
+
+    var editModel = LaunchEditViewModel.CreateFromFile(
       Host!,
-      fileName);
+      fileName,
+      true); // we were explicitly asked for a document
 
     if(editModel == null)
     {
@@ -293,9 +298,13 @@ public class EmptyTileViewModel: TileViewModel
     Trace.TraceInformation(
       $"Creating EXECUTABLE tile for: '{Path.GetFileName(fileName)}' ({fileName})");
 
-    var editModel = LaunchExeViewModel.CreateFromFile(
+    //var editModel = LaunchExeViewModel.CreateFromFile(
+    //  Host!,
+    //  fileName);
+    var editModel = LaunchEditViewModel.CreateFromFile(
       Host!,
-      fileName);
+      fileName,
+      false);
 
     if(editModel == null)
     {

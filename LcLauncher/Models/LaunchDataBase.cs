@@ -19,6 +19,8 @@ using Newtonsoft.Json.Converters;
 
 namespace LcLauncher.Models;
 
+#if MODEL2
+
 /// <summary>
 /// Abstract base class for both variants of launch tile
 /// configuration data. DEPRECATED
@@ -178,3 +180,5 @@ public abstract class LaunchDataBase: ILaunchData
     }
   }
 }
+
+#endif

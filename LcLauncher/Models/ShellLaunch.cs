@@ -15,6 +15,8 @@ using System.ComponentModel;
 
 namespace LcLauncher.Models;
 
+#if MODEL2
+
 /* JSON examples:
  * Note that this class is primarily for launching documents,
  * not so much executables. Although those work too.
@@ -82,3 +84,5 @@ public class ShellLaunch: LaunchDataBase, IShellLaunchData
   [JsonIgnore]
   public override bool ShellMode => true;
 }
+
+#endif

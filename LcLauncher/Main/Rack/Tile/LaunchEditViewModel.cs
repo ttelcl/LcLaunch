@@ -56,16 +56,6 @@ public class LaunchEditViewModel: EditorViewModelBase
       {
         model = launchData;
       }
-      else if(tileModel is ShellLaunch shell)
-      {
-        // convert to new model (LaunchData)
-        model = shell.ToLaunch();
-      }
-      else if(tileModel is RawLaunch raw)
-      {
-        // convert to new model (LaunchData)
-        model = raw.ToLaunch();
-      }
       else
       {
         throw new InvalidOperationException(
@@ -142,9 +132,12 @@ public class LaunchEditViewModel: EditorViewModelBase
 
   public static LaunchEditViewModel CreateFromFile(
     TileHostViewModel tileHost,
-    string targetFile)
+    string targetFile,
+    bool forceDocumentMode)
   {
-    var isExe = targetFile.EndsWith(".exe", StringComparison.OrdinalIgnoreCase);
+    var isExe =
+      !forceDocumentMode &&
+      targetFile.EndsWith(".exe", StringComparison.OrdinalIgnoreCase);
     var model = new LaunchData(
       targetFile,
       !isExe,
@@ -317,7 +310,7 @@ public class LaunchEditViewModel: EditorViewModelBase
   {
     if(Clipboard.ContainsFileDropList())
     {
-      // One or more file were copied in explorer or similar tools
+      // One or more files were copied in explorer or similar tools
       // (not just plain text that may be a filename)
       var fileDropList = Clipboard.GetFileDropList();
       if(fileDropList != null && fileDropList.Count > 0)
@@ -327,7 +320,7 @@ public class LaunchEditViewModel: EditorViewModelBase
           // find first valid one, or fall through to other clipboard content
           if(!String.IsNullOrEmpty(file) && File.Exists(file))
           {
-            return CreateFromFile(tileHost, file);
+            return CreateFromFile(tileHost, file, false);
           }
         }
       }
@@ -384,7 +377,7 @@ public class LaunchEditViewModel: EditorViewModelBase
           // This is includes 'raw' executables. CreateFromFile will handle that.
           if(File.Exists(line))
           {
-            return CreateFromFile(tileHost, line);
+            return CreateFromFile(tileHost, line, false);
           }
           else
           {

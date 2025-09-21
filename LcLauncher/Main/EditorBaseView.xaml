@@ -59,12 +59,6 @@
                         <DataTemplate DataType="{x:Type tile:LaunchEditViewModel}">
                             <tile:LaunchEditView/>
                         </DataTemplate>
-                        <DataTemplate DataType="{x:Type tile:LaunchDocumentViewModel}">
-                            <tile:LaunchDocumentView/>
-                        </DataTemplate>
-                        <DataTemplate DataType="{x:Type tile:LaunchExeViewModel}">
-                            <tile:LaunchExeView/>
-                        </DataTemplate>
                         <DataTemplate DataType="{x:Type tile:GroupEditViewModel}">
                             <tile:GroupEditView/>
                         </DataTemplate>

@@ -13,6 +13,8 @@ using Newtonsoft.Json;
 
 namespace LcLauncher.Models;
 
+#if MODEL2
+
 /// <summary>
 /// (To be deprecated!) Old launch model specific for non-shell launcher
 /// </summary>
@@ -64,3 +66,5 @@ public class RawLaunch: LaunchDataBase, IRawLaunchData
   [JsonIgnore]
   public override bool ShellMode => false;
 }
+
+#endif

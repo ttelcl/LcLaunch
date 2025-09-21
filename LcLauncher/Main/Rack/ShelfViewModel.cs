@@ -60,7 +60,7 @@ public class ShelfViewModel:
     DeleteShelfCommand = new DelegateCommand(
       p => DeleteShelf(),
       p => CanDeleteShelf());
-    EditCommand = new DelegateCommand(
+    EditShelfCommand = new DelegateCommand(
       p => ShelfEditViewModel.Show(this),
       p => Rack.KeyShelf == null && Rack.KeyTile == null);
   }
@@ -81,7 +81,7 @@ public class ShelfViewModel:
 
   public ICommand DeleteShelfCommand { get; }
 
-  public ICommand EditCommand { get; }
+  public ICommand EditShelfCommand { get; }
 
   public RackViewModel Rack { get; }
 

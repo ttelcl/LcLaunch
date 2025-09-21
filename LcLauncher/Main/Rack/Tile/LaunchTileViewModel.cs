@@ -33,28 +33,8 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
   {
     IconHostId = Guid.NewGuid();
     Model = model;
-    if(model is ShellLaunch shell)
+    if(model is LaunchData launch)
     {
-      ShellModel = shell;
-      RawModel = null;
-      NewModel = shell.ToLaunch();
-      Classification = LaunchData.GetLaunchKind(
-        shell.TargetPath, false);
-      KindInfo = new LaunchKindInfo(Classification, shell.TargetPath);
-    }
-    else if(model is RawLaunch raw)
-    {
-      ShellModel = null;
-      RawModel = raw;
-      NewModel = raw.ToLaunch();
-      Classification = LaunchData.GetLaunchKind(
-        raw.TargetPath, true);
-      KindInfo = new LaunchKindInfo(Classification, raw.TargetPath);
-    }
-    else if(model is LaunchData launch)
-    {
-      ShellModel = launch.ToShellLaunch();
-      RawModel = launch.ToRawLaunch();
       NewModel = launch;
       Classification = LaunchData.GetLaunchKind(
         launch.Target, !launch.ShellMode);
@@ -62,8 +42,6 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
     }
     else
     {
-      ShellModel = null;
-      RawModel = null;
       NewModel = null;
       Classification = LaunchKind.Invalid;
       KindInfo = new LaunchKindInfo(LaunchKind.Invalid, "");
@@ -71,9 +49,6 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
     _title = Model.GetEffectiveTitle();
     _tooltip = Model.GetEffectiveTooltip();
     LoadIcon(IconLoadLevel.FromCache);
-    EditCommand = new DelegateCommand(
-      p => StartEdit(),
-      p => CanEdit());
     EditCommandNew = new DelegateCommand(
       p => StartEditNew(),
       p => CanEditNew());
@@ -89,32 +64,12 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
     ClickActionCommand = RunCommand;
   }
 
-  public static LaunchTileViewModel FromShell(
-    TileListViewModel ownerList,
-    ShellLaunch model)
-  {
-    Trace.TraceWarning(
-      $"OBSOLETE! Creating launch tile from shell launch");
-    return new LaunchTileViewModel(ownerList, model);
-  }
-
-  public static LaunchTileViewModel FromRaw(
-    TileListViewModel ownerList,
-    RawLaunch model)
-  {
-    Trace.TraceWarning(
-      $"OBSOLETE! Creating launch tile from raw launch");
-    return new LaunchTileViewModel(ownerList, model);
-  }
-
   public static LaunchTileViewModel FromLaunch(
     TileListViewModel ownerList,
     LaunchData model)
   {
     return new LaunchTileViewModel(ownerList, model);
   }
-
-  public ICommand EditCommand { get; }
 
   public ICommand EditCommandNew { get; }
 
@@ -128,16 +83,6 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
   /// The model for this tile.
   /// </summary>
   public ILaunchData Model { get; }
-
-  /// <summary>
-  /// The model for this tile, if it is a shell launch.
-  /// </summary>
-  public IShellLaunchData? ShellModel { get; }
-
-  /// <summary>
-  /// The model for this tile, if it is a raw launch.
-  /// </summary>
-  public IRawLaunchData? RawModel { get; }
 
   public LaunchData? NewModel { get; }
 
@@ -173,8 +118,6 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
   {
     return Model switch {
       LaunchData launch => TileData.LaunchTile(launch),
-      ShellLaunch shell => TileData.ShellTile(shell),
-      RawLaunch raw => TileData.RawTile(raw),
       _ => throw new InvalidOperationException(
         $"Invalid launch data type {Model.GetType().FullName}")
     };
@@ -302,9 +245,7 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
   }
 
   public string FallbackIcon => Model switch {
-    ShellLaunch => "RocketLaunch",
-    RawLaunch => "RocketLaunchOutline",
-    LaunchData => "RocketLaunchOutline",
+    LaunchData ld => ld.ShellMode ? "RocketLaunch" : "RocketLaunchOutline",
     _ => "Help"
   };
 
@@ -337,63 +278,6 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
   }
 
   public Guid IconHostId { get; }
-
-  private bool CanEdit()
-  {
-    if(Host == null)
-    {
-      return false;
-    }
-    if(GetIsKeyTile())
-    {
-      return false;
-    }
-    if(ShellModel != null)
-    {
-      return Classification switch {
-        LaunchKind.Document => true,
-        LaunchKind.ShellApplication => false, // NYI
-        LaunchKind.Raw => false, // should never happen
-        _ => false,
-      };
-    }
-    else if(RawModel != null)
-    {
-      return Classification switch {
-        LaunchKind.Document => false, // should never happen
-        LaunchKind.ShellApplication => false, // should never happen
-        LaunchKind.Raw => true,
-        _ => false,
-      };
-    }
-    else
-    {
-      return false;
-    }
-  }
-
-  private void StartEdit()
-  {
-    if(!CanEdit())
-    {
-      return;
-    }
-    EditorViewModelBase editor;
-    if(ShellModel != null)
-    {
-      editor = new LaunchDocumentViewModel(Host!);
-    }
-    else if(RawModel != null)
-    {
-      editor = new LaunchExeViewModel(Host!);
-    }
-    else
-    {
-      throw new InvalidOperationException(
-        "Unrecognized launch tile data type");
-    }
-    editor.IsActive = true;
-  }
 
   private bool CanEditNew()
   {
@@ -428,15 +312,7 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
 
   private void RunTile()
   {
-    if(Model is ShellLaunch shell)
-    {
-      Launcher.Launch(shell);
-    }
-    else if(Model is RawLaunch raw)
-    {
-      Launcher.Launch(raw);
-    }
-    else if(Model is LaunchData launch)
+    if(Model is LaunchData launch)
     {
       Launcher.Launch(launch);
     }

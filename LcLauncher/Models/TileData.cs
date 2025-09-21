@@ -26,35 +26,9 @@ public class TileData
   public TileData(
     LaunchData? launch = null,
     TileGroup? group = null,
-    IEnumerable<LaunchData?>? quad = null,
-    ShellLaunch? shellLaunch = null,
-    RawLaunch? rawLaunch = null)
+    IEnumerable<LaunchData?>? quad = null)
   {
-    if(launch != null)
-    {
-      Launch = launch;
-      // ignore the other launch type arguments!
-      ShellLaunch = launch.ToShellLaunch();
-      RawLaunch = launch.ToRawLaunch();
-    }
-    else if(shellLaunch != null)
-    {
-      Launch = shellLaunch.ToLaunch();
-      ShellLaunch = shellLaunch;
-      RawLaunch = null;
-    }
-    else if(rawLaunch != null)
-    {
-      Launch = rawLaunch.ToLaunch();
-      RawLaunch = rawLaunch;
-      ShellLaunch = null;
-    }
-    else
-    {
-      Launch = null;
-      ShellLaunch = null;
-      RawLaunch = null;
-    }
+    Launch = launch;
     Group = group;
     Quad = quad == null ? null : quad.ToList();
   }
@@ -62,18 +36,6 @@ public class TileData
   public static TileData EmptyTile()
   {
     return new TileData();
-  }
-
-  public static TileData ShellTile(ShellLaunch shellLaunch)
-  {
-    return new TileData(
-      launch: shellLaunch.ToLaunch());
-  }
-
-  public static TileData RawTile(RawLaunch rawLaunch)
-  {
-    return new TileData(
-      launch: rawLaunch.ToLaunch());
   }
 
   public static TileData LaunchTile(LaunchData launch)
@@ -100,31 +62,12 @@ public class TileData
     return new TileData(quad: quad);
   }
 
-  /// <summary>
-  /// Shell based launch tile.
-  /// </summary>
-  [JsonProperty("shellLaunch")]
-  public ShellLaunch? ShellLaunch { get; }
-
-  public bool ShouldSerializeShellLaunch()
-  {
-    return ShellLaunch != null && Launch == null;
-  }
-
-  [JsonProperty("rawLaunch")]
-  public RawLaunch? RawLaunch { get; }
-
-  public bool ShouldSerializeRawLaunch()
-  {
-    return RawLaunch != null && Launch == null;
-  }
-
   [JsonProperty("launch", NullValueHandling = NullValueHandling.Ignore)]
   public LaunchData? Launch { get; }
 
   public bool HasLaunch()
   {
-    return ShellLaunch != null || RawLaunch != null || Launch != null;
+    return Launch != null;
   }
 
   [JsonProperty("group", NullValueHandling = NullValueHandling.Ignore)]
@@ -136,8 +79,6 @@ public class TileData
   public bool IsEmpty()
   {
     return
-      ShellLaunch == null &&
-      RawLaunch == null &&
       Launch == null &&
       Group == null &&
       Quad == null;
