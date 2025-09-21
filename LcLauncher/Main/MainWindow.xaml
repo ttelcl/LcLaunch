@@ -30,12 +30,24 @@
                     <MenuItem Header="Convert Rack With Icons" Command="{Binding ConvertCurrentRackWithIconsCommand}"/>
                 </MenuItem>
             </Menu>
+            <!--<mah:SplitButton
+                ItemsSource="{Binding RackList.RacksNew}"
+                DisplayMemberPath="Name"
+                HorizontalContentAlignment="Left"
+                HorizontalAlignment="Center"
+                MinWidth="250"
+                DropDownOpened="SplitButton_DropDownOpened">
+                <mah:SplitButton.Icon>
+                    <iconPacks:PackIconMaterial Kind="NewBox" />
+                </mah:SplitButton.Icon>
+            </mah:SplitButton>-->
             <mah:SplitButton
                 ItemsSource="{Binding RackList.Racks}"
                 SelectedItem="{Binding RackList.SelectedRack, Mode=TwoWay}"
                 HorizontalContentAlignment="Left"
                 HorizontalAlignment="Center"
-                MinWidth="150">
+                MinWidth="150"
+                DropDownOpened="SplitButton_DropDownOpened">
                 <mah:SplitButton.Icon>
                     <iconPacks:PackIconMaterial Kind="Bookshelf" />
                 </mah:SplitButton.Icon>

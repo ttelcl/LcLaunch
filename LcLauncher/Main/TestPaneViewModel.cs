@@ -260,13 +260,13 @@ public class TestPaneViewModel: ViewModelBase
     }
     Trace.TraceInformation(
       $"Found {infoDump.Count} applications.");
-    var store = Host.FileStore;
-    var path = store.SaveData(
-      "application-dump",
-      ".json",
-      infoDump);
-    Trace.TraceInformation(
-      $"Saved application dump to {path}");
+    //var store = Host.FileStore;
+    //var path = store.SaveData(
+    //  "application-dump",
+    //  ".json",
+    //  infoDump);
+    //Trace.TraceInformation(
+    //  $"Saved application dump to {path}");
     if(selectedSo != null)
     {
       Trace.TraceInformation(

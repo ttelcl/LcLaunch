@@ -115,7 +115,7 @@ public class HyperBucketStore
         $"Unknown / unregistered bucket store provider '{providerName}'");
     }
     // the following gets the unique key for the store and validates the arguments
-    var storeKey = GetStoreKey(storeName, storeTag, providerName);
+    var storeKey = GetStoreKey(storeName, providerName, storeTag);
     if(!_storeCache.TryGetValue(storeKey, out var store))
     {
       store = provider.GetBucketStore(RootFolder, storeName, storeTag);
@@ -176,7 +176,7 @@ public class HyperBucketStore
     if(!NamingRules.IsValidProviderName(providerName))
     {
       throw new ArgumentException(
-        $"Not a valid bucket store name: '{providerName}'");
+        $"Not a valid bucket store provider name: '{providerName}'");
     }
     return new StoreKey(providerName, storeTag, storeName);
   }

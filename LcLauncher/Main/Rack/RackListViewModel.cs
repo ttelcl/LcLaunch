@@ -15,6 +15,8 @@ using System.Windows.Input;
 using LcLauncher.Models;
 using LcLauncher.WpfUtilities;
 
+using Ttelcl.Persistence.API;
+
 namespace LcLauncher.Main.Rack;
 
 public class RackListViewModel: ViewModelBase
@@ -24,6 +26,7 @@ public class RackListViewModel: ViewModelBase
   {
     Owner = owner;
     Racks = [];
+    RacksNew = [];
     RefreshCommand = new DelegateCommand(p => Refresh());
     Refresh();
     SelectedRack = NoRackText;
@@ -34,7 +37,15 @@ public class RackListViewModel: ViewModelBase
 
   public ObservableCollection<string> Racks { get; }
 
+  public ObservableCollection<RackInfo> RacksNew { get; }
+
   public ICommand RefreshCommand { get; }
+
+  // call back from event
+  public void OnDropDownOpened()
+  {
+    Refresh();
+  }
 
   public string SelectedRack {
     get => _selectedRack;
@@ -79,6 +90,7 @@ public class RackListViewModel: ViewModelBase
   private string _selectedRack;
 
   const string NoRackText = "<no rack loaded>";
+  static readonly RackInfo NoRackInfo = new RackInfo(NoRackText, null);
 
   private void Refresh() {
     if(Racks.Count == 0 || !Racks.Contains(NoRackText))
@@ -117,6 +129,48 @@ public class RackListViewModel: ViewModelBase
     var rackNames = String.Join(", ", Racks);
     Trace.TraceInformation(
       $"Available racks: {rackNames}");
+    RefreshNew();
+  }
+
+  private void RefreshNew()
+  {
+    if(RacksNew.Count == 0 || !RacksNew.Contains(NoRackInfo))
+    {
+      RacksNew.Add(NoRackInfo);
+    }
+    var store = Owner.HyperStore;
+    var rackKeys = store.FindRackStores().Select(k => RackInfo.FromKey(k)).ToList();
+    var removedRacks = new List<RackInfo>();
+    foreach(var rack in RacksNew)
+    {
+      if(!rackKeys.Contains(rack))
+      {
+        if(rack.RackKey == null)
+        {
+          continue;
+        }
+        removedRacks.Add(rack);
+      }
+    }
+    foreach(var rack in removedRacks)
+    {
+      RacksNew.Remove(rack);
+    }
+    foreach(var rack in rackKeys)
+    {
+      if(!RacksNew.Contains(rack))
+      {
+        RacksNew.Add(rack);
+      }
+    }
+    //if(SelectedRack != null && !RacksNew.Contains(SelectedRack))
+    //{
+    //  SelectedRack = NoRackText;
+    //}
+    var rackNames = String.Join(", ", RacksNew.Select(r => r.Name));
+    Trace.TraceInformation(
+      $"Available NEW racks: {rackNames}");
+
   }
 
   public string? FindRackByPseudoFile(string pseudoFile)
@@ -139,5 +193,13 @@ public class RackListViewModel: ViewModelBase
       return rackName;
     }
     return null;
+  }
+}
+
+public record RackInfo(string Name, StoreKey? RackKey)
+{
+  public static RackInfo FromKey(StoreKey key)
+  {
+    return new(key.StoreName, key);
   }
 }

@@ -37,6 +37,7 @@ public class MainViewModel: ViewModelBase
     DefaultTheme = configuration["defaultTheme"] ?? DefaultDefaultTheme;
     ShowDevPane = configuration.GetValue<bool>("showDevPane", false);
     HyperStore = InitHyperStore();
+    DefaultStore = HyperStore.Backing.GetStore("default");
     var fileStore = new JsonDataStore();
     var storeImplementation = new JsonLcLaunchStore(fileStore);
     StoreImplementation = storeImplementation;
@@ -86,10 +87,13 @@ public class MainViewModel: ViewModelBase
 
   public ICommand ProcessNextIconJobCommand { get; }
 
+  [Obsolete("Use new persistence backend")]
   public ILcLaunchStore Store => StoreImplementation;
 
+  [Obsolete("Use new persistence backend")]
   public JsonLcLaunchStore StoreImplementation { get; }
 
+  [Obsolete("Use new persistence backend")]
   public JsonDataStore FileStore { get => StoreImplementation.Provider; }
 
   public TestPaneViewModel TestPane { get; }
@@ -98,21 +102,16 @@ public class MainViewModel: ViewModelBase
 
   public LauncherHyperStore HyperStore { get; }
 
+  /// <summary>
+  /// A bucket store for miscellaneous stuff
+  /// </summary>
+  public IBucketStore DefaultStore { get; }
+
   public ModelConverter ModelConverter { get; }
 
   public ICommand ConvertCurrentRackCommand { get; }
 
   public ICommand ConvertCurrentRackWithIconsCommand { get; }
-
-  private static LauncherHyperStore InitHyperStore()
-  {
-    var fsProvider = new Ttelcl.Persistence.Filesystem.FsBucketProvider();
-    var folder = LauncherHyperStore.DefaultStoreFolder;
-    var hyperBucketStore =
-      new HyperBucketStore(
-        folder, [fsProvider]);
-    return new LauncherHyperStore(hyperBucketStore);
-  }
 
   public RackViewModel? CurrentRack {
     get => _currentRack;
@@ -178,7 +177,10 @@ public class MainViewModel: ViewModelBase
       appsSorted
       .GroupBy(descriptor => descriptor.Kind)
       .ToDictionary(g => g.Key.ToString(), g => g.ToList());
-    StoreImplementation.Provider.SaveData("app-dump", ".json", grouped);
+    //StoreImplementation.Provider.SaveData("app-dump", ".json", grouped);
+    DefaultStore
+      .GetJsonBucket<Dictionary<string,List<ShellAppDescriptor>>>("app-dump", true)!
+      .Put(TickId.New(), grouped);
   }
 
   public bool CanProcessNextIconJob()
@@ -251,5 +253,15 @@ public class MainViewModel: ViewModelBase
     {
       Mouse.OverrideCursor = null;
     }
+  }
+
+  private static LauncherHyperStore InitHyperStore()
+  {
+    var fsProvider = new Ttelcl.Persistence.Filesystem.FsBucketProvider();
+    var folder = LauncherHyperStore.DefaultStoreFolder;
+    var hyperBucketStore =
+      new HyperBucketStore(
+        folder, [fsProvider]);
+    return new LauncherHyperStore(hyperBucketStore);
   }
 }
