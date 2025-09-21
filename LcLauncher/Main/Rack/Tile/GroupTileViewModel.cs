@@ -27,9 +27,9 @@ public class GroupTileViewModel: TileViewModel, IPostIconLoadActor, ITileListOwn
   {
     PostIconLoadId = Guid.NewGuid();
     var rack = ownerList.Shelf.Rack.Model;
-    ClaimTracker = rack.GetClaimTracker(model.TileList);
+    ClaimTracker = rack.GetClaimTracker(model.TileListId);
     TileListOwnerLabel =
-      $"Group {PostIconLoadId} targeting {model.TileList} from list {ownerList.Model.Id}";
+      $"Group {PostIconLoadId} targeting {model.TileListId} from list {ownerList.Model.Id}";
     Model = model;
     ToggleGroupCommand = new DelegateCommand(
       p => IsActive = !IsConflicted
@@ -56,14 +56,14 @@ public class GroupTileViewModel: TileViewModel, IPostIconLoadActor, ITileListOwn
     RefreshIconJobsCommand = new DelegateCommand(
       p => QueueIcons(true));
     GroupIcons = new ObservableCollection<GroupIconViewModel>();
-    var childModel = TileListModel.Load(ownerList.Shelf.Rack.Model, model.TileList);
+    var childModel = TileListModel.Load(ownerList.Shelf.Rack.Model, model.TileListId);
     if(childModel == null)
     {
       Trace.TraceWarning(
-        $"Creating missing tile list {model.TileList}");
+        $"Creating missing tile list {model.TileListId}");
       childModel = TileListModel.Create(
         ownerList.Shelf.Rack.Model,
-        model.TileList);
+        model.TileListId);
       childModel.MarkDirty();
     }
     ChildTiles = new TileListViewModel(
@@ -235,7 +235,7 @@ public class GroupTileViewModel: TileViewModel, IPostIconLoadActor, ITileListOwn
     {
       return ReplaceWithClone();
     }
-    return Model.TileList;
+    return Model.TileListId;
   }
 
   public string TileListOwnerLabel { get; }

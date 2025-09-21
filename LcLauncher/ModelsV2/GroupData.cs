@@ -21,7 +21,7 @@ public class GroupData
     string? title = null,
     string? tooltip = null)
   {
-    TileList = tilelist;
+    TileListId = tilelist;
     Title = String.IsNullOrEmpty(title) ? "Untitled Group" : title;
     Tooltip = tooltip;
   }
@@ -33,7 +33,7 @@ public class GroupData
   /// The tiles list ID in the original model
   /// </summary>
   [JsonProperty("tilelist")]
-  public Guid TileList { get; set; }
+  public Guid TileListId { get; set; }
 
   [JsonProperty("tooltip", NullValueHandling = NullValueHandling.Ignore)]
   public string? Tooltip { get; set; }

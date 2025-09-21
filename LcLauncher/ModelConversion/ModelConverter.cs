@@ -234,7 +234,7 @@ public class ModelConverter
     IdConversionMap idMappings)
   {
     var sourceModel = gtvm.Model;
-    var targetId = idMappings[gtvm.Model.TileList];
+    var targetId = idMappings[gtvm.Model.TileListId];
     return Model3.TileData.GroupTile(
       new Model3.GroupData(
         targetId,
