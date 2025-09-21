@@ -17,6 +17,8 @@ using LcLauncher.ShellApps;
 using LcLauncher.Storage;
 using LcLauncher.WpfUtilities;
 
+using LcLauncher.DataModel.Utilities;
+
 namespace LcLauncher.Main.AppPicker;
 
 public class AppViewModel: ViewModelBase, IIconHost

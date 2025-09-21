@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LcLauncher.DataModel.Entities;
+namespace LcLauncher.DataModel.Utilities;
 
 /// <summary>
 /// A classification of shell apps for LcLauncher

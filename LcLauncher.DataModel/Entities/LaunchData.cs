@@ -14,12 +14,12 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 
-using LcLauncher.DataModel.Entities;
-
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
 using Ttelcl.Persistence.API;
+
+using LcLauncher.DataModel.Utilities;
 
 namespace LcLauncher.DataModel.Entities;
 

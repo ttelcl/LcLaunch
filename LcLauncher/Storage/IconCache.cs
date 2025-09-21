@@ -18,6 +18,8 @@ using LcLauncher.Storage.BlobsStorage;
 using LcLauncher.Models;
 using LcLauncher.ShellApps;
 
+using LcLauncher.DataModel.Utilities;
+
 namespace LcLauncher.Storage;
 
 /// <summary>
@@ -193,7 +195,7 @@ public class IconCache
   public static BitmapSource?[]? IconsForSource(
     string source, IconSize sizes)
   {
-    bool useAppIcon = ShellAppDescriptor.HasShellAppsFolderPrefix(source);
+    bool useAppIcon = ShellAppTools.HasShellAppsFolderPrefix(source);
     try
     {
       var icons = new BitmapSource?[4];

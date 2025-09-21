@@ -24,6 +24,8 @@ using LcLauncher.Persistence;
 using LcLauncher.ShellApps;
 using LcLauncher.WpfUtilities;
 
+using LcLauncher.DataModel.Utilities;
+
 using Model3 = LcLauncher.DataModel.Entities;
 
 using LaunchKind = LcLauncher.DataModel.Entities.LaunchKind;
@@ -158,7 +160,8 @@ public class LaunchEditViewModel: EditorViewModelBase
     string applicationIdentifier,
     string? tooltip = null)
   {
-    applicationIdentifier = ShellAppDescriptor.WithShellAppsPrefix(applicationIdentifier);
+    applicationIdentifier =
+      ShellAppTools.WithShellAppsPrefix(applicationIdentifier);
     var model = new LaunchData(
       applicationIdentifier,
       true,
@@ -421,7 +424,7 @@ public class LaunchEditViewModel: EditorViewModelBase
         if(kind == LaunchKind.ShellApplication)
         {
           var candidate = line;
-          candidate = ShellAppDescriptor.StripShellAppsPrefix(candidate);
+          candidate = ShellAppTools.StripShellAppsPrefix(candidate);
           appid = AppIdLike.TryParse(candidate);
           parsingName = line;
         }

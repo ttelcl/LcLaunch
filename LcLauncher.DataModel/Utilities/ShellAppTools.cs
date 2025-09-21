@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LcLauncher.DataModel.Entities;
+namespace LcLauncher.DataModel.Utilities;
 
 /// <summary>
 /// Static functions related to Shell App information that do not require

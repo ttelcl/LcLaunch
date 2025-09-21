@@ -17,7 +17,7 @@ using System.Windows;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-using LcLauncher.ShellApps;
+using LcLauncher.DataModel.Utilities;
 
 using Model3 = LcLauncher.DataModel.Entities;
 
@@ -159,7 +159,6 @@ public class LaunchData
 
   public bool ShouldSerializePathEnvironment() => PathEnvironment.Count > 0;
 
-
   public string GetEffectiveTitle()
   {
     if(!String.IsNullOrEmpty(Title))
@@ -221,7 +220,7 @@ public class LaunchData
     }
     else
     {
-      if(ShellAppDescriptor.HasShellAppsFolderPrefix(target))
+      if(ShellAppTools.HasShellAppsFolderPrefix(target))
       {
         // This is definitely a shell app. It may be missing, but
         // that's something to figure out later.
