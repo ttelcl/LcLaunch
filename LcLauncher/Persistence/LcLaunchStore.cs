@@ -10,7 +10,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using LcLauncher.ModelsV2;
+using Model2 = LcLauncher.ModelsV2;
+using Model3 = LcLauncher.DataModel.Entities;
 
 namespace LcLauncher.Persistence;
 
@@ -74,7 +75,7 @@ public static class LcLaunchStore
     return rack != null;
   }
 
-  public static RackData CreateRack(
+  public static Model2.RackData CreateRack(
     this ILcLaunchStore store,
     string rackName,
     bool overwrite)
@@ -89,15 +90,15 @@ public static class LcLaunchStore
           $"Rack '{rackName}' already exists");
       }
     }
-    var emptyRack = new RackData(
-      [[], [], []], [[], [], []]);
+    var emptyRack = new Model2.RackData(
+      [[], [], []]);
     Trace.TraceInformation(
       $"Creating new rack '{rackName}'");
     store.SaveRack(rackName, emptyRack);
     return emptyRack;
   }
 
-  public static RackData LoadOrCreateRack(
+  public static Model2.RackData LoadOrCreateRack(
     this ILcLaunchStore store,
     string rackName)
   {

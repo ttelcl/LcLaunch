@@ -10,7 +10,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-using LcLauncher.ModelsV2;
+using Model2 = LcLauncher.ModelsV2;
+using Model3 = LcLauncher.DataModel.Entities;
 
 using MahApps.Metro.Controls;
 
@@ -99,13 +100,13 @@ public class GroupEditViewModel: EditorViewModelBase
       else
       {
         // create new group
-        var tileData = new GroupData(
+        var groupData = new Model2.GroupData(
           GroupId,
           Title,
           String.IsNullOrEmpty(Tooltip) ? null : Tooltip);
         var newGroup = new GroupTileViewModel(
           TileHost.TileList,
-          tileData);
+          groupData);
         TileHost.Tile = newGroup;
         newGroup.IsActive = true;
       }

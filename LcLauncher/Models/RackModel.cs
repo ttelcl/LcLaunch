@@ -14,7 +14,9 @@ using Newtonsoft.Json;
 
 using LcLauncher.Storage;
 using LcLauncher.Persistence;
-using LcLauncher.ModelsV2;
+
+using Model2 = LcLauncher.ModelsV2;
+using Model3 = LcLauncher.DataModel.Entities;
 
 namespace LcLauncher.Models;
 
@@ -66,7 +68,7 @@ public class RackModel
   /// </summary>
   public string RackName { get; }
 
-  public RackData RackData { get; }
+  public Model2.RackData RackData { get; }
 
   public IReadOnlyDictionary<Guid, ShelfModel> ShelfMap => _shelves;
 

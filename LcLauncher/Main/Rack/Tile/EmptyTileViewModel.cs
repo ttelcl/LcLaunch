@@ -13,9 +13,12 @@ using System.Windows;
 using System.Windows.Input;
 
 using Microsoft.Win32;
+
 using LcLauncher.WpfUtilities;
 using LcLauncher.Main.AppPicker;
-using LcLauncher.ModelsV2;
+
+using Model2 = LcLauncher.ModelsV2;
+using Model3 = LcLauncher.DataModel.Entities;
 
 namespace LcLauncher.Main.Rack.Tile;
 
@@ -23,7 +26,7 @@ public class EmptyTileViewModel: TileViewModel
 {
   public EmptyTileViewModel(
     TileListViewModel ownerList,
-    TileData? model,
+    Model2.TileData? model,
     string? icon = null)
     : base(ownerList)
   {
@@ -56,11 +59,11 @@ public class EmptyTileViewModel: TileViewModel
   /// The original model this tile view model was created from,
   /// possibly null. Unlike other tiles, this is immutable.
   /// </summary>
-  public TileData? Model { get; }
+  public Model2.TileData? Model { get; }
 
-  public override TileData? GetModel()
+  public override Model2.TileData? GetModel()
   {
-    return TileData.EmptyTile();
+    return Model2.TileData.EmptyTile();
   }
 
   public string Icon {

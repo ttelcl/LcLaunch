@@ -19,13 +19,13 @@ using Microsoft.Win32;
 
 using LcLauncher.Main.AppPicker;
 using LcLauncher.Models;
-using LcLauncher.ModelsV2;
 using LcLauncher.Persistence;
 using LcLauncher.ShellApps;
 using LcLauncher.WpfUtilities;
 
 using LcLauncher.DataModel.Utilities;
 
+using Model2 = LcLauncher.ModelsV2;
 using Model3 = LcLauncher.DataModel.Entities;
 
 using PathEdit = LcLauncher.DataModel.Entities.PathEdit;
@@ -58,8 +58,8 @@ public class LaunchEditViewModel: EditorViewModelBase
     if(tileHost.Tile is LaunchTileViewModel launchTile)
     {
       var tileModel = launchTile.Model;
-      LaunchData? model = null;
-      if(tileModel is LaunchData launchData)
+      Model2.LaunchData? model = null;
+      if(tileModel is Model2.LaunchData launchData)
       {
         model = launchData;
       }
@@ -104,7 +104,7 @@ public class LaunchEditViewModel: EditorViewModelBase
 
   private LaunchEditViewModel(
     TileHostViewModel tileHost,
-    LaunchData model)
+    Model2.LaunchData model)
     : base(
         tileHost.Rack.Owner,
         "Create new Launch Tile - Editor",
@@ -131,7 +131,7 @@ public class LaunchEditViewModel: EditorViewModelBase
   public static LaunchEditViewModel CreateEmpty(
     TileHostViewModel tileHost)
   {
-    var model = new LaunchData(
+    var model = new Model2.LaunchData(
       String.Empty,
       true);
     return new LaunchEditViewModel(tileHost, model);
@@ -145,7 +145,7 @@ public class LaunchEditViewModel: EditorViewModelBase
     var isExe =
       !forceDocumentMode &&
       targetFile.EndsWith(".exe", StringComparison.OrdinalIgnoreCase);
-    var model = new LaunchData(
+    var model = new Model2.LaunchData(
       targetFile,
       !isExe,
       Path.GetFileNameWithoutExtension(targetFile),
@@ -161,7 +161,7 @@ public class LaunchEditViewModel: EditorViewModelBase
   {
     applicationIdentifier =
       ShellAppTools.WithShellAppsPrefix(applicationIdentifier);
-    var model = new LaunchData(
+    var model = new Model2.LaunchData(
       applicationIdentifier,
       true,
       applicationName,
@@ -194,7 +194,7 @@ public class LaunchEditViewModel: EditorViewModelBase
           return null;
         }
         {
-          var model = new LaunchData(
+          var model = new Model2.LaunchData(
             appModel.FilePath!,
             false,
             appModel.Label,
@@ -212,7 +212,7 @@ public class LaunchEditViewModel: EditorViewModelBase
           return null;
         }
         {
-          var model = new LaunchData(
+          var model = new Model2.LaunchData(
             appModel.Descriptor.FileSystemPath!,
             true,
             appModel.Label,
@@ -267,7 +267,7 @@ public class LaunchEditViewModel: EditorViewModelBase
       }
       return null;
     }
-    var model = new LaunchData(
+    var model = new Model2.LaunchData(
       uri,
       true,
       title,
@@ -606,7 +606,7 @@ public class LaunchEditViewModel: EditorViewModelBase
 
   public ShelfViewModel Shelf => TileHost.Shelf;
 
-  public LaunchData Model { get; }
+  public Model2.LaunchData Model { get; }
 
   public LaunchKind Classification {
     get => _classification;

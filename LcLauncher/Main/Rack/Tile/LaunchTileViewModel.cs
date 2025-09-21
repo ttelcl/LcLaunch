@@ -14,12 +14,12 @@ using System.Windows.Media.Imaging;
 
 using LcLauncher.IconUpdates;
 using LcLauncher.Launching;
-using LcLauncher.ModelsV2;
 using LcLauncher.Persistence;
 using LcLauncher.WpfUtilities;
 
 using LcLauncher.DataModel.Utilities;
 
+using Model2 = LcLauncher.ModelsV2;
 using Model3 = LcLauncher.DataModel.Entities;
 
 namespace LcLauncher.Main.Rack.Tile;
@@ -32,7 +32,7 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
 {
   private LaunchTileViewModel(
     TileListViewModel ownerList,
-    LaunchData model)
+    Model2.LaunchData model)
     : base(ownerList)
   {
     IconHostId = Guid.NewGuid();
@@ -60,7 +60,7 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
 
   public static LaunchTileViewModel FromLaunch(
     TileListViewModel ownerList,
-    LaunchData model)
+    Model2.LaunchData model)
   {
     return new LaunchTileViewModel(ownerList, model);
   }
@@ -76,7 +76,7 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
   /// <summary>
   /// The model for this tile.
   /// </summary>
-  public LaunchData Model { get; }
+  public Model2.LaunchData Model { get; }
 
   public LaunchKind Classification { get; }
 
@@ -106,10 +106,10 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
   }
   private string _tooltip;
 
-  public override TileData? GetModel()
+  public override Model2.TileData? GetModel()
   {
     return Model switch {
-      LaunchData launch => TileData.LaunchTile(launch),
+      Model2.LaunchData launch => Model2.TileData.LaunchTile(launch),
       _ => throw new InvalidOperationException(
         $"Invalid launch data type {Model.GetType().FullName}")
     };
@@ -237,7 +237,7 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
   }
 
   public string FallbackIcon => Model switch {
-    LaunchData ld => ld.ShellMode ? "RocketLaunch" : "RocketLaunchOutline",
+    Model2.LaunchData ld => ld.ShellMode ? "RocketLaunch" : "RocketLaunchOutline",
     _ => "Help"
   };
 
@@ -304,7 +304,7 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
 
   private void RunTile()
   {
-    if(Model is LaunchData launch)
+    if(Model is Model2.LaunchData launch)
     {
       Launcher.Launch(launch);
     }

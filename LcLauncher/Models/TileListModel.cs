@@ -11,12 +11,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
-using LcLauncher.ModelsV2;
+using Newtonsoft.Json;
+
 using LcLauncher.Persistence;
 using LcLauncher.Storage;
 using LcLauncher.Storage.BlobsStorage;
 
-using Newtonsoft.Json;
+using Model2 = LcLauncher.ModelsV2;
+using Model3 = LcLauncher.DataModel.Entities;
 
 namespace LcLauncher.Models;
 
@@ -34,7 +36,7 @@ public class TileListModel
   /// </summary>
   private TileListModel(
     Guid id,
-    IEnumerable<TileData?> tiles,
+    IEnumerable<Model2.TileData?> tiles,
     RackModel rack)
   {
     Id = id;
@@ -59,10 +61,10 @@ public class TileListModel
     return new TileListModel(
       id ?? Guid.NewGuid(),
       [
-        TileData.EmptyTile(),
-        TileData.EmptyTile(),
-        TileData.EmptyTile(),
-        TileData.EmptyTile(),
+        Model2.TileData.EmptyTile(),
+        Model2.TileData.EmptyTile(),
+        Model2.TileData.EmptyTile(),
+        Model2.TileData.EmptyTile(),
       ],
       rack);
   }
@@ -92,7 +94,7 @@ public class TileListModel
   {
     SaveRawModel();
     var newId = Guid.NewGuid();
-    var tiles = new List<TileData?>(RawTiles); // clone to independent list
+    var tiles = new List<Model2.TileData?>(RawTiles); // clone to independent list
     var clone = new TileListModel(
       newId,
       tiles,
@@ -131,7 +133,7 @@ public class TileListModel
 
   public Guid Id { get; }
 
-  public List<TileData?> RawTiles { get; }
+  public List<Model2.TileData?> RawTiles { get; }
 
   /// <summary>
   /// The rack this list belongs to. This provides the context

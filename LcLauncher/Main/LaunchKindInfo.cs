@@ -15,8 +15,6 @@ using LcLauncher.Models;
 
 using LcLauncher.DataModel.Utilities;
 
-using Model3 = LcLauncher.DataModel.Entities;
-
 namespace LcLauncher.Main;
 
 /// <summary>

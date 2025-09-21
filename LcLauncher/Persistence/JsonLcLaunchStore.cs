@@ -10,8 +10,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using LcLauncher.ModelsV2;
 using LcLauncher.Storage;
+
+using Model2 = LcLauncher.ModelsV2;
+using Model3 = LcLauncher.DataModel.Entities;
 
 namespace LcLauncher.Persistence;
 
@@ -40,16 +42,16 @@ public class JsonLcLaunchStore: ILcLaunchStore
       .ToList();
   }
 
-  public RackData? LoadRack(string rackName)
+  public Model2.RackData? LoadRack(string rackName)
   {
     LcLaunchStore.ValidateRackName(rackName);
-    var rackdata = Provider.LoadData<RackData>(
+    var rackdata = Provider.LoadData<Model2.RackData>(
       rackName,
       ".rack-json");
     return rackdata;
   }
 
-  public void SaveRack(string rackName, RackData rack)
+  public void SaveRack(string rackName, Model2.RackData rack)
   {
     LcLaunchStore.ValidateRackName(rackName);
     Provider.SaveData(
@@ -58,15 +60,15 @@ public class JsonLcLaunchStore: ILcLaunchStore
       rack);
   }
 
-  public ShelfData? LoadShelf(Guid shelfId)
+  public Model2.ShelfData? LoadShelf(Guid shelfId)
   {
-    var shelfData = Provider.LoadData<ShelfData>(
+    var shelfData = Provider.LoadData<Model2.ShelfData>(
       shelfId,
       ".shelf-json");
     return shelfData;
   }
 
-  public void SaveShelf(Guid id, ShelfData shelf)
+  public void SaveShelf(Guid id, Model2.ShelfData shelf)
   {
     Provider.SaveData(
       id,
@@ -74,15 +76,15 @@ public class JsonLcLaunchStore: ILcLaunchStore
       shelf);
   }
 
-  public List<TileData?>? LoadTiles(Guid tileId)
+  public List<Model2.TileData?>? LoadTiles(Guid tileId)
   {
-    var listData = Provider.LoadData<List<TileData?>>(
+    var listData = Provider.LoadData<List<Model2.TileData?>>(
       tileId,
       ".tiles-json");
     return listData;
   }
 
-  public void SaveTiles(Guid id, IEnumerable<TileData?> tiles)
+  public void SaveTiles(Guid id, IEnumerable<Model2.TileData?> tiles)
   {
     Provider.SaveData(
       id,

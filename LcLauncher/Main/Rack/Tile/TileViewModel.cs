@@ -11,8 +11,10 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 
 using LcLauncher.IconUpdates;
-using LcLauncher.ModelsV2;
 using LcLauncher.WpfUtilities;
+
+using Model2 = LcLauncher.ModelsV2;
+using Model3 = LcLauncher.DataModel.Entities;
 
 namespace LcLauncher.Main.Rack.Tile;
 
@@ -26,7 +28,7 @@ public abstract class TileViewModel: ViewModelBase, IIconLoadJobSource
 
   public static TileViewModel Create(
     TileListViewModel ownerList,
-    TileData? model)
+    Model2.TileData? model)
   {
     return model switch {
       null => new EmptyTileViewModel(ownerList, null),
@@ -67,7 +69,7 @@ public abstract class TileViewModel: ViewModelBase, IIconLoadJobSource
   /// view model was created from, or a new model.
   /// In the case of an empty tile, this may be null.
   /// </summary>
-  public abstract TileData? GetModel();
+  public abstract Model2.TileData? GetModel();
 
   public bool GetIsKeyTile()
   {

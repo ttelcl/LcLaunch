@@ -11,18 +11,16 @@ using System.Windows.Threading;
 
 using Microsoft.Extensions.Configuration;
 
+using Ttelcl.Persistence.API;
+
+using LcLauncher.DataModel.Store;
 using LcLauncher.IconUpdates;
-using LcLauncher.Main.AppPicker;
 using LcLauncher.Main.Rack;
-using LcLauncher.Main.Rack.Tile;
+using LcLauncher.ModelConversion;
 using LcLauncher.Persistence;
 using LcLauncher.ShellApps;
 using LcLauncher.Storage;
 using LcLauncher.WpfUtilities;
-
-using Ttelcl.Persistence.API;
-using LcLauncher.DataModel.Store;
-using LcLauncher.ModelConversion;
 
 namespace LcLauncher.Main;
 

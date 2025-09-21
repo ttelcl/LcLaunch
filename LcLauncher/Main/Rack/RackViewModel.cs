@@ -14,9 +14,11 @@ using LcLauncher.DataModel;
 using LcLauncher.IconUpdates;
 using LcLauncher.Main.Rack.Tile;
 using LcLauncher.Models;
-using LcLauncher.ModelsV2;
 using LcLauncher.Persistence;
 using LcLauncher.WpfUtilities;
+
+using Model2 = LcLauncher.ModelsV2;
+using Model3 = LcLauncher.DataModel.Entities;
 
 namespace LcLauncher.Main.Rack;
 
@@ -319,7 +321,7 @@ public class RackViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
       throw new ArgumentOutOfRangeException(nameof(location));
     }
     var shelfGuid = Guid.NewGuid();
-    var shelfData = new ShelfData(
+    var shelfData = new Model2.ShelfData(
       title ?? $"Unnamed shelf {shelfGuid}",
       false,
       initialTheme);

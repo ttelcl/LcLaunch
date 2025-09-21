@@ -21,8 +21,7 @@ namespace LcLauncher.ModelsV2;
 public class RackData
 {
   public RackData(
-    IEnumerable<List<Guid>> columns,
-    IEnumerable<List<TickId>>? columns2 = null)
+    IEnumerable<List<Guid>> columns)
   {
     var columnList = columns.ToList();
     Columns = columnList;
@@ -35,12 +34,8 @@ public class RackData
     {
       columnList.Add([]);
     }
-    Upgrading = columns2 != null;
   }
 
   [JsonProperty("columns")]
   public IReadOnlyList<List<Guid>> Columns { get; }
-
-  [JsonIgnore]
-  public bool Upgrading { get; }
 }

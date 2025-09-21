@@ -11,7 +11,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using LcLauncher.ModelsV2;
+using Model2 = LcLauncher.ModelsV2;
+using Model3 = LcLauncher.DataModel.Entities;
 
 namespace LcLauncher.Main.Rack.Tile;
 
@@ -19,7 +20,7 @@ public class QuadTileViewModel: TileViewModel
 {
   public QuadTileViewModel(
     TileListViewModel ownerList,
-    IEnumerable<LaunchData?> model)
+    IEnumerable<Model2.LaunchData?> model)
     : base(ownerList)
   {
     var rawModel = model.ToList();
@@ -44,13 +45,13 @@ public class QuadTileViewModel: TileViewModel
     // Todo: create new viewmodels for the sub-tiles
   }
 
-  public List<LaunchData?> RawModel { get; }
+  public List<Model2.LaunchData?> RawModel { get; }
 
   public override string PlainIcon { get => "ViewGrid"; }
 
-  public override TileData? GetModel()
+  public override Model2.TileData? GetModel()
   {
-    return TileData.QuadTile(
+    return Model2.TileData.QuadTile(
       RawModel);
   }
 }

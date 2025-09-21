@@ -6,21 +6,21 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 using LcLauncher.Models;
 using LcLauncher.WpfUtilities;
 
 using Ttelcl.Persistence.API;
-using System.IO;
-using Newtonsoft.Json.Linq;
-using System.Text.RegularExpressions;
 
 namespace LcLauncher.Main.Rack;
 
@@ -82,11 +82,11 @@ public class RackListViewModel: ViewModelBase
           }
           var rackModel = new RackModel(store, _selectedRack);
           var rackVm = new RackViewModel(Owner, rackModel);
-          if(rackModel.RackData.Upgrading)
-          {
-            rackVm.MarkDirty();
-            rackVm.SaveIfDirty();
-          }
+          //if(rackModel.RackData.Upgrading)
+          //{
+          //  rackVm.MarkDirty();
+          //  rackVm.SaveIfDirty();
+          //}
           Owner.CurrentRack = rackVm;
         }
       }

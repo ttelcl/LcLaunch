@@ -11,10 +11,12 @@ using System.Threading.Tasks;
 
 using Newtonsoft.Json;
 
-using LcLauncher.ModelsV2;
+using Ttelcl.Persistence.API;
+
 using LcLauncher.Persistence;
 
-using Ttelcl.Persistence.API;
+using Model2 = LcLauncher.ModelsV2;
+using Model3 = LcLauncher.DataModel.Entities;
 
 namespace LcLauncher.Models;
 
@@ -23,7 +25,7 @@ public class ShelfModel
   internal ShelfModel(
     RackModel owner,
     Guid id,
-    ShelfData shelf)
+    Model2.ShelfData shelf)
   {
     Owner = owner;
     Id = id;
@@ -46,7 +48,7 @@ public class ShelfModel
     bool needsSave = false;
     if(shelf == null)
     { 
-      shelf = new ShelfData(
+      shelf = new Model2.ShelfData(
         "MISSING Shelf " + id.ToString(),
         true, // Start out collapsed in this unusual case
         "Cobalt",
@@ -77,7 +79,7 @@ public class ShelfModel
 
   public Guid Id { get; }
 
-  public ShelfData Shelf { get; }
+  public Model2.ShelfData Shelf { get; }
 
   public TileListModel PrimaryTiles { get; }
 

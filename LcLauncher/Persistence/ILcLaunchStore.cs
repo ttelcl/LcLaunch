@@ -7,7 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using LcLauncher.ModelsV2;
+using Model2 = LcLauncher.ModelsV2;
+using Model3 = LcLauncher.DataModel.Entities;
 
 namespace LcLauncher.Persistence;
 
@@ -24,32 +25,32 @@ public interface ILcLaunchStore
   /// <summary>
   /// Load a rack by name.
   /// </summary>
-  RackData? LoadRack(string rackName);
+  Model2.RackData? LoadRack(string rackName);
 
   /// <summary>
   /// Save a rack to the store.
   /// </summary>
-  void SaveRack(string rackName, RackData rack);
+  void SaveRack(string rackName, Model2.RackData rack);
 
   /// <summary>
   /// Load a shelf by ID.
   /// </summary>
-  ShelfData? LoadShelf(Guid shelfId);
+  Model2.ShelfData? LoadShelf(Guid shelfId);
 
   /// <summary>
   /// Save a shelf to the store.
   /// </summary>
-  void SaveShelf(Guid id, ShelfData shelf);
+  void SaveShelf(Guid id, Model2.ShelfData shelf);
 
   /// <summary>
   /// Load a tile list by ID.
   /// </summary>
-  List<TileData?>? LoadTiles(Guid tileId);
+  List<Model2.TileData?>? LoadTiles(Guid tileId);
 
   /// <summary>
   /// Save a tile list to the store.
   /// </summary>
-  void SaveTiles(Guid id, IEnumerable<TileData?> tiles);
+  void SaveTiles(Guid id, IEnumerable<Model2.TileData?> tiles);
 
   /// <summary>
   /// Enumerate all existing shelves in the store.

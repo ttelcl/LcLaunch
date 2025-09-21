@@ -12,9 +12,11 @@ using System.Windows;
 using System.Windows.Input;
 
 using LcLauncher.Main.AppPicker;
-using LcLauncher.ModelsV2;
 using LcLauncher.Persistence;
 using LcLauncher.WpfUtilities;
+
+using Model2 = LcLauncher.ModelsV2;
+using Model3 = LcLauncher.DataModel.Entities;
 
 namespace LcLauncher.Main.Rack.Tile;
 
@@ -192,8 +194,8 @@ public class TileHostViewModel: ViewModelBase
       Tile is QuadTileViewModel;
   }
 
-  public TileData? ReplaceTile(
-    TileData? newRawData)
+  public Model2.TileData? ReplaceTile(
+    Model2.TileData? newRawData)
   {
     if(IsKeyTile)
     {
@@ -216,12 +218,12 @@ public class TileHostViewModel: ViewModelBase
   /// <summary>
   /// Clear this tile to an empty tile, destroying the original tile.
   /// </summary>
-  public TileData? ClearTile()
+  public Model2.TileData? ClearTile()
   {
-    return ReplaceTile(TileData.EmptyTile());
+    return ReplaceTile(Model2.TileData.EmptyTile());
   }
 
-  public TileData? ConfirmAndClearTile()
+  public Model2.TileData? ConfirmAndClearTile()
   {
     if(!IsKeyTile)
     {
@@ -254,7 +256,7 @@ public class TileHostViewModel: ViewModelBase
   /// Also pads the list to make the last row full again (i.e.: adds
   /// an empty tile at the end).
   /// </summary>
-  public TileData? DeleteTile()
+  public Model2.TileData? DeleteTile()
   {
     if(IsKeyTile)
     {
@@ -274,7 +276,7 @@ public class TileHostViewModel: ViewModelBase
     return !IsKeyTile;
   }
 
-  public TileData? CopyTileHere(
+  public Model2.TileData? CopyTileHere(
     TileHostViewModel other)
   {
     if(other == this)

@@ -13,8 +13,10 @@ using System.Windows.Input;
 
 using LcLauncher.IconUpdates;
 using LcLauncher.Models;
-using LcLauncher.ModelsV2;
 using LcLauncher.WpfUtilities;
+
+using Model2 = LcLauncher.ModelsV2;
+using Model3 = LcLauncher.DataModel.Entities;
 
 namespace LcLauncher.Main.Rack.Tile;
 
@@ -22,7 +24,7 @@ public class GroupTileViewModel: TileViewModel, IPostIconLoadActor, ITileListOwn
 {
   public GroupTileViewModel(
     TileListViewModel ownerList,
-    GroupData model)
+    Model2.GroupData model)
     : base(ownerList)
   {
     PostIconLoadId = Guid.NewGuid();
@@ -90,7 +92,7 @@ public class GroupTileViewModel: TileViewModel, IPostIconLoadActor, ITileListOwn
 
   public override string PlainIcon { get => "DotsGrid"; }
 
-  public GroupData Model { get; }
+  public Model2.GroupData Model { get; }
 
   public string Title {
     get => Model.Title;
@@ -130,9 +132,9 @@ public class GroupTileViewModel: TileViewModel, IPostIconLoadActor, ITileListOwn
     }
   }
 
-  public override TileData? GetModel()
+  public override Model2.TileData? GetModel()
   {
-    return TileData.GroupTile(Model);
+    return Model2.TileData.GroupTile(Model);
   }
 
   public bool IsActive {
@@ -216,7 +218,7 @@ public class GroupTileViewModel: TileViewModel, IPostIconLoadActor, ITileListOwn
   private Guid ReplaceWithClone()
   {
     var targetClone = ChildTiles.CreateClone();
-    var modelClone = new GroupData(
+    var modelClone = new Model2.GroupData(
       targetClone.Model.Id,
       Model.Title,
       Model.Tooltip);

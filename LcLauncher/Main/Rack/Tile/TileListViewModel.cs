@@ -14,9 +14,11 @@ using System.Windows.Input;
 using LcLauncher.DataModel;
 using LcLauncher.IconUpdates;
 using LcLauncher.Models;
-using LcLauncher.ModelsV2;
 using LcLauncher.Persistence;
 using LcLauncher.WpfUtilities;
+
+using Model2 = LcLauncher.ModelsV2;
+using Model3 = LcLauncher.DataModel.Entities;
 
 namespace LcLauncher.Main.Rack.Tile;
 
@@ -84,7 +86,7 @@ public class TileListViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
   /// </summary>
   public void RebuildModel()
   {
-    var newTiles = new List<TileData?>();
+    var newTiles = new List<Model2.TileData?>();
     foreach(var tile in Tiles)
     {
       newTiles.Add(tile?.Tile?.GetModel());
@@ -213,7 +215,7 @@ public class TileListViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
       for(var i = 0; i < 4; i++)
       {
         var host = new TileHostViewModel(this);
-        host.Tile = new EmptyTileViewModel(this, TileData.EmptyTile());
+        host.Tile = new EmptyTileViewModel(this, Model2.TileData.EmptyTile());
         Tiles.Add(host);
       }
       MarkDirty();
@@ -261,7 +263,7 @@ public class TileListViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
     {
       dirty = true;
       var host = new TileHostViewModel(this);
-      host.Tile = new EmptyTileViewModel(this, TileData.EmptyTile());
+      host.Tile = new EmptyTileViewModel(this, Model2.TileData.EmptyTile());
       Tiles.Add(host);
     }
     if(dirty)
@@ -301,7 +303,7 @@ public class TileListViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
       Tiles.RemoveAt(Tiles.Count - 1);
     }
     var host = new TileHostViewModel(this);
-    host.Tile = new EmptyTileViewModel(this, TileData.EmptyTile());
+    host.Tile = new EmptyTileViewModel(this, Model2.TileData.EmptyTile());
     Tiles.Insert(position, host);
     MarkDirty();
     //SaveIfDirty();
