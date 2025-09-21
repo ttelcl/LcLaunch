@@ -12,10 +12,15 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
+using Newtonsoft.Json;
+
 using LcLauncher.Models;
 using LcLauncher.WpfUtilities;
 
 using Ttelcl.Persistence.API;
+using System.IO;
+using Newtonsoft.Json.Linq;
+using System.Text.RegularExpressions;
 
 namespace LcLauncher.Main.Rack;
 
@@ -173,6 +178,35 @@ public class RackListViewModel: ViewModelBase
 
   }
 
+  public string? FindRackByFile(string file)
+  {
+    if(!file.EndsWith(".rack-json"))
+    {
+      // both V2 and V3 rack files end in '.rack-json'
+      return null;
+    }
+    file = Path.GetFullPath(file);
+    var shortName = Path.GetFileName(file);
+    var rackTag = Path.GetFileNameWithoutExtension(file);
+    if(TickId.TryParse(rackTag, out var rackId))
+    {
+      var pathSegments = file.Split(
+        Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+      var folderName = pathSegments[^2];
+      var m = Regex.Match(
+        folderName,
+        "^[a-z0-9]{1,5}--rack--([-_0-9a-z]+)$",
+        RegexOptions.IgnoreCase);
+      if(m.Success)
+      {
+        var rackName = m.Groups[1].Value;
+        return rackName;
+      }
+    }
+    // if recognition as V3 fails, try V2
+    return FindRackByPseudoFile(shortName);
+  }
+
   public string? FindRackByPseudoFile(string pseudoFile)
   {
     if(String.IsNullOrEmpty(pseudoFile))
@@ -181,6 +215,7 @@ public class RackListViewModel: ViewModelBase
     }
     if(!pseudoFile.EndsWith(".rack-json"))
     {
+      // both V2 and V3 rack files end in '.rack-json'
       return null;
     }
     if(pseudoFile.IndexOfAny(['/', '\\', ':', '*', '?']) >= 0)
@@ -188,8 +223,21 @@ public class RackListViewModel: ViewModelBase
       return null;
     }
     var rackName = pseudoFile.Substring(0, pseudoFile.Length - ".rack-json".Length);
+    return FindRackByName(rackName);
+  }
+
+  public string? FindRackByName(string rackName)
+  {
+    var rackinfo =
+      RacksNew.Where(ri => ri.RackKey?.StoreName == rackName).FirstOrDefault();
+    if(rackinfo != null)
+    {
+      return rackinfo.RackKey!.StoreName;
+    }
     if(Racks.Contains(rackName))
     {
+      // V2
+      Trace.TraceWarning($"Found rack '{rackName}' as legacy rack, not as converted rack");
       return rackName;
     }
     return null;
