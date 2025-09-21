@@ -25,7 +25,6 @@ namespace LcLauncher.Models;
 /// </summary>
 public class RackModel
 {
-  private Dictionary<Guid, ShelfModel> _shelves;
   private readonly Dictionary<Guid, WeakReference<TileListOwnerTracker>>
     _claimTrackerCache;
 
@@ -40,21 +39,21 @@ public class RackModel
     LcLaunchStore.ValidateRackName(rackName);
     Store = store;
     RackName = rackName;
-    _shelves = [];
     Columns = new List<ShelfModel>[3];
     var rackData = Store.LoadOrCreateRack(RackName);
     RackData = rackData;
-    // populate shelves in the lookup and the columns
+    var shelves = new Dictionary<Guid, ShelfModel>();
+    // populate shelves
     for(var icol=0; icol<3; icol++)
     {
       Columns[icol] = [];
       var column = rackData.Columns[icol];
       foreach(var shelfId in column)
       {
-        if(!_shelves.TryGetValue(shelfId, out var shelf))
+        if(!shelves.TryGetValue(shelfId, out var shelf))
         {
           shelf = ShelfModel.Load(this, shelfId);
-          _shelves.Add(shelfId, shelf);
+          shelves.Add(shelfId, shelf);
         }
         Columns[icol].Add(shelf);
       }
@@ -69,8 +68,6 @@ public class RackModel
   public string RackName { get; }
 
   public Model2.RackData RackData { get; }
-
-  public IReadOnlyDictionary<Guid, ShelfModel> ShelfMap => _shelves;
 
   /// <summary>
   /// The 3 columns of the rack.
