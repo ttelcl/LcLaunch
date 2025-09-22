@@ -16,9 +16,6 @@ using Ttelcl.Persistence.API;
 
 namespace LcLauncher.Models;
 
-/// <summary>
-/// Description of RackModel3
-/// </summary>
 public class RackModel3
 {
   /// <summary>
@@ -44,13 +41,7 @@ public class RackModel3
       var shelf1Id = TickId.New();
       var shelf1 = new ShelfData(
         "Untitled Shelf", false, null, shelf1Id);
-      var shelf1Tiles = new TileListData(
-        shelf1Id, [
-          TileData.EmptyTile(),
-          TileData.EmptyTile(),
-          TileData.EmptyTile(),
-          TileData.EmptyTile(),
-        ]);
+      var shelf1Tiles = TileListData.CreateNew(shelf1Id);
       Store.PutShelf(shelf1);
       Store.PutTiles(shelf1Tiles);
       entity = new RackData(
@@ -84,6 +75,8 @@ public class RackModel3
   public LauncherHyperStore HyperStore => Store.Owner;
 
   public RackData RackEntity { get; }
+
+  public TickId Id => RackEntity.Id;
 
   public List<ColumnModel3> Columns { get; }
 }

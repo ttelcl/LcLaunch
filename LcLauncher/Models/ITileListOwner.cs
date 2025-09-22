@@ -13,7 +13,7 @@ using LcLauncher.Main.Rack.Tile;
 namespace LcLauncher.Models;
 
 /// <summary>
-/// An object has or wants to claim ownership of a tile list.
+/// An object that has or wants to claim ownership of a tile list.
 /// Implemented by <see cref="ShelfViewModel"/> and 
 /// <see cref="GroupTileViewModel"/>
 /// </summary>

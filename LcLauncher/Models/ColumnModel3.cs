@@ -11,19 +11,21 @@ using System.Threading.Tasks;
 
 using LcLauncher.DataModel.Entities;
 
+using Ttelcl.Persistence.API;
+
 namespace LcLauncher.Models;
 
 public class ColumnModel3
 {
   internal ColumnModel3(
     RackModel3 rack,
-    ColumnData entity)
+    ColumnData columnEntity)
   {
     Rack = rack;
-    Entity = entity;
+    ColumnEntity = columnEntity;
     Shelves = new List<ShelfModel3>();
     var store = Rack.Store;
-    foreach(var shelfId in Entity.Shelves)
+    foreach(var shelfId in ColumnEntity.Shelves)
     {
       var shelfEntity = store.GetShelf(shelfId);
       if(shelfEntity == null)
@@ -40,7 +42,9 @@ public class ColumnModel3
 
   public RackModel3 Rack { get; }
 
-  public ColumnData Entity { get; }
+  public ColumnData ColumnEntity { get; }
+
+  public TickId Id => ColumnEntity.Id;
 
   public List<ShelfModel3> Shelves { get; }
 }
