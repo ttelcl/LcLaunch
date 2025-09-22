@@ -11,9 +11,10 @@ using System.Threading.Tasks;
 using System.Windows;
 
 using LcLauncher.DataModel;
-using LcLauncher.WpfUtilities;
-
 using LcLauncher.DataModel.Entities;
+using LcLauncher.DataModel.Store;
+using LcLauncher.Models;
+using LcLauncher.WpfUtilities;
 
 namespace LcLauncher.Main.Rack;
 
@@ -22,12 +23,12 @@ public class RackViewModel: ViewModelBase/*, IPersisted, IIconLoadJobSource*/
   //private List<ColumnViewModel> _columns;
 
   public RackViewModel(
-    MainViewModel owner /*,
-    RackModel model*/)
+    MainViewModel owner,
+    RackModel3 model)
   {
     //IconLoadQueue = new IconLoadQueue(q => owner.RackQueueActivating(q));
     Owner = owner;
-    //Model = model;
+    Model = model;
     //_columns = new List<ColumnViewModel>();
     //Columns = _columns.AsReadOnly();
     //ColumnLeft = new ColumnViewModel(this, 0);
@@ -41,11 +42,11 @@ public class RackViewModel: ViewModelBase/*, IPersisted, IIconLoadJobSource*/
 
   public MainViewModel Owner { get; }
 
-  //public RackModel Model { get; }
+  public RackModel3 Model { get; }
 
-  //public ILcLaunchStore Store => Model.Store;
+  public LauncherRackStore Store => Model.Store;
 
-  //public string Name => Model.RackName;
+  public string Name => Model.RackName;
 
   //public ColumnViewModel ColumnLeft { get; }
 

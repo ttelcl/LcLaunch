@@ -53,12 +53,8 @@ public interface IJsonBucketStore: IBucketStore
 /// Implemented by classes that expect to be stored in a 
 /// <see cref="IJsonBucket{T}"/>
 /// </summary>
-public interface IJsonStorable
+public interface IJsonStorable : IHasTickId
 {
-  /// <summary>
-  /// The identifier for this object
-  /// </summary>
-  TickId Id { get; }
 }
 
 /// <summary>

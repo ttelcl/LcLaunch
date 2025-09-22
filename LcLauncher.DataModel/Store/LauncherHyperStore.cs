@@ -71,6 +71,27 @@ public class LauncherHyperStore
   }
 
   /// <summary>
+  /// Get the rack key given the specified <paramref name="rackName"/>.
+  /// </summary>
+  /// <param name="rackName">
+  /// The name of the rack
+  /// </param>
+  /// <param name="providerName">
+  /// The provider name, known in <see cref="Backing"/>. If null or omitted,
+  /// the default persistence provider in <see cref="Backing"/> is used.
+  /// </param>
+  /// <returns></returns>
+  public StoreKey GetRackKey(
+    string rackName,
+    string? providerName = null)
+  {
+    return new StoreKey(
+      providerName ?? Backing.DefaultProviderName,
+      "rack",
+      rackName);
+  }
+
+  /// <summary>
   /// The default store folder TEST VERSION
   /// </summary>
   public static string DefaultStoreFolder { get; } =

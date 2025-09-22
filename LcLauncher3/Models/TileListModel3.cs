@@ -14,14 +14,14 @@ using LcLauncher.DataModel.Entities;
 using Ttelcl.Persistence.API;
 
 namespace LcLauncher.Models;
-public class TileListModel3
+public class TileListModel3: IModel<TileListData>
 {
   public TileListModel3(
     ShelfModel3 shelf,
     TileListData tileListEntity)
   {
     Shelf = shelf;
-    TileListEntity = tileListEntity;
+    Entity = tileListEntity;
   }
 
   /// <summary>
@@ -29,12 +29,12 @@ public class TileListModel3
   /// </summary>
   public ShelfModel3 Shelf { get; }
 
-  public TileListData TileListEntity { get; }
+  public TileListData Entity { get; }
 
   public RackModel3 Rack => Shelf.Rack;
 
-  public TickId Id => TileListEntity.Id;
+  public TickId Id => Entity.Id;
 
-  public bool IsTopLevel => TileListEntity.Id == Shelf.Id;
+  public bool IsTopLevel => Entity.Id == Shelf.Id;
 
 }

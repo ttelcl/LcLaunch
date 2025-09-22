@@ -16,6 +16,7 @@ using Ttelcl.Persistence.API;
 using LcLauncher.DataModel.Store;
 using LcLauncher.ShellApps;
 using LcLauncher.WpfUtilities;
+using LcLauncher.Main.Rack;
 //using LcLauncher.IconUpdates;
 //using LcLauncher.Main.Rack;
 //using LcLauncher.ModelConversion;
@@ -88,29 +89,30 @@ public class MainViewModel: ViewModelBase
   public LauncherHyperStore HyperStore { get; }
 
   /// <summary>
-  /// A bucket store for miscellaneous stuff
+  /// A bucket store for miscellaneous stuff, e.g. testing dumps
   /// </summary>
   public IBucketStore DefaultStore { get; }
 
-  //public RackViewModel? CurrentRack {
-  //  get => _currentRack;
-  //  set {
-  //    var oldRack = _currentRack;
-  //    if(SetNullableInstanceProperty(ref _currentRack, value))
-  //    {
-  //      var rackLabel = value?.Name ?? "<NONE>";
-  //      Trace.TraceInformation(
-  //        $"Switched to rack '{rackLabel}'");
-  //      if(oldRack != null)
-  //      {
-  //        oldRack.SaveShelvesIfModified();
-  //        oldRack.SaveDirtyTileLists();
-  //        oldRack.SaveIfDirty();
-  //      }
-  //    }
-  //  }
-  //}
-  //private RackViewModel? _currentRack;
+  public RackViewModel? CurrentRack {
+    get => _currentRack;
+    set {
+      var oldRack = _currentRack;
+      if(SetNullableInstanceProperty(ref _currentRack, value))
+      {
+        var rackLabel = value?.Name ?? "<NONE>";
+        Trace.TraceInformation(
+          $"Switched to rack '{rackLabel}'");
+        if(oldRack != null)
+        {
+          Trace.TraceError("NYI: saving rack upon deactivation");
+          //oldRack.SaveShelvesIfModified();
+          //oldRack.SaveDirtyTileLists();
+          //oldRack.SaveIfDirty();
+        }
+      }
+    }
+  }
+  private RackViewModel? _currentRack;
 
   public string DefaultTheme { get; }
 
@@ -128,15 +130,16 @@ public class MainViewModel: ViewModelBase
 
   //  public RackListViewModel RackList { get; }
 
-  //public void RackQueueActivating(IconLoadQueue queue)
-  //{
-  //  if(!_iconJobTimer.IsEnabled)
-  //  {
-  //    Trace.TraceInformation(
-  //      $"Rack Queue is now active");
-  //    _iconJobTimer.IsEnabled = true;
-  //  }
-  //}
+  public void RackQueueActivating(/*IconLoadQueue queue*/)
+    // TODO: why is that argument unused??
+  {
+    if(!_iconJobTimer.IsEnabled)
+    {
+      Trace.TraceInformation(
+        $"Rack Queue is now active");
+      _iconJobTimer.IsEnabled = true;
+    }
+  }
 
   public bool ProcessNextIconJob()
   {
@@ -171,9 +174,13 @@ public class MainViewModel: ViewModelBase
 
   public void OnWindowClosing()
   {
-    //CurrentRack?.SaveShelvesIfModified();
-    //CurrentRack?.SaveDirtyTileLists();
-    //CurrentRack?.SaveIfDirty();
+    if(CurrentRack != null)
+    {
+      Trace.TraceError("NYI: saving rack upon window close");
+      //CurrentRack.SaveShelvesIfModified();
+      //CurrentRack.SaveDirtyTileLists();
+      //CurrentRack.SaveIfDirty();
+    }
   }
 
   public void OnAppActiveChange(bool active)
@@ -187,9 +194,13 @@ public class MainViewModel: ViewModelBase
     {
       Trace.TraceInformation(
         $"Application is now inactive");
-      //CurrentRack?.SaveShelvesIfModified();
-      //CurrentRack?.SaveDirtyTileLists();
-      //CurrentRack?.SaveIfDirty();
+      if(CurrentRack != null)
+      {
+        Trace.TraceError("NYI: saving rack upon app move to background");
+        //CurrentRack.SaveShelvesIfModified();
+        //CurrentRack.SaveDirtyTileLists();
+        //CurrentRack.SaveIfDirty();
+      }
     }
   }
 
