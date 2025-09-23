@@ -57,8 +57,7 @@
                 Visibility="{Binding CurrentRack, Converter={StaticResource VisibleIfNotNull}}"
                 VerticalScrollBarVisibility="Visible"
                 HorizontalScrollBarVisibility="Visible">
-                <TextBlock Text="RACK VIEW"/>
-                <!--<rack:RackView DataContext="{Binding CurrentRack}"/>-->
+                <rack:RackView DataContext="{Binding CurrentRack}"/>
             </ScrollViewer>
             <!--<local:EditorBaseView
                 Visibility="{Binding Converter={StaticResource VisibleIfNotNull}}"

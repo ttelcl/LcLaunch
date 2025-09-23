@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -20,7 +21,6 @@ namespace LcLauncher.Main.Rack;
 
 public class RackViewModel: ViewModelBase/*, IPersisted, IIconLoadJobSource*/
 {
-  //private List<ColumnViewModel> _columns;
 
   public RackViewModel(
     MainViewModel owner,
@@ -29,8 +29,12 @@ public class RackViewModel: ViewModelBase/*, IPersisted, IIconLoadJobSource*/
     //IconLoadQueue = new IconLoadQueue(q => owner.RackQueueActivating(q));
     Owner = owner;
     Model = model;
-    //_columns = new List<ColumnViewModel>();
-    //Columns = _columns.AsReadOnly();
+    Columns = [];
+    for(var i = 0; i < model.Columns.Count; i++)
+    {
+      var columnVm = new ColumnViewModel(this, i);
+      Columns.Add(columnVm);
+    }
     //ColumnLeft = new ColumnViewModel(this, 0);
     //ColumnMiddle = new ColumnViewModel(this, 1);
     //ColumnRight = new ColumnViewModel(this, 2);
@@ -38,6 +42,8 @@ public class RackViewModel: ViewModelBase/*, IPersisted, IIconLoadJobSource*/
     //_columns.Add(ColumnMiddle);
     //_columns.Add(ColumnRight);
     //Model.TraceClaimStatus();
+    Trace.TraceInformation(
+      $"Constructing rack VM {Model.RackKey} with {Columns.Count} columns");
   }
 
   public MainViewModel Owner { get; }
@@ -62,7 +68,7 @@ public class RackViewModel: ViewModelBase/*, IPersisted, IIconLoadJobSource*/
 
   //public ColumnViewModel ColumnRight { get; }
 
-  //public IReadOnlyList<ColumnViewModel> Columns { get; }
+  public ObservableCollection<ColumnViewModel> Columns { get; }
 
   //public IEnumerable<ShelfViewModel> AllShelves()
   //{

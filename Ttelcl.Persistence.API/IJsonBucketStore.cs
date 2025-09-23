@@ -135,7 +135,7 @@ public static class JsonBucketExtensions
 
   /// <summary>
   /// Put an item that implements <see cref="IJsonStorable"/> in this
-  /// bucket (retrieving the <see cref="IJsonStorable.Id"/> from the
+  /// bucket (retrieving the <see cref="IHasTickId.Id"/> from the
   /// item instead of passing it explicitly)
   /// </summary>
   public static void PutStorable<T>(
