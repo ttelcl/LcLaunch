@@ -50,6 +50,7 @@ public class RackViewModel: ViewModelBase/*, IPersisted, IIconLoadJobSource*/
 
   public void Unload()
   {
+    Trace.TraceError("NYI: saving rack on unload");
     //SaveShelvesIfModified();
     //SaveDirtyTileLists();
     //SaveIfDirty();

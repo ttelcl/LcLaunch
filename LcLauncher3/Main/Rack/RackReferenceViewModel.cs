@@ -24,10 +24,6 @@ public class RackReferenceViewModel: ViewModelBase
   {
     Host = host;
     Key = key;
-    Label =
-      Key == null
-      ? "<no rack loaded>"
-      : $"{Key.StoreName} ({Key.ProviderName})";
   }
 
   public MainViewModel Host { get; }
@@ -36,11 +32,33 @@ public class RackReferenceViewModel: ViewModelBase
 
   public bool IsValid => Key != null;
 
+  public bool IsAmbiguous {
+    get => _isAmbiguous;
+    set {
+      if(SetValueProperty(ref _isAmbiguous, value))
+      {
+        RaisePropertyChanged(nameof(Label));
+      }
+    }
+  }
+  private bool _isAmbiguous = false;
+
   public string RackName => Key?.StoreName ?? "<no rack loaded>";
 
   public string ProviderName => Key?.ProviderName ?? "-";
 
-  public string Label { get; }
+  public string Label {
+    get {
+      if(Key == null)
+      {
+        return "<no rack loaded>";
+      }
+      return
+        IsAmbiguous
+        ? $"{Key.StoreName} ({Key.ProviderName})"
+        : Key.StoreName;
+    }
+  }
 
   public RackViewModel? Load()
   {

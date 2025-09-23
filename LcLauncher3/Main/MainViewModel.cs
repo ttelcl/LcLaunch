@@ -45,7 +45,7 @@ public class MainViewModel: ViewModelBase
     Trace.TraceError("TODO: create default rack if missing");
 
     //Store.LoadOrCreateRack("default");
-    RackList = new RackListViewModel(this);
+    RackList = new RackListViewModel(this, configuration["defaultRack"]);
     //TestPane = new TestPaneViewModel(this);
     ProcessNextIconJobCommand = new DelegateCommand(
       p => ProcessNextIconJob(),
@@ -104,10 +104,7 @@ public class MainViewModel: ViewModelBase
           $"Switched to rack '{rackLabel}'");
         if(oldRack != null)
         {
-          Trace.TraceError("NYI: saving rack upon deactivation");
-          //oldRack.SaveShelvesIfModified();
-          //oldRack.SaveDirtyTileLists();
-          //oldRack.SaveIfDirty();
+          oldRack.Unload();
         }
       }
     }
@@ -176,10 +173,7 @@ public class MainViewModel: ViewModelBase
   {
     if(CurrentRack != null)
     {
-      Trace.TraceError("NYI: saving rack upon window close");
-      //CurrentRack.SaveShelvesIfModified();
-      //CurrentRack.SaveDirtyTileLists();
-      //CurrentRack.SaveIfDirty();
+      CurrentRack = null;
     }
   }
 

@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using ControlzEx.Theming;
 
 using LcLauncher.Main;
+using Ttelcl.Persistence.API;
 //using LcLauncher.Persistence;
 
 namespace LcLauncher;
@@ -49,23 +50,19 @@ public partial class App: Application
     {
       if(arg.EndsWith(".rack-json"))
       {
-        Trace.TraceError($"Commandline argument handling disabled (App.xaml.cs)");
-        //var pseudofile = Path.GetFileName(arg);
-        //// V3 rack name discovery without reliance on looking inside the rack file
-        //// requires the folder name as well
-        //var rack = MainModel.RackList.FindRackByFile(arg);
-        //if(rack != null)
-        //{
-        //  Trace.TraceInformation(
-        //    $"Selecting rack '{rack}' specified on command line (as '{arg}')");
-        //  MainModel.RackList.SelectedRack = rack;
-        //  rackSet = true;
-        //}
-        //else
-        //{
-        //  Trace.TraceError(
-        //    $"Rack '{arg}' not found");
-        //}
+        var isSet = MainModel.RackList.SelectFromCommandlineArgument(arg);
+        if(isSet)
+        {
+          Trace.TraceInformation(
+            $"Selected rack as specified on command line (as '{arg}')");
+          rackSet = true;
+          break;
+        }
+        else
+        {
+          Trace.TraceWarning(
+            $"Rack '{arg}' not found");
+        }
       }
     }
     if(!rackSet)
@@ -77,29 +74,25 @@ public partial class App: Application
       }
       else
       {
-        Trace.TraceError("NYI - rack name validation");
-        //var errorMessage = LcLaunchStore.TestValidRackName(defaultRack);
-        //if(errorMessage != null)
-        //{
-        //  Trace.TraceError(
-        //    $"Default rack name '{defaultRack}' is not valid, using 'default' instead: {errorMessage}");
-        //  defaultRack = "default";
-        //}
+        if(!NamingRules.IsValidStoreName(defaultRack))
+        {
+          Trace.TraceError(
+            $"Default rack name '{defaultRack}' is not valid, using 'default' instead.");
+          defaultRack = "default";
+        }
       }
-      Trace.TraceError("NYI - initial rack setting");
-      //var rack = MainModel.RackList.FindRackByName(defaultRack);
-      //if(rack != null)
-      //{
-      //  Trace.TraceInformation(
-      //    $"Selecting default rack '{rack}' because none were specified on command line");
-      //  MainModel.RackList.SelectedRack = rack;
-      //  rackSet = true;
-      //}
-      //else
-      //{
-      //  Trace.TraceError(
-      //    $"Not selecting any rack: none specified and '{defaultRack}' not found");
-      //}
+      var isSet = MainModel.RackList.SelectFromRackName(defaultRack);
+      if(isSet)
+      {
+        Trace.TraceInformation(
+          $"Selecting default rack '{defaultRack}' because none were specified on command line");
+        rackSet = true;
+      }
+      else
+      {
+        Trace.TraceError(
+          $"Not selecting any rack: none specified and '{defaultRack}' not found");
+      }
     }
     mainWindow.DataContext = MainModel;
 
