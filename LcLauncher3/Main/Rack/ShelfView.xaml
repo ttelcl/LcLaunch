@@ -171,14 +171,14 @@
                 Orientation="Vertical"
                 Visibility="{Binding IsExpanded, Converter={StaticResource VisibleIf}}"
                 MinHeight="42">
-                <!--<tile:TileListView
+                <tile:TileListView
                     DataContext="{Binding PrimaryTiles}"/>
                 <tile:TileListView
                     Visibility="{Binding
                         DataContext.SecondaryTiles,
                         RelativeSource={RelativeSource AncestorType=UserControl},
                         Converter={StaticResource VisibleIfNotNull}}"
-                    DataContext="{Binding SecondaryTiles}"/>-->
+                    DataContext="{Binding SecondaryTiles}"/>
             </StackPanel>
             <!-- Indicate this is the key shelf, and block mouse interaction -->
             <Border

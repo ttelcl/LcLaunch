@@ -71,61 +71,61 @@ public class TileHostViewModel: ViewModelBase
 
   public RackViewModel Rack => TileList.Shelf.Rack;
 
-  //public TileViewModel? Tile {
-  //  get => _tile;
-  //  set {
-  //    var oldTile = _tile;
-  //    if(SetNullableInstanceProperty(ref _tile, value))
-  //    {
-  //      if(oldTile != null)
-  //      {
-  //        oldTile.Host = null;
-  //      }
-  //      if(value != null)
-  //      {
-  //        value.Host = this;
-  //      }
-  //      RaisePropertyChanged(nameof(HasTile));
-  //      RaisePropertyChanged(nameof(IsEmpty));
-  //    }
-  //  }
-  //}
-  //private TileViewModel? _tile;
+  public TileViewModel? Tile {
+    get => _tile;
+    set {
+      var oldTile = _tile;
+      if(SetNullableInstanceProperty(ref _tile, value))
+      {
+        if(oldTile != null)
+        {
+          oldTile.Host = null;
+        }
+        if(value != null)
+        {
+          value.Host = this;
+        }
+        RaisePropertyChanged(nameof(HasTile));
+        RaisePropertyChanged(nameof(IsEmpty));
+      }
+    }
+  }
+  private TileViewModel? _tile;
 
-  //public bool HasTile {
-  //  get => _tile != null;
-  //}
+  public bool HasTile {
+    get => _tile != null;
+  }
 
-  //public bool IsEmpty {
-  //  get => _tile == null || _tile is EmptyTileViewModel;
-  //}
+  public bool IsEmpty {
+    get => _tile == null || _tile is EmptyTileViewModel;
+  }
 
-  //public bool Hovering {
-  //  get => _hovering;
-  //  set {
-  //    if(SetValueProperty(ref _hovering, value))
-  //    {
-  //      RaisePropertyChanged(nameof(Hovering));
-  //      if(Tile != null)
-  //      {
-  //        Tile.HostHovering = value;
-  //      }
-  //    }
-  //  }
-  //}
-  //private bool _hovering = false;
+  public bool Hovering {
+    get => _hovering;
+    set {
+      if(SetValueProperty(ref _hovering, value))
+      {
+        RaisePropertyChanged(nameof(Hovering));
+        if(Tile != null)
+        {
+          Tile.HostHovering = value;
+        }
+      }
+    }
+  }
+  private bool _hovering = false;
 
-  ///// <summary>
-  ///// Callback from the host view. Forwards to the tile,
-  ///// if any and able to handle clicks.
-  ///// </summary>
-  //public void HostMouseButtonChanged(bool down)
-  //{
-  //  if(Tile != null && Tile.ClickActionCommand != null)
-  //  {
-  //    Tile.MouseButtonChange(down);
-  //  }
-  //}
+  /// <summary>
+  /// Callback from the host view. Forwards to the tile,
+  /// if any and able to handle clicks.
+  /// </summary>
+  public void HostMouseButtonChanged(bool down)
+  {
+    if(Tile != null && Tile.ClickActionCommand != null)
+    {
+      Tile.MouseButtonChange(down);
+    }
+  }
 
   public bool IsKeyTile {
     get => _isKeyTile;
@@ -158,22 +158,21 @@ public class TileHostViewModel: ViewModelBase
 
   public string MarkTileIcon { get => IsKeyTile ? "SelectOff" : "Select"; }
 
-  //public int GetTileIndex()
-  //{
-  //  return TileList.Tiles.IndexOf(this);
-  //}
+  public int GetTileIndex()
+  {
+    return TileList.Tiles.IndexOf(this);
+  }
 
   public override string ToString()
   {
-    //return $"{TileList.Model.Id}[{GetTileIndex()}]";
-    return $"{TileList.Model.Id}[PLACEHOLDER]";
+    return $"{TileList.Model.Id}[{GetTileIndex()}]";
   }
 
-  //public bool IsEmptyTile()
-  //{
-  //  return Tile == null ||
-  //    Tile is EmptyTileViewModel;
-  //}
+  public bool IsEmptyTile()
+  {
+    return Tile == null ||
+      Tile is EmptyTileViewModel;
+  }
 
   //public bool IsGroupTile()
   //{

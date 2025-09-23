@@ -32,15 +32,16 @@ public class TileListViewModel:
   {
     Shelf = shelf;
     Model = model;
-    //Tiles = new ObservableCollection<TileHostViewModel>();
+    TileListId = model.Id;
+    Tiles = new ObservableCollection<TileHostViewModel>();
     //IconJobQueue = new IconListQueue(iconLoadQueue, this);
-    //foreach(var tile in model.RawTiles)
-    //{
-    //  var host = new TileHostViewModel(this);
-    //  var tileVm = TileViewModel.Create(this, tile);
-    //  host.Tile = tileVm;
-    //  Tiles.Add(host);
-    //}
+    foreach(var tile in model.Entity.Tiles)
+    {
+      var host = new TileHostViewModel(this);
+      //var tileVm = TileViewModel.Create(this, tile);
+      //host.Tile = tileVm;
+      Tiles.Add(host);
+    }
     //AddEmptyRowCommand = new DelegateCommand(
     //  p => AddEmptyRow(),
     //  p => CanAddEmptyRow());
@@ -60,13 +61,13 @@ public class TileListViewModel:
 
   public TileListModel Model { get; }
 
-  public TickId TileListId => Model.Id;
+  public TickId TileListId {  get; }
 
   //public ILauncherIconCache IconCache => Model.IconCache;
 
   public bool IsPrimary { get => Model.Id == Shelf.Model.Id; }
 
-  //public ObservableCollection<TileHostViewModel> Tiles { get; }
+  public ObservableCollection<TileHostViewModel> Tiles { get; }
 
   //public IconListQueue IconJobQueue { get; }
 
@@ -86,7 +87,7 @@ public class TileListViewModel:
   ///// </summary>
   //public void RebuildModel()
   //{
-  //  var newTiles = new List<Model2.TileData?>();
+  //  var newTiles = new List<TileData?>();
   //  foreach(var tile in Tiles)
   //  {
   //    newTiles.Add(tile?.Tile?.GetModel());

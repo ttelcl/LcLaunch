@@ -22,6 +22,7 @@ public class TileListModel: IModel<TileListData>
   {
     Shelf = shelf;
     Entity = tileListEntity;
+    Rack = Shelf.Rack;
   }
 
   /// <summary>
@@ -31,10 +32,17 @@ public class TileListModel: IModel<TileListData>
 
   public TileListData Entity { get; }
 
-  public RackModel Rack => Shelf.Rack;
+  public RackModel Rack { get; }
 
   public TickId Id => Entity.Id;
 
   public bool IsTopLevel => Entity.Id == Shelf.Id;
+
+  public bool IsDirty { get; private set; }
+
+  public void MarkDirty()
+  {
+    IsDirty = true;
+  }
 
 }
