@@ -27,11 +27,11 @@ public class ColumnViewModel: ViewModelBase
     Rack = rack;
     Model = rack.Model.Columns[columnIndex];
     ColumnIndex = columnIndex;
-    //Shelves = new ObservableCollection<ShelfViewModel>();
-    //foreach(var shelf in Model)
-    //{
-    //  Shelves.Add(new ShelfViewModel(Rack, shelf));
-    //}
+    Shelves = new ObservableCollection<ShelfViewModel>();
+    foreach(var shelf in Model.Shelves)
+    {
+      Shelves.Add(new ShelfViewModel(Rack, shelf));
+    }
     //MoveMarkedShelfHereCommand = new DelegateCommand(
     //  p => MoveMarkedShelfHere(),
     //  p => CanMoveMarkedShelfHere());
@@ -53,7 +53,7 @@ public class ColumnViewModel: ViewModelBase
 
   internal ColumnModel Model { get; }
 
-  //public ObservableCollection<ShelfViewModel> Shelves { get; }
+  public ObservableCollection<ShelfViewModel> Shelves { get; }
 
   //internal void MoveShelf(
   //  int indexSource,

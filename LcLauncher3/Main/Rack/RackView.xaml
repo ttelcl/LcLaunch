@@ -21,17 +21,9 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Border
-                        BorderBrush="Blue"
-                        BorderThickness="1"
+                    <local:ColumnView
                         Margin="4,3"
-                        Width="415">
-                        <TextBlock
-                            Text="Column!!"/>
-                    </Border>
-                    <!--<local:ColumnView
-                        Margin="4,3"
-                        DataContext="{Binding}"/>-->
+                        DataContext="{Binding}"/>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
