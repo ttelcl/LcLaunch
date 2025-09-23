@@ -198,34 +198,34 @@ public class MainViewModel: ViewModelBase
     }
   }
 
-  //// Usually set indirectly by the editor's IsActive property
-  //public EditorViewModelBase? CurrentEditor {
-  //  get => _currentEditor;
-  //  internal set {
-  //    var oldEditor = _currentEditor;
-  //    if(SetNullableInstanceProperty(ref _currentEditor, value))
-  //    {
-  //      if(oldEditor != null)
-  //      {
-  //        oldEditor.IsActive = false;
-  //        Trace.TraceInformation(
-  //          $"Closed editor '{oldEditor.EditorTitle}' ({oldEditor.GetType().Name})");
-  //      }
-  //      if(_currentEditor != null)
-  //      {
-  //        _currentEditor.IsActive = true;
-  //        Trace.TraceInformation(
-  //          $"Switched to editor '{_currentEditor.EditorTitle}' ({_currentEditor.GetType().Name})");
-  //      }
-  //      else
-  //      {
-  //        Trace.TraceInformation(
-  //          $"No editor active");
-  //      }
-  //    }
-  //  }
-  //}
-  //private EditorViewModelBase? _currentEditor;
+  // Usually set indirectly by the editor's IsActive property
+  public EditorViewModelBase? CurrentEditor {
+    get => _currentEditor;
+    internal set {
+      var oldEditor = _currentEditor;
+      if(SetNullableInstanceProperty(ref _currentEditor, value))
+      {
+        if(oldEditor != null)
+        {
+          oldEditor.IsActive = false;
+          Trace.TraceInformation(
+            $"Closed editor '{oldEditor.EditorTitle}' ({oldEditor.GetType().Name})");
+        }
+        if(_currentEditor != null)
+        {
+          _currentEditor.IsActive = true;
+          Trace.TraceInformation(
+            $"Switched to editor '{_currentEditor.EditorTitle}' ({_currentEditor.GetType().Name})");
+        }
+        else
+        {
+          Trace.TraceInformation(
+            $"No editor active");
+        }
+      }
+    }
+  }
+  private EditorViewModelBase? _currentEditor;
 
   private static LauncherHyperStore InitHyperStore()
   {

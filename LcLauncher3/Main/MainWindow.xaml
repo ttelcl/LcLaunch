@@ -59,9 +59,9 @@
                 HorizontalScrollBarVisibility="Visible">
                 <rack:RackView DataContext="{Binding CurrentRack}"/>
             </ScrollViewer>
-            <!--<local:EditorBaseView
+            <local:EditorBaseView
                 Visibility="{Binding Converter={StaticResource VisibleIfNotNull}}"
-                DataContext="{Binding CurrentEditor}"/>-->
+                DataContext="{Binding CurrentEditor}"/>
         </Grid>
     </DockPanel>
 </mah:MetroWindow>
