@@ -46,4 +46,19 @@ public class ShelfModel: IModel<ShelfData>
   public TickId Id => Entity.Id;
 
   public TileListModel PrimaryTiles { get; }
+
+
+  public void Save()
+  {
+    Store.PutShelf(Entity);
+    IsDirty = false;
+  }
+
+  public bool IsDirty { get; private set; }
+
+  public void MarkDirty()
+  {
+    IsDirty = true;
+  }
+
 }

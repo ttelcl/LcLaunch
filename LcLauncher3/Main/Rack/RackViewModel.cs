@@ -14,6 +14,7 @@ using System.Windows;
 using LcLauncher.DataModel;
 using LcLauncher.DataModel.Entities;
 using LcLauncher.DataModel.Store;
+using LcLauncher.Main.Rack.Tile;
 using LcLauncher.Models;
 using LcLauncher.WpfUtilities;
 
@@ -232,73 +233,73 @@ public class RackViewModel: ViewModelBase/*, IPersisted, IIconLoadJobSource*/
 
   //public bool IsDirty { get => Model.IsDirty; }
 
-  ///// <summary>
-  ///// The one shelf that is treated special. In UI feedback
-  ///// it may be referenced as 'cut' (like in Excel, where 'cutting'
-  ///// doesn't actually cut anything until it is used elsehwere).
-  ///// </summary>
-  //public ShelfViewModel? KeyShelf {
-  //  // Note: interlinked with ShelfViewModel.IsKeyShelf
-  //  get => _keyShelf;
-  //  set {
-  //    var oldShelf = _keyShelf;
-  //    if(SetNullableInstanceProperty(ref _keyShelf, value))
-  //    {
-  //      if(oldShelf != null)
-  //      {
-  //        oldShelf.IsKeyShelf = false;
-  //      }
-  //      if(_keyShelf != null)
-  //      {
-  //        KeyTile = null; // KeyShelf and KeyTile are mutually exclusive
-  //        _keyShelf.IsKeyShelf = true;
-  //        Trace.TraceInformation(
-  //          $"Key shelf changed to '{_keyShelf.ShelfId}'");
-  //      }
-  //      else
-  //      {
-  //        Trace.TraceInformation(
-  //          $"Key shelf cleared");
-  //      }
-  //      RaisePropertyChanged(nameof(HasMarkedItems));
-  //    }
-  //  }
-  //}
-  //private ShelfViewModel? _keyShelf;
+  /// <summary>
+  /// The one shelf that is treated special. In UI feedback
+  /// it may be referenced as 'cut' (like in Excel, where 'cutting'
+  /// doesn't actually cut anything until it is used elsehwere).
+  /// </summary>
+  public ShelfViewModel? KeyShelf {
+    // Note: interlinked with ShelfViewModel.IsKeyShelf
+    get => _keyShelf;
+    set {
+      var oldShelf = _keyShelf;
+      if(SetNullableInstanceProperty(ref _keyShelf, value))
+      {
+        if(oldShelf != null)
+        {
+          oldShelf.IsKeyShelf = false;
+        }
+        if(_keyShelf != null)
+        {
+          KeyTile = null; // KeyShelf and KeyTile are mutually exclusive
+          _keyShelf.IsKeyShelf = true;
+          Trace.TraceInformation(
+            $"Key shelf changed to '{_keyShelf.ShelfId}'");
+        }
+        else
+        {
+          Trace.TraceInformation(
+            $"Key shelf cleared");
+        }
+        RaisePropertyChanged(nameof(HasMarkedItems));
+      }
+    }
+  }
+  private ShelfViewModel? _keyShelf;
 
-  //public TileHostViewModel? KeyTile {
-  //  // Note: interlinked with TileHostViewModel.IsKeyTile
-  //  get => _keyTile;
-  //  set {
-  //    var oldTile = _keyTile;
-  //    if(SetNullableInstanceProperty(ref _keyTile, value))
-  //    {
-  //      if(oldTile != null)
-  //      {
-  //        oldTile.IsKeyTile = false;
-  //      }
-  //      if(_keyTile != null)
-  //      {
-  //        KeyShelf = null; // KeyShelf and KeyTile are mutually exclusive
-  //        _keyTile.IsKeyTile = true;
-  //        Trace.TraceInformation(
-  //          $"Key tile changed to '{_keyTile}'");
-  //      }
-  //      else
-  //      {
-  //        Trace.TraceInformation(
-  //          $"Key tile cleared");
-  //      }
-  //      RaisePropertyChanged(nameof(HasMarkedItems));
-  //    }
-  //  }
-  //}
-  //private TileHostViewModel? _keyTile;
+  public TileHostViewModel? KeyTile {
+    // Note: interlinked with TileHostViewModel.IsKeyTile
+    get => _keyTile;
+    set {
+      var oldTile = _keyTile;
+      if(SetNullableInstanceProperty(ref _keyTile, value))
+      {
+        if(oldTile != null)
+        {
+          oldTile.IsKeyTile = false;
+        }
+        if(_keyTile != null)
+        {
+          KeyShelf = null; // KeyShelf and KeyTile are mutually exclusive
+          _keyTile.IsKeyTile = true;
+          Trace.TraceInformation(
+            $"Key tile changed to '{_keyTile}'");
+        }
+        else
+        {
+          Trace.TraceInformation(
+            $"Key tile cleared");
+        }
+        RaisePropertyChanged(nameof(HasMarkedItems));
+      }
+    }
+  }
+  private TileHostViewModel? _keyTile;
 
-  //public bool HasMarkedItems {
-  //  get => KeyTile != null
-  //    || KeyShelf != null;
-  //}
+  public bool HasMarkedItems {
+    get => KeyTile != null
+      || KeyShelf != null;
+  }
 
   //public void MarkDirty()
   //{
