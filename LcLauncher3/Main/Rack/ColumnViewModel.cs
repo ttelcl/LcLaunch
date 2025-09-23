@@ -51,7 +51,7 @@ public class ColumnViewModel: ViewModelBase
 
   public int ColumnIndex { get; }
 
-  internal ColumnModel3 Model { get; }
+  internal ColumnModel Model { get; }
 
   //public ObservableCollection<ShelfViewModel> Shelves { get; }
 

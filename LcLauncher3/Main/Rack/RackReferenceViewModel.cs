@@ -68,7 +68,7 @@ public class RackReferenceViewModel: ViewModelBase
     }
     var hyperStore = Host.HyperStore;
     var rackStore = hyperStore.GetRackStore(Key); // may create the store
-    var rackModel = new RackModel3(rackStore, Key); // may create the rack record
+    var rackModel = new RackModel(rackStore, Key); // may create the rack record
     return new RackViewModel(Host, rackModel);
   }
 }

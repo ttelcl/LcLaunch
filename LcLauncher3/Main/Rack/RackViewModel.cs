@@ -24,7 +24,7 @@ public class RackViewModel: ViewModelBase/*, IPersisted, IIconLoadJobSource*/
 
   public RackViewModel(
     MainViewModel owner,
-    RackModel3 model)
+    RackModel model)
   {
     //IconLoadQueue = new IconLoadQueue(q => owner.RackQueueActivating(q));
     Owner = owner;
@@ -48,7 +48,7 @@ public class RackViewModel: ViewModelBase/*, IPersisted, IIconLoadJobSource*/
 
   public MainViewModel Owner { get; }
 
-  public RackModel3 Model { get; }
+  public RackModel Model { get; }
 
   public LauncherRackStore Store => Model.Store;
 

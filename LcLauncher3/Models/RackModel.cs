@@ -16,12 +16,12 @@ using Ttelcl.Persistence.API;
 
 namespace LcLauncher.Models;
 
-public class RackModel3: IModel<RackData>
+public class RackModel: IModel<RackData>
 {
   /// <summary>
   /// Create a new RackModel3, using prepared components
   /// </summary>
-  public RackModel3(
+  public RackModel(
     LauncherRackStore store,
     StoreKey rackKey)
   {
@@ -57,7 +57,7 @@ public class RackModel3: IModel<RackData>
     Entity = entity;
     foreach(var columnEntity in Entity.Columns)
     {
-      var column = new ColumnModel3(this, columnEntity);
+      var column = new ColumnModel(this, columnEntity);
       Columns.Add(column);
     }
   }
@@ -78,5 +78,5 @@ public class RackModel3: IModel<RackData>
 
   public TickId Id => Entity.Id;
 
-  public List<ColumnModel3> Columns { get; }
+  public List<ColumnModel> Columns { get; }
 }

@@ -16,10 +16,10 @@ using Ttelcl.Persistence.API;
 
 namespace LcLauncher.Models;
 
-public class ShelfModel3: IModel<ShelfData>
+public class ShelfModel: IModel<ShelfData>
 {
-  internal ShelfModel3(
-    ColumnModel3 column,
+  internal ShelfModel(
+    ColumnModel column,
     ShelfData shelfEntity)
   {
     Column = column;
@@ -32,18 +32,18 @@ public class ShelfModel3: IModel<ShelfData>
       tilesEntity = TileListData.CreateNew(Id);
       Store.PutTiles(tilesEntity);
     }
-    PrimaryTiles = new TileListModel3(this, tilesEntity);
+    PrimaryTiles = new TileListModel(this, tilesEntity);
   }
 
   public LauncherRackStore Store => Rack.Store;
 
-  public ColumnModel3 Column { get; }
+  public ColumnModel Column { get; }
 
-  public RackModel3 Rack => Column.Rack;
+  public RackModel Rack => Column.Rack;
 
   public ShelfData Entity { get; }
 
   public TickId Id => Entity.Id;
 
-  public TileListModel3 PrimaryTiles { get; }
+  public TileListModel PrimaryTiles { get; }
 }
