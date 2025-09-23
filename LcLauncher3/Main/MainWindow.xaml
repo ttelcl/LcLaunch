@@ -22,34 +22,26 @@
     <mah:MetroWindow.RightWindowCommands>
         <mah:WindowCommands>
             <Menu>
-                <MenuItem Header="Dev">
+                <MenuItem
+                    Foreground="{DynamicResource MahApps.Brushes.Gray6}"
+                    Header="Dev">
                     <MenuItem Header="Reload apps" Command="{Binding DevReloadAppsCommand}"/>
                     <MenuItem Header="Dump apps" Command="{Binding DevDumpAppsCommand}"/>
                     <MenuItem Header="Toggle Dev Pane" Command="{Binding DevTogglePaneCommand}"/>
                 </MenuItem>
             </Menu>
-            <!--<mah:SplitButton
-                ItemsSource="{Binding RackList.RacksNew}"
-                DisplayMemberPath="Name"
-                HorizontalContentAlignment="Left"
-                HorizontalAlignment="Center"
-                MinWidth="250"
-                DropDownOpened="SplitButton_DropDownOpened">
-                <mah:SplitButton.Icon>
-                    <iconPacks:PackIconMaterial Kind="NewBox" />
-                </mah:SplitButton.Icon>
-            </mah:SplitButton>-->
-            <!--<mah:SplitButton
+            <ComboBox
                 ItemsSource="{Binding RackList.Racks}"
-                SelectedItem="{Binding RackList.SelectedRack, Mode=TwoWay}"
+                DisplayMemberPath="Label"
                 HorizontalContentAlignment="Left"
                 HorizontalAlignment="Center"
-                MinWidth="150"
-                DropDownOpened="SplitButton_DropDownOpened">
-                <mah:SplitButton.Icon>
-                    <iconPacks:PackIconMaterial Kind="Bookshelf" />
-                </mah:SplitButton.Icon>
-            </mah:SplitButton>-->
+                MinWidth="200"
+                BorderThickness="0"
+                Background="{DynamicResource MahApps.Brushes.Accent1}"
+                Foreground="{DynamicResource MahApps.Brushes.Gray6}"
+                SelectedItem="{Binding RackList.Selected, Mode=TwoWay}"
+                DropDownOpened="RackList_DropDownOpened">
+            </ComboBox>
         </mah:WindowCommands>
     </mah:MetroWindow.RightWindowCommands>
     <DockPanel>

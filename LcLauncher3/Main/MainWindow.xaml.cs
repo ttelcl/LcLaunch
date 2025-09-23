@@ -47,11 +47,11 @@ public partial class MainWindow: MetroWindow
     }
   }
 
-  private void SplitButton_DropDownOpened(object sender, System.EventArgs e)
+  private void RackList_DropDownOpened(object sender, System.EventArgs e)
   {
     if(DataContext is MainViewModel vm)
     {
-      //vm.RackList.OnDropDownOpened();
+      vm.RackList.OnDropDownOpened();
     }
   }
 }

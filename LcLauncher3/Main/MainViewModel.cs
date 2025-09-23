@@ -45,7 +45,7 @@ public class MainViewModel: ViewModelBase
     Trace.TraceError("TODO: create default rack if missing");
 
     //Store.LoadOrCreateRack("default");
-    //RackList = new RackListViewModel(this);
+    RackList = new RackListViewModel(this);
     //TestPane = new TestPaneViewModel(this);
     ProcessNextIconJobCommand = new DelegateCommand(
       p => ProcessNextIconJob(),
@@ -128,7 +128,7 @@ public class MainViewModel: ViewModelBase
   }
   private bool _showDevPane;
 
-  //  public RackListViewModel RackList { get; }
+  public RackListViewModel RackList { get; }
 
   public void RackQueueActivating(/*IconLoadQueue queue*/)
     // TODO: why is that argument unused??

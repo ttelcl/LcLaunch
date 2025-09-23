@@ -48,6 +48,13 @@ public class RackViewModel: ViewModelBase/*, IPersisted, IIconLoadJobSource*/
 
   public string Name => Model.RackName;
 
+  public void Unload()
+  {
+    //SaveShelvesIfModified();
+    //SaveDirtyTileLists();
+    //SaveIfDirty();
+  }
+
   //public ColumnViewModel ColumnLeft { get; }
 
   //public ColumnViewModel ColumnMiddle { get; }
