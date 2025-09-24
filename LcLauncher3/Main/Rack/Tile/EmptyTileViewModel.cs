@@ -355,14 +355,15 @@ public class EmptyTileViewModel: TileViewModel
 
   //private LaunchEditViewModel? _preparedClipboardView;
 
-  //public void PrepareFromClipboard()
-  //{
-  //  _preparedClipboardView =
-  //    CanCreateTile()
-  //    ? LaunchEditViewModel.TryFromClipboard(Host!, true)
-  //    : null;
-  //  Trace.TraceInformation(
-  //    $"Clipboard tile enable = {_preparedClipboardView != null}");
-  //}
+  public void PrepareFromClipboard()
+  {
+    Trace.TraceError("PrepareFromClipboard() disabled");
+    //_preparedClipboardView =
+    //  CanCreateTile()
+    //  ? LaunchEditViewModel.TryFromClipboard(Host!, true)
+    //  : null;
+    //Trace.TraceInformation(
+    //  $"Clipboard tile enable = {_preparedClipboardView != null}");
+  }
 
 }

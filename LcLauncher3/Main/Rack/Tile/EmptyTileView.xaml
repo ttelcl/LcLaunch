@@ -1,0 +1,139 @@
+﻿<UserControl
+    x:Class="LcLauncher.Main.Rack.Tile.EmptyTileView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:local="clr-namespace:LcLauncher.Main.Rack.Tile"
+    xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    mc:Ignorable="d" 
+    
+    d:DataContext="{d:DesignInstance local:EmptyTileViewModel, IsDesignTimeCreatable=False}"
+    d:DesignHeight="450" d:DesignWidth="800" ContextMenuOpening="UserControl_ContextMenuOpening">
+    <UserControl.ContextMenu>
+        <ContextMenu>
+            <MenuItem
+                Header="{Binding Host.MarkTileText}"
+                Command="{Binding Host.ToggleCutCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="{Binding Host.MarkTileIcon}" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <!--<MenuItem
+                Header="Swap Marked Tile Here"
+                Command="{Binding Host.SwapMarkedTileHereCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="ApplicationImport" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>-->
+            <!--<MenuItem
+                Header="Copy Marked Tile Here"
+                Command="{Binding Host.CopyMarkedTileHereCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="ContentDuplicate" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>-->
+            <!--<MenuItem
+                Header="Create New Group Tile Here"
+                Command="{Binding CreateGroupTileCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="DotsGrid" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>-->
+            <MenuItem
+                Header="Create Launch Tile Here">
+                <Separator/>
+                <!--<MenuItem
+                    Header="Paste as Launch Tile..."
+                    ToolTip="(Try to paste your clipboard content as a launcher tile)"
+                    ToolTipService.ShowOnDisabled="True"
+                    Command="{Binding TryPasteAsTileCommand}">
+                    <MenuItem.Icon>
+                        <iconPacks:PackIconMaterial Kind="ContentPaste" Width="20" Height="20"/>
+                    </MenuItem.Icon>
+                </MenuItem>-->
+                <!--<MenuItem
+                    Header="Bind to Application..."
+                    ToolTip="(select from your installed application list)"
+                    ToolTipService.ShowOnDisabled="True"
+                    Command="{Binding CreateAppTileCommand}">
+                    <MenuItem.Icon>
+                        <iconPacks:PackIconMaterial Kind="ApplicationOutline" Width="20" Height="20"/>
+                    </MenuItem.Icon>
+                </MenuItem>-->
+                <!--<MenuItem
+                    Header="Bind to Shortcut..."
+                    ToolTip="(select shortcut file from your Start Menu or elsewhere)"
+                    ToolTipService.ShowOnDisabled="True"
+                    Command="{Binding CreateShortcutTileCommand}">
+                    <MenuItem.Icon>
+                        <iconPacks:PackIconMaterial Kind="LinkVariantPlus" Width="20" Height="20"/>
+                    </MenuItem.Icon>
+                </MenuItem>-->
+                <!--<MenuItem
+                    Header="Bind to Document..."
+                    ToolTip="(select a file from your computer, allows any file type)"
+                    ToolTipService.ShowOnDisabled="True"
+                    Command="{Binding CreateDocumentTileCommand}">
+                    <MenuItem.Icon>
+                        <iconPacks:PackIconMaterial Kind="FileDocumentPlus" Width="20" Height="20"/>
+                    </MenuItem.Icon>
+                </MenuItem>-->
+                <!--<MenuItem
+                    Header="Bind to Executable..."
+                    ToolTip="(select a *.exe file from your computer, allows for arguments and environment tweaks)"
+                    ToolTipService.ShowOnDisabled="True"
+                    Command="{Binding CreateExecutableTileCommand}">
+                    <MenuItem.Icon>
+                        <iconPacks:PackIconMaterial Kind="ApplicationCogOutline" Width="20" Height="20"/>
+                    </MenuItem.Icon>
+                </MenuItem>-->
+
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="ShapeSquarePlus" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <Separator/>
+            <!--<MenuItem
+                Header="Insert New Empty Tile Here"
+                Command="{Binding Host.InsertEmptyTileCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="Egg" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>-->
+            <!--<MenuItem
+                Header="Delete this Empty Tile"
+                Command="{Binding DeleteEmptyTileCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="EggOff" Width="20" Height="20"
+                                                Foreground="#FFFF4444"/>
+                </MenuItem.Icon>
+            </MenuItem>-->
+            <Separator/>
+            <!--<MenuItem
+                Header="Add Tile Row"
+                Command="{Binding Host.TileList.AddEmptyRowCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="TableRowPlusAfter" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>-->
+            <!--<MenuItem
+                Header="Remove Empty Tile Row"
+                Command="{Binding Host.TileList.RemoveLastEmptyRowCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="TableRowRemove" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>-->
+        </ContextMenu>
+    </UserControl.ContextMenu>
+    <Grid Background="#00000000">
+        <!-- The background ensures that right clicks are caught here, not deeper -->
+        <iconPacks:PackIconMaterial
+            Kind="{Binding Icon}"
+            Foreground="{DynamicResource MahApps.Brushes.Accent4}"
+            Height="48" Width="48"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"/>
+    </Grid>
+</UserControl>

@@ -1,0 +1,156 @@
+﻿<UserControl
+    x:Class="LcLauncher.Main.Rack.Tile.GroupTileView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+    xmlns:local="clr-namespace:LcLauncher.Main.Rack.Tile"
+    xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    mc:Ignorable="d" 
+    d:DataContext="{d:DesignInstance local:GroupTileViewModel, IsDesignTimeCreatable=False}"
+    d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.ContextMenu>
+        <ContextMenu>
+            <MenuItem
+                Header="{Binding Host.MarkTileText}"
+                Command="{Binding ToggleCutCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="{Binding Host.MarkTileIcon}" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem
+                Header="{Binding ToggleGroupText}"
+                Command="{Binding ToggleGroupCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="{Binding ToggleGroupIcon}" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <!--<MenuItem
+                Header="Insert Empty Tile Here"
+                Command="{Binding Host.InsertEmptyTileCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="Egg" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>-->
+            <Separator/>
+            <!--<MenuItem
+                Header="Properties..."
+                Command="{Binding EditGroupCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="Cog" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>-->
+            <Separator/>
+            <!--<MenuItem
+                Header="Add Tile Row"
+                Command="{Binding Host.TileList.AddEmptyRowCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="TableRowPlusAfter" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>-->
+            <!--<MenuItem
+                Header="Remove Empty Tile Row"
+                Command="{Binding Host.TileList.RemoveLastEmptyRowCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="TableRowRemove" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>-->
+            <Separator/>
+            <MenuItem Header="Other">
+                <!--<MenuItem Header="Update Icons"
+                          Command="{Binding EnqueueIconJobsCommand}">
+                    <MenuItem.Icon>
+                        <iconPacks:PackIconMaterial Kind="Reload" Width="20" Height="20"/>
+                    </MenuItem.Icon>
+                </MenuItem>-->
+                <Separator/>
+                <!--<MenuItem Header="Reload All Icons"
+                          Command="{Binding RefreshIconJobsCommand}">
+                    <MenuItem.Icon>
+                        <iconPacks:PackIconMaterial Kind="ReloadAlert" Width="20" Height="20"/>
+                    </MenuItem.Icon>
+                </MenuItem>-->
+            </MenuItem>
+            <MenuItem Header="Danger Zone">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="AlertOutline" Width="20" Height="20"
+                                                Foreground="#FFFF4444"/>
+                </MenuItem.Icon>
+                <!--<MenuItem
+                    Header="Delete (and replace with empty tile)"
+                    Command="{Binding Host.ConfirmAndClearTileCommand}">
+                    <MenuItem.Icon>
+                        <iconPacks:PackIconMaterial Kind="DeleteAlert" Width="20" Height="20"
+                                                    Foreground="#FFFF4444"/>
+                    </MenuItem.Icon>
+                </MenuItem>-->
+            </MenuItem>
+        </ContextMenu>
+    </UserControl.ContextMenu>
+    <Grid
+        Background="{DynamicResource MahApps.Brushes.Accent4}"
+        ToolTip="{Binding EffectiveTooltip}">
+        <Border
+            Margin="2,2"
+            Background="{DynamicResource MahApps.Brushes.Accent2}"
+            Width="100" Height="100"
+            Visibility="{Binding IsActive, Converter={StaticResource VisibleIf}}"/>
+        <Border
+            Margin="2,2"
+            Background="{DynamicResource MahApps.Brushes.Accent3}"
+            Width="100" Height="100"
+            Visibility="{Binding IsPrimed, Converter={StaticResource VisibleIf}}"/>
+        <ItemsControl
+            ItemsSource="{Binding GroupIcons}"
+            Width="80" Height="80">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Columns="4" Rows="4"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <local:GroupIconView DataContext="{Binding}"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <!--<Border
+            Visibility="{Binding IsConflicted, Converter={StaticResource VisibleIf}}"
+            Background="#88444444">
+            <Border.ContextMenu>
+                <ContextMenu>
+                    <MenuItem
+                        Header="Fix duplicate reference: Clone to new tile list"
+                        Command="{Binding FixGraphCommand}"/>
+                    <MenuItem
+                        Header="{Binding Host.MarkTileText}"
+                        Command="{Binding Host.ToggleCutCommand}"
+                        IsChecked="{Binding Host.IsKeyTile}">
+                        <MenuItem.Icon>
+                            <iconPacks:PackIconMaterial Kind="MapMarkerOutline" Width="20" Height="20"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </ContextMenu>
+            </Border.ContextMenu>
+            <iconPacks:PackIconMaterial
+                ToolTip="Disabled because this is a duplicate. Right-click to fix."
+                Kind="Close"
+                Foreground="#FF6666"
+                Height="80" Width="80"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"/>
+        </Border>-->
+        <TextBlock
+            IsHitTestVisible="False"
+            VerticalAlignment="Bottom"
+            HorizontalAlignment="Center"
+            FontSize="11"
+            Margin="0,0,0,5"
+            MaxWidth="96"
+            MaxHeight="35"
+            TextWrapping="Wrap"
+            TextTrimming="CharacterEllipsis"
+            Text="{Binding Title}"/>
+    </Grid>
+</UserControl>

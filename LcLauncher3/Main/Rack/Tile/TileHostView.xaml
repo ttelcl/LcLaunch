@@ -33,7 +33,7 @@
             Width="100" Height="100"
             >
             <!-- "#00000000" is transparent for display, but opaque for mouse -->
-            <!--<ContentControl
+            <ContentControl
                     Visibility="{Binding Tile, Converter={StaticResource VisibleIfNotNull}}"
                     Content="{Binding Tile}">
                 <ContentControl.Resources>
@@ -50,7 +50,7 @@
                         <local:EmptyTileView/>
                     </DataTemplate>
                 </ContentControl.Resources>
-            </ContentControl>-->
+            </ContentControl>
         </Border>
         <Border
             Margin="1,1"
