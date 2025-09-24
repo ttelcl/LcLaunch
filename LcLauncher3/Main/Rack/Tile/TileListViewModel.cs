@@ -38,8 +38,8 @@ public class TileListViewModel:
     foreach(var tile in model.Entity.Tiles)
     {
       var host = new TileHostViewModel(this);
-      //var tileVm = TileViewModel.Create(this, tile);
-      //host.Tile = tileVm;
+      var tileVm = TileViewModel.Create(this, tile);
+      host.Tile = tileVm;
       Tiles.Add(host);
     }
     //AddEmptyRowCommand = new DelegateCommand(

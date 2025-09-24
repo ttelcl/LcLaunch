@@ -174,23 +174,23 @@ public class TileHostViewModel: ViewModelBase
       Tile is EmptyTileViewModel;
   }
 
-  //public bool IsGroupTile()
-  //{
-  //  return Tile != null &&
-  //    Tile is GroupTileViewModel;
-  //}
+  public bool IsGroupTile()
+  {
+    return Tile != null &&
+      Tile is GroupTileViewModel;
+  }
 
-  //public bool IsLaunchTile()
-  //{
-  //  return Tile != null &&
-  //    Tile is LaunchTileViewModel;
-  //}
+  public bool IsLaunchTile()
+  {
+    return Tile != null &&
+      Tile is LaunchTileViewModel;
+  }
 
-  //public bool IsQuadTile()
-  //{
-  //  return Tile != null &&
-  //    Tile is QuadTileViewModel;
-  //}
+  public bool IsQuadTile()
+  {
+    return Tile != null &&
+      Tile is QuadTileViewModel;
+  }
 
   //public TileData? ReplaceTile(
   //  TileData? newRawData)
