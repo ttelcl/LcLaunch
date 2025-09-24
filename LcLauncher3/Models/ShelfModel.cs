@@ -32,7 +32,7 @@ public class ShelfModel: IModel<ShelfData>
       tilesEntity = TileListData.CreateNew(Id);
       Store.PutTiles(tilesEntity);
     }
-    PrimaryTiles = new TileListModel(this, tilesEntity);
+    PrimaryTiles = new TileListModel(column.Rack, tilesEntity);
   }
 
   public LauncherRackStore Store => Rack.Store;

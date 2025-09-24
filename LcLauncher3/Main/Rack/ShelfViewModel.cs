@@ -169,25 +169,25 @@ public class ShelfViewModel:
   }
   private TileListViewModel? _secondaryTiles;
 
-  //public GroupTileViewModel? ActiveSecondaryTile {
-  //  get => _groupTileViewModel;
-  //  set {
-  //    var oldGroup = _groupTileViewModel;
-  //    if(SetNullableInstanceProperty(ref _groupTileViewModel, value))
-  //    {
-  //      SecondaryTiles = null;
-  //      if(oldGroup != null)
-  //      {
-  //        oldGroup.IsActive = false;
-  //      }
-  //      if(_groupTileViewModel != null)
-  //      {
-  //        SecondaryTiles = _groupTileViewModel.ChildTiles;
-  //      }
-  //    }
-  //  }
-  //}
-  //private GroupTileViewModel? _groupTileViewModel;
+  public GroupTileViewModel? ActiveSecondaryTile {
+    get => _groupTileViewModel;
+    set {
+      var oldGroup = _groupTileViewModel;
+      if(SetNullableInstanceProperty(ref _groupTileViewModel, value))
+      {
+        SecondaryTiles = null;
+        if(oldGroup != null)
+        {
+          oldGroup.IsActive = false;
+        }
+        if(_groupTileViewModel != null)
+        {
+          SecondaryTiles = _groupTileViewModel.ChildTiles;
+        }
+      }
+    }
+  }
+  private GroupTileViewModel? _groupTileViewModel;
 
   public bool HasSecondaryTiles {
     get => _secondaryTiles != null;

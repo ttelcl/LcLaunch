@@ -71,6 +71,12 @@ public class TileListViewModel:
 
   //public IconListQueue IconJobQueue { get; }
 
+  public bool ContainsKeyTile()
+  {
+    var keyTile = Rack.KeyTile;
+    return keyTile!=null && Tiles.Contains(keyTile);
+  }
+
   //public TileListViewModel CreateClone()
   //{
   //  SaveIfDirty(); // make sure the model is up to date
@@ -144,70 +150,70 @@ public class TileListViewModel:
 
   //public IconLoadQueue IconLoadQueue { get => Rack.IconLoadQueue; }
 
-  ///// <summary>
-  ///// True if there is at least one tile and the last tile
-  ///// in the list is empty (i.e.: it could be removed to make space).
-  ///// </summary>
-  //public bool LastTileIsEmpty()
-  //{
-  //  if(Tiles.Count == 0)
-  //  {
-  //    // No tiles, so no empty tile
-  //    return false;
-  //  }
-  //  var lastTile = Tiles.Last();
-  //  return lastTile.IsEmpty;
-  //}
+  /// <summary>
+  /// True if there is at least one tile and the last tile
+  /// in the list is empty (i.e.: it could be removed to make space).
+  /// </summary>
+  public bool LastTileIsEmpty()
+  {
+    if(Tiles.Count == 0)
+    {
+      // No tiles, so no empty tile
+      return false;
+    }
+    var lastTile = Tiles.Last();
+    return lastTile.IsEmpty;
+  }
 
-  ///// <summary>
-  ///// True if there is at least one full row.
-  ///// </summary>
-  //public bool HasRows()
-  //{
-  //  return Tiles.Count >= 4;
-  //}
+  /// <summary>
+  /// True if there is at least one full row.
+  /// </summary>
+  public bool HasRows()
+  {
+    return Tiles.Count >= 4;
+  }
 
-  ///// <summary>
-  ///// True if the number of tiles is a multiple of 4 and
-  ///// at least 4: all rows are full and there is at least one row.
-  ///// </summary>
-  //public bool IsPadded()
-  //{
-  //  return Tiles.Count % 4 == 0 && Tiles.Count >= 4;
-  //}
+  /// <summary>
+  /// True if the number of tiles is a multiple of 4 and
+  /// at least 4: all rows are full and there is at least one row.
+  /// </summary>
+  public bool IsPadded()
+  {
+    return Tiles.Count % 4 == 0 && Tiles.Count >= 4;
+  }
 
-  //public bool CanRemoveLastEmptyRow()
-  //{
-  //  if(!IsPadded())
-  //  {
-  //    // We are in some intermediate state
-  //    return false;
-  //  }
-  //  return
-  //    Tiles[^1].IsEmpty &&
-  //    Tiles[^2].IsEmpty &&
-  //    Tiles[^3].IsEmpty &&
-  //    Tiles[^4].IsEmpty &&
-  //    Tiles.Count > 4;
-  //}
+  public bool CanRemoveLastEmptyRow()
+  {
+    if(!IsPadded())
+    {
+      // We are in some intermediate state
+      return false;
+    }
+    return
+      Tiles[^1].IsEmpty &&
+      Tiles[^2].IsEmpty &&
+      Tiles[^3].IsEmpty &&
+      Tiles[^4].IsEmpty &&
+      Tiles.Count > 4;
+  }
 
-  //public bool CanAddEmptyRow()
-  //{
-  //  if(Tiles.Count % 4 != 0)
-  //  {
-  //    // We are in some intermediate state
-  //    return false;
-  //  }
-  //  if(Tiles.Count == 0)
-  //  {
-  //    return true;
-  //  }
-  //  return // at least one of the last row tiles is in use
-  //    !Tiles[^1].IsEmpty ||
-  //    !Tiles[^2].IsEmpty ||
-  //    !Tiles[^3].IsEmpty ||
-  //    !Tiles[^4].IsEmpty;
-  //}
+  public bool CanAddEmptyRow()
+  {
+    if(Tiles.Count % 4 != 0)
+    {
+      // We are in some intermediate state
+      return false;
+    }
+    if(Tiles.Count == 0)
+    {
+      return true;
+    }
+    return // at least one of the last row tiles is in use
+      !Tiles[^1].IsEmpty ||
+      !Tiles[^2].IsEmpty ||
+      !Tiles[^3].IsEmpty ||
+      !Tiles[^4].IsEmpty;
+  }
 
   //public bool AddEmptyRow()
   //{
@@ -272,12 +278,6 @@ public class TileListViewModel:
   //    RebuildModel();
   //  }
   //  return dirty;
-  //}
-
-  //public bool ContainsKeyTile()
-  //{
-  //  var keyTile = Rack.KeyTile;
-  //  return keyTile!=null && Tiles.Contains(keyTile);
   //}
 
   //public void InsertEmptyTile(int position)
