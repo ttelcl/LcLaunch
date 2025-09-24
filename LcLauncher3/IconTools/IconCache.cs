@@ -127,10 +127,14 @@ public class IconCache
     /// if it is null there (indicating a previous failed load).
     /// </param>
     /// <returns></returns>
-    public BitmapSource? FindIcon(HashId hashId, IconLoadLevel loadLevel)
+    public BitmapSource? FindIcon(HashId? hashId, IconLoadLevel loadLevel)
     {
+      if(hashId == null)
+      {
+        return null;
+      }
       ObjectDisposedException.ThrowIf(_disposed, this);
-      if(Cache._icons.TryGetValue(hashId, out var icon))
+      if(Cache._icons.TryGetValue(hashId.Value, out var icon))
       {
         if(icon != null)
         {
@@ -138,7 +142,7 @@ public class IconCache
         }
         if(loadLevel == IconLoadLevel.LoadAlways)
         {
-          Cache._icons.Remove(hashId); // mark as not checked and fall through
+          Cache._icons.Remove(hashId.Value); // mark as not checked and fall through
         }
         else
         {
@@ -150,16 +154,16 @@ public class IconCache
         return null;
       }
       var bucket = Cache.BlobBucket;
-      if(bucket.ContainsKey(hashId))
+      if(bucket.ContainsKey(hashId.Value))
       {
         if(_blobReader == null)
         {
           // We can no longer postpone opening the underlying blob store
           _blobReader = Cache.BlobBucket.OpenReader();
         }
-        icon = _blobReader.TryReadIcon(hashId);
+        icon = _blobReader.TryReadIcon(hashId.Value);
       }
-      Cache._icons[hashId] = icon; // even if null!
+      Cache._icons[hashId.Value] = icon; // even if null!
       return icon;
     }
 

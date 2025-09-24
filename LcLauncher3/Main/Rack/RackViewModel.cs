@@ -14,6 +14,7 @@ using System.Windows;
 using LcLauncher.DataModel;
 using LcLauncher.DataModel.Entities;
 using LcLauncher.DataModel.Store;
+using LcLauncher.IconTools;
 using LcLauncher.Main.Rack.Tile;
 using LcLauncher.Models;
 using LcLauncher.WpfUtilities;
@@ -27,6 +28,9 @@ public class RackViewModel: ViewModelBase/*, IPersisted, IIconLoadJobSource*/
     MainViewModel owner,
     RackModel model)
   {
+    var store = model.Store;
+    var iconBucket = store.IconBucket;
+    IconCache = new IconCache(iconBucket);
     //IconLoadQueue = new IconLoadQueue(q => owner.RackQueueActivating(q));
     Owner = owner;
     Model = model;
@@ -36,12 +40,6 @@ public class RackViewModel: ViewModelBase/*, IPersisted, IIconLoadJobSource*/
       var columnVm = new ColumnViewModel(this, i);
       Columns.Add(columnVm);
     }
-    //ColumnLeft = new ColumnViewModel(this, 0);
-    //ColumnMiddle = new ColumnViewModel(this, 1);
-    //ColumnRight = new ColumnViewModel(this, 2);
-    //_columns.Add(ColumnLeft);
-    //_columns.Add(ColumnMiddle);
-    //_columns.Add(ColumnRight);
     //Model.TraceClaimStatus();
     Trace.TraceInformation(
       $"Constructing rack VM {Model.RackKey} with {Columns.Count} columns");
@@ -53,6 +51,8 @@ public class RackViewModel: ViewModelBase/*, IPersisted, IIconLoadJobSource*/
 
   public LauncherRackStore Store => Model.Store;
 
+  public IconCache IconCache { get; }
+
   public string Name => Model.RackName;
 
   public void Unload()
@@ -62,12 +62,6 @@ public class RackViewModel: ViewModelBase/*, IPersisted, IIconLoadJobSource*/
     //SaveDirtyTileLists();
     //SaveIfDirty();
   }
-
-  //public ColumnViewModel ColumnLeft { get; }
-
-  //public ColumnViewModel ColumnMiddle { get; }
-
-  //public ColumnViewModel ColumnRight { get; }
 
   public ObservableCollection<ColumnViewModel> Columns { get; }
 

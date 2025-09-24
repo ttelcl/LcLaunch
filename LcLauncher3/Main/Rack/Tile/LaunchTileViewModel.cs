@@ -142,59 +142,66 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
   }
   private BitmapSource? _iconMedium;
 
+  /// <summary>
+  /// Load the icon. The interpretation of the level is different than
+  /// in the icon cache API: here the 'cache' includes the cache backing,
+  /// and <see cref="IconLoadLevel.LoadIfMissing"/> and 
+  /// <see cref="IconLoadLevel.LoadAlways"/> hit the OS icon load code if
+  /// the icon is missing from the cache.
+  /// </summary>
+  /// <param name="level"></param>
+  /// <exception cref="ArgumentOutOfRangeException"></exception>
   public void LoadIcon(IconLoadLevel level)
   {
-    // TEMPORARILY DISABLED (return without doing anything)
-    Trace.TraceWarning($"Not loading Icon! ({level})");
+    var rack = OwnerList.Rack;
+    var iconCache = rack.IconCache;
 
-    ////var hasIcon = Icon != null;
-    //var hasHash = Model.Icon48 != null;
-    //var iconCache = OwnerList.IconCache;
-    //switch(level)
-    //{
-    //  case IconLoadLevel.FromCache:
-    //    {
-    //      if(/*hasIcon ||*/ !hasHash)
-    //      {
-    //        return;
-    //      }
-    //      var icon = iconCache.LoadCachedIcon(Model.Icon48);
-    //      Icon = icon;
-    //      IconSmall = iconCache.LoadCachedIcon(Model.Icon16);
-    //      IconMedium = iconCache.LoadCachedIcon(Model.Icon32);
-    //      return;
-    //    }
-    //  case IconLoadLevel.LoadIfMissing:
-    //    {
-    //      //if(hasIcon)
-    //      //{
-    //      //  return;
-    //      //}
-    //      if(hasHash)
-    //      {
-    //        var icon = iconCache.LoadCachedIcon(Model.Icon48);
-    //        if(icon != null)
-    //        {
-    //          Icon = icon;
-    //          IconSmall = iconCache.LoadCachedIcon(Model.Icon16);
-    //          IconMedium = iconCache.LoadCachedIcon(Model.Icon32);
-    //          return;
-    //        }
-    //      }
-    //      HardLoadIcon();
-    //      LoadIcon(IconLoadLevel.FromCache);
-    //      return;
-    //    }
-    //  case IconLoadLevel.LoadAlways:
-    //    {
-    //      HardLoadIcon();
-    //      LoadIcon(IconLoadLevel.FromCache);
-    //      return;
-    //    }
-    //  default:
-    //    throw new ArgumentOutOfRangeException(
-    //      nameof(level), level, "Invalid icon load level");
-    //}
+    // This now works very different from before. And should probably work in yet another way
+    using var reader = iconCache.StartReader();
+
+    switch(level)
+    {
+      case IconLoadLevel.FromCache:
+        {
+          // load levels are interpreted softer in the cache, so pass a heavier code
+          Icon = reader.FindIcon(Model.Icon48, IconLoadLevel.LoadIfMissing);
+          IconSmall = reader.FindIcon(Model.Icon16, IconLoadLevel.LoadIfMissing);
+          IconMedium = reader.FindIcon(Model.Icon32, IconLoadLevel.LoadIfMissing);
+          return;
+        }
+      case IconLoadLevel.LoadIfMissing:
+        {
+          Icon = reader.FindIcon(Model.Icon48, IconLoadLevel.LoadIfMissing);
+          IconSmall = reader.FindIcon(Model.Icon16, IconLoadLevel.LoadIfMissing);
+          IconMedium = reader.FindIcon(Model.Icon32, IconLoadLevel.LoadIfMissing);
+          if(Icon != null && IconSmall != null && IconMedium != null)
+          {
+            return;
+          }
+          // TEMPORARILY DISABLED (return without doing anything)
+          Trace.TraceWarning($"Not hard loading Icon! ({level})");
+          //HardLoadIcon();
+          //LoadIcon(IconLoadLevel.FromCache);
+          return;
+        }
+      case IconLoadLevel.LoadAlways:
+        {
+          // TEMPORARILY DISABLED (return without doing anything)
+          Trace.TraceWarning($"Not hard loading Icon! ({level})");
+          // PLACEHOLDERS FOR ICON EXTRACTION
+          Icon = reader.FindIcon(Model.Icon48, IconLoadLevel.LoadIfMissing);
+          IconSmall = reader.FindIcon(Model.Icon16, IconLoadLevel.LoadIfMissing);
+          IconMedium = reader.FindIcon(Model.Icon32, IconLoadLevel.LoadIfMissing);
+
+
+          //HardLoadIcon();
+          LoadIcon(IconLoadLevel.FromCache);
+          return;
+        }
+      default:
+        throw new ArgumentOutOfRangeException(
+          nameof(level), level, "Invalid icon load level");
+    }
   }
 
   //private void HardLoadIcon()
