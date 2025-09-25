@@ -15,10 +15,11 @@ using System.Windows.Input;
 using LcLauncher.WpfUtilities;
 
 using LcLauncher.DataModel.Entities;
+using LcLauncher.IconTools;
 
 namespace LcLauncher.Main.Rack.Tile;
 
-public class TileHostViewModel: ViewModelBase
+public class TileHostViewModel: ViewModelBase, ICanQueueIcons
 {
   public TileHostViewModel(
     TileListViewModel tileList)
@@ -339,6 +340,14 @@ public class TileHostViewModel: ViewModelBase
     return
       other != null
       && other != this;
+  }
+
+  public void QueueIcons(bool regenerate)
+  {
+    if(Tile is ICanQueueIcons icqi)
+    {
+      icqi.QueueIcons(regenerate);
+    }
   }
 
   //public AppSelectorViewModel GetAppSelector()

@@ -21,7 +21,7 @@ using LcLauncher.WpfUtilities;
 
 namespace LcLauncher.Main.Rack;
 
-public class RackViewModel: ViewModelBase/*, IPersisted*/
+public class RackViewModel: ViewModelBase, ICanQueueIcons/*, IPersisted*/
 {
 
   public RackViewModel(
@@ -32,7 +32,6 @@ public class RackViewModel: ViewModelBase/*, IPersisted*/
     var iconBucket = store.IconBucket;
     IconQueue = new IconJobQueue();
     IconLoader = new IconLoader(iconBucket);
-    IconCache = IconLoader.IconCache;
     Owner = owner;
     Model = model;
     Columns = [];
@@ -51,8 +50,6 @@ public class RackViewModel: ViewModelBase/*, IPersisted*/
   public RackModel Model { get; }
 
   public LauncherRackStore Store => Model.Store;
-
-  public IconCache IconCache { get; }
 
   public IconJobQueue IconQueue { get; }
 
@@ -197,19 +194,6 @@ public class RackViewModel: ViewModelBase/*, IPersisted*/
   //  }
   //}
 
-  //public IconLoadQueue IconLoadQueue { get; }
-
-  //public IEnumerable<IconLoadJob> GetIconLoadJobs(bool reload)
-  //{
-  //  foreach(var shelf in AllShelves())
-  //  {
-  //    foreach(var job in shelf.GetIconLoadJobs(reload))
-  //    {
-  //      yield return job;
-  //    }
-  //  }
-  //}
-
   //public void SaveShelvesIfModified()
   //{
   //  Trace.TraceInformation(
@@ -298,6 +282,14 @@ public class RackViewModel: ViewModelBase/*, IPersisted*/
   public bool HasMarkedItems {
     get => KeyTile != null
       || KeyShelf != null;
+  }
+
+  public void QueueIcons(bool regenerate)
+  {
+    foreach(var column in Columns)
+    {
+      column.QueueIcons(regenerate);
+    }
   }
 
   //public void MarkDirty()

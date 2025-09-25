@@ -58,19 +58,18 @@
             </MenuItem>-->
             <Separator/>
             <MenuItem Header="Other">
-                <!--<MenuItem Header="Update Icons"
+                <MenuItem Header="Update Icons"
                           Command="{Binding EnqueueIconJobsCommand}">
                     <MenuItem.Icon>
                         <iconPacks:PackIconMaterial Kind="Reload" Width="20" Height="20"/>
                     </MenuItem.Icon>
-                </MenuItem>-->
-                <Separator/>
-                <!--<MenuItem Header="Reload All Icons"
+                </MenuItem>
+                <MenuItem Header="Reload All Icons"
                           Command="{Binding RefreshIconJobsCommand}">
                     <MenuItem.Icon>
                         <iconPacks:PackIconMaterial Kind="ReloadAlert" Width="20" Height="20"/>
                     </MenuItem.Icon>
-                </MenuItem>-->
+                </MenuItem>
             </MenuItem>
             <MenuItem Header="Danger Zone">
                 <MenuItem.Icon>

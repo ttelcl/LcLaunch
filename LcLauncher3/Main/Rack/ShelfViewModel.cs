@@ -15,6 +15,8 @@ using ControlzEx.Theming;
 
 using LcLauncher.DataModel;
 using LcLauncher.DataModel.Store;
+using LcLauncher.IconTools;
+
 
 //using LcLauncher.IconUpdates;
 using LcLauncher.Main.Rack.Tile;
@@ -26,7 +28,7 @@ using Ttelcl.Persistence.API;
 namespace LcLauncher.Main.Rack;
 
 public class ShelfViewModel:
-  ViewModelBase, /*IIconLoadJobSource, IPersisted, ITileListOwner,*/ IHasTheme
+  ViewModelBase, IHasTheme, ICanQueueIcons /*, IPersisted, ITileListOwner*/
 {
   public ShelfViewModel(
     RackViewModel rack,
@@ -39,17 +41,16 @@ public class ShelfViewModel:
     Model = model;
     _model = Model;
     PrimaryTiles = new TileListViewModel(
-      //Rack.IconLoadQueue,
       this,
       model.PrimaryTiles);
     SetThemeCommand = new DelegateCommand(
       p => Theme = (p as string) ?? Rack.Owner.DefaultTheme);
     ToggleExpandedCommand = new DelegateCommand(
       p => IsExpanded = !IsExpanded);
-    //EnqueueIconJobs = new DelegateCommand(
-    //  p => QueueIcons(false));
-    //RefreshIconJobs = new DelegateCommand(
-    //  p => QueueIcons(true));
+    EnqueueIconJobs = new DelegateCommand(
+      p => QueueIcons(false));
+    RefreshIconJobs = new DelegateCommand(
+      p => QueueIcons(true));
     ToggleCutCommand = new DelegateCommand(
       p => {
         IsKeyShelf = Rack.KeyShelf != this;
@@ -72,9 +73,9 @@ public class ShelfViewModel:
 
   public ICommand ToggleExpandedCommand { get; }
 
-  //public ICommand EnqueueIconJobs { get; }
+  public ICommand EnqueueIconJobs { get; }
 
-  //public ICommand RefreshIconJobs { get; }
+  public ICommand RefreshIconJobs { get; }
 
   public ICommand ToggleCutCommand { get; }
 
@@ -277,22 +278,6 @@ public class ShelfViewModel:
     ThemeManager.Current.ChangeTheme(Host, theme);
   }
 
-  //public IEnumerable<IconLoadJob> GetIconLoadJobs(bool reload)
-  //{
-  //  return PrimaryTiles.GetIconLoadJobs(reload);
-  //}
-
-  //public IconLoadQueue IconLoadQueue { get => Rack.IconLoadQueue; }
-
-  //private void QueueIcons(bool reload)
-  //{
-  //  var before = IconLoadQueue.JobCount();
-  //  this.EnqueueAllIconJobs(reload);
-  //  var after = IconLoadQueue.JobCount();
-  //  Trace.TraceInformation(
-  //    $"Queued {after - before} icon load jobs ({after} - {before}) for shelf {Model.Id}");
-  //}
-
   public bool IsDirty { get => Model.IsDirty; }
 
   public void MarkDirty()
@@ -374,6 +359,11 @@ public class ShelfViewModel:
       return false;
     }
     return true;
+  }
+
+  public void QueueIcons(bool regenerate)
+  {
+    PrimaryTiles.QueueIcons(regenerate);
   }
 
   //private bool GetIsEmpty()

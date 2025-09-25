@@ -13,12 +13,13 @@ using System.Windows;
 using System.Windows.Input;
 
 using LcLauncher.DataModel.Entities;
+using LcLauncher.IconTools;
 using LcLauncher.Models;
 using LcLauncher.WpfUtilities;
 
 namespace LcLauncher.Main.Rack;
 
-public class ColumnViewModel: ViewModelBase
+public class ColumnViewModel: ViewModelBase, ICanQueueIcons
 {
   public ColumnViewModel(
     RackViewModel rack,
@@ -54,6 +55,14 @@ public class ColumnViewModel: ViewModelBase
   internal ColumnModel Model { get; }
 
   public ObservableCollection<ShelfViewModel> Shelves { get; }
+
+  public void QueueIcons(bool regenerate)
+  {
+    foreach(var shelf in Shelves)
+    {
+      shelf.QueueIcons(regenerate);
+    }
+  }
 
   //internal void MoveShelf(
   //  int indexSource,

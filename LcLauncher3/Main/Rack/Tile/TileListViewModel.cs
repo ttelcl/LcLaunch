@@ -18,15 +18,15 @@ using LcLauncher.WpfUtilities;
 
 using LcLauncher.DataModel.Entities;
 using Ttelcl.Persistence.API;
+using LcLauncher.IconTools;
 
 namespace LcLauncher.Main.Rack.Tile;
 
 public class TileListViewModel:
-  ViewModelBase /*, IIconLoadJobSource*/ /*, IPersisted*/
+  ViewModelBase, ICanQueueIcons /*, IPersisted*/
 {
 
   public TileListViewModel(
-    //IconLoadQueue iconLoadQueue,
     ShelfViewModel shelf,
     TileListModel model)
   {
@@ -34,7 +34,6 @@ public class TileListViewModel:
     Model = model;
     TileListId = model.Id;
     Tiles = new ObservableCollection<TileHostViewModel>();
-    //IconJobQueue = new IconListQueue(iconLoadQueue, this);
     foreach(var tile in model.Entity.Tiles)
     {
       var host = new TileHostViewModel(this);
@@ -63,13 +62,9 @@ public class TileListViewModel:
 
   public TickId TileListId {  get; }
 
-  //public ILauncherIconCache IconCache => Model.IconCache;
-
   public bool IsPrimary { get => Model.Id == Shelf.Model.Id; }
 
   public ObservableCollection<TileHostViewModel> Tiles { get; }
-
-  //public IconListQueue IconJobQueue { get; }
 
   public bool ContainsKeyTile()
   {
@@ -134,22 +129,6 @@ public class TileListViewModel:
   ///// <inheritdoc/>
   //public bool IsDirty => Model.IsDirty;
 
-  //public IEnumerable<IconLoadJob> GetIconLoadJobs(bool reload)
-  //{
-  //  foreach(var host in Tiles)
-  //  {
-  //    if(host.Tile != null)
-  //    {
-  //      foreach(var job in host.Tile.GetIconLoadJobs(reload))
-  //      {
-  //        yield return job;
-  //      }
-  //    }
-  //  }
-  //}
-
-  //public IconLoadQueue IconLoadQueue { get => Rack.IconLoadQueue; }
-
   /// <summary>
   /// True if there is at least one tile and the last tile
   /// in the list is empty (i.e.: it could be removed to make space).
@@ -213,6 +192,14 @@ public class TileListViewModel:
       !Tiles[^2].IsEmpty ||
       !Tiles[^3].IsEmpty ||
       !Tiles[^4].IsEmpty;
+  }
+
+  public void QueueIcons(bool regenerate)
+  {
+    foreach(var tile in Tiles)
+    {
+      tile.QueueIcons(regenerate);
+    }
   }
 
   //public bool AddEmptyRow()

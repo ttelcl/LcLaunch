@@ -19,7 +19,7 @@ using LcLauncher.DataModel.Entities;
 
 namespace LcLauncher.Main.Rack.Tile;
 
-public class GroupTileViewModel: TileViewModel/*, IPostIconLoadActor*//*, ITileListOwner*/
+public class GroupTileViewModel: TileViewModel, ICanQueueIcons /*, ITileListOwner*/
 {
   public GroupTileViewModel(
     TileListViewModel ownerList,
@@ -52,10 +52,10 @@ public class GroupTileViewModel: TileViewModel/*, IPostIconLoadActor*//*, ITileL
         }
       },
       p => Host!=null && !IsActive);
-    //EnqueueIconJobsCommand = new DelegateCommand(
-    //  p => QueueIcons(false));
-    //RefreshIconJobsCommand = new DelegateCommand(
-    //  p => QueueIcons(true));
+    EnqueueIconJobsCommand = new DelegateCommand(
+      p => QueueIcons(false));
+    RefreshIconJobsCommand = new DelegateCommand(
+      p => QueueIcons(true));
     GroupIcons = new ObservableCollection<GroupIconViewModel>();
     //var childModel = TileListModel.Load(
     //  ownerList.Shelf.Rack.Model, model.TileListId);
@@ -85,9 +85,9 @@ public class GroupTileViewModel: TileViewModel/*, IPostIconLoadActor*//*, ITileL
 
   //public ICommand FixGraphCommand { get; }
 
-  //public ICommand EnqueueIconJobsCommand { get; }
+  public ICommand EnqueueIconJobsCommand { get; }
 
-  //public ICommand RefreshIconJobsCommand { get; }
+  public ICommand RefreshIconJobsCommand { get; }
 
   public Guid PostIconLoadId { get; }
 
@@ -200,22 +200,6 @@ public class GroupTileViewModel: TileViewModel/*, IPostIconLoadActor*//*, ITileL
     }
   }
 
-  //public override IEnumerable<IconLoadJob> GetIconLoadJobs(bool reload)
-  //{
-  //  foreach(var job in ChildTiles.GetIconLoadJobs(reload))
-  //  {
-  //    yield return job;
-  //  }
-  //  ChildTiles.IconJobQueue.QueuePostLoadActor(this);
-  //}
-
-  //public void PostIconLoad()
-  //{
-  //  Trace.TraceInformation(
-  //    $"PostIconLoad for group tile '{Title}'");
-  //  ResetGroupIcons();
-  //}
-
   //private Guid ReplaceWithClone()
   //{
   //  var targetClone = ChildTiles.CreateClone();
@@ -258,15 +242,6 @@ public class GroupTileViewModel: TileViewModel/*, IPostIconLoadActor*//*, ITileL
   //  }
   //}
 
-  //private void QueueIcons(bool reload)
-  //{
-  //  var before = IconLoadQueue.JobCount();
-  //  this.EnqueueAllIconJobs(reload);
-  //  var after = IconLoadQueue.JobCount();
-  //  Trace.TraceInformation(
-  //    $"Queued {after - before} icon load jobs ({after} - {before}) for group {ChildTiles.TileListId}");
-  //}
-
   protected override void OnHostChanged(
     TileHostViewModel? oldHost, TileHostViewModel? newHost)
   {
@@ -286,5 +261,10 @@ public class GroupTileViewModel: TileViewModel/*, IPostIconLoadActor*//*, ITileL
       //// Release the claim when the host is removed
       //this.ReleaseTileList();
     }
+  }
+
+  public void QueueIcons(bool regenerate)
+  {
+    ChildTiles.QueueIcons(regenerate);
   }
 }
