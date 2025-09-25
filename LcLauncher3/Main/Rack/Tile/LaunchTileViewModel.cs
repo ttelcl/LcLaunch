@@ -25,21 +25,34 @@ namespace LcLauncher.Main.Rack.Tile;
 /// <summary>
 /// Tile view model for launch tiles.
 /// </summary>
-public class LaunchTileViewModel: TileViewModel, IIconHost
+public class LaunchTileViewModel: TileViewModel, IIconJobTarget
 {
   private LaunchTileViewModel(
     TileListViewModel ownerList,
     LaunchData model)
     : base(ownerList)
   {
-    IconHostId = Guid.NewGuid();
+    IconTargetId = Guid.NewGuid();
     Model = model;
+    IconIds = new IconIdSet {
+      Icon16 = model.Icon16,
+      Icon32 = model.Icon32,
+      Icon48 = model.Icon48,
+      Icon256 = null,
+    };
+    Icons = new IconSet {
+      IconSmall = IconSmall,
+      IconMedium = IconMedium,
+      IconLarge = Icon,
+      IconExtraLarge = null,
+    };
     Classification = LaunchKinds.GetLaunchKind(
       model.Target, !model.ShellMode);
     KindInfo = new LaunchKindInfo(Classification, model.Target);
     _title = Model.GetEffectiveTitle();
     _tooltip = Model.GetEffectiveTooltip();
-    LoadIcon(IconCacheLoadLevel.FromCache);
+    GroupTileAdapter = new GroupTileAdapterViewModel(IconSmall);
+    
     //EditCommandNew = new DelegateCommand(
     //  p => StartEditNew(),
     //  p => CanEditNew());
@@ -53,6 +66,9 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
       p => RunTile(),
       p => Host != null && !Host.Rack.HasMarkedItems);
     ClickActionCommand = RunCommand;
+
+    //LoadIcon(IconCacheLoadLevel.FromCache);
+    QueueIcon(IconLoadLevel.DiskCache, false);
   }
 
   public static LaunchTileViewModel FromLaunch(
@@ -117,6 +133,8 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
     set {
       if(SetNullableInstanceProperty(ref _icon, value))
       {
+        Icons.IconLarge = value;
+        RaisePropertyChanged(nameof(Icons));
       }
     }
   }
@@ -127,6 +145,9 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
     set {
       if(SetNullableInstanceProperty(ref _iconSmall, value))
       {
+        Icons.IconSmall = value;
+        RaisePropertyChanged(nameof(Icons));
+        GroupTileAdapter.Icon = value;
       }
     }
   }
@@ -137,10 +158,24 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
     set {
       if(SetNullableInstanceProperty(ref _iconMedium, value))
       {
+        Icons.IconMedium = value;
+        RaisePropertyChanged(nameof(Icons));
       }
     }
   }
   private BitmapSource? _iconMedium;
+
+  public GroupTileAdapterViewModel GroupTileAdapter { get; }
+
+  public void QueueIcon(IconLoadLevel level, bool refresh)
+  {
+    var rack = OwnerList.Rack;
+    var queue = rack.IconQueue;
+    queue.Enqueue(
+      this,
+      level,
+      refresh);
+  }
 
   /// <summary>
   /// Load the icon. The interpretation of the level is different than
@@ -153,55 +188,56 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
   /// <exception cref="ArgumentOutOfRangeException"></exception>
   public void LoadIcon(IconCacheLoadLevel level)
   {
-    var rack = OwnerList.Rack;
-    var iconCache = rack.IconCache;
+    Trace.TraceError("LoadIcon() no longer supported");
+    //var rack = OwnerList.Rack;
+    //var iconCache = rack.IconCache;
 
-    // This now works very different from before. And should probably work in yet another way
-    using var reader = iconCache.StartReader();
+    //// This now works very different from before. And should probably work in yet another way
+    //using var reader = iconCache.StartReader();
 
-    switch(level)
-    {
-      case IconCacheLoadLevel.FromCache:
-        {
-          // load levels are interpreted softer in the cache, so pass a heavier code
-          Icon = reader.FindIcon(Model.Icon48, IconCacheLoadLevel.LoadIfMissing);
-          IconSmall = reader.FindIcon(Model.Icon16, IconCacheLoadLevel.LoadIfMissing);
-          IconMedium = reader.FindIcon(Model.Icon32, IconCacheLoadLevel.LoadIfMissing);
-          return;
-        }
-      case IconCacheLoadLevel.LoadIfMissing:
-        {
-          Icon = reader.FindIcon(Model.Icon48, IconCacheLoadLevel.LoadIfMissing);
-          IconSmall = reader.FindIcon(Model.Icon16, IconCacheLoadLevel.LoadIfMissing);
-          IconMedium = reader.FindIcon(Model.Icon32, IconCacheLoadLevel.LoadIfMissing);
-          if(Icon != null && IconSmall != null && IconMedium != null)
-          {
-            return;
-          }
-          // TEMPORARILY DISABLED (return without doing anything)
-          Trace.TraceWarning($"Not hard loading Icon! ({level})");
-          //HardLoadIcon();
-          //LoadIcon(IconLoadLevel.FromCache);
-          return;
-        }
-      case IconCacheLoadLevel.LoadAlways:
-        {
-          // TEMPORARILY DISABLED (return without doing anything)
-          Trace.TraceWarning($"Not hard loading Icon! ({level})");
-          // PLACEHOLDERS FOR ICON EXTRACTION
-          Icon = reader.FindIcon(Model.Icon48, IconCacheLoadLevel.LoadIfMissing);
-          IconSmall = reader.FindIcon(Model.Icon16, IconCacheLoadLevel.LoadIfMissing);
-          IconMedium = reader.FindIcon(Model.Icon32, IconCacheLoadLevel.LoadIfMissing);
+    //switch(level)
+    //{
+    //  case IconCacheLoadLevel.FromCache:
+    //    {
+    //      // load levels are interpreted softer in the cache, so pass a heavier code
+    //      Icon = reader.FindIcon(Model.Icon48, IconCacheLoadLevel.LoadIfMissing);
+    //      IconSmall = reader.FindIcon(Model.Icon16, IconCacheLoadLevel.LoadIfMissing);
+    //      IconMedium = reader.FindIcon(Model.Icon32, IconCacheLoadLevel.LoadIfMissing);
+    //      return;
+    //    }
+    //  case IconCacheLoadLevel.LoadIfMissing:
+    //    {
+    //      Icon = reader.FindIcon(Model.Icon48, IconCacheLoadLevel.LoadIfMissing);
+    //      IconSmall = reader.FindIcon(Model.Icon16, IconCacheLoadLevel.LoadIfMissing);
+    //      IconMedium = reader.FindIcon(Model.Icon32, IconCacheLoadLevel.LoadIfMissing);
+    //      if(Icon != null && IconSmall != null && IconMedium != null)
+    //      {
+    //        return;
+    //      }
+    //      // TEMPORARILY DISABLED (return without doing anything)
+    //      Trace.TraceWarning($"Not hard loading Icon! ({level})");
+    //      //HardLoadIcon();
+    //      //LoadIcon(IconLoadLevel.FromCache);
+    //      return;
+    //    }
+    //  case IconCacheLoadLevel.LoadAlways:
+    //    {
+    //      // TEMPORARILY DISABLED (return without doing anything)
+    //      Trace.TraceWarning($"Not hard loading Icon! ({level})");
+    //      // PLACEHOLDERS FOR ICON EXTRACTION
+    //      Icon = reader.FindIcon(Model.Icon48, IconCacheLoadLevel.LoadIfMissing);
+    //      IconSmall = reader.FindIcon(Model.Icon16, IconCacheLoadLevel.LoadIfMissing);
+    //      IconMedium = reader.FindIcon(Model.Icon32, IconCacheLoadLevel.LoadIfMissing);
 
 
-          //HardLoadIcon();
-          LoadIcon(IconCacheLoadLevel.FromCache);
-          return;
-        }
-      default:
-        throw new ArgumentOutOfRangeException(
-          nameof(level), level, "Invalid icon load level");
-    }
+    //      //HardLoadIcon();
+    //      LoadIcon(IconCacheLoadLevel.FromCache);
+    //      return;
+    //    }
+    //  default:
+    //    throw new ArgumentOutOfRangeException(
+    //      nameof(level), level, "Invalid icon load level");
+    //}
   }
 
   //private void HardLoadIcon()
@@ -276,7 +312,52 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
   //  }
   //}
 
-  public Guid IconHostId { get; }
+  /// <inheritdoc/>
+  public Guid IconTargetId { get; }
+
+  /// <inheritdoc/>
+  public string IconSource => Model.GetIconSource();
+
+  /// <inheritdoc/>
+  public IconSize IconSizes => IconSize.Normal;
+
+  /// <inheritdoc/>
+  public IconIdSet IconIds { get; }
+
+  /// <inheritdoc/>
+  public IconSet Icons { get; }
+
+  public void UpdateIcons(IconIdSet iconIds, IconSet icons)
+  {
+    if(iconIds.Icon16 != IconIds.Icon16)
+    {
+      IconIds.Icon16 = iconIds.Icon16;
+      // Todo: mark as dirty
+    }
+    if(iconIds.Icon32 != IconIds.Icon32)
+    {
+      IconIds.Icon32 = iconIds.Icon32;
+      // Todo: mark as dirty
+    }
+    if(iconIds.Icon48 != IconIds.Icon48)
+    {
+      IconIds.Icon48 = iconIds.Icon48;
+      // Todo: mark as dirty
+    }
+    if(icons.IconSmall != IconSmall)
+    {
+      IconSmall = icons.IconSmall;
+    }
+    if(icons.IconMedium != IconMedium)
+    {
+      IconMedium = icons.IconMedium;
+    }
+    if(icons.IconLarge != Icon)
+    {
+      Icon = icons.IconLarge;
+    }
+
+  }
 
   private bool CanEditNew()
   {

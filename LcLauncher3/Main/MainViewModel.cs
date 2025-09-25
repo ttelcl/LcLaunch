@@ -17,11 +17,6 @@ using LcLauncher.DataModel.Store;
 using LcLauncher.ShellApps;
 using LcLauncher.WpfUtilities;
 using LcLauncher.Main.Rack;
-//using LcLauncher.IconUpdates;
-//using LcLauncher.Main.Rack;
-//using LcLauncher.ModelConversion;
-//using LcLauncher.Persistence;
-//using LcLauncher.Storage;
 
 namespace LcLauncher.Main;
 
@@ -37,16 +32,12 @@ public class MainViewModel: ViewModelBase
     ShowDevPane = configuration.GetValue<bool>("showDevPane", false);
     HyperStore = InitHyperStore();
     DefaultStore = HyperStore.Backing.GetStore("default");
-    //var fileStore = new JsonDataStore();
-    //var storeImplementation = new JsonLcLaunchStore(fileStore);
-    //StoreImplementation = storeImplementation;
 
     // Make sure there is at least one rack (named "default")
     Trace.TraceError("TODO: create default rack if missing");
 
     //Store.LoadOrCreateRack("default");
     RackList = new RackListViewModel(this, configuration["defaultRack"]);
-    //TestPane = new TestPaneViewModel(this);
     ProcessNextIconJobCommand = new DelegateCommand(
       p => ProcessNextIconJob(),
       p => CanProcessNextIconJob());
@@ -81,8 +72,6 @@ public class MainViewModel: ViewModelBase
   public ICommand DevTogglePaneCommand { get; }
 
   public ICommand ProcessNextIconJobCommand { get; }
-
-  // public TestPaneViewModel TestPane { get; }
 
   public ShellAppCache AppCache { get; }
 
@@ -140,16 +129,17 @@ public class MainViewModel: ViewModelBase
 
   public bool ProcessNextIconJob()
   {
-    //var processed = CurrentRack?.IconLoadQueue.ProcessNextJob() ?? false;
-    //return processed;
-    return false; // TODO
+    if(CurrentRack == null || !CurrentRack.IconQueue.HasWork)
+    {
+      return false;
+    }
+    return CurrentRack.IconLoader.ProcessNextBatch(
+      CurrentRack.IconQueue, 10);
   }
 
   public bool CanProcessNextIconJob()
   {
-    //  return CurrentRack != null &&
-    //    !CurrentRack.IconLoadQueue.IsEmpty();
-    return false;
+    return CurrentRack != null && CurrentRack.IconQueue.HasWork;
   }
 
   private void DevDumpApps()

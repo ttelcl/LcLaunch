@@ -25,9 +25,14 @@
                 <MenuItem
                     Foreground="{DynamicResource MahApps.Brushes.Gray6}"
                     Header="Dev">
-                    <MenuItem Header="Reload apps" Command="{Binding DevReloadAppsCommand}"/>
-                    <MenuItem Header="Dump apps" Command="{Binding DevDumpAppsCommand}"/>
-                    <MenuItem Header="Toggle Dev Pane" Command="{Binding DevTogglePaneCommand}"/>
+                    <MenuItem Header="Reload apps"
+                              Command="{Binding DevReloadAppsCommand}"/>
+                    <MenuItem Header="Dump apps"
+                              Command="{Binding DevDumpAppsCommand}"/>
+                    <MenuItem Header="Toggle Dev Pane"
+                              Command="{Binding DevTogglePaneCommand}"/>
+                    <MenuItem Header="Process Next Icon Batch"
+                              Command="{Binding ProcessNextIconJobCommand}"/>
                 </MenuItem>
             </Menu>
             <ComboBox
