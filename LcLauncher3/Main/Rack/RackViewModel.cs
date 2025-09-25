@@ -21,7 +21,7 @@ using LcLauncher.WpfUtilities;
 
 namespace LcLauncher.Main.Rack;
 
-public class RackViewModel: ViewModelBase/*, IPersisted, IIconLoadJobSource*/
+public class RackViewModel: ViewModelBase/*, IPersisted*/
 {
 
   public RackViewModel(
@@ -30,7 +30,6 @@ public class RackViewModel: ViewModelBase/*, IPersisted, IIconLoadJobSource*/
   {
     var store = model.Store;
     var iconBucket = store.IconBucket;
-    //IconLoadQueue = new IconLoadQueue(q => owner.RackQueueActivating(q));
     IconQueue = new IconJobQueue();
     IconLoader = new IconLoader(iconBucket);
     IconCache = IconLoader.IconCache;

@@ -43,7 +43,7 @@ public class MainViewModel: ViewModelBase
       p => CanProcessNextIconJob());
     _iconJobTimer = new DispatcherTimer(
       DispatcherPriority.ApplicationIdle) {
-      Interval = TimeSpan.FromMilliseconds(30),
+      Interval = TimeSpan.FromMilliseconds(30 /*1500*/),
       IsEnabled = false,
     };
     _iconJobTimer.Tick += (s, e) => {
@@ -95,6 +95,7 @@ public class MainViewModel: ViewModelBase
         {
           oldRack.Unload();
         }
+        ActivateRackIconQueue();
       }
     }
   }
@@ -116,10 +117,12 @@ public class MainViewModel: ViewModelBase
 
   public RackListViewModel RackList { get; }
 
-  public void RackQueueActivating(/*IconLoadQueue queue*/)
-    // TODO: why is that argument unused??
+  public void ActivateRackIconQueue()
   {
-    if(!_iconJobTimer.IsEnabled)
+    if(
+      !_iconJobTimer.IsEnabled
+      && CurrentRack != null
+      && CurrentRack.IconQueue.HasWork)
     {
       Trace.TraceInformation(
         $"Rack Queue is now active");

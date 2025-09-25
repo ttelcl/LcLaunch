@@ -175,6 +175,7 @@ public class LaunchTileViewModel: TileViewModel, IIconJobTarget
       this,
       level,
       refresh);
+    rack.Owner.ActivateRackIconQueue();
   }
 
   /// <summary>
