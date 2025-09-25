@@ -39,13 +39,13 @@ public static class IconExtraction
   /// sizes.
   /// </param>
   /// <returns></returns>
-  public static BitmapSource?[]? IconsForSource(
+  public static IconSet? IconsForSource(
     string source, IconSize sizes)
   {
     bool useAppIcon = ShellAppTools.HasShellAppsFolderPrefix(source);
     try
     {
-      var icons = new BitmapSource?[4];
+      var icons = new IconSet();
       using var iconShell = ShellObject.FromParsingName(source);
       var thumbnail = iconShell.Thumbnail;
       if(useAppIcon)
@@ -57,22 +57,22 @@ public static class IconExtraction
         if(sizes.HasFlag(IconSize.Small))
         {
           thumbnail.CurrentSize = DefaultIconSize.Small;
-          icons[0] = thumbnail.BitmapSource;
+          icons.IconSmall = thumbnail.BitmapSource;
         }
         if(sizes.HasFlag(IconSize.Medium))
         {
           thumbnail.CurrentSize = DefaultIconSize.Medium;
-          icons[1] = thumbnail.BitmapSource;
+          icons.IconMedium = thumbnail.BitmapSource;
         }
         if(sizes.HasFlag(IconSize.Large))
         {
           thumbnail.CurrentSize = DefaultIconSize.Large;
-          icons[2] = thumbnail.BitmapSource;
+          icons.IconLarge = thumbnail.BitmapSource;
         }
         if(sizes.HasFlag(IconSize.ExtraLarge))
         {
           thumbnail.CurrentSize = DefaultIconSize.ExtraLarge;
-          icons[3] = thumbnail.BitmapSource;
+          icons.IconExtraLarge = thumbnail.BitmapSource;
         }
         return icons;
       }
@@ -81,19 +81,19 @@ public static class IconExtraction
         thumbnail.FormatOption = ShellThumbnailFormatOption.IconOnly;
         if(sizes.HasFlag(IconSize.Small))
         {
-          icons[0] = thumbnail.SmallBitmapSource;
+          icons.IconSmall = thumbnail.SmallBitmapSource;
         }
         if(sizes.HasFlag(IconSize.Medium))
         {
-          icons[1] = thumbnail.MediumBitmapSource;
+          icons.IconMedium = thumbnail.MediumBitmapSource;
         }
         if(sizes.HasFlag(IconSize.Large))
         {
-          icons[2] = thumbnail.LargeBitmapSource;
+          icons.IconLarge = thumbnail.LargeBitmapSource;
         }
         if(sizes.HasFlag(IconSize.ExtraLarge))
         {
-          icons[3] = thumbnail.ExtraLargeBitmapSource;
+          icons.IconExtraLarge = thumbnail.ExtraLargeBitmapSource;
         }
         return icons;
       }

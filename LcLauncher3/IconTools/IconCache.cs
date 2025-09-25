@@ -15,10 +15,11 @@ using Ttelcl.Persistence.API;
 namespace LcLauncher.IconTools;
 
 /// <summary>
-/// How hard IconCache.Reader.FindIcon() will look for an icon.
+/// How hard to look for an icon in <see cref="IconCache"/>
 /// </summary>
-public enum IconLoadLevel
+public enum IconCacheLoadLevel
 {
+
   /// <summary>
   /// Only get the icon if it was already in the cache. If not in the
   /// cache, or the cache entry is null, return null.
@@ -67,7 +68,7 @@ public class IconCache
     using var reader = StartReader();
     foreach(var id in ids)
     {
-      reader.FindIcon(id, IconLoadLevel.LoadIfMissing);
+      reader.FindIcon(id, IconCacheLoadLevel.LoadIfMissing);
     }
   }
 
@@ -127,7 +128,7 @@ public class IconCache
     /// if it is null there (indicating a previous failed load).
     /// </param>
     /// <returns></returns>
-    public BitmapSource? FindIcon(HashId? hashId, IconLoadLevel loadLevel)
+    public BitmapSource? FindIcon(HashId? hashId, IconCacheLoadLevel loadLevel)
     {
       if(hashId == null)
       {
@@ -140,7 +141,7 @@ public class IconCache
         {
           return icon;
         }
-        if(loadLevel == IconLoadLevel.LoadAlways)
+        if(loadLevel == IconCacheLoadLevel.LoadAlways)
         {
           Cache._icons.Remove(hashId.Value); // mark as not checked and fall through
         }
@@ -149,7 +150,7 @@ public class IconCache
           return null;
         }
       }
-      if(loadLevel == IconLoadLevel.FromCache)
+      if(loadLevel == IconCacheLoadLevel.FromCache)
       {
         return null;
       }

@@ -30,8 +30,10 @@ public class RackViewModel: ViewModelBase/*, IPersisted, IIconLoadJobSource*/
   {
     var store = model.Store;
     var iconBucket = store.IconBucket;
-    IconCache = new IconCache(iconBucket);
     //IconLoadQueue = new IconLoadQueue(q => owner.RackQueueActivating(q));
+    IconQueue = new IconJobQueue();
+    IconLoader = new IconLoader(iconBucket);
+    IconCache = IconLoader.IconCache;
     Owner = owner;
     Model = model;
     Columns = [];
@@ -52,6 +54,10 @@ public class RackViewModel: ViewModelBase/*, IPersisted, IIconLoadJobSource*/
   public LauncherRackStore Store => Model.Store;
 
   public IconCache IconCache { get; }
+
+  public IconJobQueue IconQueue { get; }
+
+  public IconLoader IconLoader { get; }
 
   public string Name => Model.RackName;
 

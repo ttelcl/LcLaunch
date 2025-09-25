@@ -45,5 +45,39 @@ public enum IconSize
   /// All normal icon sizes: small, medium, large, but not extra large.
   /// </summary>
   Normal = Small | Medium | Large,
+
+  /// <summary>
+  /// No icon sizes
+  /// </summary>
+  None = 0,
+}
+
+public static class IconSizes
+{
+  /// <summary>
+  /// Unpack the individual icon sizes in the argument
+  /// </summary>
+  /// <param name="iconSize"></param>
+  /// <returns></returns>
+  public static IEnumerable<IconSize> Unpack(
+    this IconSize iconSize)
+  {
+    if((iconSize & IconSize.Small) != 0)
+    {
+      yield return IconSize.Small;
+    }
+    if((iconSize & IconSize.Medium) != 0)
+    {
+      yield return IconSize.Medium;
+    }
+    if((iconSize & IconSize.Large) != 0)
+    {
+      yield return IconSize.Large;
+    }
+    if((iconSize & IconSize.ExtraLarge) != 0)
+    {
+      yield return IconSize.ExtraLarge;
+    }
+  }
 }
 

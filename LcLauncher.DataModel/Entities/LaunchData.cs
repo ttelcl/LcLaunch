@@ -112,7 +112,8 @@ public class LaunchData
 
   /// <summary>
   /// The file used to derive the icon for the tile.
-  /// Usually null, in which case the icon will be derived from the target.
+  /// Usually null, in which case the icon will be derived from the target
+  /// (using <see cref="GetIconSource"/>).
   /// </summary>
   [JsonProperty("iconSource", NullValueHandling = NullValueHandling.Ignore)]
   public string? IconSource { get; set; }

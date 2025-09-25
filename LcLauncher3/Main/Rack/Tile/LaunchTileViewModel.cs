@@ -39,15 +39,15 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
     KindInfo = new LaunchKindInfo(Classification, model.Target);
     _title = Model.GetEffectiveTitle();
     _tooltip = Model.GetEffectiveTooltip();
-    LoadIcon(IconLoadLevel.FromCache);
+    LoadIcon(IconCacheLoadLevel.FromCache);
     //EditCommandNew = new DelegateCommand(
     //  p => StartEditNew(),
     //  p => CanEditNew());
     FixIconCommand = new DelegateCommand(
-      p => LoadIcon(IconLoadLevel.LoadIfMissing),
+      p => LoadIcon(IconCacheLoadLevel.LoadIfMissing),
       p => Host != null && !Host.Rack.HasMarkedItems);
     ForceIconCommand = new DelegateCommand(
-      p => LoadIcon(IconLoadLevel.LoadAlways),
+      p => LoadIcon(IconCacheLoadLevel.LoadAlways),
       p => Host != null && !Host.Rack.HasMarkedItems);
     RunCommand = new DelegateCommand(
       p => RunTile(),
@@ -145,13 +145,13 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
   /// <summary>
   /// Load the icon. The interpretation of the level is different than
   /// in the icon cache API: here the 'cache' includes the cache backing,
-  /// and <see cref="IconLoadLevel.LoadIfMissing"/> and 
-  /// <see cref="IconLoadLevel.LoadAlways"/> hit the OS icon load code if
+  /// and <see cref="IconCacheLoadLevel.LoadIfMissing"/> and 
+  /// <see cref="IconCacheLoadLevel.LoadAlways"/> hit the OS icon load code if
   /// the icon is missing from the cache.
   /// </summary>
   /// <param name="level"></param>
   /// <exception cref="ArgumentOutOfRangeException"></exception>
-  public void LoadIcon(IconLoadLevel level)
+  public void LoadIcon(IconCacheLoadLevel level)
   {
     var rack = OwnerList.Rack;
     var iconCache = rack.IconCache;
@@ -161,19 +161,19 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
 
     switch(level)
     {
-      case IconLoadLevel.FromCache:
+      case IconCacheLoadLevel.FromCache:
         {
           // load levels are interpreted softer in the cache, so pass a heavier code
-          Icon = reader.FindIcon(Model.Icon48, IconLoadLevel.LoadIfMissing);
-          IconSmall = reader.FindIcon(Model.Icon16, IconLoadLevel.LoadIfMissing);
-          IconMedium = reader.FindIcon(Model.Icon32, IconLoadLevel.LoadIfMissing);
+          Icon = reader.FindIcon(Model.Icon48, IconCacheLoadLevel.LoadIfMissing);
+          IconSmall = reader.FindIcon(Model.Icon16, IconCacheLoadLevel.LoadIfMissing);
+          IconMedium = reader.FindIcon(Model.Icon32, IconCacheLoadLevel.LoadIfMissing);
           return;
         }
-      case IconLoadLevel.LoadIfMissing:
+      case IconCacheLoadLevel.LoadIfMissing:
         {
-          Icon = reader.FindIcon(Model.Icon48, IconLoadLevel.LoadIfMissing);
-          IconSmall = reader.FindIcon(Model.Icon16, IconLoadLevel.LoadIfMissing);
-          IconMedium = reader.FindIcon(Model.Icon32, IconLoadLevel.LoadIfMissing);
+          Icon = reader.FindIcon(Model.Icon48, IconCacheLoadLevel.LoadIfMissing);
+          IconSmall = reader.FindIcon(Model.Icon16, IconCacheLoadLevel.LoadIfMissing);
+          IconMedium = reader.FindIcon(Model.Icon32, IconCacheLoadLevel.LoadIfMissing);
           if(Icon != null && IconSmall != null && IconMedium != null)
           {
             return;
@@ -184,18 +184,18 @@ public class LaunchTileViewModel: TileViewModel, IIconHost
           //LoadIcon(IconLoadLevel.FromCache);
           return;
         }
-      case IconLoadLevel.LoadAlways:
+      case IconCacheLoadLevel.LoadAlways:
         {
           // TEMPORARILY DISABLED (return without doing anything)
           Trace.TraceWarning($"Not hard loading Icon! ({level})");
           // PLACEHOLDERS FOR ICON EXTRACTION
-          Icon = reader.FindIcon(Model.Icon48, IconLoadLevel.LoadIfMissing);
-          IconSmall = reader.FindIcon(Model.Icon16, IconLoadLevel.LoadIfMissing);
-          IconMedium = reader.FindIcon(Model.Icon32, IconLoadLevel.LoadIfMissing);
+          Icon = reader.FindIcon(Model.Icon48, IconCacheLoadLevel.LoadIfMissing);
+          IconSmall = reader.FindIcon(Model.Icon16, IconCacheLoadLevel.LoadIfMissing);
+          IconMedium = reader.FindIcon(Model.Icon32, IconCacheLoadLevel.LoadIfMissing);
 
 
           //HardLoadIcon();
-          LoadIcon(IconLoadLevel.FromCache);
+          LoadIcon(IconCacheLoadLevel.FromCache);
           return;
         }
       default:
