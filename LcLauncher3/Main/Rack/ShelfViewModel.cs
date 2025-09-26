@@ -14,6 +14,8 @@ using System.Windows.Input;
 using ControlzEx.Theming;
 
 using LcLauncher.DataModel;
+using LcLauncher.DataModel.ChangeTracking;
+using LcLauncher.DataModel.Entities;
 using LcLauncher.DataModel.Store;
 using LcLauncher.IconTools;
 
@@ -28,7 +30,8 @@ using Ttelcl.Persistence.API;
 namespace LcLauncher.Main.Rack;
 
 public class ShelfViewModel:
-  ViewModelBase, IHasTheme, ICanQueueIcons /*, IPersisted, ITileListOwner*/
+  ViewModelBase, IHasTheme, ICanQueueIcons, IDirtyHost,
+  IWrapsModel<ShelfModel, ShelfData>
 {
   public ShelfViewModel(
     RackViewModel rack,
@@ -202,7 +205,7 @@ public class ShelfViewModel:
         if(Model.Entity.Theme != value)
         {
           Model.Entity.Theme = value;
-          Model.MarkDirty();
+          MarkAsDirty();
         }
         SetTheme("Dark." + value);
       }
@@ -218,7 +221,7 @@ public class ShelfViewModel:
         if(Model.Entity.Title != value)
         {
           Model.Entity.Title = value;
-          Model.MarkDirty();
+          MarkAsDirty();
         }
       }
     }
@@ -234,7 +237,7 @@ public class ShelfViewModel:
         if(Model.Entity.Collapsed != !value)
         {
           Model.Entity.Collapsed = !value;
-          Model.MarkDirty();
+          MarkAsDirty();
         }
       }
     }
@@ -278,27 +281,8 @@ public class ShelfViewModel:
     ThemeManager.Current.ChangeTheme(Host, theme);
   }
 
-  public bool IsDirty { get => Model.IsDirty; }
-
-  public void MarkDirty()
-  {
-    Model.MarkDirty();
-    RaisePropertyChanged(nameof(IsDirty));
-  }
-
-  public void SaveIfDirty()
-  {
-    if(IsDirty)
-    {
-      Trace.TraceInformation(
-        $"Saving shelf {Model.Id}");
-      // No need to 'rebuild' anything, since there are no sub-models
-      Model.Save();
-      RaisePropertyChanged(nameof(IsDirty));
-    }
-  }
-
   public string TileListOwnerLabel { get => $"Shelf {ShelfId}"; }
+
   //public TileListOwnerTracker ClaimTracker { get; }
   public bool ClaimPriority { get => true; }
 
@@ -361,15 +345,49 @@ public class ShelfViewModel:
     return true;
   }
 
+  /// <inheritdoc/>
   public void QueueIcons(bool regenerate)
   {
     PrimaryTiles.QueueIcons(regenerate);
   }
 
-  //private bool GetIsEmpty()
-  //{
-  //  return PrimaryTiles.Tiles.All(t => t.IsEmpty);
-  //}
+  /// <inheritdoc/>
+  public bool IsDirty { 
+    get => _isDirty;
+    private set {
+      if(SetValueProperty(ref _isDirty, value))
+      {
+      }
+    }
+  }
+  private bool _isDirty;
+
+  /// <summary>
+  /// Save this shelf entity (but not the associated tile lists)
+  /// </summary>
+  /// <param name="ifDirty"></param>
+  public void Save(bool ifDirty = true)
+  {
+    if(IsDirty || !ifDirty)
+    {
+      // No need to rebuild: all fields already use the raw data as backing store
+      Trace.TraceInformation(
+        $"Saving shelf {Model.Id} ('{Title}')");
+      Store.PutShelf(Model.Entity);
+      IsDirty = false;
+    }
+  }
+
+  /// <inheritdoc/>
+  public void MarkAsDirty()
+  {
+    IsDirty = true;
+  }
+
+  private bool GetIsEmpty()
+  {
+    return PrimaryTiles.Tiles.All(t => t.IsEmpty);
+  }
 
   //private void DeleteShelf()
   //{
@@ -412,5 +430,9 @@ public class ShelfViewModel:
   //  }
   //}
 
-  //
+  internal void GatherTileLists(Dictionary<TickId, TileListViewModel> buffer)
+  {
+    PrimaryTiles.GatherTileLists(buffer);
+  }
+
 }

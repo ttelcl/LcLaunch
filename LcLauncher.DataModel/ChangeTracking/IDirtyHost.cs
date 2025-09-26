@@ -54,7 +54,9 @@ public interface IDirtyPart: IDirtyMarkable
   /// <summary>
   /// The dirtyness tracking host that actually will be marked as dirty
   /// when this part is marked as dirty.
+  /// In some cases the <see cref="IDirtyPart"/> may be disconnected and
+  /// this would be null.
   /// </summary>
-  IDirtyHost DirtyHost { get; }
+  IDirtyHost? DirtyHost { get; }
 }
 

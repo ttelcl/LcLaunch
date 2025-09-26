@@ -180,13 +180,10 @@ public class MainViewModel: ViewModelBase
     else
     {
       Trace.TraceInformation(
-        $"Application is now inactive");
+        $"Application is now inactive (saving what is needed)");
       if(CurrentRack != null)
       {
-        Trace.TraceError("NYI: saving rack upon app move to background");
-        //CurrentRack.SaveShelvesIfModified();
-        //CurrentRack.SaveDirtyTileLists();
-        //CurrentRack.SaveIfDirty();
+        CurrentRack.SaveDeep();
       }
     }
   }

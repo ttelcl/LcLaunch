@@ -20,9 +20,12 @@ using LcLauncher.Main.Rack.Tile;
 using LcLauncher.Models;
 using LcLauncher.WpfUtilities;
 
+using Ttelcl.Persistence.API;
+
 namespace LcLauncher.Main.Rack;
 
-public class RackViewModel: ViewModelBase, ICanQueueIcons, IDirtyHost
+public class RackViewModel:
+  ViewModelBase, ICanQueueIcons, IDirtyHost, IWrapsModel<RackModel, RackData>
 {
 
   public RackViewModel(
@@ -60,10 +63,9 @@ public class RackViewModel: ViewModelBase, ICanQueueIcons, IDirtyHost
 
   public void Unload()
   {
-    Trace.TraceError("NYI: saving rack on unload");
-    //SaveShelvesIfModified();
-    //SaveDirtyTileLists();
-    //SaveIfDirty();
+    Trace.TraceWarning(
+      $"Unloading rack '{Name}' (and saving what needs saving)");
+    SaveDeep();
   }
 
   public ObservableCollection<ColumnViewModel> Columns { get; }
@@ -79,16 +81,25 @@ public class RackViewModel: ViewModelBase, ICanQueueIcons, IDirtyHost
     }
   }
 
-  ///// <summary>
-  ///// Gather all tile lists referenced in the rack by walking
-  ///// the shelves, tile lists and group tiles.
-  ///// </summary>
-  //public List<TileListViewModel> GatherTileLists()
-  //{
-  //  var tileLists = new Dictionary<Guid, TileListViewModel>();
-  //  GatherTileLists(tileLists);
-  //  return tileLists.Values.ToList();
-  //}
+  /// <summary>
+  /// Gather all tile lists referenced in the rack by walking
+  /// the shelves, tile lists and group tiles.
+  /// </summary>
+  public List<TileListViewModel> GatherTileLists()
+  {
+    var tileLists = new Dictionary<TickId, TileListViewModel>();
+    GatherTileLists(tileLists);
+    return tileLists.Values.ToList();
+  }
+
+  private void GatherTileLists(
+    Dictionary<TickId, TileListViewModel> tileLists)
+  {
+    foreach(var shelf in AllShelves())
+    {
+      shelf.GatherTileLists(tileLists);
+    }
+  }
 
   ///// <summary>
   ///// Get the current location of a shelf in this rack,
@@ -184,15 +195,6 @@ public class RackViewModel: ViewModelBase, ICanQueueIcons, IDirtyHost
   //    return null;
   //  }
   //  return column.Shelves[location.ShelfIndex];
-  //}
-
-  //private void GatherTileLists(
-  //  Dictionary<Guid, TileListViewModel> tileLists)
-  //{
-  //  foreach(var shelf in AllShelves())
-  //  {
-  //    shelf.GatherTileLists(tileLists);
-  //  }
   //}
 
   //public void SaveShelvesIfModified()
@@ -293,7 +295,16 @@ public class RackViewModel: ViewModelBase, ICanQueueIcons, IDirtyHost
     }
   }
 
-  public bool IsDirty { get; private set; }
+  /// <inheritdoc/>
+  public bool IsDirty {
+    get => _isDirty;
+    private set {
+      if(SetValueProperty(ref _isDirty, value))
+      {
+      }
+    }
+  }
+  private bool _isDirty;
 
   /// <summary>
   /// Implements <see cref="IDirtyHost.Save(bool)"/>.
@@ -306,13 +317,10 @@ public class RackViewModel: ViewModelBase, ICanQueueIcons, IDirtyHost
     if(IsDirty || !ifDirty)
     {
       Model.RebuildEntity();
-      var entity = Model.Entity;
-      Store.PutRack(entity);
-      if(IsDirty)
-      {
-        RaisePropertyChanged(nameof(IsDirty));
-        IsDirty = false;
-      }
+      Trace.TraceInformation(
+        $"Saving rack '{Model.RackName}' ({Model.Id})");
+      Store.PutRack(Model.Entity);
+      IsDirty = false;
     }
   }
 
@@ -325,12 +333,19 @@ public class RackViewModel: ViewModelBase, ICanQueueIcons, IDirtyHost
 
   public void SaveDirtyShelves(bool ifDirty = true)
   {
-    Trace.TraceError("NOT IMPLEMENTED: SaveDirtyShelves(). BETTER RESTORE THAT BACKUP.");
+    foreach(var shelf in AllShelves())
+    {
+      shelf.Save(ifDirty);
+    }
   }
 
   public void SaveDirtyTileLists(bool ifDirty = true)
   {
-    Trace.TraceError("NOT IMPLEMENTED: SaveDirtyTileLists(). BETTER RESTORE THAT BACKUP.");
+    var tileLists = GatherTileLists();
+    foreach(var tileList in tileLists)
+    {
+      tileList.Save(ifDirty);
+    }
   }
 
   public void MarkAsDirty()

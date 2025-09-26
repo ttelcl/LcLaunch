@@ -16,10 +16,12 @@ using LcLauncher.WpfUtilities;
 
 using LcLauncher.DataModel.Entities;
 using LcLauncher.IconTools;
+using LcLauncher.DataModel.ChangeTracking;
 
 namespace LcLauncher.Main.Rack.Tile;
 
-public class TileHostViewModel: ViewModelBase, ICanQueueIcons
+public class TileHostViewModel:
+  ViewModelBase, ICanQueueIcons, IDirtyPart
 {
   public TileHostViewModel(
     TileListViewModel tileList)
@@ -348,6 +350,13 @@ public class TileHostViewModel: ViewModelBase, ICanQueueIcons
     {
       icqi.QueueIcons(regenerate);
     }
+  }
+
+  public IDirtyHost DirtyHost => TileList;
+
+  public void MarkAsDirty()
+  {
+    DirtyHost.MarkAsDirty();
   }
 
   //public AppSelectorViewModel GetAppSelector()

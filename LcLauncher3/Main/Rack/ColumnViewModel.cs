@@ -20,7 +20,8 @@ using LcLauncher.WpfUtilities;
 
 namespace LcLauncher.Main.Rack;
 
-public class ColumnViewModel: ViewModelBase, ICanQueueIcons, IDirtyPart
+public class ColumnViewModel:
+  ViewModelBase, ICanQueueIcons, IDirtyPart, IWrapsModel<ColumnModel, ColumnData>
 {
   public ColumnViewModel(
     RackViewModel rack,

@@ -17,6 +17,8 @@ using Ttelcl.Persistence.API;
 namespace LcLauncher.Models;
 
 public class ShelfModel: IModel<ShelfData>
+// No need to implement IRebuildableModel<> because the VM updates the entity
+// directly
 {
   internal ShelfModel(
     ColumnModel column,
@@ -46,19 +48,5 @@ public class ShelfModel: IModel<ShelfData>
   public TickId Id => Entity.Id;
 
   public TileListModel PrimaryTiles { get; }
-
-
-  public void Save()
-  {
-    Store.PutShelf(Entity);
-    IsDirty = false;
-  }
-
-  public bool IsDirty { get; private set; }
-
-  public void MarkDirty()
-  {
-    IsDirty = true;
-  }
 
 }

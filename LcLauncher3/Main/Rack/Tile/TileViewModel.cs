@@ -13,10 +13,11 @@ using System.Windows.Input;
 using LcLauncher.WpfUtilities;
 
 using LcLauncher.DataModel.Entities;
+using LcLauncher.DataModel.ChangeTracking;
 
 namespace LcLauncher.Main.Rack.Tile;
 
-public abstract class TileViewModel: ViewModelBase /*, IIconLoadJobSource*/
+public abstract class TileViewModel: ViewModelBase, IDirtyPart
 {
   protected TileViewModel(
     TileListViewModel ownerList)
@@ -66,6 +67,7 @@ public abstract class TileViewModel: ViewModelBase /*, IIconLoadJobSource*/
   /// view model. This may be the original model the tile
   /// view model was created from, or a new model.
   /// In the case of an empty tile, this may be null.
+  /// ((named 'GetModel()' for historical reasons. GetEntity() would be better))
   /// </summary>
   public abstract TileData? GetModel();
 
@@ -73,25 +75,6 @@ public abstract class TileViewModel: ViewModelBase /*, IIconLoadJobSource*/
   {
     return Host != null && Host.IsKeyTile;
   }
-
-  ///// <summary>
-  ///// Create Icon Load jobs for this tile. The default
-  ///// implementation returns an empty list. Icon load jobs
-  ///// create missing icon(s), store them in the cache, and
-  ///// update the icon hashes in the tile data.
-  ///// </summary>
-  ///// <param name="reload">
-  ///// If true, reload the icon into the cache even if it
-  ///// already is known.
-  ///// </param>
-  ///// <returns></returns>
-  //public virtual IEnumerable<IconLoadJob> GetIconLoadJobs(
-  //  bool reload)
-  //{
-  //  return [];
-  //}
-
-  //public IconLoadQueue IconLoadQueue { get => OwnerList.IconLoadQueue; }
 
   public virtual void OnHoveringChanged(bool hovering)
   {
@@ -161,5 +144,12 @@ public abstract class TileViewModel: ViewModelBase /*, IIconLoadJobSource*/
     TileHostViewModel? newHost)
   {
     // do nothing
+  }
+
+  public IDirtyHost? DirtyHost => Host?.DirtyHost;
+
+  public void MarkAsDirty()
+  {
+    DirtyHost?.MarkAsDirty();
   }
 }

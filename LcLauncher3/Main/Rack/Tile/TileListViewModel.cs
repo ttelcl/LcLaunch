@@ -11,19 +11,21 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
+using Ttelcl.Persistence.API;
+
 using LcLauncher.DataModel;
-//using LcLauncher.IconUpdates;
+using LcLauncher.DataModel.ChangeTracking;
+using LcLauncher.DataModel.Entities;
+using LcLauncher.IconTools;
 using LcLauncher.Models;
 using LcLauncher.WpfUtilities;
-
-using LcLauncher.DataModel.Entities;
-using Ttelcl.Persistence.API;
-using LcLauncher.IconTools;
+using LcLauncher.DataModel.Store;
 
 namespace LcLauncher.Main.Rack.Tile;
 
 public class TileListViewModel:
-  ViewModelBase, ICanQueueIcons /*, IPersisted*/
+  ViewModelBase, ICanQueueIcons, IDirtyHost,
+  IRebuildableWrapModel<TileListModel, TileListData>
 {
 
   public TileListViewModel(
@@ -57,6 +59,8 @@ public class TileListViewModel:
   public ShelfViewModel Shelf { get; }
 
   public RackViewModel Rack => Shelf.Rack;
+
+  public LauncherRackStore Store => Shelf.Store;
 
   public TileListModel Model { get; }
 
@@ -194,12 +198,60 @@ public class TileListViewModel:
       !Tiles[^4].IsEmpty;
   }
 
+  /// <inheritdoc/>
   public void QueueIcons(bool regenerate)
   {
     foreach(var tile in Tiles)
     {
       tile.QueueIcons(regenerate);
     }
+  }
+
+  /// <inheritdoc/>
+  public bool IsDirty {
+    get => _isDirty;
+    private set {
+      if(SetValueProperty(ref _isDirty, value))
+      {
+      }
+    }
+  }
+  private bool _isDirty;
+
+  /// <inheritdoc/>
+  public void Save(bool ifDirty = true)
+  {
+    if(IsDirty || !ifDirty)
+    {
+      RebuildEntity();
+      Trace.TraceInformation(
+        $"Saving tile list {Model.Id}");
+      Store.PutTiles(Model.Entity);
+      IsDirty = false;
+    }
+  }
+
+  /// <inheritdoc/>
+  public void MarkAsDirty()
+  {
+    IsDirty = true;
+  }
+
+  /// <inheritdoc/>
+  public void RebuildEntity()
+  {
+    var model = Model;
+    var entity = model.Entity;
+    var newTiles = new List<TileData?>();
+    foreach(var tile in Tiles)
+    {
+      // GetModel() is exposed in the VM layer (although it could be reimplemented
+      // in the model layer)
+      newTiles.Add(tile.Tile?.GetModel());
+    }
+    entity.Tiles.Clear();
+    entity.Tiles.AddRange(newTiles);
+    MarkAsDirty();
   }
 
   //public bool AddEmptyRow()
@@ -308,23 +360,23 @@ public class TileListViewModel:
   //  InsertEmptyTile(index);
   //}
 
-  //internal void GatherTileLists(Dictionary<Guid, TileListViewModel> buffer)
-  //{
-  //  if(!buffer.ContainsKey(TileListId))
-  //  {
-  //    buffer.Add(TileListId, this);
-  //    foreach(var tile in Tiles)
-  //    {
-  //      if(tile.Tile != null && tile.Tile is GroupTileViewModel groupVm)
-  //      {
-  //        groupVm.ChildTiles.GatherTileLists(buffer);
-  //      }
-  //    }
-  //  }
-  //  else
-  //  {
-  //    Trace.TraceError(
-  //      $"Encountered duplicate tile list reference {TileListId}");
-  //  }
-  //}
+  internal void GatherTileLists(Dictionary<TickId, TileListViewModel> buffer)
+  {
+    if(!buffer.ContainsKey(TileListId))
+    {
+      buffer.Add(TileListId, this);
+      foreach(var tile in Tiles)
+      {
+        if(tile.Tile != null && tile.Tile is GroupTileViewModel groupVm)
+        {
+          groupVm.ChildTiles.GatherTileLists(buffer);
+        }
+      }
+    }
+    else
+    {
+      Trace.TraceError(
+        $"Encountered duplicate tile list reference {TileListId}");
+    }
+  }
 }

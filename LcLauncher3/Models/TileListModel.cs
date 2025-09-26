@@ -85,5 +85,4 @@ public class TileListModel: IModel<TileListData>
     var entity = rack.Store.GetTiles(id);
     return entity == null ? null : new TileListModel(rack, entity);
   }
-
 }
