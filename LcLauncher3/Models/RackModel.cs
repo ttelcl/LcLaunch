@@ -16,10 +16,10 @@ using Ttelcl.Persistence.API;
 
 namespace LcLauncher.Models;
 
-public class RackModel: IModel<RackData>
+public class RackModel: IRebuildableModel<RackData>
 {
   /// <summary>
-  /// Create a new RackModel3, using prepared components
+  /// Create a new RackModel, using prepared components
   /// </summary>
   public RackModel(
     LauncherRackStore store,
@@ -79,4 +79,19 @@ public class RackModel: IModel<RackData>
   public TickId Id => Entity.Id;
 
   public List<ColumnModel> Columns { get; }
+
+  public void RebuildEntity()
+  {
+    // Rack ID is immutable
+    // Rack name is immutable too (because it is used as the actual ID!)
+    // That leaves the columns to be rebuilt
+    var newColumnData = new List<ColumnData>();
+    foreach(var column in Columns)
+    {
+      column.RebuildEntity();
+      newColumnData.Add(column.Entity);
+    }
+    Entity.Columns.Clear();
+    Entity.Columns.AddRange(newColumnData);
+  }
 }

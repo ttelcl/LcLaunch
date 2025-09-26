@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows;
 
 using LcLauncher.DataModel;
+using LcLauncher.DataModel.ChangeTracking;
 using LcLauncher.DataModel.Entities;
 using LcLauncher.DataModel.Store;
 using LcLauncher.IconTools;
@@ -21,7 +22,7 @@ using LcLauncher.WpfUtilities;
 
 namespace LcLauncher.Main.Rack;
 
-public class RackViewModel: ViewModelBase, ICanQueueIcons/*, IPersisted*/
+public class RackViewModel: ViewModelBase, ICanQueueIcons, IDirtyHost
 {
 
   public RackViewModel(
@@ -35,9 +36,9 @@ public class RackViewModel: ViewModelBase, ICanQueueIcons/*, IPersisted*/
     Owner = owner;
     Model = model;
     Columns = [];
-    for(var i = 0; i < model.Columns.Count; i++)
+    foreach(var columnModel in model.Columns)
     {
-      var columnVm = new ColumnViewModel(this, i);
+      var columnVm = new ColumnViewModel(this, columnModel);
       Columns.Add(columnVm);
     }
     //Model.TraceClaimStatus();
@@ -67,16 +68,16 @@ public class RackViewModel: ViewModelBase, ICanQueueIcons/*, IPersisted*/
 
   public ObservableCollection<ColumnViewModel> Columns { get; }
 
-  //public IEnumerable<ShelfViewModel> AllShelves()
-  //{
-  //  foreach(var columnVm in Columns)
-  //  {
-  //    foreach(var shelfVm in columnVm.Shelves)
-  //    {
-  //      yield return shelfVm;
-  //    }
-  //  }
-  //}
+  public IEnumerable<ShelfViewModel> AllShelves()
+  {
+    foreach(var columnVm in Columns)
+    {
+      foreach(var shelfVm in columnVm.Shelves)
+      {
+        yield return shelfVm;
+      }
+    }
+  }
 
   ///// <summary>
   ///// Gather all tile lists referenced in the rack by walking
@@ -289,6 +290,55 @@ public class RackViewModel: ViewModelBase, ICanQueueIcons/*, IPersisted*/
     foreach(var column in Columns)
     {
       column.QueueIcons(regenerate);
+    }
+  }
+
+  public bool IsDirty { get; private set; }
+
+  /// <summary>
+  /// Implements <see cref="IDirtyHost.Save(bool)"/>.
+  /// This only saves the rack entity itself (including its columns),
+  /// but not its shelves and tile lists.
+  /// </summary>
+  /// <param name="ifDirty"></param>
+  public void Save(bool ifDirty = true)
+  {
+    if(IsDirty || !ifDirty)
+    {
+      Model.RebuildEntity();
+      var entity = Model.Entity;
+      Store.PutRack(entity);
+      if(IsDirty)
+      {
+        RaisePropertyChanged(nameof(IsDirty));
+        IsDirty = false;
+      }
+    }
+  }
+
+  public void SaveDeep(bool ifDirty = true)
+  {
+    Save(ifDirty);
+    SaveDirtyShelves(ifDirty);
+    SaveDirtyTileLists(ifDirty);
+  }
+
+  public void SaveDirtyShelves(bool ifDirty = true)
+  {
+    Trace.TraceError("NOT IMPLEMENTED: SaveDirtyShelves(). BETTER RESTORE THAT BACKUP.");
+  }
+
+  public void SaveDirtyTileLists(bool ifDirty = true)
+  {
+    Trace.TraceError("NOT IMPLEMENTED: SaveDirtyTileLists(). BETTER RESTORE THAT BACKUP.");
+  }
+
+  public void MarkAsDirty()
+  {
+    if(!IsDirty)
+    {
+      IsDirty = true;
+      RaisePropertyChanged(nameof(IsDirty));
     }
   }
 

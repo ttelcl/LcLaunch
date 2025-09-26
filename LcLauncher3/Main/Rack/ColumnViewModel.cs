@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
+using LcLauncher.DataModel.ChangeTracking;
 using LcLauncher.DataModel.Entities;
 using LcLauncher.IconTools;
 using LcLauncher.Models;
@@ -19,15 +20,14 @@ using LcLauncher.WpfUtilities;
 
 namespace LcLauncher.Main.Rack;
 
-public class ColumnViewModel: ViewModelBase, ICanQueueIcons
+public class ColumnViewModel: ViewModelBase, ICanQueueIcons, IDirtyPart
 {
   public ColumnViewModel(
     RackViewModel rack,
-    int columnIndex)
+    ColumnModel columnModel)
   {
     Rack = rack;
-    Model = rack.Model.Columns[columnIndex];
-    ColumnIndex = columnIndex;
+    Model = columnModel;
     Shelves = new ObservableCollection<ShelfViewModel>();
     foreach(var shelf in Model.Shelves)
     {
@@ -50,8 +50,6 @@ public class ColumnViewModel: ViewModelBase, ICanQueueIcons
 
   public RackViewModel Rack { get; }
 
-  public int ColumnIndex { get; }
-
   internal ColumnModel Model { get; }
 
   public ObservableCollection<ShelfViewModel> Shelves { get; }
@@ -62,6 +60,13 @@ public class ColumnViewModel: ViewModelBase, ICanQueueIcons
     {
       shelf.QueueIcons(regenerate);
     }
+  }
+
+  public IDirtyHost DirtyHost => Rack;
+
+  public void MarkAsDirty()
+  {
+    DirtyHost.MarkAsDirty();
   }
 
   //internal void MoveShelf(

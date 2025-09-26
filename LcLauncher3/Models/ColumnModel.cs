@@ -15,17 +15,17 @@ using Ttelcl.Persistence.API;
 
 namespace LcLauncher.Models;
 
-public class ColumnModel
+public class ColumnModel: IRebuildableModel<ColumnData>
 {
   internal ColumnModel(
     RackModel rack,
     ColumnData columnEntity)
   {
     Rack = rack;
-    ColumnEntity = columnEntity;
+    Entity = columnEntity;
     Shelves = new List<ShelfModel>();
     var store = Rack.Store;
-    foreach(var shelfId in ColumnEntity.Shelves)
+    foreach(var shelfId in Entity.Shelves)
     {
       var shelfEntity = store.GetShelf(shelfId);
       if(shelfEntity == null)
@@ -42,9 +42,23 @@ public class ColumnModel
 
   public RackModel Rack { get; }
 
-  public ColumnData ColumnEntity { get; }
+  public ColumnData Entity { get; }
 
-  public TickId Id => ColumnEntity.Id;
+  public string ColumnTitle {
+    get => Entity.Title;
+    set => Entity.Title = value;
+  }
+
+  public TickId Id => Entity.Id;
 
   public List<ShelfModel> Shelves { get; }
+
+  public void RebuildEntity()
+  {
+    // Entity.Id is immutable
+    // Entity.Title is already 'hot'
+    // Rebuild shelf id list
+    Entity.Shelves.Clear();
+    Entity.Shelves.AddRange(Shelves.Select(shelfModel => shelfModel.Id));
+  }
 }

@@ -26,3 +26,14 @@ public interface IModel<TEntity>: IHasTickId
   TEntity Entity { get; }
 }
 
+public interface IRebuildableModel<TEntity>: IModel<TEntity>
+  where TEntity : class, IHasTickId
+{
+  /// <summary>
+  /// Reconstruct the <see cref="IModel{TEntity}"/>'s
+  /// <see cref="IModel{TEntity}.Entity"/> to match latest edits,
+  /// reading for saving to the persistence layer.
+  /// </summary>
+  void RebuildEntity();
+}
+
