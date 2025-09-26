@@ -247,30 +247,30 @@ public class ShelfViewModel:
   public string ShelfExpandedIcon =>
     IsExpanded ? "ChevronUpCircleOutline" : "ChevronDownCircleOutline";
 
-  private ShelfView? Host { get; set; }
+  private ShelfView? View { get; set; }
 
-  internal void UpdateHost(ShelfView? host)
+  internal void UpdateView(ShelfView? view)
   {
-    if(host == null)
+    if(view == null)
     {
       Trace.TraceInformation(
-        "ShelfViewModel.UpdateHost: Clearing host control");
-      Host = null;
+        "ShelfViewModel.UpdateHost: Clearing host (view) control");
+      View = null;
     }
     else
     {
       Trace.TraceInformation(
-        "ShelfViewModel.UpdateHost: Setting host control");
-      Host = host;
+        "ShelfViewModel.UpdateHost: Setting host (view) control");
+      View = view;
       SetTheme("Dark." + Theme);
     }
   }
 
   private void SetTheme(string? theme)
   {
-    if(Host == null)
+    if(View == null)
     {
-      //Trace.TraceWarning("SetTheme: Host control is null");
+      //Trace.TraceWarning("SetTheme: Host (View) control is null");
       return;
     }
     if(string.IsNullOrEmpty(theme))
@@ -278,7 +278,7 @@ public class ShelfViewModel:
       Trace.TraceWarning("SetTheme: Theme is null or empty");
       return;
     }
-    ThemeManager.Current.ChangeTheme(Host, theme);
+    ThemeManager.Current.ChangeTheme(View, theme);
   }
 
   public string TileListOwnerLabel { get => $"Shelf {ShelfId}"; }
