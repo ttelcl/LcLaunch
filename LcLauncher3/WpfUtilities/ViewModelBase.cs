@@ -126,7 +126,7 @@ public abstract class ViewModelBase: INotifyPropertyChanged
   /// Raise the PropertChanged event for a value type if the old value and new value
   /// are different. 
   /// </summary>
-  protected bool CheckValueChanged<T>(
+  protected bool ValueChanged<T>(
     T oldValue,
     T newValue,
     [CallerMemberName] string propertyName = "")
@@ -146,7 +146,7 @@ public abstract class ViewModelBase: INotifyPropertyChanged
   /// Raise the PropertyChanged event for a non-nullable reference type if
   /// the old value and new value are different instances
   /// </summary>
-  protected bool CheckInstanceChanged<T>(
+  protected bool InstanceChanged<T>(
     T oldValue,
     T newValue,
     [CallerMemberName] string propertyName = "") where T : class
@@ -166,7 +166,7 @@ public abstract class ViewModelBase: INotifyPropertyChanged
   /// Raise the PropertyChanged event for a non-nullable reference type if
   /// the old value and new value are different instances
   /// </summary>
-  protected bool CheckNullableInstanceChanged<T>(
+  protected bool NullableInstanceChanged<T>(
     T? oldValue,
     T? newValue,
     [CallerMemberName] string propertyName = "") where T : class
@@ -180,69 +180,5 @@ public abstract class ViewModelBase: INotifyPropertyChanged
       RaisePropertyChanged(propertyName);
       return true;
     }
-  }
-
-  protected bool SetWrappedValueProperty<T>(
-    WrappedValueProperty<T> wrapper,
-    T value,
-    [CallerMemberName] string propertyName = "")
-  {
-    if(wrapper.ChangeValue(value))
-    {
-      RaisePropertyChanged(propertyName);
-      return true;
-    }
-    else
-    {
-      return false;
-    }
-  }
-
-  protected bool SetWrappedInstanceProperty<T>(
-    WrappedInstanceProperty<T> wrapper,
-    T value,
-    [CallerMemberName] string propertyName = "")
-    where T : class
-  {
-    if(wrapper.ChangeValue(value))
-    {
-      RaisePropertyChanged(propertyName);
-      return true;
-    }
-    else
-    {
-      return false;
-    }
-  }
-
-  protected bool SetWrappedNullableInstanceProperty<T>(
-    WrappedNullableInstanceProperty<T> wrapper,
-    T? value,
-    [CallerMemberName] string propertyName = "")
-    where T : class?
-  {
-    if(wrapper.ChangeValue(value))
-    {
-      RaisePropertyChanged(propertyName);
-      return true;
-    }
-    else
-    {
-      return false;
-    }
-  }
-
-  public static WrappedValueProperty<T> WrapValueProperty<T>(
-    Func<T> getter,
-    Action<T> setter)
-  {
-    return new WrappedValueProperty<T>(getter, setter);
-  }
-
-  public static WrappedInstanceProperty<T> WrapInstanceProperty<T>(
-    Func<T> getter,
-    Action<T> setter) where T : class
-  {
-    return new WrappedInstanceProperty<T>(getter, setter);
   }
 }
