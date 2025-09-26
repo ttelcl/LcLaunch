@@ -42,14 +42,14 @@
                                     Width="20" Height="20"/>
                             </MenuItem.Icon>
                         </MenuItem>
-                        <!--<MenuItem Header="Insert Marked Shelf Here"
+                        <MenuItem Header="Insert Marked Shelf Here"
                                   Command="{Binding MoveMarkedShelfHereCommand}">
                             <MenuItem.Icon>
                                 <iconPacks:PackIconMaterial
                                     Kind="TrayArrowDown"
                                     Width="20" Height="20"/>
                             </MenuItem.Icon>
-                        </MenuItem>-->
+                        </MenuItem>
                         <!--<MenuItem Header="Create New Shelf Here"
                                   Command="{Binding CreateNewShelfHereCommand}">
                             <MenuItem.Icon>

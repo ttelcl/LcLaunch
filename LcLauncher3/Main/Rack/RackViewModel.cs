@@ -357,56 +357,92 @@ public class RackViewModel:
     }
   }
 
-  //public void MarkDirty()
-  //{
-  //  Model.MarkDirty();
-  //  RaisePropertyChanged(nameof(IsDirty));
-  //}
+  public ShelfLocation GetColumnTail(ColumnViewModel column)
+  {
+    if(!Columns.Contains(column))
+    {
+      throw new ArgumentException(
+        "Column is not part of this rack", nameof(column));
+    }
+    return new ShelfLocation(column, column.Shelves.Count);
+  }
 
-  //public void SaveIfDirty()
-  //{
-  //  if(IsDirty)
-  //  {
-  //    Trace.TraceInformation(
-  //      $"Saving rack metadata '{Name}'");
-  //    Model.RebuildRackData();
-  //    Model.Save();
-  //    RaisePropertyChanged(nameof(IsDirty));
-  //  }
-  //}
+  /// <summary>
+  /// Get the current location of a shelf in this rack,
+  /// or null if it is not in this rack.
+  /// </summary>
+  public ShelfLocation? GetShelfLocation(ShelfViewModel shelf)
+  {
+    foreach(var column in Columns)
+    {
+      for(int j = 0; j < column.Shelves.Count; j++)
+      {
+        if(column.Shelves[j] == shelf)
+        {
+          return new ShelfLocation(column, j);
+        }
+      }
+    }
+    return null;
+  }
 
-  //internal ShelfViewModel CreateNewShelf(
-  //  ShelfLocation location,
-  //  string? title = null,
-  //  string? initialTheme = null)
-  //{
-  //  initialTheme ??= Owner.DefaultTheme;
-  //  var columnVm = Columns[location.ColumnIndex];
-  //  if(location.ShelfIndex < 0
-  //    || location.ShelfIndex > columnVm.Shelves.Count)
-  //  {
-  //    throw new ArgumentOutOfRangeException(nameof(location));
-  //  }
-  //  var shelfGuid = Guid.NewGuid();
-  //  var shelfData = new Model2.ShelfData(
-  //    title ?? $"Unnamed shelf {shelfGuid}",
-  //    false,
-  //    initialTheme);
-  //  var shelfModel = new ShelfModel(
-  //    Model,
-  //    shelfGuid,
-  //    shelfData);
-  //  var shelfVm = new ShelfViewModel(this, shelfModel);
-  //  // Insert VM into the column
-  //  columnVm.Shelves.Insert(
-  //    location.ShelfIndex, shelfVm);
-  //  // Insert model into the column
-  //  columnVm.Model.Insert(
-  //    location.ShelfIndex, shelfModel);
-  //  shelfVm.MarkDirty();
-  //  shelfVm.SaveIfDirty();
-  //  MarkDirty();
-  //  SaveIfDirty();
-  //  return shelfVm;
-  //}
+  public void MoveShelf(ShelfLocation source, ShelfLocation destination)
+  {
+    if(!Columns.Contains(source.Column))
+    {
+      throw new ArgumentException(
+        "Source column is not part of this rack", nameof(source));
+    }
+    if(!Columns.Contains(destination.Column))
+    {
+      throw new ArgumentException(
+        "Source column is not part of this rack", nameof(destination));
+    }
+    var columnSource = source.Column;
+    var columnTarget = destination.Column;
+    // Check that the source is an existing shelf
+    if(source.ShelfIndex < 0
+      || source.ShelfIndex >= columnSource.Shelves.Count)
+    {
+      throw new ArgumentOutOfRangeException(nameof(source));
+    }
+    var maxDestinationIndex = columnTarget.Shelves.Count-1;
+    if(!Object.ReferenceEquals(columnSource, columnTarget))
+    {
+      // For different-column moves, the maximum destination index
+      // is the empty slot after the last shelf in the column.
+      maxDestinationIndex++;
+    }
+    // Check that the destination is an existing shelf or the tail
+    // of the column.
+    if(destination.ShelfIndex < 0
+      || destination.ShelfIndex > maxDestinationIndex)
+    {
+      throw new ArgumentOutOfRangeException(nameof(destination));
+    }
+    if(Object.ReferenceEquals(columnSource, columnTarget)
+      && source.ShelfIndex == destination.ShelfIndex)
+    {
+      MessageBox.Show(
+        "Source and destination shelf are the same");
+    }
+    columnSource.MoveShelf(
+      source.ShelfIndex, columnTarget, destination.ShelfIndex);
+  }
+
+  public ShelfViewModel? GetShelfByLocation(ShelfLocation location)
+  {
+    var column = location.Column;
+    if(!Columns.Contains(column))
+    {
+      throw new ArgumentException(
+        "Column is not part of this rack", nameof(column));
+    }
+    if(location.ShelfIndex < 0 || location.ShelfIndex >= column.Shelves.Count)
+    {
+      return null;
+    }
+    return column.Shelves[location.ShelfIndex];
+  }
+
 }

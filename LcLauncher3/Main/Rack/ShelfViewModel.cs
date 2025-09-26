@@ -58,9 +58,9 @@ public class ShelfViewModel:
       p => {
         IsKeyShelf = Rack.KeyShelf != this;
       });
-    //MoveMarkedShelfHereCommand = new DelegateCommand(
-    //  p => MoveMarkedShelfHere(),
-    //  p => CanMoveMarkedShelfHere());
+    MoveMarkedShelfHereCommand = new DelegateCommand(
+      p => MoveMarkedShelfHere(),
+      p => CanMoveMarkedShelfHere());
     //CreateNewShelfHereCommand = new DelegateCommand(
     //  p => CreateNewShelfHere(),
     //  p => Rack.KeyShelf == null && Rack.KeyTile == null);
@@ -82,7 +82,7 @@ public class ShelfViewModel:
 
   public ICommand ToggleCutCommand { get; }
 
-  //public ICommand MoveMarkedShelfHereCommand { get; }
+  public ICommand MoveMarkedShelfHereCommand { get; }
 
   //public ICommand CreateNewShelfHereCommand { get; }
 
@@ -304,22 +304,22 @@ public class ShelfViewModel:
     return true;
   }
 
-  //private void MoveMarkedShelfHere()
-  //{
-  //  if(CanMoveMarkedShelfHere())
-  //  {
-  //    var keyShelf = Rack.KeyShelf!;
-  //    var sourceLocation = Rack.GetShelfLocation(keyShelf);
-  //    var destinationLocation = Rack.GetShelfLocation(this);
-  //    if(sourceLocation != null && destinationLocation != null)
-  //    {
-  //      Rack.MoveShelf(
-  //        sourceLocation.Value,
-  //        destinationLocation.Value);
-  //    }
-  //  }
-  //  Rack.KeyShelf = null;
-  //}
+  private void MoveMarkedShelfHere()
+  {
+    if(CanMoveMarkedShelfHere())
+    {
+      var keyShelf = Rack.KeyShelf!;
+      var sourceLocation = Rack.GetShelfLocation(keyShelf);
+      var destinationLocation = Rack.GetShelfLocation(this);
+      if(sourceLocation != null && destinationLocation != null)
+      {
+        Rack.MoveShelf(
+          sourceLocation.Value,
+          destinationLocation.Value);
+      }
+    }
+    Rack.KeyShelf = null;
+  }
 
   //private void CreateNewShelfHere()
   //{
