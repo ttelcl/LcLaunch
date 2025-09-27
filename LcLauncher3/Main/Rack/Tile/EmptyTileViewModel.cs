@@ -52,6 +52,10 @@ public class EmptyTileViewModel: TileViewModel
     //CreateAppTileCommand = new DelegateCommand(
     //  p => CreateAppTile(),
     //  p => CanCreateTile());
+    // Override:
+    ClickActionCommand = new DelegateCommand(
+      p => DefaultClickCommand(),
+      p => CanHandleDefaultClick());
   }
 
   /// <summary>
@@ -109,6 +113,35 @@ public class EmptyTileViewModel: TileViewModel
     {
       Host.DeleteTile();
     }
+  }
+
+  /// <summary>
+  /// Handle the click on this tile. Almost the same, as
+  /// Swap, but different feedback in case of errors.
+  /// </summary>
+  private void DefaultClickCommand()
+  {
+    if(Host == null || Rack.KeyTile == null || Host.IsKeyTile)
+    {
+      // fail silently for very unusual, unintended, or very common
+      // no-ops. All to avoid spam.
+      return;
+    }
+    if(!Host.SwapMarkedTileHereCommand.CanExecute(null))
+    {
+      MessageBox.Show(
+        "Cannot swap that tile here right now",
+        "Error");
+    }
+    else
+    {
+      Host.SwapMarkedTileHereCommand.Execute(null);
+    }
+  }
+
+  private bool CanHandleDefaultClick()
+  {
+    return Host != null && Rack.KeyTile != null;
   }
 
   private bool CanDeleteTile()
