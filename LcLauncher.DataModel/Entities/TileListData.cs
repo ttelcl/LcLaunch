@@ -62,5 +62,6 @@ public class TileListData: IJsonStorable
   /// <summary>
   /// The list of tiles
   /// </summary>
+  [JsonProperty("tiles")]
   public List<TileData?> Tiles { get; }
 }
