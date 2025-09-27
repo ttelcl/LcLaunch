@@ -21,12 +21,12 @@
                     <iconPacks:PackIconMaterial Kind="TrayArrowDown" Width="20" Height="20"/>
                 </MenuItem.Icon>
             </MenuItem>
-            <!--<MenuItem Header="Create New Shelf Here"
+            <MenuItem Header="Create New Shelf Here"
                       Command="{Binding CreateNewShelfHereCommand}">
                 <MenuItem.Icon>
                     <iconPacks:PackIconMaterial Kind="TrayPlus" Width="20" Height="20"/>
                 </MenuItem.Icon>
-            </MenuItem>-->
+            </MenuItem>
         </ContextMenu>
     </UserControl.ContextMenu>
     <StackPanel Orientation="Vertical">

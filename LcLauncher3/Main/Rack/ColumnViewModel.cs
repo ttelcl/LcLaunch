@@ -15,6 +15,7 @@ using System.Windows.Input;
 using LcLauncher.DataModel.ChangeTracking;
 using LcLauncher.DataModel.Entities;
 using LcLauncher.IconTools;
+using LcLauncher.Main.Rack.Editors;
 using LcLauncher.Models;
 using LcLauncher.WpfUtilities;
 
@@ -38,9 +39,9 @@ public class ColumnViewModel:
     MoveMarkedShelfHereCommand = new DelegateCommand(
       p => MoveMarkedShelfHere(),
       p => CanMoveMarkedShelfHere());
-    //CreateNewShelfHereCommand = new DelegateCommand(
-    //  p => CreateNewShelfHere(),
-    //  p => Rack.KeyShelf == null && Rack.KeyTile == null);
+    CreateNewShelfHereCommand = new DelegateCommand(
+      p => CreateNewShelfHere(),
+      p => Rack.KeyShelf == null && Rack.KeyTile == null);
   }
 
   /// <summary>
@@ -48,7 +49,7 @@ public class ColumnViewModel:
   /// </summary>
   public ICommand MoveMarkedShelfHereCommand { get; }
 
-  //public ICommand CreateNewShelfHereCommand { get; }
+  public ICommand CreateNewShelfHereCommand { get; }
 
   public RackViewModel Rack { get; }
 
@@ -189,11 +190,14 @@ public class ColumnViewModel:
     Rack.KeyShelf = null;
   }
 
-  //private void CreateNewShelfHere()
-  //{
-  //  var sourceLocation = Rack.GetColumnTail(this);
-  //  var _ = Rack.CreateNewShelf(sourceLocation, null);
-  //  // Todo: open editor
-  //}
+  private void CreateNewShelfHere()
+  {
+    // enforce preconditions
+    Rack.KeyTile = null;
+    Rack.KeyShelf = null;
+    var sourceLocation = Rack.GetColumnTail(this);
+    var shelf = Rack.CreateNewShelf(sourceLocation, null);
+    ShelfEditViewModel.Show(shelf);
+  }
 
 }

@@ -7,6 +7,7 @@
     xmlns:local="clr-namespace:LcLauncher.Main"
     xmlns:rack="clr-namespace:LcLauncher.Main.Rack"
     xmlns:tile="clr-namespace:LcLauncher.Main.Rack.Tile"
+    xmlns:edit="clr-namespace:LcLauncher.Main.Rack.Editors"
     mc:Ignorable="d" 
     xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
@@ -53,16 +54,16 @@
                 Header="{Binding EditorTitle}">
                 <ContentControl Content="{Binding}" MinHeight="200">
                     <ContentControl.Resources>
-                        <!--<DataTemplate DataType="{x:Type rack:ShelfEditViewModel}">
+                        <DataTemplate DataType="{x:Type edit:ShelfEditViewModel}">
                             <rack:ShelfEditView/>
-                        </DataTemplate>-->
-                        <!--<DataTemplate DataType="{x:Type tile:LaunchEditViewModel}">
+                        </DataTemplate>
+                        <!--<DataTemplate DataType="{x:Type edit:LaunchEditViewModel}">
                             <tile:LaunchEditView/>
                         </DataTemplate>-->
-                        <!--<DataTemplate DataType="{x:Type tile:GroupEditViewModel}">
+                        <!--<DataTemplate DataType="{x:Type edit:GroupEditViewModel}">
                             <tile:GroupEditView/>
                         </DataTemplate>-->
-                        <!--<DataTemplate DataType="{x:Type apps:AppSelectorViewModel}">
+                        <!--<DataTemplate DataType="{x:Type edit:AppSelectorViewModel}">
                             <apps:AppSelectorView/>
                         </DataTemplate>-->
                     </ContentControl.Resources>

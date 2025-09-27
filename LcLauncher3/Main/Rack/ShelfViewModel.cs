@@ -18,6 +18,8 @@ using LcLauncher.DataModel.ChangeTracking;
 using LcLauncher.DataModel.Entities;
 using LcLauncher.DataModel.Store;
 using LcLauncher.IconTools;
+using LcLauncher.Main.Rack.Editors;
+
 
 
 //using LcLauncher.IconUpdates;
@@ -62,15 +64,15 @@ public class ShelfViewModel:
     MoveMarkedShelfHereCommand = new DelegateCommand(
       p => MoveMarkedShelfHere(),
       p => CanMoveMarkedShelfHere());
-    //CreateNewShelfHereCommand = new DelegateCommand(
-    //  p => CreateNewShelfHere(),
-    //  p => Rack.KeyShelf == null && Rack.KeyTile == null);
-    //DeleteShelfCommand = new DelegateCommand(
-    //  p => DeleteShelf(),
-    //  p => CanDeleteShelf());
-    //EditShelfCommand = new DelegateCommand(
-    //  p => ShelfEditViewModel.Show(this),
-    //  p => Rack.KeyShelf == null && Rack.KeyTile == null);
+    CreateNewShelfHereCommand = new DelegateCommand(
+      p => CreateNewShelfHere(),
+      p => Rack.KeyShelf == null && Rack.KeyTile == null);
+    DeleteShelfCommand = new DelegateCommand(
+      p => DeleteShelf(),
+      p => CanDeleteShelf());
+    EditShelfCommand = new DelegateCommand(
+      p => ShelfEditViewModel.Show(this),
+      p => Rack.KeyShelf == null && Rack.KeyTile == null);
   }
 
   public ICommand SetThemeCommand { get; }
@@ -85,11 +87,11 @@ public class ShelfViewModel:
 
   public ICommand MoveMarkedShelfHereCommand { get; }
 
-  //public ICommand CreateNewShelfHereCommand { get; }
+  public ICommand CreateNewShelfHereCommand { get; }
 
-  //public ICommand DeleteShelfCommand { get; }
+  public ICommand DeleteShelfCommand { get; }
 
-  //public ICommand EditShelfCommand { get; }
+  public ICommand EditShelfCommand { get; }
 
   public RackViewModel Rack { get; }
 
@@ -293,11 +295,6 @@ public class ShelfViewModel:
   //public TileListOwnerTracker ClaimTracker { get; }
   public bool ClaimPriority { get => true; }
 
-  //internal void GatherTileLists(Dictionary<Guid, TileListViewModel> buffer)
-  //{
-  //  PrimaryTiles.GatherTileLists(buffer);
-  //}
-
   private bool CanMoveMarkedShelfHere()
   {
     if(Rack.KeyShelf == null)
@@ -328,16 +325,19 @@ public class ShelfViewModel:
     Rack.KeyShelf = null;
   }
 
-  //private void CreateNewShelfHere()
-  //{
-  //  var sourceLocation = Rack.GetShelfLocation(this);
-  //  if(sourceLocation == null)
-  //  {
-  //    return;
-  //  }
-  //  var _ = Rack.CreateNewShelf(sourceLocation.Value, null, Theme);
-  //  // Todo: open editor
-  //}
+  private void CreateNewShelfHere()
+  {
+    var sourceLocation = Rack.GetShelfLocation(this);
+    if(sourceLocation == null)
+    {
+      return;
+    }
+    // Enforce conditions for showing the editor
+    Rack.KeyShelf = null;
+    Rack.KeyTile = null;
+    var shelf = Rack.CreateNewShelf(sourceLocation.Value, null, Theme);
+    ShelfEditViewModel.Show(shelf);
+  }
 
   private bool CanDeleteShelf()
   {
@@ -359,7 +359,7 @@ public class ShelfViewModel:
   }
 
   /// <inheritdoc/>
-  public bool IsDirty { 
+  public bool IsDirty {
     get => _isDirty;
     private set {
       if(SetValueProperty(ref _isDirty, value))
@@ -396,46 +396,53 @@ public class ShelfViewModel:
     return PrimaryTiles.Tiles.All(t => t.IsEmpty);
   }
 
-  //private void DeleteShelf()
-  //{
-  //  if(CanDeleteShelf())
-  //  {
-  //    if(!GetIsEmpty())
-  //    {
-  //      var response = MessageBox.Show(
-  //        "This shelf is not empty. Do you really want to delete it?",
-  //        "Delete Shelf",
-  //        MessageBoxButton.YesNo,
-  //        MessageBoxImage.Warning);
-  //      if(response != MessageBoxResult.Yes)
-  //      {
-  //        return;
-  //      }
-  //    }
-  //    var sourceLocation = Rack.GetShelfLocation(this);
-  //    if(sourceLocation != null)
-  //    {
-  //      // We are about to detach this shelf from the rack.
-  //      // Make sure its persisted model is up to date (it may still
-  //      // be in use by other racks!)
-  //      SaveIfDirty();
+  private void DeleteShelf()
+  {
+    if(CanDeleteShelf())
+    {
+      if(!GetIsEmpty())
+      {
+        var response = MessageBox.Show(
+          "This shelf is not empty. Do you really want to delete it?",
+          "Delete Shelf",
+          MessageBoxButton.YesNo,
+          MessageBoxImage.Warning);
+        if(response != MessageBoxResult.Yes)
+        {
+          return;
+        }
+      }
+      var sourceLocation = Rack.GetShelfLocation(this);
+      if(sourceLocation != null)
+      {
+        // We are about to detach this shelf from the rack.
+        // Make sure its persisted model is up to date (as a backup)
+        // Also save all embedded tile lists. All saving is hard mode here,
+        // ensuring the file timestamps are similar
+        Save(false);
+        var tileLists = new Dictionary<TickId, TileListViewModel>();
+        GatherTileLists(tileLists);
+        foreach(var tileList in tileLists.Values)
+        {
+          tileList.Save(false);
+        }
 
-  //      var columnVm = Rack.Columns[sourceLocation.Value.ColumnIndex];
+        var columnVm = sourceLocation.Value.Column;
 
-  //      // Remove the shelf vm from the column
-  //      columnVm.Shelves.RemoveAt(sourceLocation.Value.ShelfIndex);
+        // Remove the shelf vm from the column
+        columnVm.Shelves.RemoveAt(sourceLocation.Value.ShelfIndex);
 
-  //      // Remove the shelf model from the column
-  //      columnVm.Model.RemoveAt(sourceLocation.Value.ShelfIndex);
+        // Remove the shelf model from the column
+        columnVm.Model.Shelves.RemoveAt(sourceLocation.Value.ShelfIndex);
 
-  //      Rack.MarkDirty();
-  //      Rack.SaveIfDirty();
+        Rack.MarkAsDirty();
+        Rack.Save();
 
-  //      // We don't delete the backing store content. The shelf
-  //      // may be in use elsewhere still.
-  //    }
-  //  }
-  //}
+        // We don't delete the backing store content, keeping it as
+        // a kind of backup.
+      }
+    }
+  }
 
   internal void GatherTileLists(Dictionary<TickId, TileListViewModel> buffer)
   {

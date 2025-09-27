@@ -456,4 +456,39 @@ public class RackViewModel:
     return column.Shelves[location.ShelfIndex];
   }
 
+  internal ShelfViewModel CreateNewShelf(
+    ShelfLocation location,
+    string? title = null,
+    string? initialTheme = null)
+  {
+    initialTheme ??= Owner.DefaultTheme;
+    var columnVm = location.Column;
+    if(location.ShelfIndex < 0
+      || location.ShelfIndex > columnVm.Shelves.Count)
+    {
+      throw new ArgumentOutOfRangeException(nameof(location));
+    }
+    var shelfId = TickId.New();
+    var shelfData = new ShelfData(
+      title ?? $"Unnamed shelf {shelfId}",
+      false,
+      initialTheme,
+      shelfId);
+    var shelfModel = new ShelfModel(
+      columnVm.Model,
+      shelfData);
+    var shelfVm = new ShelfViewModel(this, shelfModel);
+    // Insert VM into the column
+    columnVm.Shelves.Insert(
+      location.ShelfIndex, shelfVm);
+    // Insert model into the column
+    columnVm.Model.Shelves.Insert(
+      location.ShelfIndex, shelfModel);
+    shelfVm.MarkAsDirty();
+    shelfVm.Save();
+    MarkAsDirty();
+    Save();
+    return shelfVm;
+  }
+
 }

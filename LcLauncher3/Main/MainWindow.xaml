@@ -8,6 +8,7 @@
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     xmlns:local="clr-namespace:LcLauncher.Main"
     xmlns:rack="clr-namespace:LcLauncher.Main.Rack"
+    xmlns:edit="clr-namespace:LcLauncher.Main.Rack.Editors"
     TitleCharacterCasing="Normal"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance local:MainViewModel, IsDesignTimeCreatable=False}"
