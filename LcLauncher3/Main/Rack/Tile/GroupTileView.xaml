@@ -26,36 +26,36 @@
                     <iconPacks:PackIconMaterial Kind="{Binding ToggleGroupIcon}" Width="20" Height="20"/>
                 </MenuItem.Icon>
             </MenuItem>
-            <!--<MenuItem
+            <MenuItem
                 Header="Insert Empty Tile Here"
                 Command="{Binding Host.InsertEmptyTileCommand}">
                 <MenuItem.Icon>
                     <iconPacks:PackIconMaterial Kind="Egg" Width="20" Height="20"/>
                 </MenuItem.Icon>
-            </MenuItem>-->
+            </MenuItem>
             <Separator/>
-            <!--<MenuItem
-                Header="Properties..."
+            <MenuItem
+                Header="Properties (Edit) ..."
                 Command="{Binding EditGroupCommand}">
                 <MenuItem.Icon>
                     <iconPacks:PackIconMaterial Kind="Cog" Width="20" Height="20"/>
                 </MenuItem.Icon>
-            </MenuItem>-->
+            </MenuItem>
             <Separator/>
-            <!--<MenuItem
+            <MenuItem
                 Header="Add Tile Row"
                 Command="{Binding Host.TileList.AddEmptyRowCommand}">
                 <MenuItem.Icon>
                     <iconPacks:PackIconMaterial Kind="TableRowPlusAfter" Width="20" Height="20"/>
                 </MenuItem.Icon>
-            </MenuItem>-->
-            <!--<MenuItem
+            </MenuItem>
+            <MenuItem
                 Header="Remove Empty Tile Row"
                 Command="{Binding Host.TileList.RemoveLastEmptyRowCommand}">
                 <MenuItem.Icon>
                     <iconPacks:PackIconMaterial Kind="TableRowRemove" Width="20" Height="20"/>
                 </MenuItem.Icon>
-            </MenuItem>-->
+            </MenuItem>
             <Separator/>
             <MenuItem Header="Other">
                 <MenuItem Header="Update Icons"

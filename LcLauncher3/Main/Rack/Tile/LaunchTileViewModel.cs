@@ -19,6 +19,7 @@ using LcLauncher.DataModel.Utilities;
 
 using LcLauncher.DataModel.Entities;
 using LcLauncher.IconTools;
+using LcLauncher.Main.Rack.Editors;
 
 namespace LcLauncher.Main.Rack.Tile;
 
@@ -53,10 +54,10 @@ public class LaunchTileViewModel:
     _title = Model.GetEffectiveTitle();
     _tooltip = Model.GetEffectiveTooltip();
     GroupTileAdapter = new GroupTileAdapterViewModel(IconSmall);
-    
-    //EditCommandNew = new DelegateCommand(
-    //  p => StartEditNew(),
-    //  p => CanEditNew());
+
+    EditCommandNew = new DelegateCommand(
+      p => StartEditNew(),
+      p => CanEditNew());
     FixIconCommand = new DelegateCommand(
       p => QueueIcon(IconLoadLevel.System, false),
       p => Host != null && !Host.Rack.HasMarkedItems);
@@ -78,7 +79,7 @@ public class LaunchTileViewModel:
     return new LaunchTileViewModel(ownerList, model);
   }
 
-  //public ICommand EditCommandNew { get; }
+  public ICommand EditCommandNew { get; }
 
   public ICommand FixIconCommand { get; }
 
@@ -330,16 +331,16 @@ public class LaunchTileViewModel:
     };
   }
 
-  //private void StartEditNew()
-  //{
-  //  if(!CanEditNew())
-  //  {
-  //    return;
-  //  }
-  //  EditorViewModelBase editor;
-  //  editor = new LaunchEditViewModel(Host!);
-  //  editor.IsActive = true;
-  //}
+  private void StartEditNew()
+  {
+    if(!CanEditNew())
+    {
+      return;
+    }
+    EditorViewModelBase editor;
+    editor = new LaunchEditViewModel(Host!);
+    editor.IsActive = true;
+  }
 
   private void RunTile()
   {

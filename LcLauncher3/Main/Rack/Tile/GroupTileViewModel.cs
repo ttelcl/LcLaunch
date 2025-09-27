@@ -16,6 +16,7 @@ using LcLauncher.Models;
 using LcLauncher.WpfUtilities;
 
 using LcLauncher.DataModel.Entities;
+using LcLauncher.Main.Rack.Editors;
 
 namespace LcLauncher.Main.Rack.Tile;
 
@@ -39,9 +40,9 @@ public class GroupTileViewModel:
     //FixGraphCommand = new DelegateCommand(
     //  p => { ConditionalReplaceWithClone(); },
     //  p => IsConflicted);
-    //EditGroupCommand = new DelegateCommand(
-    //  p => EditGroup(),
-    //  p => !IsConflicted && !GetIsKeyTile());
+    EditGroupCommand = new DelegateCommand(
+      p => EditGroup(),
+      p => /*!IsConflicted &&*/ !GetIsKeyTile());
     ToggleCutCommand = new DelegateCommand(
       p => {
         if(Host != null)
@@ -55,8 +56,6 @@ public class GroupTileViewModel:
     RefreshIconJobsCommand = new DelegateCommand(
       p => QueueIcons(true));
     GroupIcons = new ObservableCollection<GroupIconViewModel>();
-    //var childModel = TileListModel.Load(
-    //  ownerList.Shelf.Rack.Model, model.TileListId);
     var childModel = TileListModel.Load(rackModel, model.TileListId);
     var dirty = false;
     if(childModel == null)
@@ -83,7 +82,7 @@ public class GroupTileViewModel:
 
   public ICommand ToggleGroupCommand { get; }
 
-  //public ICommand EditGroupCommand { get; }
+  public ICommand EditGroupCommand { get; }
 
   //public ICommand FixGraphCommand { get; }
 
@@ -244,14 +243,14 @@ public class GroupTileViewModel:
 
   // public bool IsConflicted { get => !this.OwnsTileList(); }
 
-  //public void EditGroup()
-  //{
-  //  if(Host != null)
-  //  {
-  //    var editor = new GroupEditViewModel(Host); // automatically picks up 'this'
-  //    editor.IsActive = true;
-  //  }
-  //}
+  public void EditGroup()
+  {
+    if(Host != null)
+    {
+      var editor = new GroupEditViewModel(Host); // automatically picks up 'this'
+      editor.IsActive = true;
+    }
+  }
 
   protected override void OnHostChanged(
     TileHostViewModel? oldHost, TileHostViewModel? newHost)

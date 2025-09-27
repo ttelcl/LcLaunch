@@ -16,7 +16,6 @@
     d:DataContext="{d:DesignInstance local:EditorViewModelBase, IsDesignTimeCreatable=False}"
     Background="{DynamicResource MahApps.Brushes.Gray9}"
     d:DesignHeight="450" d:DesignWidth="800">
-    <!--xmlns:apps="clr-namespace:LcLauncher.Main.AppPicker"-->
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -58,12 +57,12 @@
                         <DataTemplate DataType="{x:Type edit:ShelfEditViewModel}">
                             <rack:ShelfEditView/>
                         </DataTemplate>
-                        <!--<DataTemplate DataType="{x:Type edit:LaunchEditViewModel}">
-                            <tile:LaunchEditView/>
-                        </DataTemplate>-->
-                        <!--<DataTemplate DataType="{x:Type edit:GroupEditViewModel}">
-                            <tile:GroupEditView/>
-                        </DataTemplate>-->
+                        <DataTemplate DataType="{x:Type edit:LaunchEditViewModel}">
+                            <edit:LaunchEditView/>
+                        </DataTemplate>
+                        <DataTemplate DataType="{x:Type edit:GroupEditViewModel}">
+                            <edit:GroupEditView/>
+                        </DataTemplate>
                         <DataTemplate DataType="{x:Type apps:AppSelectorViewModel}">
                             <apps:AppSelectorView/>
                         </DataTemplate>
