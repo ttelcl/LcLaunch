@@ -32,8 +32,8 @@ public class TileHostViewModel:
         IsKeyTile = Rack.KeyTile != this;
       },
       p => Tile != null && Tile.CanSelectTile());
-    //InsertEmptyTileCommand = new DelegateCommand(
-    //  p => TileList.InsertEmptyTile(this));
+    InsertEmptyTileCommand = new DelegateCommand(
+      p => TileList.InsertEmptyTile(this));
     CopyMarkedTileHereCommand = new DelegateCommand(
       p => {
         if(CanCopyTileHere(Rack.KeyTile))
@@ -61,7 +61,7 @@ public class TileHostViewModel:
 
   public ICommand ToggleCutCommand { get; }
 
-  //public ICommand InsertEmptyTileCommand { get; }
+  public ICommand InsertEmptyTileCommand { get; }
 
   public ICommand CopyMarkedTileHereCommand { get; }
 
@@ -294,25 +294,25 @@ public class TileHostViewModel:
     return null;
   }
 
-  ///// <summary>
-  ///// Delete this tile from the list, destroying the original tile.
-  ///// Also pads the list to make the last row full again (i.e.: adds
-  ///// an empty tile at the end).
-  ///// </summary>
-  //public TileData? DeleteTile()
-  //{
-  //  if(IsKeyTile)
-  //  {
-  //    throw new InvalidOperationException(
-  //      "Cannot clear or delete the marked tile");
-  //  }
-  //  var oldData = Tile?.GetModel();
-  //  Tile = null;
-  //  TileList.Tiles.Remove(this);
-  //  TileList.PadRow();
-  //  TileList.MarkDirty();
-  //  return oldData;
-  //}
+  /// <summary>
+  /// Delete this tile from the list, destroying the original tile.
+  /// Also pads the list to make the last row full again (i.e.: adds
+  /// an empty tile at the end).
+  /// </summary>
+  public TileData? DeleteTile()
+  {
+    if(IsKeyTile)
+    {
+      throw new InvalidOperationException(
+        "Cannot clear or delete the marked tile");
+    }
+    var oldData = Tile?.GetModel();
+    Tile = null;
+    TileList.Tiles.Remove(this);
+    TileList.PadRow();
+    TileList.MarkAsDirty();
+    return oldData;
+  }
 
   public bool CanDeleteTile()
   {

@@ -46,18 +46,18 @@ public class TileListViewModel:
       Tiles.Add(host);
     }
 
-    //AddEmptyRowCommand = new DelegateCommand(
-    //  p => AddEmptyRow(),
-    //  p => CanAddEmptyRow());
-    //RemoveLastEmptyRowCommand = new DelegateCommand(
-    //  p => RemoveLastEmptyRow(),
-    //  p => CanRemoveLastEmptyRow());
-    //PadRow();
+    AddEmptyRowCommand = new DelegateCommand(
+      p => AddEmptyRow(),
+      p => CanAddEmptyRow());
+    RemoveLastEmptyRowCommand = new DelegateCommand(
+      p => RemoveLastEmptyRow(),
+      p => CanRemoveLastEmptyRow());
+    PadRow();
   }
 
-  //public ICommand AddEmptyRowCommand { get; }
+  public ICommand AddEmptyRowCommand { get; }
 
-  //public ICommand RemoveLastEmptyRowCommand { get; }
+  public ICommand RemoveLastEmptyRowCommand { get; }
 
   public ShelfViewModel Shelf { get; }
 
@@ -80,63 +80,6 @@ public class TileListViewModel:
     var keyTile = Rack.KeyTile;
     return keyTile!=null && Tiles.Contains(keyTile);
   }
-
-  //public TileListViewModel CreateClone()
-  //{
-  //  SaveIfDirty(); // make sure the model is up to date
-  //  var cloneModel = Model.CreateClone();
-  //  var clone = new TileListViewModel(
-  //    Rack.IconLoadQueue,
-  //    Shelf,
-  //    cloneModel);
-  //  return clone;
-  //}
-
-  ///// <summary>
-  ///// Rebuild the persisted model from the viewmodels
-  ///// </summary>
-  //public void RebuildModel()
-  //{
-  //  var newTiles = new List<TileData?>();
-  //  foreach(var tile in Tiles)
-  //  {
-  //    newTiles.Add(tile?.Tile?.GetModel());
-  //  }
-  //  Model.RawTiles.Clear();
-  //  Model.RawTiles.AddRange(newTiles);
-  //  Model.MarkDirty();
-  //}
-
-  ///// <summary>
-  ///// Save, without rebuilding the model (assuming it is already)
-  ///// </summary>
-  //private void SaveRaw()
-  //{
-  //  Trace.TraceInformation(
-  //    $"Saving tile list {Model.Id}");
-  //  Model.SaveRawModel();
-  //  RaisePropertyChanged(nameof(IsDirty));
-  //}
-
-  ///// <inheritdoc/>
-  //public void MarkDirty()
-  //{
-  //  Model.MarkDirty();
-  //  RaisePropertyChanged(nameof(IsDirty));
-  //}
-
-  ///// <inheritdoc/>
-  //public void SaveIfDirty()
-  //{
-  //  if(IsDirty)
-  //  {
-  //    RebuildModel();
-  //    SaveRaw();
-  //  }
-  //}
-
-  ///// <inheritdoc/>
-  //public bool IsDirty => Model.IsDirty;
 
   /// <summary>
   /// True if there is at least one tile and the last tile
@@ -259,111 +202,110 @@ public class TileListViewModel:
     MarkAsDirty();
   }
 
-  //public bool AddEmptyRow()
-  //{
-  //  if(CanAddEmptyRow())
-  //  {
-  //    for(var i = 0; i < 4; i++)
-  //    {
-  //      var host = new TileHostViewModel(this);
-  //      host.Tile = new EmptyTileViewModel(this, Model2.TileData.EmptyTile());
-  //      Tiles.Add(host);
-  //    }
-  //    MarkDirty();
-  //    //SaveIfDirty(); // TODO: use autosave instead
-  //    return true;
-  //  }
-  //  return false;
-  //}
+  public bool AddEmptyRow()
+  {
+    if(CanAddEmptyRow())
+    {
+      for(var i = 0; i < 4; i++)
+      {
+        var host = new TileHostViewModel(this);
+        host.Tile = new EmptyTileViewModel(this, TileData.EmptyTile());
+        Tiles.Add(host);
+      }
+      MarkAsDirty();
+      return true;
+    }
+    return false;
+  }
 
-  //public bool RemoveLastEmptyRow()
-  //{
-  //  if(CanRemoveLastEmptyRow())
-  //  {
-  //    Tiles.RemoveAt(Tiles.Count - 1);
-  //    Tiles.RemoveAt(Tiles.Count - 1);
-  //    Tiles.RemoveAt(Tiles.Count - 1);
-  //    Tiles.RemoveAt(Tiles.Count - 1);
-  //    MarkDirty();
-  //    //SaveIfDirty(); // TODO: use autosave instead
-  //    return true;
-  //  }
-  //  return false;
-  //}
+  public bool RemoveLastEmptyRow()
+  {
+    if(CanRemoveLastEmptyRow())
+    {
+      Tiles.RemoveAt(Tiles.Count - 1);
+      Tiles.RemoveAt(Tiles.Count - 1);
+      Tiles.RemoveAt(Tiles.Count - 1);
+      Tiles.RemoveAt(Tiles.Count - 1);
+      MarkAsDirty();
+      return true;
+    }
+    return false;
+  }
 
-  ///// <summary>
-  ///// Add empty tiles until the following properties hold:
-  ///// The number of tiles is a multiple of 4. And there is
-  ///// at least one row of tiles. If any changes were made,
-  ///// the model is rebuilt.
-  ///// </summary>
-  ///// <returns>
-  ///// True if the list was modified, false if it was already
-  ///// meeting the requirements. 
-  ///// </returns>
-  //public bool PadRow()
-  //{
-  //  var rows = (Tiles.Count + 3) / 4;
-  //  if(rows < 1)
-  //  {
-  //    rows = 1;
-  //  }
-  //  var expectedTileCount = rows * 4;
-  //  var dirty = false;
-  //  while(Tiles.Count < expectedTileCount)
-  //  {
-  //    dirty = true;
-  //    var host = new TileHostViewModel(this);
-  //    host.Tile = new EmptyTileViewModel(this, Model2.TileData.EmptyTile());
-  //    Tiles.Add(host);
-  //  }
-  //  if(dirty)
-  //  {
-  //    RebuildModel();
-  //  }
-  //  return dirty;
-  //}
+  /// <summary>
+  /// Add empty tiles until the following properties hold:
+  /// The number of tiles is a multiple of 4. And there is
+  /// at least one row of tiles. If any changes were made,
+  /// the model is rebuilt.
+  /// </summary>
+  /// <returns>
+  /// True if the list was modified, false if it was already
+  /// meeting the requirements. 
+  /// </returns>
+  public bool PadRow()
+  {
+    var rows = (Tiles.Count + 3) / 4;
+    if(rows < 1)
+    {
+      rows = 1;
+    }
+    var expectedTileCount = rows * 4;
+    var dirty = false;
+    while(Tiles.Count < expectedTileCount)
+    {
+      dirty = true;
+      var host = new TileHostViewModel(this);
+      host.Tile = new EmptyTileViewModel(this, TileData.EmptyTile());
+      Tiles.Add(host);
+    }
+    if(dirty)
+    {
+      // MarkAsDirty(); // included in RebuildEntity()
+      RebuildEntity();
+    }
+    return dirty;
+  }
 
-  //public void InsertEmptyTile(int position)
-  //{
-  //  if(position < 0)
-  //  {
-  //    throw new ArgumentOutOfRangeException(nameof(position));
-  //  }
-  //  if(position >= Tiles.Count)
-  //  {
-  //    // Interpret this request 'creatively': add an entire row and be done
-  //    AddEmptyRow();
-  //    return;
-  //  }
-  //  if(LastTileIsEmpty())
-  //  {
-  //    // Remove the last empty tile to make space
-  //    Tiles.RemoveAt(Tiles.Count - 1);
-  //  }
-  //  else
-  //  {
-  //    AddEmptyRow();
-  //    // Remove the last empty tile to make space
-  //    Tiles.RemoveAt(Tiles.Count - 1);
-  //  }
-  //  var host = new TileHostViewModel(this);
-  //  host.Tile = new EmptyTileViewModel(this, Model2.TileData.EmptyTile());
-  //  Tiles.Insert(position, host);
-  //  MarkDirty();
-  //  //SaveIfDirty();
-  //}
+  public void InsertEmptyTile(int position)
+  {
+    if(position < 0)
+    {
+      throw new ArgumentOutOfRangeException(nameof(position));
+    }
+    if(position >= Tiles.Count)
+    {
+      // Interpret this request 'creatively': add an entire row and be done
+      AddEmptyRow();
+      return;
+    }
+    if(LastTileIsEmpty())
+    {
+      // Remove the last empty tile to make space
+      Tiles.RemoveAt(Tiles.Count - 1);
+    }
+    else
+    {
+      AddEmptyRow();
+      // Remove the last empty tile to make space
+      Tiles.RemoveAt(Tiles.Count - 1);
+    }
+    var host = new TileHostViewModel(this);
+    host.Tile = new EmptyTileViewModel(this, TileData.EmptyTile());
+    Tiles.Insert(position, host);
+    MarkAsDirty();
+    //SaveIfDirty();
+  }
 
-  //public void InsertEmptyTile(TileHostViewModel host)
-  //{
-  //  if(host.TileList != this)
-  //  {
-  //    throw new ArgumentException(
-  //      "Host does not belong to this tile list");
-  //  }
-  //  var index = Tiles.IndexOf(host);
-  //  InsertEmptyTile(index);
-  //}
+  public void InsertEmptyTile(TileHostViewModel host)
+  {
+    if(host.TileList != this)
+    {
+      throw new ArgumentException(
+        "Host does not belong to this tile list");
+    }
+    var index = Tiles.IndexOf(host);
+    InsertEmptyTile(index);
+  }
 
   internal void GatherTileLists(Dictionary<TickId, TileListViewModel> buffer)
   {

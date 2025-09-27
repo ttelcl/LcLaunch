@@ -95,36 +95,36 @@
                 </MenuItem.Icon>
             </MenuItem>
             <Separator/>
-            <!--<MenuItem
+            <MenuItem
                 Header="Insert New Empty Tile Here"
                 Command="{Binding Host.InsertEmptyTileCommand}">
                 <MenuItem.Icon>
                     <iconPacks:PackIconMaterial Kind="Egg" Width="20" Height="20"/>
                 </MenuItem.Icon>
-            </MenuItem>-->
-            <!--<MenuItem
+            </MenuItem>
+            <MenuItem
                 Header="Delete this Empty Tile"
                 Command="{Binding DeleteEmptyTileCommand}">
                 <MenuItem.Icon>
                     <iconPacks:PackIconMaterial Kind="EggOff" Width="20" Height="20"
                                                 Foreground="#FFFF4444"/>
                 </MenuItem.Icon>
-            </MenuItem>-->
+            </MenuItem>
             <Separator/>
-            <!--<MenuItem
+            <MenuItem
                 Header="Add Tile Row"
                 Command="{Binding Host.TileList.AddEmptyRowCommand}">
                 <MenuItem.Icon>
                     <iconPacks:PackIconMaterial Kind="TableRowPlusAfter" Width="20" Height="20"/>
                 </MenuItem.Icon>
-            </MenuItem>-->
-            <!--<MenuItem
+            </MenuItem>
+            <MenuItem
                 Header="Remove Empty Tile Row"
                 Command="{Binding Host.TileList.RemoveLastEmptyRowCommand}">
                 <MenuItem.Icon>
                     <iconPacks:PackIconMaterial Kind="TableRowRemove" Width="20" Height="20"/>
                 </MenuItem.Icon>
-            </MenuItem>-->
+            </MenuItem>
         </ContextMenu>
     </UserControl.ContextMenu>
     <Grid Background="#00000000">

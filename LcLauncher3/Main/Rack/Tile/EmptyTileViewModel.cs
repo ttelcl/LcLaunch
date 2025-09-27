@@ -31,9 +31,9 @@ public class EmptyTileViewModel: TileViewModel
   {
     Model = model;
     Icon = icon ?? FindIcon();
-    //DeleteEmptyTileCommand = new DelegateCommand(
-    //  p => DeleteTile(),
-    //  p => CanDeleteTile());
+    DeleteEmptyTileCommand = new DelegateCommand(
+      p => DeleteTile(),
+      p => CanDeleteTile());
     //CreateShortcutTileCommand = new DelegateCommand(
     //  p => CreateDocumentTile(true),
     //  p => CanCreateTile());
@@ -89,7 +89,7 @@ public class EmptyTileViewModel: TileViewModel
     };
   }
 
-  //public ICommand DeleteEmptyTileCommand { get; }
+  public ICommand DeleteEmptyTileCommand { get; }
 
   //public ICommand CreateGroupTileCommand { get; }
 
@@ -103,13 +103,13 @@ public class EmptyTileViewModel: TileViewModel
 
   //public ICommand TryPasteAsTileCommand { get; }
 
-  //private void DeleteTile()
-  //{
-  //  if(Host != null)
-  //  {
-  //    Host.DeleteTile();
-  //  }
-  //}
+  private void DeleteTile()
+  {
+    if(Host != null)
+    {
+      Host.DeleteTile();
+    }
+  }
 
   private bool CanDeleteTile()
   {
@@ -127,6 +127,7 @@ public class EmptyTileViewModel: TileViewModel
   //static Guid AppsFolderId = Guid.Parse("1e87508d-89c2-42f0-8a7e-645a0f50ca58");
   static Guid CommonStartMenuId =
     Guid.Parse("A4115719-D62E-491D-AA7C-E74B8BE3B067");
+
   public static FileDialogCustomPlace CommonStartMenuFolder =
     new FileDialogCustomPlace(CommonStartMenuId);
 

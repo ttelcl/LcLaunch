@@ -65,18 +65,18 @@
                             </MenuItem.Icon>
                         </MenuItem>-->
                         <Separator/>
-                        <!--<MenuItem Header="Add Tile Row"
+                        <MenuItem Header="Add Tile Row"
                                   Command="{Binding PrimaryTiles.AddEmptyRowCommand}">
                             <MenuItem.Icon>
                                 <iconPacks:PackIconMaterial Kind="TableRowPlusAfter" Width="20" Height="20"/>
                             </MenuItem.Icon>
-                        </MenuItem>-->
-                        <!--<MenuItem Header="Remove Empty Tile Row"
+                        </MenuItem>
+                        <MenuItem Header="Remove Empty Tile Row"
                                   Command="{Binding PrimaryTiles.RemoveLastEmptyRowCommand}">
                             <MenuItem.Icon>
                                 <iconPacks:PackIconMaterial Kind="TableRowRemove" Width="20" Height="20"/>
                             </MenuItem.Icon>
-                        </MenuItem>-->
+                        </MenuItem>
                         <Separator/>
                         <MenuItem Header="Other">
                             <MenuItem Header="Update Missing Icons"
