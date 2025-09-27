@@ -20,20 +20,20 @@
                     <iconPacks:PackIconMaterial Kind="{Binding Host.MarkTileIcon}" Width="20" Height="20"/>
                 </MenuItem.Icon>
             </MenuItem>
-            <!--<MenuItem
+            <MenuItem
                 Header="Swap Marked Tile Here"
                 Command="{Binding Host.SwapMarkedTileHereCommand}">
                 <MenuItem.Icon>
                     <iconPacks:PackIconMaterial Kind="ApplicationImport" Width="20" Height="20"/>
                 </MenuItem.Icon>
-            </MenuItem>-->
-            <!--<MenuItem
+            </MenuItem>
+            <MenuItem
                 Header="Copy Marked Tile Here"
                 Command="{Binding Host.CopyMarkedTileHereCommand}">
                 <MenuItem.Icon>
                     <iconPacks:PackIconMaterial Kind="ContentDuplicate" Width="20" Height="20"/>
                 </MenuItem.Icon>
-            </MenuItem>-->
+            </MenuItem>
             <!--<MenuItem
                 Header="Create New Group Tile Here"
                 Command="{Binding CreateGroupTileCommand}">
@@ -135,5 +135,15 @@
             Height="48" Width="48"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"/>
+        <Grid
+            Visibility="{Binding Host.IsKeyTile, Converter={StaticResource VisibleIfNot}}"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center">
+            <iconPacks:PackIconMaterial
+                Kind="TransferDown"
+                Visibility="{Binding Rack.KeyTile, Converter={StaticResource VisibleIfNotNull}}"
+                Foreground="{DynamicResource MahApps.Brushes.Accent2}"
+                Height="48" Width="48"/>
+        </Grid>
     </Grid>
 </UserControl>

@@ -34,24 +34,24 @@ public class TileHostViewModel:
       p => Tile != null && Tile.CanSelectTile());
     //InsertEmptyTileCommand = new DelegateCommand(
     //  p => TileList.InsertEmptyTile(this));
-    //CopyMarkedTileHereCommand = new DelegateCommand(
-    //  p => {
-    //    if(CanCopyTileHere(Rack.KeyTile))
-    //    {
-    //      CopyTileHere(Rack.KeyTile!);
-    //    }
-    //  },
-    //  p =>
-    //    CanCopyTileHere(Rack.KeyTile));
-    //SwapMarkedTileHereCommand = new DelegateCommand(
-    //  p => {
-    //    if(CanSwapTileHere(Rack.KeyTile))
-    //    {
-    //      SwapTileHere(Rack.KeyTile!);
-    //    }
-    //  },
-    //  p =>
-    //    CanSwapTileHere(Rack.KeyTile));
+    CopyMarkedTileHereCommand = new DelegateCommand(
+      p => {
+        if(CanCopyTileHere(Rack.KeyTile))
+        {
+          CopyTileHere(Rack.KeyTile!);
+        }
+      },
+      p =>
+        CanCopyTileHere(Rack.KeyTile));
+    SwapMarkedTileHereCommand = new DelegateCommand(
+      p => {
+        if(CanSwapTileHere(Rack.KeyTile))
+        {
+          SwapTileHere(Rack.KeyTile!);
+        }
+      },
+      p =>
+        CanSwapTileHere(Rack.KeyTile));
     //ConfirmAndClearTileCommand = new DelegateCommand(
     //  p => {
     //    var result = ConfirmAndClearTile();
@@ -63,9 +63,9 @@ public class TileHostViewModel:
 
   //public ICommand InsertEmptyTileCommand { get; }
 
-  //public ICommand CopyMarkedTileHereCommand { get; }
+  public ICommand CopyMarkedTileHereCommand { get; }
 
-  //public ICommand SwapMarkedTileHereCommand { get; }
+  public ICommand SwapMarkedTileHereCommand { get; }
 
   //public ICommand ConfirmAndClearTileCommand { get; }
 
@@ -237,62 +237,62 @@ public class TileHostViewModel:
       Tile is QuadTileViewModel;
   }
 
-  //public TileData? ReplaceTile(
-  //  TileData? newRawData)
-  //{
-  //  if(IsKeyTile)
-  //  {
-  //    throw new InvalidOperationException(
-  //      "Cannot edit the marked tile");
-  //  }
-  //  var oldRawData = Tile?.GetModel();
-  //  var tile = TileViewModel.Create(
-  //    TileList,
-  //    newRawData);
-  //  Tile = tile;
-  //  TileList.MarkDirty();
-  //  if(tile is LaunchTileViewModel launchTile)
-  //  {
-  //    launchTile.LoadIcon(IconLoadLevel.LoadIfMissing);
-  //  }
-  //  return oldRawData;
-  //}
+  public TileData? ReplaceTile(
+    TileData? newRawData)
+  {
+    if(IsKeyTile)
+    {
+      throw new InvalidOperationException(
+        "Cannot edit the marked tile");
+    }
+    var oldRawData = Tile?.GetModel();
+    var tile = TileViewModel.Create(
+      TileList,
+      newRawData);
+    Tile = tile;
+    MarkAsDirty();
+    if(tile is ICanQueueIcons iconQueuer)
+    {
+      iconQueuer.QueueIcons(false);
+    }
+    return oldRawData;
+  }
 
-  ///// <summary>
-  ///// Clear this tile to an empty tile, destroying the original tile.
-  ///// </summary>
-  //public TileData? ClearTile()
-  //{
-  //  return ReplaceTile(Model2.TileData.EmptyTile());
-  //}
+  /// <summary>
+  /// Clear this tile to an empty tile, destroying the original tile.
+  /// </summary>
+  private TileData? ClearTile()
+  {
+    return ReplaceTile(TileData.EmptyTile());
+  }
 
-  //public TileData? ConfirmAndClearTile()
-  //{
-  //  if(!IsKeyTile)
-  //  {
-  //    var result = MessageBox.Show(
-  //      "Are you sure you want to delete this tile?\n(This cannot be undone)",
-  //      "Delete Tile",
-  //      MessageBoxButton.YesNo,
-  //      MessageBoxImage.Warning);
-  //    if(result == MessageBoxResult.Yes)
-  //    {
-  //      if(Tile is GroupTileViewModel groupTile 
-  //        && Shelf.ActiveSecondaryTile == groupTile)
-  //      {
-  //        Shelf.ActiveSecondaryTile = null;
-  //      }
-  //      return ClearTile();
-  //    }
-  //    else
-  //    {
-  //      // user cancelled
-  //      return null;
-  //    }
-  //  }
-  //  // refused
-  //  return null;
-  //}
+  public TileData? ConfirmAndClearTile()
+  {
+    if(!IsKeyTile)
+    {
+      var result = MessageBox.Show(
+        "Are you sure you want to delete this tile?\n(This cannot be undone)",
+        "Delete Tile",
+        MessageBoxButton.YesNo,
+        MessageBoxImage.Warning);
+      if(result == MessageBoxResult.Yes)
+      {
+        if(Tile is GroupTileViewModel groupTile
+          && Shelf.ActiveSecondaryTile == groupTile)
+        {
+          Shelf.ActiveSecondaryTile = null;
+        }
+        return ClearTile();
+      }
+      else
+      {
+        // user cancelled
+        return null;
+      }
+    }
+    // refused
+    return null;
+  }
 
   ///// <summary>
   ///// Delete this tile from the list, destroying the original tile.
@@ -319,64 +319,64 @@ public class TileHostViewModel:
     return !IsKeyTile;
   }
 
-  //public TileData? CopyTileHere(
-  //  TileHostViewModel other)
-  //{
-  //  if(other == this)
-  //  {
-  //    throw new InvalidOperationException(
-  //      "Cannot copy a tile to itself");
-  //  }
-  //  if(IsKeyTile)
-  //  {
-  //    throw new InvalidOperationException(
-  //      "Cannot copy to the marked tile");
-  //  }
-  //  if(!IsEmpty)
-  //  {
-  //    throw new InvalidOperationException(
-  //      "Cannot copy tile here, because this tile is not empty");
-  //  }
-  //  if(other.IsGroupTile())
-  //  {
-  //    // this would create a duplicate tile list reference
-  //    throw new InvalidOperationException(
-  //      "Cannot 'copy' group tiles");
-  //  }
-  //  if(other.IsKeyTile)
-  //  {
-  //    // expected to be the normal case
-  //    other.IsKeyTile = false;
-  //  }
-  //  var newData = other.Tile?.GetModel();
-  //  return ReplaceTile(newData);
-  //}
+  public TileData? CopyTileHere(
+    TileHostViewModel other)
+  {
+    if(other == this)
+    {
+      throw new InvalidOperationException(
+        "Cannot copy a tile to itself");
+    }
+    if(IsKeyTile)
+    {
+      throw new InvalidOperationException(
+        "Cannot copy to the marked tile");
+    }
+    if(!IsEmpty)
+    {
+      throw new InvalidOperationException(
+        "Cannot copy tile here, because this tile is not empty");
+    }
+    if(other.IsGroupTile())
+    {
+      // this would create a duplicate tile list reference
+      throw new InvalidOperationException(
+        "Cannot 'copy' group tiles");
+    }
+    if(other.IsKeyTile)
+    {
+      // expected to be the normal case
+      other.IsKeyTile = false;
+    }
+    var newData = other.Tile?.GetModel();
+    return ReplaceTile(newData);
+  }
 
-  //public bool CanCopyTileHere(
-  //  TileHostViewModel? other)
-  //{
-  //  return
-  //    other != null
-  //    && other != this
-  //    && !IsKeyTile
-  //    && IsEmpty
-  //    && !other.IsGroupTile();
-  //}
+  public bool CanCopyTileHere(
+    TileHostViewModel? other)
+  {
+    return
+      other != null
+      && other != this
+      && !IsKeyTile
+      && IsEmpty
+      && !other.IsGroupTile();
+  }
 
-  //public void SwapTileHere(
-  //  TileHostViewModel other)
-  //{
-  //  if(other == this)
-  //  {
-  //    throw new InvalidOperationException(
-  //      "Cannot swap a tile with itself");
-  //  }
-  //  var otherData = other.Tile?.GetModel();
-  //  other.IsKeyTile = false;
-  //  IsKeyTile = false;
-  //  var hereData = ReplaceTile(otherData);
-  //  other.ReplaceTile(hereData);
-  //}
+  public void SwapTileHere(
+    TileHostViewModel other)
+  {
+    if(other == this)
+    {
+      throw new InvalidOperationException(
+        "Cannot swap a tile with itself");
+    }
+    var otherData = other.Tile?.GetModel();
+    other.IsKeyTile = false;
+    IsKeyTile = false;
+    var hereData = ReplaceTile(otherData);
+    other.ReplaceTile(hereData);
+  }
 
   public bool CanSwapTileHere(
     TileHostViewModel? other)

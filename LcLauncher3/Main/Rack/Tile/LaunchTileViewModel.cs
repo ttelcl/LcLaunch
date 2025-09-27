@@ -167,6 +167,7 @@ public class LaunchTileViewModel:
 
   public GroupTileAdapterViewModel GroupTileAdapter { get; }
 
+  /// <inheritdoc/>
   public void QueueIcons(bool regenerate)
   {
     if(regenerate)
