@@ -44,6 +44,8 @@ public abstract class TileViewModel: ViewModelBase, IDirtyPart
 
   public TileListViewModel OwnerList { get; }
 
+  public RackViewModel Rack => OwnerList.Rack;
+
   public TileHostViewModel? Host {
     get => _host;
     internal set {
@@ -81,6 +83,16 @@ public abstract class TileViewModel: ViewModelBase, IDirtyPart
     // do nothing
   }
 
+  /// <summary>
+  /// True if the tile can be selected.
+  /// True if there is a Host, but subclasses can be more restrictive.
+  /// </summary>
+  /// <returns></returns>
+  public virtual bool CanSelectTile()
+  {
+    return Host != null;
+  }
+
   private bool _hostHovering;
   public bool HostHovering {
     get => _hostHovering;
@@ -103,31 +115,35 @@ public abstract class TileViewModel: ViewModelBase, IDirtyPart
   /// </summary>
   public ICommand? ClickActionCommand { get; protected set; } = null;
 
-  /// <summary>
-  /// Called by host tile when the mouse button state changes and
-  /// <see cref="ClickActionCommand"/> is not null.
-  /// </summary>
-  /// <param name="down">
-  /// True at mouse-down, false at mouse-up.
-  /// </param>
-  public void MouseButtonChange(bool down)
-  {
-    //Trace.TraceInformation(
-    //  $"TileViewModel: MouseButtonChange {down}");
-    var trigger =
-      !down
-      && IsPrimed
-      && HostHovering
-      && Host!=null
-      && ClickActionCommand!=null;
-    IsPrimed = down && HostHovering && ClickActionCommand!=null;
-    if(trigger && ClickActionCommand!.CanExecute(null))
-    {
-      ClickActionCommand!.Execute(null);
-    }
-  }
+  ///// <summary>
+  ///// Called by host tile when the mouse button state changes and
+  ///// <see cref="ClickActionCommand"/> is not null.
+  ///// </summary>
+  ///// <param name="down">
+  ///// True at mouse-down, false at mouse-up.
+  ///// </param>
+  //public void MouseButtonChange(bool down, ModifierKeys modifierKeys)
+  //{
+  //  //Trace.TraceInformation(
+  //  //  $"TileViewModel: MouseButtonChange {down}");
+  //  var trigger =
+  //    !down
+  //    && IsPrimed
+  //    && HostHovering
+  //    && Host!=null
+  //    && ClickActionCommand!=null;
+  //  IsPrimed = down && HostHovering && ClickActionCommand!=null;
+  //  if(trigger && ClickActionCommand!.CanExecute(null))
+  //  {
+  //    ClickActionCommand!.Execute(null);
+  //  }
+  //}
 
-  private bool _isPrimed;
+  /// <summary>
+  /// A click on this tile is between mousedown and mouseup.
+  /// Managed through the tile host.
+  /// Used by the tile host and by this tile view itself.
+  /// </summary>
   public bool IsPrimed {
     get => _isPrimed;
     set {
@@ -136,6 +152,48 @@ public abstract class TileViewModel: ViewModelBase, IDirtyPart
         //Trace.TraceInformation(
         //  $"TileViewModel: IsPrimed changed to {value}");
       }
+    }
+  }
+  private bool _isPrimed;
+
+  /// <summary>
+  /// The tile host has detected a click on this tile
+  /// </summary>
+  /// <param name="modifierKeys"></param>
+  public void TileClicked(ModifierKeys modifierKeys)
+  {
+    if(Host != null)
+    {
+      if(Host.IsKeyTile)
+      {
+        // Click on key tile. Ignore tile specifics and deselect the tile
+        // instead.
+        Host.IsKeyTile = false;
+      }
+      else if(modifierKeys.HasFlag(ModifierKeys.Control))
+      {
+        // Control-click on tile that is not the key tile: make it the key tile
+        // if allowed.
+        if(CanSelectTile())
+        {
+          Host.IsKeyTile = true;
+        }
+        else
+        {
+          Trace.TraceWarning(
+            "Ignoring CTRL-Click because tile is denying being selected");
+        }
+      }
+      else
+      {
+        ClickActionCommand?.Execute(null);
+      }
+    }
+    else
+    {
+      // Should never happen
+      Trace.TraceError(
+        "Ignoring click on disconected tile");
     }
   }
 

@@ -282,6 +282,17 @@ public class RackViewModel:
   }
   private TileHostViewModel? _keyTile;
 
+
+  public TileHostViewModel? ClickTile {
+    get => _clickTile;
+    set {
+      if(SetNullableInstanceProperty(ref _clickTile, value))
+      {
+      }
+    }
+  }
+  private TileHostViewModel? _clickTile;
+
   public bool HasMarkedItems {
     get => KeyTile != null
       || KeyShelf != null;

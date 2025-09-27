@@ -19,18 +19,16 @@ using LcLauncher.DataModel.Entities;
 
 namespace LcLauncher.Main.Rack.Tile;
 
-public class GroupTileViewModel: TileViewModel, ICanQueueIcons /*, ITileListOwner*/
+public class GroupTileViewModel:
+  TileViewModel, ICanQueueIcons, ITileListOwner
 {
   public GroupTileViewModel(
     TileListViewModel ownerList,
     GroupData model)
     : base(ownerList)
   {
-    PostIconLoadId = Guid.NewGuid();
-    var rack = ownerList.Shelf.Rack.Model;
+    var rackModel = Rack.Model;
     //ClaimTracker = rack.GetClaimTracker(model.TileListId);
-    TileListOwnerLabel =
-      $"Group {PostIconLoadId} targeting {model.TileListId} from list {ownerList.Model.Id}";
     Model = model;
     ToggleGroupCommand = new DelegateCommand(
       p => IsActive = /*!IsConflicted
@@ -59,21 +57,25 @@ public class GroupTileViewModel: TileViewModel, ICanQueueIcons /*, ITileListOwne
     GroupIcons = new ObservableCollection<GroupIconViewModel>();
     //var childModel = TileListModel.Load(
     //  ownerList.Shelf.Rack.Model, model.TileListId);
-    var childModel = TileListModel.Load(rack, model.TileListId);
+    var childModel = TileListModel.Load(rackModel, model.TileListId);
+    var dirty = false;
     if(childModel == null)
     {
       Trace.TraceWarning(
         $"Creating missing tile list {model.TileListId}");
       childModel = TileListModel.Create(
-        rack, model.TileListId);
-      childModel.MarkDirty();
+        rackModel, model.TileListId);
+      dirty = true;
     }
     ChildTiles = new TileListViewModel(
-      //ownerList.Shelf.Rack.IconLoadQueue,
       ownerList.Shelf,
-      childModel);
-    // BEWARE: FIX THIS
-    //ChildTiles.SaveIfDirty();
+      childModel,
+      this);
+    if(dirty)
+    {
+      ChildTiles.MarkAsDirty();
+    }
+    ChildTiles.Save(true);
     ResetGroupIcons();
   }
 
@@ -89,7 +91,18 @@ public class GroupTileViewModel: TileViewModel, ICanQueueIcons /*, ITileListOwne
 
   public ICommand RefreshIconJobsCommand { get; }
 
-  public Guid PostIconLoadId { get; }
+  public override bool CanSelectTile()
+  {
+    return Host!=null && !IsActive;
+  }
+
+  public TileListViewModel ChildTiles { get; }
+
+  /// <inheritdoc/>
+  public TileListViewModel OwnedTiles => ChildTiles;
+
+  /// <inheritdoc/>
+  public TileListViewModel? ParentTiles => Host?.TileList;
 
   public override string PlainIcon { get => "DotsGrid"; }
 
@@ -168,7 +181,9 @@ public class GroupTileViewModel: TileViewModel, ICanQueueIcons /*, ITileListOwne
           {
             // Make sure the key tile does not go invisible
             // 'Unselect' it instead.
-            Host.Rack.KeyTile = null;
+            // This is also the first line guard against creating
+            // group tile loops.
+            Rack.KeyTile = null;
           }
         }
         RaisePropertyChanged(nameof(ToggleGroupIcon));
@@ -185,8 +200,6 @@ public class GroupTileViewModel: TileViewModel, ICanQueueIcons /*, ITileListOwne
   public string ToggleGroupText {
     get => IsActive ? "Hide Group" : "Show Group";
   }
-
-  public TileListViewModel ChildTiles { get; }
 
   public ObservableCollection<GroupIconViewModel> GroupIcons { get; }
 
@@ -225,8 +238,6 @@ public class GroupTileViewModel: TileViewModel, ICanQueueIcons /*, ITileListOwne
   //  return Model.TileListId;
   //}
 
-  public string TileListOwnerLabel { get; }
-
   // public TileListOwnerTracker ClaimTracker { get; }
 
   public bool ClaimPriority { get => false; }
@@ -263,6 +274,7 @@ public class GroupTileViewModel: TileViewModel, ICanQueueIcons /*, ITileListOwne
     }
   }
 
+  /// <inheritdoc/>
   public void QueueIcons(bool regenerate)
   {
     ChildTiles.QueueIcons(regenerate);

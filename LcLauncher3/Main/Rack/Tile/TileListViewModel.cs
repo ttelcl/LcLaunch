@@ -30,10 +30,12 @@ public class TileListViewModel:
 
   public TileListViewModel(
     ShelfViewModel shelf,
-    TileListModel model)
+    TileListModel model,
+    ITileListOwner owner)
   {
     Shelf = shelf;
     Model = model;
+    Owner = owner;
     TileListId = model.Id;
     Tiles = new ObservableCollection<TileHostViewModel>();
     foreach(var tile in model.Entity.Tiles)
@@ -43,6 +45,7 @@ public class TileListViewModel:
       host.Tile = tileVm;
       Tiles.Add(host);
     }
+
     //AddEmptyRowCommand = new DelegateCommand(
     //  p => AddEmptyRow(),
     //  p => CanAddEmptyRow());
@@ -59,6 +62,8 @@ public class TileListViewModel:
   public ShelfViewModel Shelf { get; }
 
   public RackViewModel Rack => Shelf.Rack;
+
+  public ITileListOwner Owner { get; }
 
   public LauncherRackStore Store => Shelf.Store;
 

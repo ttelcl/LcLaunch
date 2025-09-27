@@ -31,7 +31,7 @@ namespace LcLauncher.Main.Rack;
 
 public class ShelfViewModel:
   ViewModelBase, IHasTheme, ICanQueueIcons, IDirtyHost,
-  IWrapsModel<ShelfModel, ShelfData>
+  IWrapsModel<ShelfModel, ShelfData>, ITileListOwner
 {
   public ShelfViewModel(
     RackViewModel rack,
@@ -45,7 +45,8 @@ public class ShelfViewModel:
     _model = Model;
     PrimaryTiles = new TileListViewModel(
       this,
-      model.PrimaryTiles);
+      model.PrimaryTiles,
+      this);
     SetThemeCommand = new DelegateCommand(
       p => Theme = (p as string) ?? Rack.Owner.DefaultTheme);
     ToggleExpandedCommand = new DelegateCommand(
@@ -196,6 +197,12 @@ public class ShelfViewModel:
   public bool HasSecondaryTiles {
     get => _secondaryTiles != null;
   }
+
+  /// <inheritdoc/>
+  public TileListViewModel OwnedTiles => PrimaryTiles;
+
+  /// <inheritdoc/>
+  public TileListViewModel? ParentTiles => null;
 
   public string Theme {
     get => _theme;
@@ -434,5 +441,4 @@ public class ShelfViewModel:
   {
     PrimaryTiles.GatherTileLists(buffer);
   }
-
 }

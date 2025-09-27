@@ -30,7 +30,8 @@ public class TileHostViewModel:
     ToggleCutCommand = new DelegateCommand(
       p => {
         IsKeyTile = Rack.KeyTile != this;
-      });
+      },
+      p => Tile != null && Tile.CanSelectTile());
     //InsertEmptyTileCommand = new DelegateCommand(
     //  p => TileList.InsertEmptyTile(this));
     //CopyMarkedTileHereCommand = new DelegateCommand(
@@ -108,10 +109,16 @@ public class TileHostViewModel:
     set {
       if(SetValueProperty(ref _hovering, value))
       {
-        RaisePropertyChanged(nameof(Hovering));
         if(Tile != null)
         {
           Tile.HostHovering = value;
+          if(!value && Rack.ClickTile == this)
+          {
+            Trace.TraceInformation(
+              "Canceling click-in-progress because the mouse is no longer over the tile host");
+            Rack.ClickTile = null;
+          }
+          Tile.IsPrimed = Hovering && Rack.ClickTile == this;
         }
       }
     }
@@ -122,12 +129,47 @@ public class TileHostViewModel:
   /// Callback from the host view. Forwards to the tile,
   /// if any and able to handle clicks.
   /// </summary>
-  public void HostMouseButtonChanged(bool down)
+  public void HostMouseButtonChanged(bool down, ModifierKeys modifierKeys)
   {
-    if(Tile != null && Tile.ClickActionCommand != null)
+    if(down)
     {
-      Tile.MouseButtonChange(down);
+      if(Rack.ClickTile != null)
+      {
+        Trace.TraceWarning(
+          "Clearing unfinished tile click upon start of next mousedown");
+      }
+      Rack.ClickTile = this;
+      if(Tile != null)
+      {
+        Tile.IsPrimed = Hovering && Rack.ClickTile == this;
+      }
     }
+    else
+    {
+      var clickTileHost = Rack.ClickTile;
+      var tilePrimed = Tile != null && Tile.IsPrimed;
+      Rack.ClickTile = null;
+      if(Tile != null)
+      {
+        var valid =
+          clickTileHost == this
+          && tilePrimed;
+        Tile.IsPrimed = false;
+        if(valid)
+        {
+          Tile.TileClicked(modifierKeys);
+        }
+      }
+    }
+
+
+    //if(Tile != null)
+    //{
+    //  if(Tile.ClickActionCommand != null)
+    //  {
+    //    Tile.MouseButtonChange(down, modifierKeys);
+    //  }
+    //}
   }
 
   public bool IsKeyTile {
@@ -154,9 +196,9 @@ public class TileHostViewModel:
   private bool _isKeyTile = false;
 
   public string MarkTileText {
-    get => IsKeyTile 
-      ? "Deselect Tile"
-      : "Select Tile";
+    get => IsKeyTile
+      ? "Deselect Tile (click)"
+      : "Select Tile (CTRL-click)";
   }
 
   public string MarkTileIcon { get => IsKeyTile ? "SelectOff" : "Select"; }

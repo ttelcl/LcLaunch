@@ -45,7 +45,7 @@ public partial class TileHostView: UserControl
   {
     if(e.ChangedButton == MouseButton.Left && DataContext is TileHostViewModel tile)
     {
-      tile.HostMouseButtonChanged(true);
+      tile.HostMouseButtonChanged(true, Keyboard.Modifiers);
     }
   }
 
@@ -53,7 +53,7 @@ public partial class TileHostView: UserControl
   {
     if(e.ChangedButton == MouseButton.Left && DataContext is TileHostViewModel tile)
     {
-      tile.HostMouseButtonChanged(false);
+      tile.HostMouseButtonChanged(false, Keyboard.Modifiers);
     }
   }
 

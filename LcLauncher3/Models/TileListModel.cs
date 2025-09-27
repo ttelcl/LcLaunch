@@ -42,13 +42,6 @@ public class TileListModel: IModel<TileListData>
 
   //public bool IsTopLevel => Entity.Id == Shelf.Id;
 
-  public bool IsDirty { get; private set; }
-
-  public void MarkDirty()
-  {
-    IsDirty = true;
-  }
-
   /// <summary>
   /// Create a brand new empty TileList, optionally using
   /// a predefined ID.
