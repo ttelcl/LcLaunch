@@ -156,6 +156,23 @@
                         Kind="{Binding MarkShelfIcon}"
                         Height="16" Width="16"/>
                 </ToggleButton>
+                <Grid
+                    DockPanel.Dock="Right"
+                    Margin="0,0,8,0"
+                    Visibility="{Binding Rack.KeyShelf, Converter={StaticResource VisibleIfNotNull}}"
+                    Width="20" Height="20">
+                    <Button
+                        MinWidth="20" MinHeight="20"
+                        BorderThickness="0"
+                        ToolTip="Insert Shelf Here"
+                        Command="{Binding MoveMarkedShelfHereCommand}"
+                        Visibility="{Binding IsKeyShelf, Converter={StaticResource VisibleIfNot}}"
+                        Style="{DynamicResource MahApps.Styles.Button.Circle}">
+                        <iconPacks:PackIconMaterial
+                            Kind="ArrowSplitHorizontal"
+                            Height="16" Width="16"/>
+                    </Button>
+                </Grid>
                 <Grid/>
                 <!-- Spacer -->
             </DockPanel>
