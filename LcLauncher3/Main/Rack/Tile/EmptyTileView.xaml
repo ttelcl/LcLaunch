@@ -34,13 +34,13 @@
                     <iconPacks:PackIconMaterial Kind="ContentDuplicate" Width="20" Height="20"/>
                 </MenuItem.Icon>
             </MenuItem>
-            <!--<MenuItem
+            <MenuItem
                 Header="Create New Group Tile Here"
                 Command="{Binding CreateGroupTileCommand}">
                 <MenuItem.Icon>
                     <iconPacks:PackIconMaterial Kind="DotsGrid" Width="20" Height="20"/>
                 </MenuItem.Icon>
-            </MenuItem>-->
+            </MenuItem>
             <MenuItem
                 Header="Create Launch Tile Here">
                 <Separator/>

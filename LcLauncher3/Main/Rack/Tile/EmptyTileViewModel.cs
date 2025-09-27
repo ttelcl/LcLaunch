@@ -18,6 +18,7 @@ using LcLauncher.WpfUtilities;
 //using LcLauncher.Main.AppPicker;
 
 using LcLauncher.DataModel.Entities;
+using LcLauncher.Main.Rack.Editors;
 
 namespace LcLauncher.Main.Rack.Tile;
 
@@ -34,6 +35,9 @@ public class EmptyTileViewModel: TileViewModel
     DeleteEmptyTileCommand = new DelegateCommand(
       p => DeleteTile(),
       p => CanDeleteTile());
+    CreateGroupTileCommand = new DelegateCommand(
+      p => CreateGroupTile(),
+      p => CanCreateTile());
     //CreateShortcutTileCommand = new DelegateCommand(
     //  p => CreateDocumentTile(true),
     //  p => CanCreateTile());
@@ -42,9 +46,6 @@ public class EmptyTileViewModel: TileViewModel
     //  p => CanCreateTile());
     //CreateExecutableTileCommand = new DelegateCommand(
     //  p => CreateExecutableTile(),
-    //  p => CanCreateTile());
-    //CreateGroupTileCommand = new DelegateCommand(
-    //  p => CreateGroupTile(),
     //  p => CanCreateTile());
     //TryPasteAsTileCommand = new DelegateCommand(
     //  p => CreateLauncherFromClipboard(),
@@ -95,7 +96,7 @@ public class EmptyTileViewModel: TileViewModel
 
   public ICommand DeleteEmptyTileCommand { get; }
 
-  //public ICommand CreateGroupTileCommand { get; }
+  public ICommand CreateGroupTileCommand { get; }
 
   //public ICommand CreateShortcutTileCommand { get; }
 
@@ -157,8 +158,7 @@ public class EmptyTileViewModel: TileViewModel
       && Host.Rack.KeyShelf == null;
   }
 
-  //static Guid AppsFolderId = Guid.Parse("1e87508d-89c2-42f0-8a7e-645a0f50ca58");
-  static Guid CommonStartMenuId =
+  static readonly Guid CommonStartMenuId =
     Guid.Parse("A4115719-D62E-491D-AA7C-E74B8BE3B067");
 
   public static FileDialogCustomPlace CommonStartMenuFolder =
@@ -347,15 +347,15 @@ public class EmptyTileViewModel: TileViewModel
   //  editModel.IsActive = true;
   //}
 
-  //private void CreateGroupTile()
-  //{
-  //  if(CanCreateTile())
-  //  {
-  //    var editModel = new GroupEditViewModel(
-  //      Host!);
-  //    editModel.IsActive = true;
-  //  }
-  //}
+  private void CreateGroupTile()
+  {
+    if(CanCreateTile())
+    {
+      var editModel = new GroupEditViewModel(
+        Host!);
+      editModel.IsActive = true;
+    }
+  }
 
   private void CreateAppTile()
   {
