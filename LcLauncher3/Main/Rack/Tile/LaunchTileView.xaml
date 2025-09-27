@@ -67,7 +67,7 @@
                 </MenuItem.Icon>
             </MenuItem>-->
             <Separator/>
-            <!--<MenuItem Header="Other">
+            <MenuItem Header="Other">
                 <MenuItem
                     Header="Fix missing icon"
                     Command="{Binding FixIconCommand}">
@@ -82,20 +82,20 @@
                         <iconPacks:PackIconMaterial Kind="ReloadAlert" Width="20" Height="20"/>
                     </MenuItem.Icon>
                 </MenuItem>
-            </MenuItem>-->
+            </MenuItem>
             <MenuItem Header="Danger Zone">
                 <MenuItem.Icon>
                     <iconPacks:PackIconMaterial Kind="AlertOutline" Width="20" Height="20"
                                                 Foreground="#FFFF4444"/>
                 </MenuItem.Icon>
-                <!--<MenuItem
+                <MenuItem
                     Header="Delete (and replace with empty tile)"
                     Command="{Binding Host.ConfirmAndClearTileCommand}">
                     <MenuItem.Icon>
                         <iconPacks:PackIconMaterial Kind="DeleteAlert" Width="20" Height="20"
                                                     Foreground="#FFFF4444"/>
                     </MenuItem.Icon>
-                </MenuItem>-->
+                </MenuItem>
             </MenuItem>
         </ContextMenu>
     </UserControl.ContextMenu>

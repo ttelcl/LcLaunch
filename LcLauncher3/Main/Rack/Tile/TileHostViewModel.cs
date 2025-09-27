@@ -52,11 +52,11 @@ public class TileHostViewModel:
       },
       p =>
         CanSwapTileHere(Rack.KeyTile));
-    //ConfirmAndClearTileCommand = new DelegateCommand(
-    //  p => {
-    //    var result = ConfirmAndClearTile();
-    //  },
-    //  p => !IsKeyTile);
+    ConfirmAndClearTileCommand = new DelegateCommand(
+      p => {
+        var result = ConfirmAndClearTile();
+      },
+      p => !IsKeyTile);
   }
 
   public ICommand ToggleCutCommand { get; }
@@ -67,7 +67,7 @@ public class TileHostViewModel:
 
   public ICommand SwapMarkedTileHereCommand { get; }
 
-  //public ICommand ConfirmAndClearTileCommand { get; }
+  public ICommand ConfirmAndClearTileCommand { get; }
 
   public TileListViewModel TileList { get; }
 
