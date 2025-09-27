@@ -103,6 +103,12 @@ public class GroupTileViewModel:
   /// <inheritdoc/>
   public TileListViewModel? ParentTiles => Host?.TileList;
 
+  /// <inheritdoc/>
+  public void OwnedTilesEdited()
+  {
+    ResetGroupIcons();
+  }
+
   public override string PlainIcon { get => "DotsGrid"; }
 
   public GroupData Model { get; }

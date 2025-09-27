@@ -30,6 +30,11 @@ public interface ITileListOwner
   /// The rack that this owner (and its tile list) is in
   /// </summary>
   RackViewModel Rack { get; }
+
+  /// <summary>
+  /// Callback after <see cref="OwnedTiles"/> has been edited
+  /// </summary>
+  void OwnedTilesEdited();
 }
 
 public static class TileListOwner

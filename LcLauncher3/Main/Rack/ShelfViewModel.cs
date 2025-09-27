@@ -206,6 +206,12 @@ public class ShelfViewModel:
   /// <inheritdoc/>
   public TileListViewModel? ParentTiles => null;
 
+  /// <inheritdoc/>
+  public void OwnedTilesEdited()
+  {
+    // no need to do anything
+  }
+
   public string Theme {
     get => _theme;
     set {

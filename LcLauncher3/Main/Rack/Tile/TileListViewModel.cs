@@ -183,6 +183,7 @@ public class TileListViewModel:
   public void MarkAsDirty()
   {
     IsDirty = true;
+    Owner.OwnedTilesEdited();
   }
 
   /// <inheritdoc/>
