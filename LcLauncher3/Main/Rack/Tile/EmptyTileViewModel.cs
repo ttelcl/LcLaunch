@@ -49,9 +49,9 @@ public class EmptyTileViewModel: TileViewModel
     //TryPasteAsTileCommand = new DelegateCommand(
     //  p => CreateLauncherFromClipboard(),
     //  p => CanCreateLauncherFromClipboardPrepared());
-    //CreateAppTileCommand = new DelegateCommand(
-    //  p => CreateAppTile(),
-    //  p => CanCreateTile());
+    CreateAppTileCommand = new DelegateCommand(
+      p => CreateAppTile(),
+      p => CanCreateTile());
     // Override:
     ClickActionCommand = new DelegateCommand(
       p => DefaultClickCommand(),
@@ -103,7 +103,7 @@ public class EmptyTileViewModel: TileViewModel
 
   //public ICommand CreateExecutableTileCommand { get; }
 
-  //public ICommand CreateAppTileCommand { get; }
+  public ICommand CreateAppTileCommand { get; }
 
   //public ICommand TryPasteAsTileCommand { get; }
 
@@ -357,14 +357,14 @@ public class EmptyTileViewModel: TileViewModel
   //  }
   //}
 
-  //private void CreateAppTile()
-  //{
-  //  if(CanCreateTile())
-  //  {
-  //    var selectorModel = Host!.GetAppSelector();
-  //    selectorModel.IsActive = true;
-  //  }
-  //}
+  private void CreateAppTile()
+  {
+    if(CanCreateTile())
+    {
+      var selectorModel = Host!.GetAppSelector();
+      selectorModel.IsActive = true;
+    }
+  }
 
   //private void CreateLauncherFromClipboard()
   //{

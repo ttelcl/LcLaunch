@@ -192,6 +192,7 @@ public class IconCache
   public class Writer: IDisposable
   {
     private IBlobBucketWriter? _writer;
+    private bool _disposed;
 
     internal Writer(IconCache cache)
     {
@@ -217,11 +218,12 @@ public class IconCache
 
     public void Dispose()
     {
-      if(_writer is not null)
+      if(!_disposed)
       {
         var writer = _writer;
         _writer = null;
-        writer.Dispose();
+        _disposed = true;
+        writer?.Dispose();
         GC.SuppressFinalize(this);
       }
     }

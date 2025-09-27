@@ -53,7 +53,7 @@
                         <iconPacks:PackIconMaterial Kind="ContentPaste" Width="20" Height="20"/>
                     </MenuItem.Icon>
                 </MenuItem>-->
-                <!--<MenuItem
+                <MenuItem
                     Header="Bind to Application..."
                     ToolTip="(select from your installed application list)"
                     ToolTipService.ShowOnDisabled="True"
@@ -61,7 +61,7 @@
                     <MenuItem.Icon>
                         <iconPacks:PackIconMaterial Kind="ApplicationOutline" Width="20" Height="20"/>
                     </MenuItem.Icon>
-                </MenuItem>-->
+                </MenuItem>
                 <!--<MenuItem
                     Header="Bind to Shortcut..."
                     ToolTip="(select shortcut file from your Start Menu or elsewhere)"

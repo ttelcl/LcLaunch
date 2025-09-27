@@ -17,6 +17,7 @@ using LcLauncher.WpfUtilities;
 using LcLauncher.DataModel.Entities;
 using LcLauncher.IconTools;
 using LcLauncher.DataModel.ChangeTracking;
+using LcLauncher.Main.AppPicker;
 
 namespace LcLauncher.Main.Rack.Tile;
 
@@ -401,8 +402,8 @@ public class TileHostViewModel:
     DirtyHost.MarkAsDirty();
   }
 
-  //public AppSelectorViewModel GetAppSelector()
-  //{
-  //  return new AppSelectorViewModel(Rack, this);
-  //}
+  public AppSelectorViewModel GetAppSelector()
+  {
+    return new AppSelectorViewModel(this);
+  }
 }
