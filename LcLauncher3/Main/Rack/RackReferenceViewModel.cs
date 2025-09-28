@@ -43,7 +43,9 @@ public class RackReferenceViewModel: ViewModelBase
   }
   private bool _isAmbiguous = false;
 
-  public string RackName => Key?.StoreName ?? "<no rack loaded>";
+  private const string __noRackName = "--- rack management ---";
+
+  public string RackName => Key?.StoreName ?? __noRackName;
 
   public string ProviderName => Key?.ProviderName ?? "-";
 
@@ -51,7 +53,7 @@ public class RackReferenceViewModel: ViewModelBase
     get {
       if(Key == null)
       {
-        return "<no rack loaded>";
+        return __noRackName;
       }
       return
         IsAmbiguous

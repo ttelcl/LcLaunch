@@ -41,6 +41,7 @@ public class MainViewModel: ViewModelBase
     }
 
     RackList = new RackListViewModel(this, configuration["defaultRack"]);
+    RackManager = new RackManagerViewModel(this);
     
     ProcessNextIconJobCommand = new DelegateCommand(
       p => ProcessNextIconJob(),
@@ -120,6 +121,8 @@ public class MainViewModel: ViewModelBase
   private bool _showDevPane;
 
   public RackListViewModel RackList { get; }
+
+  public RackManagerViewModel RackManager { get; }
 
   public void ActivateRackIconQueue()
   {
@@ -229,15 +232,5 @@ public class MainViewModel: ViewModelBase
       new HyperBucketStore(
         folder, [fsProvider]);
     return new LauncherHyperStore(hyperBucketStore);
-  }
-
-  private static void CreateRackIfMissing(
-    string rackName, string? providerName = null)
-  {
-    // Make sure there is at least one rack (named "default")
-    Trace.TraceError("TODO: create default rack if missing");
-
-    // Beware: this is called BEFORE the rack list is created.
-    // Better implement this in LauncherHyperStore.
   }
 }

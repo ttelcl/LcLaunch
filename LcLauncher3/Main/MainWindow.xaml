@@ -44,7 +44,7 @@
                 HorizontalAlignment="Center"
                 MinWidth="200"
                 BorderThickness="0"
-                Background="{DynamicResource MahApps.Brushes.Accent1}"
+                Background="{DynamicResource MahApps.Brushes.Accent4}"
                 Foreground="{DynamicResource MahApps.Brushes.Gray6}"
                 SelectedItem="{Binding RackList.Selected, Mode=TwoWay}"
                 DropDownOpened="RackList_DropDownOpened">
@@ -72,6 +72,12 @@
                 </ScrollViewer.Resources>
                 <rack:RackView DataContext="{Binding CurrentRack}"/>
             </ScrollViewer>
+            <Border
+                Visibility="{Binding CurrentRack, Converter={StaticResource VisibleIfNull}}"
+                BorderThickness="1"
+                BorderBrush="{DynamicResource MahApps.Brushes.Accent4}">
+                <rack:RackManagerView DataContext="{Binding RackManager}"/>
+            </Border>
             <local:EditorBaseView
                 Visibility="{Binding Converter={StaticResource VisibleIfNotNull}}"
                 DataContext="{Binding CurrentEditor}"/>
