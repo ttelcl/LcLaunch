@@ -89,12 +89,18 @@ public class LauncherRackStore
     {
       return rack;
     }
-    // Rack not yet initialized: create a new empty one
+    // Rack not yet initialized: create a new empty one, with one shelf
+    var shelf1Id = TickId.New();
+    var shelf1 = new ShelfData(
+      "Untitled Shelf", false, null, shelf1Id);
+    var shelf1Tiles = TileListData.CreateNew(shelf1Id);
+    PutShelf(shelf1);
+    PutTiles(shelf1Tiles);
     _rack = new RackData(
       TickId.New(),
       Key.StoreName,
       [
-        new ColumnData(TickId.New(), [], "Column 1"),
+        new ColumnData(TickId.New(), [ shelf1Id ], "Column 1"),
         new ColumnData(TickId.New(), [], "Column 2"),
         new ColumnData(TickId.New(), [], "Column 3"),
       ]);

@@ -127,7 +127,7 @@ public class RackListViewModel: ViewModelBase
   /// <summary>
   /// Try to select the rack based on the given command line argument.
   /// This current implementation expects a *.rack-json file
-  /// as used inside a store or a rack folder names. In case of a file
+  /// (as used inside a store) or a rack folder name. In case of a file
   /// name, its folder name is checked first (because that can
   /// disambiguate the case of multiple storage providers for the
   /// same rack name)
@@ -206,6 +206,12 @@ public class RackListViewModel: ViewModelBase
       return true;
     }
     return false;
+  }
+
+  public bool ContainsNamedRack(string rackName)
+  {
+    return _racks.Any(r => r.RackName.Equals(
+          rackName, StringComparison.OrdinalIgnoreCase));
   }
 
   /// <summary>

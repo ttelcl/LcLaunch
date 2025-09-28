@@ -33,11 +33,15 @@ public class MainViewModel: ViewModelBase
     HyperStore = InitHyperStore();
     DefaultStore = HyperStore.Backing.GetStore("default");
 
-    // Make sure there is at least one rack (named "default")
-    Trace.TraceError("TODO: create default rack if missing");
+    var created = HyperStore.CreateRackIfNotExists(
+      "default", HyperStore.Backing.DefaultProviderName);
+    if(created)
+    {
+      Trace.TraceWarning("Default rack created");
+    }
 
-    //Store.LoadOrCreateRack("default");
     RackList = new RackListViewModel(this, configuration["defaultRack"]);
+    
     ProcessNextIconJobCommand = new DelegateCommand(
       p => ProcessNextIconJob(),
       p => CanProcessNextIconJob());
@@ -225,5 +229,15 @@ public class MainViewModel: ViewModelBase
       new HyperBucketStore(
         folder, [fsProvider]);
     return new LauncherHyperStore(hyperBucketStore);
+  }
+
+  private static void CreateRackIfMissing(
+    string rackName, string? providerName = null)
+  {
+    // Make sure there is at least one rack (named "default")
+    Trace.TraceError("TODO: create default rack if missing");
+
+    // Beware: this is called BEFORE the rack list is created.
+    // Better implement this in LauncherHyperStore.
   }
 }

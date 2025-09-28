@@ -210,4 +210,13 @@ public class HyperBucketStore
   {
     return FindFolderStores().Where(sk => sk.StoreTag == storeTag);
   }
+
+  /// <summary>
+  /// Check if the argument is a known storage provider name
+  /// </summary>
+  public bool IsKnownProviderName(string providerName)
+  {
+    return _providerMap.ContainsKey(providerName);
+  }
+
 }
