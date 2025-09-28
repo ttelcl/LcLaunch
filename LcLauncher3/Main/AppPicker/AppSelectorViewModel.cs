@@ -16,6 +16,7 @@ using System.Windows.Data;
 using LcLauncher.DataModel;
 using LcLauncher.IconTools;
 using LcLauncher.Main.Rack;
+using LcLauncher.Main.Rack.Editors;
 using LcLauncher.Main.Rack.Tile;
 using LcLauncher.ShellApps;
 using LcLauncher.WpfUtilities;
@@ -249,23 +250,18 @@ public class AppSelectorViewModel: EditorViewModelBase
     {
       var app = SelectedApp!;
       var tileKind = SelectionTileKind!.Value;
-      //var editor2 = LaunchEditViewModel.CreateFromAppSelector(Target, app, tileKind);
-      //if(editor2 != null)
-      //{
-      //  IsActive = false;
-      //  editor2.IsActive = true;
-      //}
-      //else
-      //{
-      //  Trace.TraceError(
-      //    "Failed to create tile specific editor");
-      //  IsActive = false;
-      //}
-      MessageBox.Show(
-        "NYI: handling the app selection",
-        "Not Implemented",
-        MessageBoxButton.OK,
-        MessageBoxImage.Information);
+      var editor2 = LaunchEditViewModel.CreateFromAppSelector(Target, app, tileKind);
+      if(editor2 != null)
+      {
+        IsActive = false;
+        editor2.IsActive = true;
+      }
+      else
+      {
+        Trace.TraceError(
+          "Failed to create tile specific editor");
+        IsActive = false;
+      }
     }
   }
 
