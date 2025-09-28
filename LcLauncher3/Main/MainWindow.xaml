@@ -9,6 +9,7 @@
     xmlns:local="clr-namespace:LcLauncher.Main"
     xmlns:rack="clr-namespace:LcLauncher.Main.Rack"
     xmlns:edit="clr-namespace:LcLauncher.Main.Rack.Editors"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     TitleCharacterCasing="Normal"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance local:MainViewModel, IsDesignTimeCreatable=False}"
@@ -63,6 +64,12 @@
                 Visibility="{Binding CurrentRack, Converter={StaticResource VisibleIfNotNull}}"
                 VerticalScrollBarVisibility="Visible"
                 HorizontalScrollBarVisibility="Visible">
+                <ScrollViewer.Resources>
+                    <!-- https://stackoverflow.com/a/50260778/271323 -->
+                    <!-- Plus checking the source for the right name. The default is 14. -->
+                    <sys:Double x:Key="MahApps.Sizes.ScrollBar.Width">10</sys:Double>
+                    <sys:Double x:Key="MahApps.Sizes.ScrollBar.Height">14</sys:Double>
+                </ScrollViewer.Resources>
                 <rack:RackView DataContext="{Binding CurrentRack}"/>
             </ScrollViewer>
             <local:EditorBaseView
