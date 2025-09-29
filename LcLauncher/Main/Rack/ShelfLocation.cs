@@ -14,14 +14,14 @@ namespace LcLauncher.Main.Rack;
 public struct ShelfLocation
 {
   public ShelfLocation(
-    int columnIndex,
+    ColumnViewModel column,
     int shelfIndex)
   {
-    ColumnIndex = columnIndex;
+    Column = column;
     ShelfIndex = shelfIndex;
   }
 
-  public int ColumnIndex { get; }
+  public ColumnViewModel Column { get; }
 
   public int ShelfIndex { get; }
 

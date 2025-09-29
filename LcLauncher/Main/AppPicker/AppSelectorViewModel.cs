@@ -14,24 +14,23 @@ using System.Windows;
 using System.Windows.Data;
 
 using LcLauncher.DataModel;
-using LcLauncher.IconUpdates;
+using LcLauncher.IconTools;
 using LcLauncher.Main.Rack;
+using LcLauncher.Main.Rack.Editors;
 using LcLauncher.Main.Rack.Tile;
-using LcLauncher.Persistence;
 using LcLauncher.ShellApps;
 using LcLauncher.WpfUtilities;
 
 namespace LcLauncher.Main.AppPicker;
 
-public class AppSelectorViewModel: EditorViewModelBase, IPersisted
+public class AppSelectorViewModel: EditorViewModelBase
 {
   public AppSelectorViewModel(
-    RackViewModel rack,
     TileHostViewModel target)
-    : base(rack.Owner, "Application Selector", target.Shelf.Theme)
+    : base(target.Rack.Owner, "Application Selector", target.Shelf.Theme)
   {
+    var rack = target.Rack;
     Wide = true;
-    IconTargetId = Guid.NewGuid();
     Target = target;
     AppCache = rack.Owner.AppCache;
     Applications = [];
@@ -56,7 +55,7 @@ public class AppSelectorViewModel: EditorViewModelBase, IPersisted
     }
     Categories.Add(new AppCategoryViewModel(this, null));
     SelectedCategory = Categories[0];
-    IconJobQueue = new IconListQueue(rack.IconLoadQueue, this, IconTargetId);
+    IconJobQueue = rack.IconQueue;
     Refill();
   }
 
@@ -266,12 +265,7 @@ public class AppSelectorViewModel: EditorViewModelBase, IPersisted
     }
   }
 
-  /// <summary>
-  /// This selector view model ID in the icon load system
-  /// </summary>
-  public Guid IconTargetId { get; }
-
-  public IconListQueue IconJobQueue { get; }
+  public IconJobQueue IconJobQueue { get; }
 
   /// <summary>
   /// Dummy implementation (because <see cref="SaveIfDirty"/> is a dummy implementation)

@@ -9,87 +9,44 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Newtonsoft.Json;
+using LcLauncher.DataModel.Entities;
+using LcLauncher.DataModel.Store;
 
-using LcLauncher.Persistence;
 using Ttelcl.Persistence.API;
 
 namespace LcLauncher.Models;
 
-public class ShelfModel
+public class ShelfModel: IModel<ShelfData>
+// No need to implement IRebuildableModel<> because the VM updates the entity
+// directly
 {
   internal ShelfModel(
-    RackModel owner,
-    Guid id,
-    ShelfData shelf)
+    ColumnModel column,
+    ShelfData shelfEntity)
   {
-    Owner = owner;
-    Id = id;
-    Shelf = shelf;
-    var tilesModel = TileListModel.Load(Owner, id);
-    if(tilesModel == null)
+    Column = column;
+    Entity = shelfEntity;
+    var tilesEntity = Store.GetTiles(Id);
+    if(tilesEntity == null)
     {
-      tilesModel = TileListModel.Create(Owner, id);
-      tilesModel.SaveRawModel();
+      Trace.TraceWarning(
+        $"Tiles for shelf {Id} are missing. Creating a default");
+      tilesEntity = TileListData.CreateNew(Id);
+      Store.PutTiles(tilesEntity);
     }
-    PrimaryTiles = tilesModel;
-    IsDirty = false;
+    PrimaryTiles = new TileListModel(column.Rack, tilesEntity);
   }
 
-  public static ShelfModel Load(
-    RackModel owner,
-    Guid id)
-  {
-    var shelf = owner.Store.LoadShelf(id);
-    bool needsSave = false;
-    if(shelf == null)
-    { 
-      shelf = new ShelfData(
-        "MISSING Shelf " + id.ToString(),
-        true, // Start out collapsed in this unusual case
-        "Cobalt",
-        id,
-        TickId.New());
-      needsSave = true;
-    }
-    if(String.IsNullOrEmpty(shelf.Title))
-    {
-      shelf.Title = "Untitled Shelf " + id.ToString();
-    }
-    if(shelf.IdOld != id)
-    {
-      shelf.IdOld = id;
-      shelf.Tid = TickId.New();
-      needsSave = true;
-    }
-    if(needsSave)
-    {
-      owner.Store.SaveShelf(id, shelf);
-    }
-    return new ShelfModel(owner, id, shelf);
-  }
+  public LauncherRackStore Store => Rack.Store;
 
-  public RackModel Owner { get; }
+  public ColumnModel Column { get; }
 
-  public ILcLaunchStore Store => Owner.Store;
+  public RackModel Rack => Column.Rack;
 
-  public Guid Id { get; }
+  public ShelfData Entity { get; }
 
-  public ShelfData Shelf { get; }
+  public TickId Id => Entity.Id;
 
   public TileListModel PrimaryTiles { get; }
-
-  public void Save()
-  {
-    Store.SaveShelf(Id, Shelf);
-    IsDirty = false;
-  }
-
-  public bool IsDirty { get; private set; }
-
-  public void MarkDirty()
-  {
-    IsDirty = true;
-  }
 
 }

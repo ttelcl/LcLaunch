@@ -32,6 +32,28 @@ public class TileListData: IJsonStorable
   }
 
   /// <summary>
+  /// Create a new tile list with 4 empty tiles and the given <paramref name="id"/>.
+  /// </summary>
+  public static TileListData CreateNew(TickId id)
+  {
+    return new TileListData(
+      id, [
+        TileData.EmptyTile(),
+        TileData.EmptyTile(),
+        TileData.EmptyTile(),
+        TileData.EmptyTile(),
+      ]);
+  }
+
+  /// <summary>
+  /// Create a new tile list with 4 empty tiles and a newly generated id.
+  /// </summary>
+  public static TileListData CreateNew()
+  {
+    return CreateNew(TickId.New());
+  }
+
+  /// <summary>
   /// The ID of the tile list
   /// </summary>
   [JsonProperty("id")]
@@ -40,5 +62,6 @@ public class TileListData: IJsonStorable
   /// <summary>
   /// The list of tiles
   /// </summary>
+  [JsonProperty("tiles")]
   public List<TileData?> Tiles { get; }
 }

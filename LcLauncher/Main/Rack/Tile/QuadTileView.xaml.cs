@@ -13,16 +13,15 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace LcLauncher.Main.Rack.Tile
+namespace LcLauncher.Main.Rack.Tile;
+
+/// <summary>
+/// Interaction logic for QuadTileView.xaml
+/// </summary>
+public partial class QuadTileView: UserControl
 {
-  /// <summary>
-  /// Interaction logic for QuadTileView.xaml
-  /// </summary>
-  public partial class QuadTileView: UserControl
+  public QuadTileView()
   {
-    public QuadTileView()
-    {
-      InitializeComponent();
-    }
+    InitializeComponent();
   }
 }

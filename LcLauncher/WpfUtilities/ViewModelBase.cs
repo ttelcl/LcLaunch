@@ -72,7 +72,8 @@ public abstract class ViewModelBase: INotifyPropertyChanged
   /// Returns true if the value changed, false if the value didn't change.
   /// </summary>
   protected bool SetInstanceProperty<T>(
-    ref T storage, T value, [CallerMemberName] string propertyName = "") where T : class
+    ref T storage, T value, [CallerMemberName] string propertyName = "")
+    where T : class
   {
     if(ReferenceEquals(storage, value))
     {
@@ -92,7 +93,8 @@ public abstract class ViewModelBase: INotifyPropertyChanged
   /// are equal).
   /// </summary>
   protected void ForceInstanceProperty<T>(
-    ref T storage, T value, [CallerMemberName] string propertyName = "") where T : class
+    ref T storage, T value, [CallerMemberName] string propertyName = "")
+    where T : class
   {
     storage = value;
     RaisePropertyChanged(propertyName);
@@ -105,7 +107,8 @@ public abstract class ViewModelBase: INotifyPropertyChanged
   /// Returns true if the value changed, false if the value didn't change.
   /// </summary>
   protected bool SetNullableInstanceProperty<T>(
-    ref T? storage, T? value, [CallerMemberName] string propertyName = "") where T : class?
+    ref T? storage, T? value, [CallerMemberName] string propertyName = "")
+    where T : class?
   {
     if(ReferenceEquals(storage, value))
     {
@@ -123,7 +126,7 @@ public abstract class ViewModelBase: INotifyPropertyChanged
   /// Raise the PropertChanged event for a value type if the old value and new value
   /// are different. 
   /// </summary>
-  protected bool CheckValueProperty<T>(
+  protected bool ValueChanged<T>(
     T oldValue,
     T newValue,
     [CallerMemberName] string propertyName = "")
@@ -140,10 +143,10 @@ public abstract class ViewModelBase: INotifyPropertyChanged
   }
 
   /// <summary>
-  /// Raise the PropertChanged event for a reference type if the old value and new value
-  /// are different instances
+  /// Raise the PropertyChanged event for a non-nullable reference type if
+  /// the old value and new value are different instances
   /// </summary>
-  protected bool CheckInstanceProperty<T>(
+  protected bool InstanceChanged<T>(
     T oldValue,
     T newValue,
     [CallerMemberName] string propertyName = "") where T : class
@@ -159,4 +162,23 @@ public abstract class ViewModelBase: INotifyPropertyChanged
     }
   }
 
+  /// <summary>
+  /// Raise the PropertyChanged event for a non-nullable reference type if
+  /// the old value and new value are different instances
+  /// </summary>
+  protected bool NullableInstanceChanged<T>(
+    T? oldValue,
+    T? newValue,
+    [CallerMemberName] string propertyName = "") where T : class
+  {
+    if(ReferenceEquals(oldValue, newValue))
+    {
+      return false;
+    }
+    else
+    {
+      RaisePropertyChanged(propertyName);
+      return true;
+    }
+  }
 }

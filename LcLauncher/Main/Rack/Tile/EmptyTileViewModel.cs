@@ -14,9 +14,11 @@ using System.Windows.Input;
 
 using Microsoft.Win32;
 
-using LcLauncher.Models;
 using LcLauncher.WpfUtilities;
 using LcLauncher.Main.AppPicker;
+
+using LcLauncher.DataModel.Entities;
+using LcLauncher.Main.Rack.Editors;
 
 namespace LcLauncher.Main.Rack.Tile;
 
@@ -33,6 +35,9 @@ public class EmptyTileViewModel: TileViewModel
     DeleteEmptyTileCommand = new DelegateCommand(
       p => DeleteTile(),
       p => CanDeleteTile());
+    CreateGroupTileCommand = new DelegateCommand(
+      p => CreateGroupTile(),
+      p => CanCreateTile());
     CreateShortcutTileCommand = new DelegateCommand(
       p => CreateDocumentTile(true),
       p => CanCreateTile());
@@ -42,15 +47,16 @@ public class EmptyTileViewModel: TileViewModel
     CreateExecutableTileCommand = new DelegateCommand(
       p => CreateExecutableTile(),
       p => CanCreateTile());
-    CreateGroupTileCommand = new DelegateCommand(
-      p => CreateGroupTile(),
-      p => CanCreateTile());
     TryPasteAsTileCommand = new DelegateCommand(
       p => CreateLauncherFromClipboard(),
       p => CanCreateLauncherFromClipboardPrepared());
     CreateAppTileCommand = new DelegateCommand(
       p => CreateAppTile(),
       p => CanCreateTile());
+    // Override:
+    ClickActionCommand = new DelegateCommand(
+      p => DefaultClickCommand(),
+      p => CanHandleDefaultClick());
   }
 
   /// <summary>
@@ -80,8 +86,8 @@ public class EmptyTileViewModel: TileViewModel
   {
     return Model switch {
       null => "EggOutline",
-      { ShellLaunch: { } } => "RocketLaunch",
-      { RawLaunch: { } } => "RocketLaunchOutline",
+      { Launch.ShellMode: true } => "RocketLaunch",
+      { Launch.ShellMode: false } => "RocketLaunchOutline",
       { Group: { } } => "DotsGrid",
       { Quad: { } } => "ViewGrid",
       _ => "Egg",
@@ -110,6 +116,35 @@ public class EmptyTileViewModel: TileViewModel
     }
   }
 
+  /// <summary>
+  /// Handle the click on this tile. Almost the same, as
+  /// Swap, but different feedback in case of errors.
+  /// </summary>
+  private void DefaultClickCommand()
+  {
+    if(Host == null || Rack.KeyTile == null || Host.IsKeyTile)
+    {
+      // fail silently for very unusual, unintended, or very common
+      // no-ops. All to avoid spam.
+      return;
+    }
+    if(!Host.SwapMarkedTileHereCommand.CanExecute(null))
+    {
+      MessageBox.Show(
+        "Cannot swap that tile here right now",
+        "Error");
+    }
+    else
+    {
+      Host.SwapMarkedTileHereCommand.Execute(null);
+    }
+  }
+
+  private bool CanHandleDefaultClick()
+  {
+    return Host != null && Rack.KeyTile != null;
+  }
+
   private bool CanDeleteTile()
   {
     return Host != null && !Host.IsKeyTile;
@@ -123,10 +158,23 @@ public class EmptyTileViewModel: TileViewModel
       && Host.Rack.KeyShelf == null;
   }
 
-  //static Guid AppsFolderId = Guid.Parse("1e87508d-89c2-42f0-8a7e-645a0f50ca58");
-  static Guid CommonStartMenuId = Guid.Parse("A4115719-D62E-491D-AA7C-E74B8BE3B067");
+  static readonly Guid CommonStartMenuId =
+    Guid.Parse("A4115719-D62E-491D-AA7C-E74B8BE3B067");
+
   public static FileDialogCustomPlace CommonStartMenuFolder =
     new FileDialogCustomPlace(CommonStartMenuId);
+
+  private static void AddOpenDocumentCustomPlaces(OpenFileDialog dialog)
+  {
+    dialog.CustomPlaces.Add(FileDialogCustomPlaces.StartMenu);
+    dialog.CustomPlaces.Add(CommonStartMenuFolder);
+    dialog.CustomPlaces.Add(FileDialogCustomPlaces.Desktop);
+    dialog.CustomPlaces.Add(FileDialogCustomPlaces.ProgramFiles);
+    dialog.CustomPlaces.Add(FileDialogCustomPlaces.ProgramFilesCommon);
+    dialog.CustomPlaces.Add(FileDialogCustomPlaces.Documents);
+    dialog.CustomPlaces.Add(FileDialogCustomPlaces.LocalApplicationData);
+    dialog.CustomPlaces.Add(FileDialogCustomPlaces.RoamingApplicationData);
+  }
 
   /// <summary>
   /// Create a new launch tile and replace this empty tile.
@@ -147,14 +195,7 @@ public class EmptyTileViewModel: TileViewModel
       {
         dialog.Filter = "Shortcut files (*.lnk)|*.lnk";
         dialog.Title = "Select a shortcut file";
-        dialog.CustomPlaces.Add(FileDialogCustomPlaces.StartMenu);
-        dialog.CustomPlaces.Add(CommonStartMenuFolder);
-        dialog.CustomPlaces.Add(FileDialogCustomPlaces.Desktop);
-        dialog.CustomPlaces.Add(FileDialogCustomPlaces.ProgramFiles);
-        dialog.CustomPlaces.Add(FileDialogCustomPlaces.ProgramFilesCommon);
-        dialog.CustomPlaces.Add(FileDialogCustomPlaces.Documents);
-        dialog.CustomPlaces.Add(FileDialogCustomPlaces.LocalApplicationData);
-        dialog.CustomPlaces.Add(FileDialogCustomPlaces.RoamingApplicationData);
+        AddOpenDocumentCustomPlaces(dialog);
         dialog.InitialDirectory =
           Environment.GetFolderPath(
             Environment.SpecialFolder.StartMenu);
@@ -165,14 +206,7 @@ public class EmptyTileViewModel: TileViewModel
       {
         dialog.Filter = "All files (*.*)|*.*|Executables (*.exe)|*.exe";
         dialog.Title = "Select a document file (shortcuts are dereferenced to their target)";
-        dialog.CustomPlaces.Add(FileDialogCustomPlaces.StartMenu);
-        dialog.CustomPlaces.Add(CommonStartMenuFolder);
-        dialog.CustomPlaces.Add(FileDialogCustomPlaces.Desktop);
-        dialog.CustomPlaces.Add(FileDialogCustomPlaces.ProgramFiles);
-        dialog.CustomPlaces.Add(FileDialogCustomPlaces.ProgramFilesCommon);
-        dialog.CustomPlaces.Add(FileDialogCustomPlaces.Documents);
-        dialog.CustomPlaces.Add(FileDialogCustomPlaces.LocalApplicationData);
-        dialog.CustomPlaces.Add(FileDialogCustomPlaces.RoamingApplicationData);
+        AddOpenDocumentCustomPlaces(dialog);
         dialog.InitialDirectory =
           Environment.GetFolderPath(
             Environment.SpecialFolder.MyDocuments);
@@ -262,9 +296,10 @@ public class EmptyTileViewModel: TileViewModel
     Trace.TraceInformation(
       $"Creating DOCUMENT tile for: '{Path.GetFileName(fileName)}' ({fileName})");
 
-    var editModel = LaunchDocumentViewModel.CreateFromFile(
+    var editModel = LaunchEditViewModel.CreateFromFile(
       Host!,
-      fileName);
+      fileName,
+      true); // we were explicitly asked for a document
 
     if(editModel == null)
     {
@@ -293,9 +328,10 @@ public class EmptyTileViewModel: TileViewModel
     Trace.TraceInformation(
       $"Creating EXECUTABLE tile for: '{Path.GetFileName(fileName)}' ({fileName})");
 
-    var editModel = LaunchExeViewModel.CreateFromFile(
+    var editModel = LaunchEditViewModel.CreateFromFile(
       Host!,
-      fileName);
+      fileName,
+      false);
 
     if(editModel == null)
     {
@@ -331,7 +367,7 @@ public class EmptyTileViewModel: TileViewModel
   private void CreateLauncherFromClipboard()
   {
     if(CanCreateTile())
-      // allow call even if not yet prepared
+    // allow call even if not yet prepared
     {
       var editModel =
         _preparedClipboardView
@@ -353,6 +389,7 @@ public class EmptyTileViewModel: TileViewModel
 
   public void PrepareFromClipboard()
   {
+    //Trace.TraceError("PrepareFromClipboard() disabled");
     _preparedClipboardView =
       CanCreateTile()
       ? LaunchEditViewModel.TryFromClipboard(Host!, true)

@@ -13,24 +13,23 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace LcLauncher.Main.Rack.Tile
-{
-  /// <summary>
-  /// Interaction logic for EmptyTileView.xaml
-  /// </summary>
-  public partial class EmptyTileView: UserControl
-  {
-    public EmptyTileView()
-    {
-      InitializeComponent();
-    }
+namespace LcLauncher.Main.Rack.Tile;
 
-    private void UserControl_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+/// <summary>
+/// Interaction logic for EmptyTileView.xaml
+/// </summary>
+public partial class EmptyTileView: UserControl
+{
+  public EmptyTileView()
+  {
+    InitializeComponent();
+  }
+
+  private void UserControl_ContextMenuOpening(object sender, ContextMenuEventArgs e)
+  {
+    if(DataContext is EmptyTileViewModel model)
     {
-      if(DataContext is EmptyTileViewModel model)
-      {
-        model.PrepareFromClipboard();
-      }
+      model.PrepareFromClipboard();
     }
   }
 }

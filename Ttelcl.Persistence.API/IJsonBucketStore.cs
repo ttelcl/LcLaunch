@@ -53,12 +53,8 @@ public interface IJsonBucketStore: IBucketStore
 /// Implemented by classes that expect to be stored in a 
 /// <see cref="IJsonBucket{T}"/>
 /// </summary>
-public interface IJsonStorable
+public interface IJsonStorable : IHasTickId
 {
-  /// <summary>
-  /// The identifier for this object
-  /// </summary>
-  TickId Id { get; }
 }
 
 /// <summary>
@@ -139,7 +135,7 @@ public static class JsonBucketExtensions
 
   /// <summary>
   /// Put an item that implements <see cref="IJsonStorable"/> in this
-  /// bucket (retrieving the <see cref="IJsonStorable.Id"/> from the
+  /// bucket (retrieving the <see cref="IHasTickId.Id"/> from the
   /// item instead of passing it explicitly)
   /// </summary>
   public static void PutStorable<T>(

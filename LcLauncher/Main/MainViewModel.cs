@@ -11,18 +11,12 @@ using System.Windows.Threading;
 
 using Microsoft.Extensions.Configuration;
 
-using LcLauncher.IconUpdates;
-using LcLauncher.Main.AppPicker;
-using LcLauncher.Main.Rack;
-using LcLauncher.Main.Rack.Tile;
-using LcLauncher.Persistence;
-using LcLauncher.ShellApps;
-using LcLauncher.Storage;
-using LcLauncher.WpfUtilities;
-
 using Ttelcl.Persistence.API;
+
 using LcLauncher.DataModel.Store;
-using LcLauncher.ModelConversion;
+using LcLauncher.ShellApps;
+using LcLauncher.WpfUtilities;
+using LcLauncher.Main.Rack;
 
 namespace LcLauncher.Main;
 
@@ -38,19 +32,23 @@ public class MainViewModel: ViewModelBase
     ShowDevPane = configuration.GetValue<bool>("showDevPane", false);
     HyperStore = InitHyperStore();
     DefaultStore = HyperStore.Backing.GetStore("default");
-    var fileStore = new JsonDataStore();
-    var storeImplementation = new JsonLcLaunchStore(fileStore);
-    StoreImplementation = storeImplementation;
-    // Make sure there is at least one rack (named "default")
-    Store.LoadOrCreateRack("default");
-    RackList = new RackListViewModel(this);
-    TestPane = new TestPaneViewModel(this);
+
+    var created = HyperStore.CreateRackIfNotExists(
+      "default", HyperStore.Backing.DefaultProviderName);
+    if(created)
+    {
+      Trace.TraceWarning("Default rack created");
+    }
+
+    RackList = new RackListViewModel(this, configuration["defaultRack"]);
+    RackManager = new RackManagerViewModel(this);
+    
     ProcessNextIconJobCommand = new DelegateCommand(
       p => ProcessNextIconJob(),
       p => CanProcessNextIconJob());
     _iconJobTimer = new DispatcherTimer(
       DispatcherPriority.ApplicationIdle) {
-      Interval = TimeSpan.FromMilliseconds(30),
+      Interval = TimeSpan.FromMilliseconds(30 /*1500*/),
       IsEnabled = false,
     };
     _iconJobTimer.Tick += (s, e) => {
@@ -68,13 +66,6 @@ public class MainViewModel: ViewModelBase
       p => { DevDumpApps(); });
     DevTogglePaneCommand = new DelegateCommand(
       p => { ShowDevPane = !ShowDevPane; });
-    ModelConverter = new ModelConverter(this);
-    ConvertCurrentRackCommand = new DelegateCommand(
-      p => ConvertCurrentRack(false),
-      p => CurrentRack != null);
-    ConvertCurrentRackWithIconsCommand = new DelegateCommand(
-      p => ConvertCurrentRack(true),
-      p => CurrentRack != null);
   }
 
   public IConfigurationRoot Configuration { get; }
@@ -87,31 +78,14 @@ public class MainViewModel: ViewModelBase
 
   public ICommand ProcessNextIconJobCommand { get; }
 
-  [Obsolete("Use new persistence backend")]
-  public ILcLaunchStore Store => StoreImplementation;
-
-  [Obsolete("Use new persistence backend")]
-  public JsonLcLaunchStore StoreImplementation { get; }
-
-  [Obsolete("Use new persistence backend")]
-  public JsonDataStore FileStore { get => StoreImplementation.Provider; }
-
-  public TestPaneViewModel TestPane { get; }
-
   public ShellAppCache AppCache { get; }
 
   public LauncherHyperStore HyperStore { get; }
 
   /// <summary>
-  /// A bucket store for miscellaneous stuff
+  /// A bucket store for miscellaneous stuff, e.g. testing dumps
   /// </summary>
   public IBucketStore DefaultStore { get; }
-
-  public ModelConverter ModelConverter { get; }
-
-  public ICommand ConvertCurrentRackCommand { get; }
-
-  public ICommand ConvertCurrentRackWithIconsCommand { get; }
 
   public RackViewModel? CurrentRack {
     get => _currentRack;
@@ -124,10 +98,9 @@ public class MainViewModel: ViewModelBase
           $"Switched to rack '{rackLabel}'");
         if(oldRack != null)
         {
-          oldRack.SaveShelvesIfModified();
-          oldRack.SaveDirtyTileLists();
-          oldRack.SaveIfDirty();
+          oldRack.Unload();
         }
+        ActivateRackIconQueue();
       }
     }
   }
@@ -149,9 +122,14 @@ public class MainViewModel: ViewModelBase
 
   public RackListViewModel RackList { get; }
 
-  public void RackQueueActivating(IconLoadQueue queue)
+  public RackManagerViewModel RackManager { get; }
+
+  public void ActivateRackIconQueue()
   {
-    if(!_iconJobTimer.IsEnabled)
+    if(
+      !_iconJobTimer.IsEnabled
+      && CurrentRack != null
+      && CurrentRack.IconQueue.HasWork)
     {
       Trace.TraceInformation(
         $"Rack Queue is now active");
@@ -161,8 +139,17 @@ public class MainViewModel: ViewModelBase
 
   public bool ProcessNextIconJob()
   {
-    var processed = CurrentRack?.IconLoadQueue.ProcessNextJob() ?? false;
-    return processed;
+    if(CurrentRack == null || !CurrentRack.IconQueue.HasWork)
+    {
+      return false;
+    }
+    return CurrentRack.IconLoader.ProcessNextBatch(
+      CurrentRack.IconQueue, 10);
+  }
+
+  public bool CanProcessNextIconJob()
+  {
+    return CurrentRack != null && CurrentRack.IconQueue.HasWork;
   }
 
   private void DevDumpApps()
@@ -177,23 +164,17 @@ public class MainViewModel: ViewModelBase
       appsSorted
       .GroupBy(descriptor => descriptor.Kind)
       .ToDictionary(g => g.Key.ToString(), g => g.ToList());
-    //StoreImplementation.Provider.SaveData("app-dump", ".json", grouped);
     DefaultStore
       .GetJsonBucket<Dictionary<string,List<ShellAppDescriptor>>>("app-dump", true)!
       .Put(TickId.New(), grouped);
   }
 
-  public bool CanProcessNextIconJob()
-  {
-    return CurrentRack != null &&
-      !CurrentRack.IconLoadQueue.IsEmpty();
-  }
-
   public void OnWindowClosing()
   {
-    CurrentRack?.SaveShelvesIfModified();
-    CurrentRack?.SaveDirtyTileLists();
-    CurrentRack?.SaveIfDirty();
+    if(CurrentRack != null)
+    {
+      CurrentRack = null;
+    }
   }
 
   public void OnAppActiveChange(bool active)
@@ -206,10 +187,11 @@ public class MainViewModel: ViewModelBase
     else
     {
       Trace.TraceInformation(
-        $"Application is now inactive");
-      CurrentRack?.SaveShelvesIfModified();
-      CurrentRack?.SaveDirtyTileLists();
-      CurrentRack?.SaveIfDirty();
+        $"Application is now inactive (saving what is needed)");
+      if(CurrentRack != null)
+      {
+        CurrentRack.SaveDeep();
+      }
     }
   }
 
@@ -241,19 +223,6 @@ public class MainViewModel: ViewModelBase
     }
   }
   private EditorViewModelBase? _currentEditor;
-
-  private void ConvertCurrentRack(bool dumpIcons)
-  {
-    try
-    {
-      Mouse.OverrideCursor = Cursors.Wait;
-      ModelConverter.ConvertCurrentRack(dumpIcons);
-    }
-    finally
-    {
-      Mouse.OverrideCursor = null;
-    }
-  }
 
   private static LauncherHyperStore InitHyperStore()
   {

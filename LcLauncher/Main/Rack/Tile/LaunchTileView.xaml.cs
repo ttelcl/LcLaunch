@@ -13,16 +13,15 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace LcLauncher.Main.Rack.Tile
+namespace LcLauncher.Main.Rack.Tile;
+
+/// <summary>
+/// Interaction logic for LaunchTileView.xaml
+/// </summary>
+public partial class LaunchTileView: UserControl
 {
-  /// <summary>
-  /// Interaction logic for LaunchTileView.xaml
-  /// </summary>
-  public partial class LaunchTileView: UserControl
+  public LaunchTileView()
   {
-    public LaunchTileView()
-    {
-      InitializeComponent();
-    }
+    InitializeComponent();
   }
 }

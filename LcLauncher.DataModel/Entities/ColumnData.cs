@@ -19,7 +19,7 @@ namespace LcLauncher.DataModel.Entities;
 /// Describes a V3 column (before V3 these were implicit and nameless).
 /// Not serialized separately, but as part of <see cref="RackData"/>
 /// </summary>
-public class ColumnData
+public class ColumnData: IHasTickId
 {
   /// <summary>
   /// Deserialization constructor

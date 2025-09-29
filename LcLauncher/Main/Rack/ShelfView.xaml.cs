@@ -32,11 +32,11 @@ namespace LcLauncher.Main.Rack
       {
         if(e.NewValue == null && e.OldValue is ShelfViewModel vmold)
         {
-          vmold.UpdateHost(null);
+          vmold.UpdateView(null);
         }
         else if(e.NewValue is ShelfViewModel vmnew)
         {
-          vmnew.UpdateHost(this);
+          vmnew.UpdateView(this);
         }
       }
     }

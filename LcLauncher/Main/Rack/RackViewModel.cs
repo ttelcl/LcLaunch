@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -11,51 +12,63 @@ using System.Threading.Tasks;
 using System.Windows;
 
 using LcLauncher.DataModel;
-using LcLauncher.IconUpdates;
+using LcLauncher.DataModel.ChangeTracking;
+using LcLauncher.DataModel.Entities;
+using LcLauncher.DataModel.Store;
+using LcLauncher.IconTools;
 using LcLauncher.Main.Rack.Tile;
 using LcLauncher.Models;
-using LcLauncher.Persistence;
 using LcLauncher.WpfUtilities;
+
+using Ttelcl.Persistence.API;
 
 namespace LcLauncher.Main.Rack;
 
-public class RackViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
+public class RackViewModel:
+  ViewModelBase, ICanQueueIcons, IDirtyHost, IWrapsModel<RackModel, RackData>
 {
-  private List<ColumnViewModel> _columns;
 
   public RackViewModel(
     MainViewModel owner,
     RackModel model)
   {
-    IconLoadQueue = new IconLoadQueue(q => owner.RackQueueActivating(q));
+    var store = model.Store;
+    var iconBucket = store.IconBucket;
+    IconQueue = new IconJobQueue();
+    IconLoader = new IconLoader(iconBucket);
     Owner = owner;
     Model = model;
-    _columns = new List<ColumnViewModel>();
-    Columns = _columns.AsReadOnly();
-    ColumnLeft = new ColumnViewModel(this, 0);
-    ColumnMiddle = new ColumnViewModel(this, 1);
-    ColumnRight = new ColumnViewModel(this, 2);
-    _columns.Add(ColumnLeft);
-    _columns.Add(ColumnMiddle);
-    _columns.Add(ColumnRight);
-    Model.TraceClaimStatus();
+    Columns = [];
+    foreach(var columnModel in model.Columns)
+    {
+      var columnVm = new ColumnViewModel(this, columnModel);
+      Columns.Add(columnVm);
+    }
+    //Model.TraceClaimStatus();
+    Trace.TraceInformation(
+      $"Constructing rack VM {Model.RackKey} with {Columns.Count} columns");
   }
 
   public MainViewModel Owner { get; }
 
   public RackModel Model { get; }
 
-  public ILcLaunchStore Store => Model.Store;
+  public LauncherRackStore Store => Model.Store;
+
+  public IconJobQueue IconQueue { get; }
+
+  public IconLoader IconLoader { get; }
 
   public string Name => Model.RackName;
 
-  public ColumnViewModel ColumnLeft { get; }
+  public void Unload()
+  {
+    Trace.TraceWarning(
+      $"Unloading rack '{Name}' (and saving what needs saving)");
+    SaveDeep();
+  }
 
-  public ColumnViewModel ColumnMiddle { get; }
-
-  public ColumnViewModel ColumnRight { get; }
-
-  public IReadOnlyList<ColumnViewModel> Columns { get; }
+  public ObservableCollection<ColumnViewModel> Columns { get; }
 
   public IEnumerable<ShelfViewModel> AllShelves()
   {
@@ -74,109 +87,13 @@ public class RackViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
   /// </summary>
   public List<TileListViewModel> GatherTileLists()
   {
-    var tileLists = new Dictionary<Guid, TileListViewModel>();
+    var tileLists = new Dictionary<TickId, TileListViewModel>();
     GatherTileLists(tileLists);
     return tileLists.Values.ToList();
   }
 
-  /// <summary>
-  /// Get the current location of a shelf in this rack,
-  /// or null if it is not in this rack.
-  /// </summary>
-  public ShelfLocation? GetShelfLocation(ShelfViewModel shelf)
-  {
-    for(int i = 0; i < Columns.Count; i++)
-    {
-      var column = Columns[i];
-      for(int j = 0; j < column.Shelves.Count; j++)
-      {
-        if(column.Shelves[j] == shelf)
-        {
-          return new ShelfLocation(i, j);
-        }
-      }
-    }
-    return null;
-  }
-
-  public ShelfLocation GetColumnTail(int columnIndex)
-  {
-    if(columnIndex < 0 || columnIndex >= Columns.Count)
-    {
-      throw new ArgumentOutOfRangeException(nameof(columnIndex));
-    }
-    var column = Columns[columnIndex];
-    return new ShelfLocation(columnIndex, column.Shelves.Count);
-  }
-
-  public ShelfLocation GetColumnTail(ColumnViewModel column)
-  {
-    if(!Columns.Contains(column))
-    {
-      throw new ArgumentException(
-        "Column is not part of this rack", nameof(column));
-    }
-    return GetColumnTail(column.ColumnIndex);
-  }
-
-  public void MoveShelf(ShelfLocation source, ShelfLocation destination)
-  {
-    if(source.ColumnIndex < 0 || source.ColumnIndex >= Columns.Count)
-    {
-      throw new ArgumentOutOfRangeException(nameof(source));
-    }
-    if(destination.ColumnIndex < 0 || destination.ColumnIndex >= Columns.Count)
-    {
-      throw new ArgumentOutOfRangeException(nameof(destination));
-    }
-    var columnSource = Columns[source.ColumnIndex];
-    var columnTarget = Columns[destination.ColumnIndex];
-    // Check that the source is an existing shelf
-    if(source.ShelfIndex < 0 
-      || source.ShelfIndex >= columnSource.Shelves.Count)
-    {
-      throw new ArgumentOutOfRangeException(nameof(source));
-    }
-    var maxDestinationIndex = columnTarget.Shelves.Count-1;
-    if(source.ColumnIndex != destination.ColumnIndex)
-    {
-      // For different-column moves, the maximum destination index
-      // is the empty slot after the last shelf in the column.
-      maxDestinationIndex++;
-    }
-    // Check that the destination is an existing shelf or the tail
-    // of the column.
-    if(destination.ShelfIndex < 0
-      || destination.ShelfIndex > maxDestinationIndex)
-    {
-      throw new ArgumentOutOfRangeException(nameof(destination));
-    }
-    if(source.ColumnIndex == destination.ColumnIndex
-      && source.ShelfIndex == destination.ShelfIndex)
-    {
-      MessageBox.Show(
-        "Source and destination shelf are the same");
-    }
-    columnSource.MoveShelf(
-      source.ShelfIndex, columnTarget, destination.ShelfIndex);
-  }
-
-  public ShelfViewModel? GetShelfByLocation(ShelfLocation location)
-  {
-    if(location.ColumnIndex < 0 || location.ColumnIndex >= Columns.Count)
-    {
-      return null;
-    }
-    var column = Columns[location.ColumnIndex];
-    if(location.ShelfIndex < 0 || location.ShelfIndex >= column.Shelves.Count)
-    {
-      return null;
-    }
-    return column.Shelves[location.ShelfIndex];
-  }
-
   private void GatherTileLists(
-    Dictionary<Guid, TileListViewModel> tileLists)
+    Dictionary<TickId, TileListViewModel> tileLists)
   {
     foreach(var shelf in AllShelves())
     {
@@ -184,40 +101,123 @@ public class RackViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
     }
   }
 
-  public IconLoadQueue IconLoadQueue { get; }
+  ///// <summary>
+  ///// Get the current location of a shelf in this rack,
+  ///// or null if it is not in this rack.
+  ///// </summary>
+  //public ShelfLocation? GetShelfLocation(ShelfViewModel shelf)
+  //{
+  //  for(int i = 0; i < Columns.Count; i++)
+  //  {
+  //    var column = Columns[i];
+  //    for(int j = 0; j < column.Shelves.Count; j++)
+  //    {
+  //      if(column.Shelves[j] == shelf)
+  //      {
+  //        return new ShelfLocation(i, j);
+  //      }
+  //    }
+  //  }
+  //  return null;
+  //}
 
-  public IEnumerable<IconLoadJob> GetIconLoadJobs(bool reload)
-  {
-    foreach(var shelf in AllShelves())
-    {
-      foreach(var job in shelf.GetIconLoadJobs(reload))
-      {
-        yield return job;
-      }
-    }
-  }
+  //public ShelfLocation GetColumnTail(int columnIndex)
+  //{
+  //  if(columnIndex < 0 || columnIndex >= Columns.Count)
+  //  {
+  //    throw new ArgumentOutOfRangeException(nameof(columnIndex));
+  //  }
+  //  var column = Columns[columnIndex];
+  //  return new ShelfLocation(columnIndex, column.Shelves.Count);
+  //}
 
-  public void SaveShelvesIfModified()
-  {
-    Trace.TraceInformation(
-      $"Saving modified shelves in rack '{Name}' (if any)");
-    foreach(var shelf in AllShelves())
-    {
-      shelf.SaveIfDirty();
-    }
-  }
+  //public ShelfLocation GetColumnTail(ColumnViewModel column)
+  //{
+  //  if(!Columns.Contains(column))
+  //  {
+  //    throw new ArgumentException(
+  //      "Column is not part of this rack", nameof(column));
+  //  }
+  //  return GetColumnTail(column.ColumnIndex);
+  //}
 
-  public void SaveDirtyTileLists()
-  {
-    Trace.TraceInformation(
-      $"Saving modified tile lists in rack '{Name}' (if any)");
-    foreach(var tileList in GatherTileLists())
-    {
-      tileList.SaveIfDirty();
-    }
-  }
+  //public void MoveShelf(ShelfLocation source, ShelfLocation destination)
+  //{
+  //  if(source.ColumnIndex < 0 || source.ColumnIndex >= Columns.Count)
+  //  {
+  //    throw new ArgumentOutOfRangeException(nameof(source));
+  //  }
+  //  if(destination.ColumnIndex < 0 || destination.ColumnIndex >= Columns.Count)
+  //  {
+  //    throw new ArgumentOutOfRangeException(nameof(destination));
+  //  }
+  //  var columnSource = Columns[source.ColumnIndex];
+  //  var columnTarget = Columns[destination.ColumnIndex];
+  //  // Check that the source is an existing shelf
+  //  if(source.ShelfIndex < 0 
+  //    || source.ShelfIndex >= columnSource.Shelves.Count)
+  //  {
+  //    throw new ArgumentOutOfRangeException(nameof(source));
+  //  }
+  //  var maxDestinationIndex = columnTarget.Shelves.Count-1;
+  //  if(source.ColumnIndex != destination.ColumnIndex)
+  //  {
+  //    // For different-column moves, the maximum destination index
+  //    // is the empty slot after the last shelf in the column.
+  //    maxDestinationIndex++;
+  //  }
+  //  // Check that the destination is an existing shelf or the tail
+  //  // of the column.
+  //  if(destination.ShelfIndex < 0
+  //    || destination.ShelfIndex > maxDestinationIndex)
+  //  {
+  //    throw new ArgumentOutOfRangeException(nameof(destination));
+  //  }
+  //  if(source.ColumnIndex == destination.ColumnIndex
+  //    && source.ShelfIndex == destination.ShelfIndex)
+  //  {
+  //    MessageBox.Show(
+  //      "Source and destination shelf are the same");
+  //  }
+  //  columnSource.MoveShelf(
+  //    source.ShelfIndex, columnTarget, destination.ShelfIndex);
+  //}
 
-  public bool IsDirty { get => Model.IsDirty; }
+  //public ShelfViewModel? GetShelfByLocation(ShelfLocation location)
+  //{
+  //  if(location.ColumnIndex < 0 || location.ColumnIndex >= Columns.Count)
+  //  {
+  //    return null;
+  //  }
+  //  var column = Columns[location.ColumnIndex];
+  //  if(location.ShelfIndex < 0 || location.ShelfIndex >= column.Shelves.Count)
+  //  {
+  //    return null;
+  //  }
+  //  return column.Shelves[location.ShelfIndex];
+  //}
+
+  //public void SaveShelvesIfModified()
+  //{
+  //  Trace.TraceInformation(
+  //    $"Saving modified shelves in rack '{Name}' (if any)");
+  //  foreach(var shelf in AllShelves())
+  //  {
+  //    shelf.SaveIfDirty();
+  //  }
+  //}
+
+  //public void SaveDirtyTileLists()
+  //{
+  //  Trace.TraceInformation(
+  //    $"Saving modified tile lists in rack '{Name}' (if any)");
+  //  foreach(var tileList in GatherTileLists())
+  //  {
+  //    tileList.SaveIfDirty();
+  //  }
+  //}
+
+  //public bool IsDirty { get => Model.IsDirty; }
 
   /// <summary>
   /// The one shelf that is treated special. In UI feedback
@@ -282,27 +282,178 @@ public class RackViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
   }
   private TileHostViewModel? _keyTile;
 
+
+  public TileHostViewModel? ClickTile {
+    get => _clickTile;
+    set {
+      if(SetNullableInstanceProperty(ref _clickTile, value))
+      {
+      }
+    }
+  }
+  private TileHostViewModel? _clickTile;
+
   public bool HasMarkedItems {
     get => KeyTile != null
       || KeyShelf != null;
   }
 
-  public void MarkDirty()
+  public void QueueIcons(bool regenerate)
   {
-    Model.MarkDirty();
-    RaisePropertyChanged(nameof(IsDirty));
+    foreach(var column in Columns)
+    {
+      column.QueueIcons(regenerate);
+    }
   }
 
-  public void SaveIfDirty()
+  /// <inheritdoc/>
+  public bool IsDirty {
+    get => _isDirty;
+    private set {
+      if(SetValueProperty(ref _isDirty, value))
+      {
+      }
+    }
+  }
+  private bool _isDirty;
+
+  /// <summary>
+  /// Implements <see cref="IDirtyHost.Save(bool)"/>.
+  /// This only saves the rack entity itself (including its columns),
+  /// but not its shelves and tile lists.
+  /// </summary>
+  /// <param name="ifDirty"></param>
+  public void Save(bool ifDirty = true)
   {
-    if(IsDirty)
+    if(IsDirty || !ifDirty)
     {
+      Model.RebuildEntity();
       Trace.TraceInformation(
-        $"Saving rack metadata '{Name}'");
-      Model.RebuildRackData();
-      Model.Save();
+        $"Saving rack '{Model.RackName}' ({Model.Id})");
+      Store.PutRack(Model.Entity);
+      IsDirty = false;
+    }
+  }
+
+  public void SaveDeep(bool ifDirty = true)
+  {
+    Save(ifDirty);
+    SaveDirtyShelves(ifDirty);
+    SaveDirtyTileLists(ifDirty);
+  }
+
+  public void SaveDirtyShelves(bool ifDirty = true)
+  {
+    foreach(var shelf in AllShelves())
+    {
+      shelf.Save(ifDirty);
+    }
+  }
+
+  public void SaveDirtyTileLists(bool ifDirty = true)
+  {
+    var tileLists = GatherTileLists();
+    foreach(var tileList in tileLists)
+    {
+      tileList.Save(ifDirty);
+    }
+  }
+
+  public void MarkAsDirty()
+  {
+    if(!IsDirty)
+    {
+      IsDirty = true;
       RaisePropertyChanged(nameof(IsDirty));
     }
+  }
+
+  public ShelfLocation GetColumnTail(ColumnViewModel column)
+  {
+    if(!Columns.Contains(column))
+    {
+      throw new ArgumentException(
+        "Column is not part of this rack", nameof(column));
+    }
+    return new ShelfLocation(column, column.Shelves.Count);
+  }
+
+  /// <summary>
+  /// Get the current location of a shelf in this rack,
+  /// or null if it is not in this rack.
+  /// </summary>
+  public ShelfLocation? GetShelfLocation(ShelfViewModel shelf)
+  {
+    foreach(var column in Columns)
+    {
+      for(int j = 0; j < column.Shelves.Count; j++)
+      {
+        if(column.Shelves[j] == shelf)
+        {
+          return new ShelfLocation(column, j);
+        }
+      }
+    }
+    return null;
+  }
+
+  public void MoveShelf(ShelfLocation source, ShelfLocation destination)
+  {
+    if(!Columns.Contains(source.Column))
+    {
+      throw new ArgumentException(
+        "Source column is not part of this rack", nameof(source));
+    }
+    if(!Columns.Contains(destination.Column))
+    {
+      throw new ArgumentException(
+        "Source column is not part of this rack", nameof(destination));
+    }
+    var columnSource = source.Column;
+    var columnTarget = destination.Column;
+    // Check that the source is an existing shelf
+    if(source.ShelfIndex < 0
+      || source.ShelfIndex >= columnSource.Shelves.Count)
+    {
+      throw new ArgumentOutOfRangeException(nameof(source));
+    }
+    var maxDestinationIndex = columnTarget.Shelves.Count-1;
+    if(!Object.ReferenceEquals(columnSource, columnTarget))
+    {
+      // For different-column moves, the maximum destination index
+      // is the empty slot after the last shelf in the column.
+      maxDestinationIndex++;
+    }
+    // Check that the destination is an existing shelf or the tail
+    // of the column.
+    if(destination.ShelfIndex < 0
+      || destination.ShelfIndex > maxDestinationIndex)
+    {
+      throw new ArgumentOutOfRangeException(nameof(destination));
+    }
+    if(Object.ReferenceEquals(columnSource, columnTarget)
+      && source.ShelfIndex == destination.ShelfIndex)
+    {
+      MessageBox.Show(
+        "Source and destination shelf are the same");
+    }
+    columnSource.MoveShelf(
+      source.ShelfIndex, columnTarget, destination.ShelfIndex);
+  }
+
+  public ShelfViewModel? GetShelfByLocation(ShelfLocation location)
+  {
+    var column = location.Column;
+    if(!Columns.Contains(column))
+    {
+      throw new ArgumentException(
+        "Column is not part of this rack", nameof(column));
+    }
+    if(location.ShelfIndex < 0 || location.ShelfIndex >= column.Shelves.Count)
+    {
+      return null;
+    }
+    return column.Shelves[location.ShelfIndex];
   }
 
   internal ShelfViewModel CreateNewShelf(
@@ -311,32 +462,33 @@ public class RackViewModel: ViewModelBase, IIconLoadJobSource, IPersisted
     string? initialTheme = null)
   {
     initialTheme ??= Owner.DefaultTheme;
-    var columnVm = Columns[location.ColumnIndex];
+    var columnVm = location.Column;
     if(location.ShelfIndex < 0
       || location.ShelfIndex > columnVm.Shelves.Count)
     {
       throw new ArgumentOutOfRangeException(nameof(location));
     }
-    var shelfGuid = Guid.NewGuid();
+    var shelfId = TickId.New();
     var shelfData = new ShelfData(
-      title ?? $"Unnamed shelf {shelfGuid}",
+      title ?? $"Unnamed shelf {shelfId}",
       false,
-      initialTheme);
+      initialTheme,
+      shelfId);
     var shelfModel = new ShelfModel(
-      Model,
-      shelfGuid,
+      columnVm.Model,
       shelfData);
     var shelfVm = new ShelfViewModel(this, shelfModel);
     // Insert VM into the column
     columnVm.Shelves.Insert(
       location.ShelfIndex, shelfVm);
     // Insert model into the column
-    columnVm.Model.Insert(
+    columnVm.Model.Shelves.Insert(
       location.ShelfIndex, shelfModel);
-    shelfVm.MarkDirty();
-    shelfVm.SaveIfDirty();
-    MarkDirty();
-    SaveIfDirty();
+    shelfVm.MarkAsDirty();
+    shelfVm.Save();
+    MarkAsDirty();
+    Save();
     return shelfVm;
   }
+
 }

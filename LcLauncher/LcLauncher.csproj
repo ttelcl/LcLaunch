@@ -12,6 +12,8 @@
   <PropertyGroup>
     <!-- This prevents other language resources being emitted -->
     <SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
+    <RootNamespace>LcLauncher</RootNamespace>
+    <AssemblyName>LcLauncher</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -39,6 +41,10 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Main\Rack\Editors\" />
   </ItemGroup>
 
 </Project>

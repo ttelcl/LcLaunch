@@ -17,6 +17,17 @@ using Newtonsoft.Json;
 namespace Ttelcl.Persistence.API;
 
 /// <summary>
+/// An object that has a <see cref="TickId"/> as identifier
+/// </summary>
+public interface IHasTickId
+{
+  /// <summary>
+  /// The ID of the object
+  /// </summary>
+  TickId Id { get; }
+}
+
+/// <summary>
 /// Locally unique identifiers, fitting in a 64 bit signed integer
 /// </summary>
 [JsonConverter(typeof(TickIdConverter))]

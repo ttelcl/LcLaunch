@@ -5,20 +5,22 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 
 using Microsoft.Win32;
 using Microsoft.WindowsAPICodePack.Shell;
 
-using LcLauncher.Main;
-using System.IO;
-using LcLauncher.Models;
-using System.Text.RegularExpressions;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json;
-using System.Windows.Media.Imaging;
+
+using LcLauncher.Main;
+using LcLauncher.Models;
+using LcLauncher.DataModel.Utilities;
 
 namespace LcLauncher.ShellApps;
 
@@ -35,15 +37,15 @@ public class ShellAppDescriptor
     string parsingName)
   {
     Label = label;
-    if(HasShellAppsFolderPrefix(parsingName))
+    if(ShellAppTools.HasShellAppsFolderPrefix(parsingName))
     {
       FullParsingName = parsingName;
-      ParsingName = StripShellAppsPrefix(parsingName);
+      ParsingName = ShellAppTools.StripShellAppsPrefix(parsingName);
     }
     else
     {
       ParsingName = parsingName;
-      FullParsingName = ShellAppsFolderPrefix + parsingName;
+      FullParsingName = ShellAppTools.ShellAppsFolderPrefix + parsingName;
     }
     Kind = ShellAppKind.Unclassified;
     Classify();
@@ -64,7 +66,7 @@ public class ShellAppDescriptor
   public static ShellAppDescriptor? TryFromParsingName(
     string parsingName)
   {
-    parsingName = WithShellAppsPrefix(parsingName);
+    parsingName = ShellAppTools.WithShellAppsPrefix(parsingName);
     try
     {
       using var shellObject = ShellObject.FromParsingName(parsingName);
@@ -254,62 +256,62 @@ public class ShellAppDescriptor
     Kind = ShellAppKind.Other;
   }
 
-  /// <summary>
-  /// The prefix for the shell apps folder. Technically,
-  /// this is case insensitive. Use <see cref="HasShellAppsFolderPrefix(string?)"/>
-  /// to test for this prefix and its alternate form.
-  /// </summary>
-  public const string ShellAppsFolderPrefix =
-    "shell:AppsFolder\\";
+  ///// <summary>
+  ///// The prefix for the shell apps folder. Technically,
+  ///// this is case insensitive. Use <see cref="HasShellAppsFolderPrefix(string?)"/>
+  ///// to test for this prefix and its alternate form.
+  ///// </summary>
+  //public const string ShellAppsFolderPrefix =
+  //  "shell:AppsFolder\\";
 
-  public const string ShellAppsFolderPrefix2 =
-    "shell:::{4234d49b-0245-4df3-B780-3893943456e1}\\";
+  //public const string ShellAppsFolderPrefix2 =
+  //  "shell:::{4234d49b-0245-4df3-B780-3893943456e1}\\";
 
-  public static bool HasShellAppsFolderPrefix(string? target)
-  {
-    if(String.IsNullOrEmpty(target)
-      || !target.StartsWith("shell:")) // case sensitive!
-    {
-      return false;
-    }
-    return
-      target.StartsWith(
-        ShellAppsFolderPrefix,
-        StringComparison.InvariantCultureIgnoreCase)
-      || target.StartsWith(
-        ShellAppsFolderPrefix2,
-        StringComparison.InvariantCultureIgnoreCase);
-  }
+  //public static bool HasShellAppsFolderPrefix(string? target)
+  //{
+  //  if(String.IsNullOrEmpty(target)
+  //    || !target.StartsWith("shell:")) // case sensitive!
+  //  {
+  //    return false;
+  //  }
+  //  return
+  //    target.StartsWith(
+  //      ShellAppsFolderPrefix,
+  //      StringComparison.InvariantCultureIgnoreCase)
+  //    || target.StartsWith(
+  //      ShellAppsFolderPrefix2,
+  //      StringComparison.InvariantCultureIgnoreCase);
+  //}
 
-  public static string StripShellAppsPrefix(string parsingName)
-  {
-    if(HasShellAppsFolderPrefix(parsingName))
-    {
-      var idx = parsingName.IndexOf('\\');
-      if(idx < 0)
-      {
-        // Expecting anything that passes HasShellAppsFolderPrefix() to have at least one \
-        throw new InvalidOperationException("Internal error");
-      }
-      return parsingName.Substring(idx+1);
-    }
-    else
-    {
-      return parsingName;
-    }
-  }
+  //public static string StripShellAppsPrefix(string parsingName)
+  //{
+  //  if(HasShellAppsFolderPrefix(parsingName))
+  //  {
+  //    var idx = parsingName.IndexOf('\\');
+  //    if(idx < 0)
+  //    {
+  //      // Expecting anything that passes HasShellAppsFolderPrefix() to have at least one \
+  //      throw new InvalidOperationException("Internal error");
+  //    }
+  //    return parsingName.Substring(idx+1);
+  //  }
+  //  else
+  //  {
+  //    return parsingName;
+  //  }
+  //}
 
-  public static string WithShellAppsPrefix(string parsingName)
-  {
-    if(!HasShellAppsFolderPrefix(parsingName))
-    {
-      return ShellAppsFolderPrefix + parsingName;
-    }
-    else
-    {
-      return parsingName;
-    }
-  }
+  //public static string WithShellAppsPrefix(string parsingName)
+  //{
+  //  if(!HasShellAppsFolderPrefix(parsingName))
+  //  {
+  //    return ShellAppsFolderPrefix + parsingName;
+  //  }
+  //  else
+  //  {
+  //    return parsingName;
+  //  }
+  //}
 
   [JsonIgnore]
   public BitmapSource? Icon { get; set; }
