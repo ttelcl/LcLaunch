@@ -22,8 +22,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps", "Apps", "{40092E14-1
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LcLauncher.DataModel", "LcLauncher.DataModel\LcLauncher.DataModel.csproj", "{3BB44B34-1ED2-4295-B435-DC168E517FC8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LcLauncher3", "LcLauncher3\LcLauncher3.csproj", "{DBCF414F-785D-4698-BC03-60DB5671DC6C}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -46,10 +44,6 @@ Global
 		{3BB44B34-1ED2-4295-B435-DC168E517FC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3BB44B34-1ED2-4295-B435-DC168E517FC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3BB44B34-1ED2-4295-B435-DC168E517FC8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DBCF414F-785D-4698-BC03-60DB5671DC6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DBCF414F-785D-4698-BC03-60DB5671DC6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DBCF414F-785D-4698-BC03-60DB5671DC6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DBCF414F-785D-4698-BC03-60DB5671DC6C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -59,7 +53,6 @@ Global
 		{2D4F0A4F-DF4E-45A6-A9D2-5646F0268EFF} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{991743ED-5C38-4C9E-966F-9996C965FA5B} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{3BB44B34-1ED2-4295-B435-DC168E517FC8} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
-		{DBCF414F-785D-4698-BC03-60DB5671DC6C} = {40092E14-15F3-4F30-BFF6-81434924B68C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5535931B-8931-40BA-AC04-80DF0BC17378}
