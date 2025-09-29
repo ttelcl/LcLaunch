@@ -42,7 +42,7 @@ public class JsonDataStore
   public static string DefaultFolder { get; } = Path.Combine(
     Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
     "Lcl",
-    "launcher");
+    "launcher1");
 
   public T? LoadData<T>(
     string tag,
