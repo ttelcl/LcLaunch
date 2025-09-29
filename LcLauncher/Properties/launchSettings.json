@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "LcLauncher": {
+    "LcLauncher3": {
       "commandName": "Project",
       "commandLineArgs": "c:\\Users\\ttelcl\\AppData\\Local\\Lcl\\launcher\\fs--rack--rack-demo-dev\\20250921-070328-6215051.rack-json"
     }

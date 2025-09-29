@@ -25,6 +25,7 @@ public class GroupIconViewModel: ViewModelBase
   {
     Owner = owner;
     Target = target;
+    RewireIcon();
   }
 
   public GroupTileViewModel Owner { get; }
@@ -42,15 +43,37 @@ public class GroupIconViewModel: ViewModelBase
     };
   }
 
-  public BitmapSource? Icon {
-    get => Target switch {
-      null => null,
-      EmptyTileViewModel _ => null,
-      LaunchTileViewModel lvm => lvm.IconSmall,
-      GroupTileViewModel _ => null,
-      QuadTileViewModel _ => null,
-      _ => null
-    };
+  //public BitmapSource? Icon {
+  //  get => Target switch {
+  //    null => null,
+  //    EmptyTileViewModel _ => null,
+  //    LaunchTileViewModel lvm => lvm.IconSmall,
+  //    GroupTileViewModel _ => null,
+  //    QuadTileViewModel _ => null,
+  //    _ => null
+  //  };
+  //}
+
+  public void RewireIcon()
+  {
+    IconAdapter =
+      Target switch {
+        null => null,
+        EmptyTileViewModel _ => null,
+        LaunchTileViewModel lvm => lvm.GroupTileAdapter,
+        GroupTileViewModel _ => null,
+        QuadTileViewModel _ => null,
+        _ => null
+      };
   }
 
+  public GroupTileAdapterViewModel? IconAdapter {
+    get => _iconAdapter;
+    set {
+      if(SetNullableInstanceProperty(ref _iconAdapter, value))
+      {
+      }
+    }
+  }
+  private GroupTileAdapterViewModel? _iconAdapter;
 }

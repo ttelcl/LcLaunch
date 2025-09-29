@@ -11,7 +11,8 @@ using Microsoft.Extensions.Configuration;
 using ControlzEx.Theming;
 
 using LcLauncher.Main;
-using LcLauncher.Persistence;
+using Ttelcl.Persistence.API;
+//using LcLauncher.Persistence;
 
 namespace LcLauncher;
 
@@ -49,20 +50,17 @@ public partial class App: Application
     {
       if(arg.EndsWith(".rack-json"))
       {
-        var pseudofile = Path.GetFileName(arg);
-        // V3 rack name discovery without reliance on looking inside the rack file
-        // requires the folder name as well
-        var rack = MainModel.RackList.FindRackByFile(arg);
-        if(rack != null)
+        var isSet = MainModel.RackList.SelectFromCommandlineArgument(arg);
+        if(isSet)
         {
           Trace.TraceInformation(
-            $"Selecting rack '{rack}' specified on command line (as '{arg}')");
-          MainModel.RackList.SelectedRack = rack;
+            $"Selected rack as specified on command line (as '{arg}')");
           rackSet = true;
+          break;
         }
         else
         {
-          Trace.TraceError(
+          Trace.TraceWarning(
             $"Rack '{arg}' not found");
         }
       }
@@ -76,20 +74,18 @@ public partial class App: Application
       }
       else
       {
-        var errorMessage = LcLaunchStore.TestValidRackName(defaultRack);
-        if(errorMessage != null)
+        if(!NamingRules.IsValidStoreName(defaultRack))
         {
           Trace.TraceError(
-            $"Default rack name '{defaultRack}' is not valid, using 'default' instead: {errorMessage}");
+            $"Default rack name '{defaultRack}' is not valid, using 'default' instead.");
           defaultRack = "default";
         }
       }
-      var rack = MainModel.RackList.FindRackByName(defaultRack);
-      if(rack != null)
+      var isSet = MainModel.RackList.SelectFromRackName(defaultRack);
+      if(isSet)
       {
         Trace.TraceInformation(
-          $"Selecting default rack '{rack}' because none were specified on command line");
-        MainModel.RackList.SelectedRack = rack;
+          $"Selecting default rack '{defaultRack}' because none were specified on command line");
         rackSet = true;
       }
       else
@@ -99,10 +95,6 @@ public partial class App: Application
       }
     }
     mainWindow.DataContext = MainModel;
-
-    //mainWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-    //mainWindow.Width = 1280;
-    //mainWindow.Height = 1024;
 
     Trace.TraceInformation($"App.App_Startup showing main window");
     mainWindow.Show();

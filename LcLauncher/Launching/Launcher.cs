@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-using LcLauncher.ModelsV2;
+using LcLauncher.DataModel.Entities;
 
 namespace LcLauncher.Launching;
 

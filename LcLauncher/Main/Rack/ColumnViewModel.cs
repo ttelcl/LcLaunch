@@ -12,22 +12,27 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
+using LcLauncher.DataModel.ChangeTracking;
+using LcLauncher.DataModel.Entities;
+using LcLauncher.IconTools;
+using LcLauncher.Main.Rack.Editors;
 using LcLauncher.Models;
 using LcLauncher.WpfUtilities;
 
 namespace LcLauncher.Main.Rack;
 
-public class ColumnViewModel: ViewModelBase
+public class ColumnViewModel:
+  ViewModelBase, ICanQueueIcons, IDirtyPart,
+  IWrapsModel<ColumnModel, ColumnData>
 {
   public ColumnViewModel(
     RackViewModel rack,
-    int columnIndex)
+    ColumnModel columnModel)
   {
     Rack = rack;
-    Model = rack.Model.Columns[columnIndex];
-    ColumnIndex = columnIndex;
+    Model = columnModel;
     Shelves = new ObservableCollection<ShelfViewModel>();
-    foreach(var shelf in Model)
+    foreach(var shelf in Model.Shelves)
     {
       Shelves.Add(new ShelfViewModel(Rack, shelf));
     }
@@ -48,11 +53,24 @@ public class ColumnViewModel: ViewModelBase
 
   public RackViewModel Rack { get; }
 
-  public int ColumnIndex { get; }
-
-  internal List<ShelfModel> Model { get; }
+  internal ColumnModel Model { get; }
 
   public ObservableCollection<ShelfViewModel> Shelves { get; }
+
+  public void QueueIcons(bool regenerate)
+  {
+    foreach(var shelf in Shelves)
+    {
+      shelf.QueueIcons(regenerate);
+    }
+  }
+
+  public IDirtyHost DirtyHost => Rack;
+
+  public void MarkAsDirty()
+  {
+    DirtyHost.MarkAsDirty();
+  }
 
   internal void MoveShelf(
     int indexSource,
@@ -76,11 +94,12 @@ public class ColumnViewModel: ViewModelBase
     // Move the viewmodel
     Shelves.Move(indexSource, indexDestination);
     // Move the model
-    var modelSource = Model[indexSource];
-    Model.RemoveAt(indexSource);
-    Model.Insert(indexDestination, modelSource);
+    var modelShelves = Model.Shelves;
+    var modelSource = modelShelves[indexSource];
+    modelShelves.RemoveAt(indexSource);
+    modelShelves.Insert(indexDestination, modelSource);
     // Mark the container as dirty
-    MarkRackDirty();
+    MarkAsDirty();
   }
 
   internal void MoveShelf(
@@ -118,23 +137,20 @@ public class ColumnViewModel: ViewModelBase
       columnDestination.Shelves.Insert(indexDestination, shelfVm);
 
       // Move the model
-      var shelfModel = Model[indexSource];
-      Model.RemoveAt(indexSource);
-      columnDestination.Model.Insert(indexDestination, shelfModel);
+      var shelfModel = Model.Shelves[indexSource];
+      Model.Shelves.RemoveAt(indexSource);
+      columnDestination.Model.Shelves.Insert(indexDestination, shelfModel);
 
-      // Mark the container as dirty
-      MarkRackDirty();
+      // Mark the container as dirty (logically you'd expect to mark both
+      // source and destination column as dirty, but they both forward that
+      // to the rack).
+      Rack.MarkAsDirty();
     }
-  }
-
-  public void MarkRackDirty()
-  {
-    Rack.MarkDirty();
   }
 
   private bool CanMoveMarkedShelfHere()
   {
-    var keyShelf = Rack.KeyShelf!;
+    var keyShelf = Rack.KeyShelf;
     if(keyShelf == null)
     {
       return false;
@@ -145,7 +161,7 @@ public class ColumnViewModel: ViewModelBase
     {
       return false;
     }
-    if(columnLocation.ColumnIndex == sourceLocation.Value.ColumnIndex)
+    if(Object.ReferenceEquals(this, sourceLocation.Value.Column))
     {
       // Same column, so we cannot move to the last shelf
       return sourceLocation.Value.ShelfIndex < columnLocation.ShelfIndex;
@@ -176,9 +192,12 @@ public class ColumnViewModel: ViewModelBase
 
   private void CreateNewShelfHere()
   {
+    // enforce preconditions
+    Rack.KeyTile = null;
+    Rack.KeyShelf = null;
     var sourceLocation = Rack.GetColumnTail(this);
-    var _ = Rack.CreateNewShelf(sourceLocation, null);
-    // Todo: open editor
+    var shelf = Rack.CreateNewShelf(sourceLocation, null);
+    ShelfEditViewModel.Show(shelf);
   }
 
 }

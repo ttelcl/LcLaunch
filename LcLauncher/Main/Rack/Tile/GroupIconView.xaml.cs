@@ -13,16 +13,15 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace LcLauncher.Main.Rack.Tile
+namespace LcLauncher.Main.Rack.Tile;
+
+/// <summary>
+/// Interaction logic for GroupIconView.xaml
+/// </summary>
+public partial class GroupIconView: UserControl
 {
-  /// <summary>
-  /// Interaction logic for GroupIconView.xaml
-  /// </summary>
-  public partial class GroupIconView: UserControl
+  public GroupIconView()
   {
-    public GroupIconView()
-    {
-      InitializeComponent();
-    }
+    InitializeComponent();
   }
 }

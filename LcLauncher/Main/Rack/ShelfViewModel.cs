@@ -14,16 +14,26 @@ using System.Windows.Input;
 using ControlzEx.Theming;
 
 using LcLauncher.DataModel;
-using LcLauncher.IconUpdates;
+using LcLauncher.DataModel.ChangeTracking;
+using LcLauncher.DataModel.Entities;
+using LcLauncher.DataModel.Store;
+using LcLauncher.IconTools;
+using LcLauncher.Main.Rack.Editors;
+
+
+
+//using LcLauncher.IconUpdates;
 using LcLauncher.Main.Rack.Tile;
 using LcLauncher.Models;
-using LcLauncher.Persistence;
 using LcLauncher.WpfUtilities;
+
+using Ttelcl.Persistence.API;
 
 namespace LcLauncher.Main.Rack;
 
 public class ShelfViewModel:
-  ViewModelBase, IIconLoadJobSource, IPersisted, ITileListOwner, IHasTheme
+  ViewModelBase, IHasTheme, ICanQueueIcons, IDirtyHost,
+  IWrapsModel<ShelfModel, ShelfData>, ITileListOwner
 {
   public ShelfViewModel(
     RackViewModel rack,
@@ -31,18 +41,18 @@ public class ShelfViewModel:
   {
     Rack = rack;
     _theme = Rack.Owner.DefaultTheme;
-    ClaimTracker = Rack.Model.GetClaimTracker(model.Id);
+    //ClaimTracker = Rack.Model.GetClaimTracker(model.Id);
     Store = Rack.Store;
     Model = model;
     _model = Model;
+    PrimaryTiles = new TileListViewModel(
+      this,
+      model.PrimaryTiles,
+      this);
     SetThemeCommand = new DelegateCommand(
       p => Theme = (p as string) ?? Rack.Owner.DefaultTheme);
     ToggleExpandedCommand = new DelegateCommand(
       p => IsExpanded = !IsExpanded);
-    PrimaryTiles = new TileListViewModel(
-      Rack.IconLoadQueue,
-      this,
-      model.PrimaryTiles);
     EnqueueIconJobs = new DelegateCommand(
       p => QueueIcons(false));
     RefreshIconJobs = new DelegateCommand(
@@ -98,17 +108,17 @@ public class ShelfViewModel:
       }
       if(SetInstanceProperty(ref _model!, value))
       {
-        if(!this.ClaimTileList())
-        {
-          Trace.TraceWarning(
-            $"ShelfViewModel.Model: Failed to claim tile list for "+
-            $"'{TileListOwnerLabel}', already claimed by "+
-            $"'{ClaimTracker.Owner?.TileListOwnerLabel ?? String.Empty}'");
-        }
-        Title = value.Shelf.Title;
-        Theme = value.Shelf.Theme ?? Rack.Owner.DefaultTheme;
-        IsExpanded = !value.Shelf.Collapsed;
-        ActiveSecondaryTile = null;
+        //if(!this.ClaimTileList())
+        //{
+        //  Trace.TraceWarning(
+        //    $"ShelfViewModel.Model: Failed to claim tile list for "+
+        //    $"'{TileListOwnerLabel}', already claimed by "+
+        //    $"'{ClaimTracker.Owner?.TileListOwnerLabel ?? String.Empty}'");
+        //}
+        Title = value.Entity.Title;
+        Theme = value.Entity.Theme ?? Rack.Owner.DefaultTheme;
+        IsExpanded = !value.Entity.Collapsed;
+        //ActiveSecondaryTile = null;
         RaisePropertyChanged(nameof(PrimaryTiles));
         RaisePropertyChanged(nameof(ShelfId));
       }
@@ -149,11 +159,11 @@ public class ShelfViewModel:
   public string MarkShelfActionIcon =>
     IsKeyShelf ? "CheckboxBlankOffOutline" : "CheckboxIntermediate";
 
-  public ILcLaunchStore Store { get; }
+  public LauncherRackStore Store { get; }
 
   public TileListViewModel PrimaryTiles { get; }
 
-  public Guid ShelfId => Model.Id;
+  public TickId ShelfId => Model.Id;
 
   public TileListViewModel? SecondaryTiles {
     get => _secondaryTiles;
@@ -190,15 +200,27 @@ public class ShelfViewModel:
     get => _secondaryTiles != null;
   }
 
+  /// <inheritdoc/>
+  public TileListViewModel OwnedTiles => PrimaryTiles;
+
+  /// <inheritdoc/>
+  public TileListViewModel? ParentTiles => null;
+
+  /// <inheritdoc/>
+  public void OwnedTilesEdited()
+  {
+    // no need to do anything
+  }
+
   public string Theme {
     get => _theme;
     set {
       if(SetValueProperty(ref _theme, value))
       {
-        if(Model.Shelf.Theme != value)
+        if(Model.Entity.Theme != value)
         {
-          Model.Shelf.Theme = value;
-          Model.MarkDirty();
+          Model.Entity.Theme = value;
+          MarkAsDirty();
         }
         SetTheme("Dark." + value);
       }
@@ -211,10 +233,10 @@ public class ShelfViewModel:
     set {
       if(SetValueProperty(ref _title, value))
       {
-        if(Model.Shelf.Title != value)
+        if(Model.Entity.Title != value)
         {
-          Model.Shelf.Title = value;
-          Model.MarkDirty();
+          Model.Entity.Title = value;
+          MarkAsDirty();
         }
       }
     }
@@ -227,10 +249,10 @@ public class ShelfViewModel:
       if(SetValueProperty(ref _isExpanded, value))
       {
         RaisePropertyChanged(nameof(ShelfExpandedIcon));
-        if(Model.Shelf.Collapsed != !value)
+        if(Model.Entity.Collapsed != !value)
         {
-          Model.Shelf.Collapsed = !value;
-          Model.MarkDirty();
+          Model.Entity.Collapsed = !value;
+          MarkAsDirty();
         }
       }
     }
@@ -240,30 +262,30 @@ public class ShelfViewModel:
   public string ShelfExpandedIcon =>
     IsExpanded ? "ChevronUpCircleOutline" : "ChevronDownCircleOutline";
 
-  private ShelfView? Host { get; set; }
+  private ShelfView? View { get; set; }
 
-  internal void UpdateHost(ShelfView? host)
+  internal void UpdateView(ShelfView? view)
   {
-    if(host == null)
+    if(view == null)
     {
       Trace.TraceInformation(
-        "ShelfViewModel.UpdateHost: Clearing host control");
-      Host = null;
+        "ShelfViewModel.UpdateHost: Clearing host (view) control");
+      View = null;
     }
     else
     {
       Trace.TraceInformation(
-        "ShelfViewModel.UpdateHost: Setting host control");
-      Host = host;
+        "ShelfViewModel.UpdateHost: Setting host (view) control");
+      View = view;
       SetTheme("Dark." + Theme);
     }
   }
 
   private void SetTheme(string? theme)
   {
-    if(Host == null)
+    if(View == null)
     {
-      //Trace.TraceWarning("SetTheme: Host control is null");
+      //Trace.TraceWarning("SetTheme: Host (View) control is null");
       return;
     }
     if(string.IsNullOrEmpty(theme))
@@ -271,53 +293,13 @@ public class ShelfViewModel:
       Trace.TraceWarning("SetTheme: Theme is null or empty");
       return;
     }
-    ThemeManager.Current.ChangeTheme(Host, theme);
-  }
-
-  public IEnumerable<IconLoadJob> GetIconLoadJobs(bool reload)
-  {
-    return PrimaryTiles.GetIconLoadJobs(reload);
-  }
-
-  public IconLoadQueue IconLoadQueue { get => Rack.IconLoadQueue; }
-
-  private void QueueIcons(bool reload)
-  {
-    var before = IconLoadQueue.JobCount();
-    this.EnqueueAllIconJobs(reload);
-    var after = IconLoadQueue.JobCount();
-    Trace.TraceInformation(
-      $"Queued {after - before} icon load jobs ({after} - {before}) for shelf {Model.Id}");
-  }
-
-  public bool IsDirty { get => Model.IsDirty; }
-
-  public void MarkDirty()
-  {
-    Model.MarkDirty();
-    RaisePropertyChanged(nameof(IsDirty));
-  }
-
-  public void SaveIfDirty()
-  {
-    if(IsDirty)
-    {
-      Trace.TraceInformation(
-        $"Saving shelf {Model.Id}");
-      // No need to 'rebuild' anything, since there are no sub-models
-      Model.Save();
-      RaisePropertyChanged(nameof(IsDirty));
-    }
+    ThemeManager.Current.ChangeTheme(View, theme);
   }
 
   public string TileListOwnerLabel { get => $"Shelf {ShelfId}"; }
-  public TileListOwnerTracker ClaimTracker { get; }
-  public bool ClaimPriority { get => true; }
 
-  internal void GatherTileLists(Dictionary<Guid, TileListViewModel> buffer)
-  {
-    PrimaryTiles.GatherTileLists(buffer);
-  }
+  //public TileListOwnerTracker ClaimTracker { get; }
+  public bool ClaimPriority { get => true; }
 
   private bool CanMoveMarkedShelfHere()
   {
@@ -356,8 +338,11 @@ public class ShelfViewModel:
     {
       return;
     }
-    var _ = Rack.CreateNewShelf(sourceLocation.Value, null, Theme);
-    // Todo: open editor
+    // Enforce conditions for showing the editor
+    Rack.KeyShelf = null;
+    Rack.KeyTile = null;
+    var shelf = Rack.CreateNewShelf(sourceLocation.Value, null, Theme);
+    ShelfEditViewModel.Show(shelf);
   }
 
   private bool CanDeleteShelf()
@@ -371,6 +356,45 @@ public class ShelfViewModel:
       return false;
     }
     return true;
+  }
+
+  /// <inheritdoc/>
+  public void QueueIcons(bool regenerate)
+  {
+    PrimaryTiles.QueueIcons(regenerate);
+  }
+
+  /// <inheritdoc/>
+  public bool IsDirty {
+    get => _isDirty;
+    private set {
+      if(SetValueProperty(ref _isDirty, value))
+      {
+      }
+    }
+  }
+  private bool _isDirty;
+
+  /// <summary>
+  /// Save this shelf entity (but not the associated tile lists)
+  /// </summary>
+  /// <param name="ifDirty"></param>
+  public void Save(bool ifDirty = true)
+  {
+    if(IsDirty || !ifDirty)
+    {
+      // No need to rebuild: all fields already use the raw data as backing store
+      Trace.TraceInformation(
+        $"Saving shelf {Model.Id} ('{Title}')");
+      Store.PutShelf(Model.Entity);
+      IsDirty = false;
+    }
+  }
+
+  /// <inheritdoc/>
+  public void MarkAsDirty()
+  {
+    IsDirty = true;
   }
 
   private bool GetIsEmpty()
@@ -398,26 +422,36 @@ public class ShelfViewModel:
       if(sourceLocation != null)
       {
         // We are about to detach this shelf from the rack.
-        // Make sure its persisted model is up to date (it may still
-        // be in use by other racks!)
-        SaveIfDirty();
+        // Make sure its persisted model is up to date (as a backup)
+        // Also save all embedded tile lists. All saving is hard mode here,
+        // ensuring the file timestamps are similar
+        Save(false);
+        var tileLists = new Dictionary<TickId, TileListViewModel>();
+        GatherTileLists(tileLists);
+        foreach(var tileList in tileLists.Values)
+        {
+          tileList.Save(false);
+        }
 
-        var columnVm = Rack.Columns[sourceLocation.Value.ColumnIndex];
+        var columnVm = sourceLocation.Value.Column;
 
         // Remove the shelf vm from the column
         columnVm.Shelves.RemoveAt(sourceLocation.Value.ShelfIndex);
 
         // Remove the shelf model from the column
-        columnVm.Model.RemoveAt(sourceLocation.Value.ShelfIndex);
+        columnVm.Model.Shelves.RemoveAt(sourceLocation.Value.ShelfIndex);
 
-        Rack.MarkDirty();
-        Rack.SaveIfDirty();
+        Rack.MarkAsDirty();
+        Rack.Save();
 
-        // We don't delete the backing store content. The shelf
-        // may be in use elsewhere still.
+        // We don't delete the backing store content, keeping it as
+        // a kind of backup.
       }
     }
   }
 
-  //
+  internal void GatherTileLists(Dictionary<TickId, TileListViewModel> buffer)
+  {
+    PrimaryTiles.GatherTileLists(buffer);
+  }
 }

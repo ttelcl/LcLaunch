@@ -5,46 +5,42 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Media.Imaging;
 
-using Newtonsoft.Json;
+using LcLauncher.DataModel.Entities;
 
-using LcLauncher.Persistence;
-using LcLauncher.Storage;
-using LcLauncher.Storage.BlobsStorage;
-
-using Model2 = LcLauncher.ModelsV2;
-using Model3 = LcLauncher.DataModel.Entities;
+using Ttelcl.Persistence.API;
 
 namespace LcLauncher.Models;
 
 /// <summary>
-/// An ordered list of tiles, together with an ID.
-/// This is not serialized direcly, but wraps the
-/// result or source of serialization.
+/// A tile list within a rack. Logically each tile list belongs
+/// to a rack (not a shelf!)
 /// </summary>
-public class TileListModel
+public class TileListModel: IModel<TileListData>
 {
-
-  /// <summary>
-  /// Create a new TileList. Use <see cref="Load"/> or
-  /// <see cref="Create(Guid?)"/> to call this constructor.
-  /// </summary>
-  private TileListModel(
-    Guid id,
-    IEnumerable<Model2.TileData?> tiles,
-    RackModel rack)
+  public TileListModel(
+    RackModel rack,
+    TileListData tileListEntity)
   {
-    Id = id;
-    RawTiles = tiles.ToList();
-    Store = rack.Store;
-    IconCache = Store.GetIconCache(id);
+    Entity = tileListEntity;
     Rack = rack;
   }
+
+  ///// <summary>
+  ///// The shelf directly or indirectly owning this Tile List
+  ///// </summary>
+  //public ShelfModel Shelf { get; }
+
+  public TileListData Entity { get; }
+
+  public RackModel Rack { get; }
+
+  public TickId Id => Entity.Id;
+
+  //public bool IsTopLevel => Entity.Id == Shelf.Id;
 
   /// <summary>
   /// Create a brand new empty TileList, optionally using
@@ -56,17 +52,10 @@ public class TileListModel
   /// <returns></returns>
   public static TileListModel Create(
     RackModel rack,
-    Guid? id = null)
+    TickId? id = null)
   {
-    return new TileListModel(
-      id ?? Guid.NewGuid(),
-      [
-        Model2.TileData.EmptyTile(),
-        Model2.TileData.EmptyTile(),
-        Model2.TileData.EmptyTile(),
-        Model2.TileData.EmptyTile(),
-      ],
-      rack);
+    var entity = TileListData.CreateNew(id ?? TickId.New());
+    return new TileListModel(rack, entity);
   }
 
   /// <summary>
@@ -84,67 +73,9 @@ public class TileListModel
   /// </returns>
   public static TileListModel? Load(
     RackModel rack,
-    Guid id)
+    TickId id)
   {
-    var list = rack.Store.LoadTiles(id);
-    return list == null ? null : new TileListModel(id, list, rack);
+    var entity = rack.Store.GetTiles(id);
+    return entity == null ? null : new TileListModel(rack, entity);
   }
-
-  public TileListModel CreateClone()
-  {
-    SaveRawModel();
-    var newId = Guid.NewGuid();
-    var tiles = new List<Model2.TileData?>(RawTiles); // clone to independent list
-    var clone = new TileListModel(
-      newId,
-      tiles,
-      Rack);
-    Trace.TraceInformation(
-      $"Creating clone of tile list {Id} as {newId}");
-    clone.SaveRawModel();
-    return clone;
-  }
-
-  /// <summary>
-  /// Save the existing model. Warning: this is quite possibly
-  /// NOT what you want to save, as it may not have all changes.
-  /// Use the methods in the ViewModel to rebuild the model from the
-  /// viewmodels first.
-  /// </summary>
-  public void SaveRawModel()
-  {
-    Store.SaveTiles(Id, RawTiles);
-    IsDirty = false;
-  }
-
-  public void DevSaveCopy(Guid id)
-  {
-    Trace.TraceInformation(
-      $"Saving copy of tile list {Id} as {id}");
-    Store.SaveTiles(id, RawTiles);
-  }
-
-  public bool IsDirty { get; private set; }
-
-  public void MarkDirty()
-  {
-    IsDirty = true;
-  }
-
-  public Guid Id { get; }
-
-  public List<Model2.TileData?> RawTiles { get; }
-
-  /// <summary>
-  /// The rack this list belongs to. This provides the context
-  /// in which this list should be unique.
-  /// </summary>
-  public RackModel Rack { get; }
-
-  /// <summary>
-  /// The store in which this list is saved and its icons are cached.
-  /// </summary>
-  public ILcLaunchStore Store { get; }
-
-  public ILauncherIconCache IconCache { get; }
 }

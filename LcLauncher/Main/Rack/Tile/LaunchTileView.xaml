@@ -13,15 +13,6 @@
     <UserControl.ContextMenu>
         <ContextMenu>
             <MenuItem
-                Header="Launch"
-                Command="{Binding RunCommand}">
-                <MenuItem.Icon>
-                    <iconPacks:PackIconMaterial
-                        Kind="RocketLaunch" Width="20" Height="20" />
-                    <!-- Foreground="{DynamicResource MahApps.Brushes.AccentBase}" -->
-                </MenuItem.Icon>
-            </MenuItem>
-            <MenuItem
                 Header="{Binding Host.MarkTileText}"
                 Command="{Binding Host.ToggleCutCommand}">
                 <MenuItem.Icon>
@@ -29,30 +20,14 @@
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem
-                Header="Insert Empty Tile Here"
+                Header="Insert New Empty Tile Here"
                 Command="{Binding Host.InsertEmptyTileCommand}">
                 <MenuItem.Icon>
                     <iconPacks:PackIconMaterial Kind="Egg" Width="20" Height="20"/>
                 </MenuItem.Icon>
             </MenuItem>
-            <Separator/>
             <MenuItem
-                Header="Edit ..."
-                Command="{Binding EditCommandNew}">
-                <MenuItem.Icon>
-                    <iconPacks:PackIconMaterial Kind="Cog" Width="20" Height="20"/>
-                </MenuItem.Icon>
-            </MenuItem>
-            <MenuItem
-                Header="Shrink ..."
-                IsEnabled="False">
-                <MenuItem.Icon>
-                    <iconPacks:PackIconMaterial Kind="ViewGridPlusOutline" Width="20" Height="20"/>
-                </MenuItem.Icon>
-            </MenuItem>
-            <Separator/>
-            <MenuItem
-                Header="Add Tile Row"
+                Header="Append Empty Tile Row"
                 Command="{Binding Host.TileList.AddEmptyRowCommand}">
                 <MenuItem.Icon>
                     <iconPacks:PackIconMaterial Kind="TableRowPlusAfter" Width="20" Height="20"/>
@@ -66,7 +41,31 @@
                 </MenuItem.Icon>
             </MenuItem>
             <Separator/>
-            <MenuItem Header="Other">
+            <MenuItem
+                Header="Launch!"
+                Command="{Binding RunCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial
+                        Kind="RocketLaunch" Width="20" Height="20"
+                        Foreground="#FF44CC44"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem
+                Header="Edit ..."
+                Command="{Binding EditCommandNew}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="Cog" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem
+                Header="Shrink 4 tiles together..."
+                IsEnabled="False">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="ViewGridPlusOutline" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <Separator/>
+            <MenuItem Header="Advanced">
                 <MenuItem
                     Header="Fix missing icon"
                     Command="{Binding FixIconCommand}">
