@@ -101,8 +101,9 @@ public class LaunchTileViewModel:
     set {
       if(SetValueProperty(ref _title, value))
       {
-        // TODO: feed back to original and save
+        // Reminder: this is actually unused. Editing a tile replaces this entire VM
         Model.Title = value;
+        MarkAsDirty();
       }
     }
   }
@@ -113,8 +114,9 @@ public class LaunchTileViewModel:
     set {
       if(SetValueProperty(ref _tooltip, value))
       {
-        // TODO: feed back to original and save
+        // Reminder: this is actually unused. Editing a tile replaces this entire VM
         Model.Tooltip = value;
+        MarkAsDirty();
       }
     }
   }

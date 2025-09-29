@@ -21,81 +21,6 @@
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem
-                Header="Swap Marked Tile Here"
-                Command="{Binding Host.SwapMarkedTileHereCommand}">
-                <MenuItem.Icon>
-                    <iconPacks:PackIconMaterial Kind="ApplicationImport" Width="20" Height="20"/>
-                </MenuItem.Icon>
-            </MenuItem>
-            <MenuItem
-                Header="Copy Marked Tile Here"
-                Command="{Binding Host.CopyMarkedTileHereCommand}">
-                <MenuItem.Icon>
-                    <iconPacks:PackIconMaterial Kind="ContentDuplicate" Width="20" Height="20"/>
-                </MenuItem.Icon>
-            </MenuItem>
-            <MenuItem
-                Header="Create New Group Tile Here"
-                Command="{Binding CreateGroupTileCommand}">
-                <MenuItem.Icon>
-                    <iconPacks:PackIconMaterial Kind="DotsGrid" Width="20" Height="20"/>
-                </MenuItem.Icon>
-            </MenuItem>
-            <MenuItem
-                Header="Create Launch Tile Here">
-                <Separator/>
-                <!--<MenuItem
-                    Header="Paste as Launch Tile..."
-                    ToolTip="(Try to paste your clipboard content as a launcher tile)"
-                    ToolTipService.ShowOnDisabled="True"
-                    Command="{Binding TryPasteAsTileCommand}">
-                    <MenuItem.Icon>
-                        <iconPacks:PackIconMaterial Kind="ContentPaste" Width="20" Height="20"/>
-                    </MenuItem.Icon>
-                </MenuItem>-->
-                <MenuItem
-                    Header="Bind to Application..."
-                    ToolTip="(select from your installed application list)"
-                    ToolTipService.ShowOnDisabled="True"
-                    Command="{Binding CreateAppTileCommand}">
-                    <MenuItem.Icon>
-                        <iconPacks:PackIconMaterial Kind="ApplicationOutline" Width="20" Height="20"/>
-                    </MenuItem.Icon>
-                </MenuItem>
-                <!--<MenuItem
-                    Header="Bind to Shortcut..."
-                    ToolTip="(select shortcut file from your Start Menu or elsewhere)"
-                    ToolTipService.ShowOnDisabled="True"
-                    Command="{Binding CreateShortcutTileCommand}">
-                    <MenuItem.Icon>
-                        <iconPacks:PackIconMaterial Kind="LinkVariantPlus" Width="20" Height="20"/>
-                    </MenuItem.Icon>
-                </MenuItem>-->
-                <!--<MenuItem
-                    Header="Bind to Document..."
-                    ToolTip="(select a file from your computer, allows any file type)"
-                    ToolTipService.ShowOnDisabled="True"
-                    Command="{Binding CreateDocumentTileCommand}">
-                    <MenuItem.Icon>
-                        <iconPacks:PackIconMaterial Kind="FileDocumentPlus" Width="20" Height="20"/>
-                    </MenuItem.Icon>
-                </MenuItem>-->
-                <!--<MenuItem
-                    Header="Bind to Executable..."
-                    ToolTip="(select a *.exe file from your computer, allows for arguments and environment tweaks)"
-                    ToolTipService.ShowOnDisabled="True"
-                    Command="{Binding CreateExecutableTileCommand}">
-                    <MenuItem.Icon>
-                        <iconPacks:PackIconMaterial Kind="ApplicationCogOutline" Width="20" Height="20"/>
-                    </MenuItem.Icon>
-                </MenuItem>-->
-
-                <MenuItem.Icon>
-                    <iconPacks:PackIconMaterial Kind="ShapeSquarePlus" Width="20" Height="20"/>
-                </MenuItem.Icon>
-            </MenuItem>
-            <Separator/>
-            <MenuItem
                 Header="Insert New Empty Tile Here"
                 Command="{Binding Host.InsertEmptyTileCommand}">
                 <MenuItem.Icon>
@@ -103,16 +28,7 @@
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem
-                Header="Delete this Empty Tile"
-                Command="{Binding DeleteEmptyTileCommand}">
-                <MenuItem.Icon>
-                    <iconPacks:PackIconMaterial Kind="EggOff" Width="20" Height="20"
-                                                Foreground="#FFFF4444"/>
-                </MenuItem.Icon>
-            </MenuItem>
-            <Separator/>
-            <MenuItem
-                Header="Add Tile Row"
+                Header="Append Empty Tile Row"
                 Command="{Binding Host.TileList.AddEmptyRowCommand}">
                 <MenuItem.Icon>
                     <iconPacks:PackIconMaterial Kind="TableRowPlusAfter" Width="20" Height="20"/>
@@ -123,6 +39,92 @@
                 Command="{Binding Host.TileList.RemoveLastEmptyRowCommand}">
                 <MenuItem.Icon>
                     <iconPacks:PackIconMaterial Kind="TableRowRemove" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <Separator/>
+            <MenuItem
+                Header="Swap with Selected Tile"
+                Command="{Binding Host.SwapMarkedTileHereCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial
+                        Kind="TransferDown" Width="20" Height="20"
+                        Foreground="#FF44CC44"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem
+                Header="Copy Selected Launch Tile Here"
+                Command="{Binding Host.CopyMarkedTileHereCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="ContentDuplicate" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <Separator/>
+            <MenuItem
+                Header="Convert to Group Tile"
+                Command="{Binding CreateGroupTileCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="DotsGrid" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem
+                Header="Convert Tile: Paste Clipboard..."
+                ToolTip="(Try to paste your clipboard content as a launcher tile)"
+                ToolTipService.ShowOnDisabled="True"
+                Command="{Binding TryPasteAsTileCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="ContentPaste" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem
+                    Header="Convert Tile: Application Picker..."
+                    ToolTip="(select from your installed application list)"
+                    ToolTipService.ShowOnDisabled="True"
+                    Command="{Binding CreateAppTileCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="ApplicationOutline" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem
+                Header="Convert Tile: Browse">
+                <MenuItem
+                    Header="Bind to Shortcut..."
+                    ToolTip="(select shortcut file from your Start Menu or elsewhere)"
+                    ToolTipService.ShowOnDisabled="True"
+                    Command="{Binding CreateShortcutTileCommand}">
+                    <MenuItem.Icon>
+                        <iconPacks:PackIconMaterial Kind="LinkVariantPlus" Width="20" Height="20"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem
+                    Header="Bind to Document..."
+                    ToolTip="(select a file from your computer, allows any file type)"
+                    ToolTipService.ShowOnDisabled="True"
+                    Command="{Binding CreateDocumentTileCommand}">
+                    <MenuItem.Icon>
+                        <iconPacks:PackIconMaterial Kind="FileDocumentPlus" Width="20" Height="20"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem
+                    Header="Bind to Executable..."
+                    ToolTip="(select a *.exe file from your computer, allows for arguments and environment tweaks)"
+                    ToolTipService.ShowOnDisabled="True"
+                    Command="{Binding CreateExecutableTileCommand}">
+                    <MenuItem.Icon>
+                        <iconPacks:PackIconMaterial Kind="ApplicationCogOutline" Width="20" Height="20"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="ShapeSquarePlus" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <Separator/>
+            <MenuItem
+                Header="Delete this Empty Tile"
+                Command="{Binding DeleteEmptyTileCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="EggOff" Width="20" Height="20"
+                                                Foreground="#FFFF4444"/>
                 </MenuItem.Icon>
             </MenuItem>
         </ContextMenu>
