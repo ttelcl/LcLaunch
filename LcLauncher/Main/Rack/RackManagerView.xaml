@@ -11,7 +11,7 @@
     mc:Ignorable="d" 
     d:DataContext="{d:DesignInstance local:RackManagerViewModel, IsDesignTimeCreatable=False}"
     d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Margin="30">
+    <Grid Margin="30,10,30,30">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" MinHeight="100"/>
             <RowDefinition Height="*"/>
@@ -23,20 +23,50 @@
         </Grid.ColumnDefinitions>
         <Border
             Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
-            Margin="10"
+            Margin="10,0,10,10"
             BorderThickness="1"
             BorderBrush="{DynamicResource MahApps.Brushes.Accent}">
             <StackPanel Orientation="Vertical">
                 <TextBlock
-                    Margin="50,10"
+                    Margin="30,10"
                     FontSize="32"
                     HorizontalAlignment="Center"
                     Text="Rack Manager"/>
-                <TextBlock
-                    Margin="150,10"
-                    FontSize="16"
-                    HorizontalAlignment="Left"
-                    Text="This is introductory text. (TBD)"/>
+                <BulletDecorator
+                    TextBlock.FontSize="16"
+                    Margin="30,5" Width="600">
+                    <BulletDecorator.Bullet>
+                        <!--<TextBlock Width="20" Text="&#x2022;"/>-->
+                        <TextBlock Width="20" Text="&#x25cf;"/>
+                    </BulletDecorator.Bullet>
+                    <TextBlock TextWrapping="Wrap">
+                        Use this page to select the rack you want to use (you can also use the
+                        drop-down in the title bar, of course).
+                    </TextBlock>
+                </BulletDecorator>
+                <BulletDecorator
+                    TextBlock.FontSize="16"
+                    Margin="30,5" Width="600">
+                    <BulletDecorator.Bullet>
+                        <TextBlock Width="20" Text="&#x25cf;"/>
+                    </BulletDecorator.Bullet>
+                    <TextBlock TextWrapping="Wrap">
+                        This is also the place where you can create new, empty, racks.
+                    </TextBlock>
+                </BulletDecorator>
+                <BulletDecorator
+                    TextBlock.FontSize="16"
+                    Margin="30,5" Width="600">
+                    <BulletDecorator.Bullet>
+                        <TextBlock Width="20" Text="&#x25cf;"/>
+                    </BulletDecorator.Bullet>
+                    <TextBlock TextWrapping="Wrap" FontStyle="Italic">
+                        Use separate racks to separate things that, to you, are unrelated. For
+                        example, have separate racks for work and leisure. Or just use one
+                        'default' rack for everything, and use the columns and shelves in the
+                        rack to separate contexts. It is your choice :).
+                    </TextBlock>
+                </BulletDecorator>
             </StackPanel>
         </Border>
 
@@ -51,8 +81,27 @@
             Margin="10"
             BorderThickness="2"
             BorderBrush="{DynamicResource MahApps.Brushes.Accent}">
-            
+            <ScrollViewer>
+                <ItemsControl
+                    ItemsSource="{Binding RackList.Racks}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Vertical"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid
+                                Visibility="{Binding Key, Converter={StaticResource VisibleIfNotNull}}">
+                                <!-- Hide the rack manager 'pseudo-rack' in this list -->
+                                <local:RackRefItemView />
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
         </Border>
+        
         <TextBlock
             Grid.Row="2" Grid.Column="0"
             FontSize="20"

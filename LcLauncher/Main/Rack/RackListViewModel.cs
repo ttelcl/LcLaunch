@@ -22,7 +22,7 @@ public class RackListViewModel: ViewModelBase
     MainViewModel host, string? defaultRackName)
   {
     Host = host;
-    NoRack = new RackReferenceViewModel(host, null);
+    NoRack = new RackReferenceViewModel(this, null);
     _racks = [NoRack];
     _selected = NoRack;
     Refresh();
@@ -84,7 +84,7 @@ public class RackListViewModel: ViewModelBase
       // try to preserve existing entry
       var vm =
         _racks.FirstOrDefault(rrvm => rrvm.Key == key)
-        ?? new RackReferenceViewModel(Host, key);
+        ?? new RackReferenceViewModel(this, key);
       rackRefs.Add(vm);
     }
 

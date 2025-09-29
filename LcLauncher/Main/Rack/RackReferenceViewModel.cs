@@ -8,6 +8,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using System.Windows.Media;
 
 using LcLauncher.Models;
 using LcLauncher.WpfUtilities;
@@ -19,14 +21,23 @@ namespace LcLauncher.Main.Rack;
 public class RackReferenceViewModel: ViewModelBase
 {
   public RackReferenceViewModel(
-    MainViewModel host,
+    RackListViewModel rackList,
     StoreKey? key)
   {
-    Host = host;
+    RackList = rackList;
     Key = key;
+    DullColor = Brushes.Gray;
+    AlertColor = Brushes.DarkOrange;
+    SelectThisCommand = new DelegateCommand(
+      p => { RackList.Selected = this; },
+      p => Key != null);
   }
 
-  public MainViewModel Host { get; }
+  public ICommand SelectThisCommand { get; }
+
+  public RackListViewModel RackList { get; }
+  
+  public MainViewModel Host => RackList.Host;
 
   public StoreKey? Key { get; }
 
@@ -38,6 +49,7 @@ public class RackReferenceViewModel: ViewModelBase
       if(SetValueProperty(ref _isAmbiguous, value))
       {
         RaisePropertyChanged(nameof(Label));
+        RaisePropertyChanged(nameof(ProviderColor));
       }
     }
   }
@@ -61,6 +73,13 @@ public class RackReferenceViewModel: ViewModelBase
         : Key.StoreName;
     }
   }
+
+  public Brush ProviderColor =>
+    IsAmbiguous ? AlertColor : DullColor;
+
+  public Brush DullColor { get; }
+
+  public Brush AlertColor { get; }
 
   public RackViewModel? Load()
   {
