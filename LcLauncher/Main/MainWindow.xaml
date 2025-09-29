@@ -8,12 +8,14 @@
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     xmlns:local="clr-namespace:LcLauncher.Main"
     xmlns:rack="clr-namespace:LcLauncher.Main.Rack"
+    xmlns:edit="clr-namespace:LcLauncher.Main.Rack.Editors"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     TitleCharacterCasing="Normal"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance local:MainViewModel, IsDesignTimeCreatable=False}"
     Icon="/LcLauncher;component/lclaunch.ico"
     WindowStartupLocation="CenterScreen"
-    ResizeMode="CanMinimize"
+    ResizeMode="CanResizeWithGrip"
     Title="Luc's Application Launchpad"
     Height="850" Width="1285"
     Activated="WindowActivated"
@@ -22,37 +24,60 @@
     <mah:MetroWindow.RightWindowCommands>
         <mah:WindowCommands>
             <Menu>
-                <MenuItem Header="Dev">
-                    <MenuItem Header="Reload apps" Command="{Binding DevReloadAppsCommand}"/>
-                    <MenuItem Header="Dump apps" Command="{Binding DevDumpAppsCommand}"/>
-                    <MenuItem Header="Toggle Dev Pane" Command="{Binding DevTogglePaneCommand}"/>
+                <MenuItem
+                    Foreground="{DynamicResource MahApps.Brushes.Gray6}"
+                    Header="Dev">
+                    <MenuItem Header="Reload apps"
+                              Command="{Binding DevReloadAppsCommand}"/>
+                    <MenuItem Header="Dump apps"
+                              Command="{Binding DevDumpAppsCommand}"/>
+                    <MenuItem Header="Toggle Dev Pane"
+                              Command="{Binding DevTogglePaneCommand}"/>
+                    <MenuItem Header="Process Next Icon Batch"
+                              Command="{Binding ProcessNextIconJobCommand}"/>
                 </MenuItem>
             </Menu>
-            <mah:SplitButton
+            <ComboBox
                 ItemsSource="{Binding RackList.Racks}"
-                SelectedItem="{Binding RackList.SelectedRack, Mode=TwoWay}"
+                DisplayMemberPath="Label"
                 HorizontalContentAlignment="Left"
                 HorizontalAlignment="Center"
-                MinWidth="150">
-                <mah:SplitButton.Icon>
-                    <iconPacks:PackIconMaterial Kind="Bookshelf" />
-                </mah:SplitButton.Icon>
-            </mah:SplitButton>
+                MinWidth="200"
+                BorderThickness="0"
+                Background="{DynamicResource MahApps.Brushes.Accent4}"
+                Foreground="{DynamicResource MahApps.Brushes.Gray6}"
+                SelectedItem="{Binding RackList.Selected, Mode=TwoWay}"
+                DropDownOpened="RackList_DropDownOpened">
+            </ComboBox>
         </mah:WindowCommands>
     </mah:MetroWindow.RightWindowCommands>
     <DockPanel>
         <Grid
             DockPanel.Dock="Top"
             Visibility="{Binding ShowDevPane, Converter={StaticResource VisibleIf}}">
-            <local:TestPane
-                DataContext="{Binding TestPane}"/>
+            <TextBlock Text="DEV PANE"/>
+            <!--<local:TestPane
+                DataContext="{Binding TestPane}"/>-->
         </Grid>
         <Grid>
             <ScrollViewer
                 Visibility="{Binding CurrentRack, Converter={StaticResource VisibleIfNotNull}}"
-                VerticalScrollBarVisibility="Visible">
+                VerticalScrollBarVisibility="Visible"
+                HorizontalScrollBarVisibility="Visible">
+                <ScrollViewer.Resources>
+                    <!-- https://stackoverflow.com/a/50260778/271323 -->
+                    <!-- Plus checking the source for the right name. The default is 14. -->
+                    <sys:Double x:Key="MahApps.Sizes.ScrollBar.Width">10</sys:Double>
+                    <sys:Double x:Key="MahApps.Sizes.ScrollBar.Height">14</sys:Double>
+                </ScrollViewer.Resources>
                 <rack:RackView DataContext="{Binding CurrentRack}"/>
             </ScrollViewer>
+            <Border
+                Visibility="{Binding CurrentRack, Converter={StaticResource VisibleIfNull}}"
+                BorderThickness="1"
+                BorderBrush="{DynamicResource MahApps.Brushes.Accent4}">
+                <rack:RackManagerView DataContext="{Binding RackManager}"/>
+            </Border>
             <local:EditorBaseView
                 Visibility="{Binding Converter={StaticResource VisibleIfNotNull}}"
                 DataContext="{Binding CurrentEditor}"/>

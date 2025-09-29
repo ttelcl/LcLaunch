@@ -5,77 +5,46 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-using LcLauncher.Models;
+using LcLauncher.DataModel.Entities;
 
 namespace LcLauncher.Launching;
 
 public static class Launcher
 {
-  public static void Launch(LaunchDataBase launchData)
-  {
-    if(launchData is RawLaunch rawLaunch)
-    {
-      Launch(rawLaunch);
-    }
-    else if(launchData is ShellLaunch shellLaunch)
-    {
-      Launch(shellLaunch);
-    }
-    else
-    {
-      MessageBox.Show(
-        "Unrecognized launch type",
-        "Error",
-        MessageBoxButton.OK,
-        MessageBoxImage.Error);
-    }
-  }
 
   public static void Launch(LaunchData launchData)
   {
     if(launchData.ShellMode)
     {
-      var shellLaunch = launchData.ToShellLaunch();
-      if(shellLaunch != null)
-      {
-        Launch(shellLaunch);
-      }
-      else
-      {
-        MessageBox.Show(
-          "Unrecognized shell launch type",
-          "Error",
-          MessageBoxButton.OK,
-          MessageBoxImage.Error);
-      }
+      LaunchShellMode(launchData);
     }
     else
     {
-      var rawLaunch = launchData.ToRawLaunch();
-      if(rawLaunch != null)
-      {
-        Launch(rawLaunch);
-      }
-      else
-      {
-        MessageBox.Show(
-          "Unrecognized raw launch type",
-          "Error",
-          MessageBoxButton.OK,
-          MessageBoxImage.Error);
-      }
+      LaunchRawMode(launchData);
     }
   }
 
-  public static void Launch(RawLaunch rawLaunch)
+  private static void LaunchRawMode(LaunchData rawLaunch)
   {
+    if(rawLaunch.ShellMode)
+    {
+      throw new InvalidOperationException(
+        "Expecting a raw mode LaunchData here");
+    }
+    var fileName = rawLaunch.Target;
+    if(!File.Exists(fileName))
+    {
+      throw new InvalidOperationException(
+        $"Cannot launch: file '{fileName}' no longer exists");
+    }
     var startInfo = new ProcessStartInfo {
-      FileName = rawLaunch.TargetPath,
+      FileName = fileName,
       UseShellExecute = false,
       WindowStyle = rawLaunch.WindowStyle,
     };
@@ -119,18 +88,19 @@ public static class Launcher
       //  $"Started process {process.Id} ({process.MainModule?.FileName ?? String.Empty})");
       // Accessing MainModule may fail if the process is not yet running
       Trace.TraceInformation(
-        $"Started process {process.Id}");
+        $"Started Raw Mode process {process.Id}, target = {rawLaunch.Target}");
     }
     else
     {
-      Trace.TraceInformation("No process information available");
+      Trace.TraceInformation(
+        $"No process information available. Launched Raw Mode target {rawLaunch.Target}");
     }
   }
 
-  public static void Launch(ShellLaunch shellLaunch)
+  private static void LaunchShellMode(LaunchData shellLaunch)
   {
     var startInfo = new ProcessStartInfo {
-      FileName = shellLaunch.TargetPath,
+      FileName = shellLaunch.Target,
       UseShellExecute = true,
       WindowStyle = shellLaunch.WindowStyle,
       ErrorDialog = true,  // only valid if UseShellExecute is true
@@ -160,11 +130,13 @@ public static class Launcher
       //  $"Started process {process.Id} ({process.MainModule?.FileName ?? String.Empty})");
       // Accessing MainModule may fail if the process is not yet running
       Trace.TraceInformation(
-        $"Started process {process.Id}");
+        $"Started Shell Mode process {process.Id}, target = {shellLaunch.Target}");
     }
     else
     {
-      Trace.TraceInformation("No process information available");
+      Trace.TraceInformation(
+        $"No process information available. Launched Shell Mode target {shellLaunch.Target}");
     }
   }
+
 }

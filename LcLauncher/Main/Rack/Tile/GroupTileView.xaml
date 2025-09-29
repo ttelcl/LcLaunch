@@ -20,30 +20,14 @@
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem
-                Header="{Binding ToggleGroupText}"
-                Command="{Binding ToggleGroupCommand}">
-                <MenuItem.Icon>
-                    <iconPacks:PackIconMaterial Kind="{Binding ToggleGroupIcon}" Width="20" Height="20"/>
-                </MenuItem.Icon>
-            </MenuItem>
-            <MenuItem
-                Header="Insert Empty Tile Here"
+                Header="Insert New Empty Tile Here"
                 Command="{Binding Host.InsertEmptyTileCommand}">
                 <MenuItem.Icon>
                     <iconPacks:PackIconMaterial Kind="Egg" Width="20" Height="20"/>
                 </MenuItem.Icon>
             </MenuItem>
-            <Separator/>
             <MenuItem
-                Header="Properties..."
-                Command="{Binding EditGroupCommand}">
-                <MenuItem.Icon>
-                    <iconPacks:PackIconMaterial Kind="Cog" Width="20" Height="20"/>
-                </MenuItem.Icon>
-            </MenuItem>
-            <Separator/>
-            <MenuItem
-                Header="Add Tile Row"
+                Header="Append Empty Tile Row"
                 Command="{Binding Host.TileList.AddEmptyRowCommand}">
                 <MenuItem.Icon>
                     <iconPacks:PackIconMaterial Kind="TableRowPlusAfter" Width="20" Height="20"/>
@@ -57,7 +41,24 @@
                 </MenuItem.Icon>
             </MenuItem>
             <Separator/>
-            <MenuItem Header="Other">
+            <MenuItem
+                Header="{Binding ToggleGroupText}"
+                Command="{Binding ToggleGroupCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial
+                        Kind="{Binding ToggleGroupIcon}" Width="20" Height="20"
+                        Foreground="#FF44CC44"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem
+                Header="Properties (Edit) ..."
+                Command="{Binding EditGroupCommand}">
+                <MenuItem.Icon>
+                    <iconPacks:PackIconMaterial Kind="Cog" Width="20" Height="20"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <Separator/>
+            <MenuItem Header="Advanced">
                 <MenuItem Header="Update Icons"
                           Command="{Binding EnqueueIconJobsCommand}">
                     <MenuItem.Icon>
@@ -71,18 +72,6 @@
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
-            <!--<MenuItem Header="Target tile list Info">
-                <MenuItem.Icon>
-                    <iconPacks:PackIconMaterial Kind="InformationSlabCircleOutline" Width="20" Height="20"/>
-                </MenuItem.Icon>
-                <MenuItem
-                    Header="{Binding Model.TileList}"
-                    IsEnabled="False">
-                    <MenuItem.Icon>
-                        <iconPacks:PackIconMaterial Kind="InformationSlabCircleOutline" Width="20" Height="20"/>
-                    </MenuItem.Icon>
-                </MenuItem>
-            </MenuItem>-->
             <MenuItem Header="Danger Zone">
                 <MenuItem.Icon>
                     <iconPacks:PackIconMaterial Kind="AlertOutline" Width="20" Height="20"
@@ -113,7 +102,8 @@
             Width="100" Height="100"
             Visibility="{Binding IsPrimed, Converter={StaticResource VisibleIf}}"/>
         <ItemsControl
-            ItemsSource="{Binding GroupIcons}">
+            ItemsSource="{Binding GroupIcons}"
+            Width="80" Height="80">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <UniformGrid Columns="4" Rows="4"/>
@@ -125,7 +115,7 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <Border
+        <!--<Border
             Visibility="{Binding IsConflicted, Converter={StaticResource VisibleIf}}"
             Background="#88444444">
             <Border.ContextMenu>
@@ -150,7 +140,7 @@
                 Height="80" Width="80"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"/>
-        </Border>
+        </Border>-->
         <TextBlock
             IsHitTestVisible="False"
             VerticalAlignment="Bottom"

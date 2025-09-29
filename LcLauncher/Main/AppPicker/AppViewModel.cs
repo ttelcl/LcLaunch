@@ -11,21 +11,21 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
-using LcLauncher.IconUpdates;
-using LcLauncher.Persistence;
 using LcLauncher.ShellApps;
-using LcLauncher.Storage;
 using LcLauncher.WpfUtilities;
+
+using LcLauncher.DataModel.Utilities;
+using LcLauncher.IconTools;
 
 namespace LcLauncher.Main.AppPicker;
 
-public class AppViewModel: ViewModelBase, IIconHost
+public class AppViewModel: ViewModelBase, IIconJobTarget
 {
   public AppViewModel(
     AppSelectorViewModel owner,
     ShellAppDescriptor descriptor)
   {
-    IconHostId = Guid.NewGuid();
+    IconTargetId = Guid.NewGuid();
     Owner = owner;
     Descriptor = descriptor;
     Icon = descriptor.Icon;
@@ -97,20 +97,11 @@ public class AppViewModel: ViewModelBase, IIconHost
     {
       _iconRequested = true;
       Trace.TraceInformation($"Requesting missing icon {Descriptor.ParsingName}");
-      var job = new IconLoadJob(Owner.IconJobQueue, this, LoadIcon);
-      var mainQueue = Owner.IconJobQueue.Parent;
-      mainQueue.EnqueueJob(job);
-    }
-  }
-
-  // Callback from the icon loader queue. This actually tries to load the icon
-  private void LoadIcon()
-  {
-    var fullParsingName = Descriptor.FullParsingName;
-    var icons = IconCache.IconsForSource(fullParsingName, IconSize.Large);
-    if(icons != null)
-    {
-      Icon = icons[2];
+      Owner.IconJobQueue.Enqueue(
+        this,
+        IconLoadLevel.System,
+        false);
+      Owner.Owner.ActivateRackIconQueue();
     }
   }
 
@@ -133,5 +124,26 @@ public class AppViewModel: ViewModelBase, IIconHost
   }
   private BitmapSource? _icon;
 
-  public Guid IconHostId { get; }
+  /// <inheritdoc/>
+  public Guid IconTargetId { get; }
+
+  /// <inheritdoc/>
+  public string IconSource => Descriptor.FullParsingName;
+
+  /// <inheritdoc/>
+  public IconSize IconSizes => IconSize.Large;
+
+  /// <inheritdoc/>
+  public IconIdSet IconIds { get; } = new IconIdSet();
+
+  /// <inheritdoc/>
+  public IconSet Icons { get; } = new IconSet();
+
+  /// <inheritdoc/>
+  public void UpdateIcons(IconIdSet iconIds, IconSet icons)
+  {
+    IconIds.Icon48 = iconIds.Icon48;
+    Icons.IconLarge = icons.IconLarge;
+    Icon = icons.IconLarge;
+  }
 }

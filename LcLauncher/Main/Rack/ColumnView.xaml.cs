@@ -13,16 +13,15 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace LcLauncher.Main.Rack
+namespace LcLauncher.Main.Rack;
+
+/// <summary>
+/// Interaction logic for ColumnView.xaml
+/// </summary>
+public partial class ColumnView: UserControl
 {
-  /// <summary>
-  /// Interaction logic for ColumnView.xaml
-  /// </summary>
-  public partial class ColumnView: UserControl
+  public ColumnView()
   {
-    public ColumnView()
-    {
-      InitializeComponent();
-    }
+    InitializeComponent();
   }
 }

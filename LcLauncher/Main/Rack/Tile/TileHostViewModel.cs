@@ -11,14 +11,18 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
-using LcLauncher.Main.AppPicker;
-using LcLauncher.Models;
-using LcLauncher.Persistence;
+//using LcLauncher.Main.AppPicker;
 using LcLauncher.WpfUtilities;
+
+using LcLauncher.DataModel.Entities;
+using LcLauncher.IconTools;
+using LcLauncher.DataModel.ChangeTracking;
+using LcLauncher.Main.AppPicker;
 
 namespace LcLauncher.Main.Rack.Tile;
 
-public class TileHostViewModel: ViewModelBase
+public class TileHostViewModel:
+  ViewModelBase, ICanQueueIcons, IDirtyPart
 {
   public TileHostViewModel(
     TileListViewModel tileList)
@@ -27,7 +31,8 @@ public class TileHostViewModel: ViewModelBase
     ToggleCutCommand = new DelegateCommand(
       p => {
         IsKeyTile = Rack.KeyTile != this;
-      });
+      },
+      p => Tile != null && Tile.CanSelectTile());
     InsertEmptyTileCommand = new DelegateCommand(
       p => TileList.InsertEmptyTile(this));
     CopyMarkedTileHereCommand = new DelegateCommand(
@@ -105,10 +110,16 @@ public class TileHostViewModel: ViewModelBase
     set {
       if(SetValueProperty(ref _hovering, value))
       {
-        RaisePropertyChanged(nameof(Hovering));
         if(Tile != null)
         {
           Tile.HostHovering = value;
+          if(!value && Rack.ClickTile == this)
+          {
+            Trace.TraceInformation(
+              "Canceling click-in-progress because the mouse is no longer over the tile host");
+            Rack.ClickTile = null;
+          }
+          Tile.IsPrimed = Hovering && Rack.ClickTile == this;
         }
       }
     }
@@ -119,12 +130,47 @@ public class TileHostViewModel: ViewModelBase
   /// Callback from the host view. Forwards to the tile,
   /// if any and able to handle clicks.
   /// </summary>
-  public void HostMouseButtonChanged(bool down)
+  public void HostMouseButtonChanged(bool down, ModifierKeys modifierKeys)
   {
-    if(Tile != null && Tile.ClickActionCommand != null)
+    if(down)
     {
-      Tile.MouseButtonChange(down);
+      if(Rack.ClickTile != null)
+      {
+        Trace.TraceWarning(
+          "Clearing unfinished tile click upon start of next mousedown");
+      }
+      Rack.ClickTile = this;
+      if(Tile != null)
+      {
+        Tile.IsPrimed = Hovering && Rack.ClickTile == this;
+      }
     }
+    else
+    {
+      var clickTileHost = Rack.ClickTile;
+      var tilePrimed = Tile != null && Tile.IsPrimed;
+      Rack.ClickTile = null;
+      if(Tile != null)
+      {
+        var valid =
+          clickTileHost == this
+          && tilePrimed;
+        Tile.IsPrimed = false;
+        if(valid)
+        {
+          Tile.TileClicked(modifierKeys);
+        }
+      }
+    }
+
+
+    //if(Tile != null)
+    //{
+    //  if(Tile.ClickActionCommand != null)
+    //  {
+    //    Tile.MouseButtonChange(down, modifierKeys);
+    //  }
+    //}
   }
 
   public bool IsKeyTile {
@@ -151,9 +197,9 @@ public class TileHostViewModel: ViewModelBase
   private bool _isKeyTile = false;
 
   public string MarkTileText {
-    get => IsKeyTile 
-      ? "Deselect Tile"
-      : "Select Tile";
+    get => IsKeyTile
+      ? "Deselect Tile (click)"
+      : "Select Tile (CTRL-click)";
   }
 
   public string MarkTileIcon { get => IsKeyTile ? "SelectOff" : "Select"; }
@@ -205,10 +251,10 @@ public class TileHostViewModel: ViewModelBase
       TileList,
       newRawData);
     Tile = tile;
-    TileList.MarkDirty();
-    if(tile is LaunchTileViewModel launchTile)
+    MarkAsDirty();
+    if(tile is ICanQueueIcons iconQueuer)
     {
-      launchTile.LoadIcon(IconLoadLevel.LoadIfMissing);
+      iconQueuer.QueueIcons(false);
     }
     return oldRawData;
   }
@@ -216,7 +262,7 @@ public class TileHostViewModel: ViewModelBase
   /// <summary>
   /// Clear this tile to an empty tile, destroying the original tile.
   /// </summary>
-  public TileData? ClearTile()
+  private TileData? ClearTile()
   {
     return ReplaceTile(TileData.EmptyTile());
   }
@@ -232,7 +278,7 @@ public class TileHostViewModel: ViewModelBase
         MessageBoxImage.Warning);
       if(result == MessageBoxResult.Yes)
       {
-        if(Tile is GroupTileViewModel groupTile 
+        if(Tile is GroupTileViewModel groupTile
           && Shelf.ActiveSecondaryTile == groupTile)
         {
           Shelf.ActiveSecondaryTile = null;
@@ -265,7 +311,7 @@ public class TileHostViewModel: ViewModelBase
     Tile = null;
     TileList.Tiles.Remove(this);
     TileList.PadRow();
-    TileList.MarkDirty();
+    TileList.MarkAsDirty();
     return oldData;
   }
 
@@ -341,8 +387,23 @@ public class TileHostViewModel: ViewModelBase
       && other != this;
   }
 
+  public void QueueIcons(bool regenerate)
+  {
+    if(Tile is ICanQueueIcons icqi)
+    {
+      icqi.QueueIcons(regenerate);
+    }
+  }
+
+  public IDirtyHost DirtyHost => TileList;
+
+  public void MarkAsDirty()
+  {
+    DirtyHost.MarkAsDirty();
+  }
+
   public AppSelectorViewModel GetAppSelector()
   {
-    return new AppSelectorViewModel(Rack, this);
+    return new AppSelectorViewModel(this);
   }
 }

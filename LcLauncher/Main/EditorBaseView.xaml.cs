@@ -15,31 +15,30 @@ using System.Windows.Shapes;
 
 using LcLauncher.Main.Rack;
 
-namespace LcLauncher.Main
-{
-  /// <summary>
-  /// Interaction logic for EditorBaseView.xaml
-  /// </summary>
-  public partial class EditorBaseView: UserControl
-  {
-    public EditorBaseView()
-    {
-      InitializeComponent();
-    }
+namespace LcLauncher.Main;
 
-    private void EditorBaseView_DataContextChanged(
-      object sender, DependencyPropertyChangedEventArgs e)
+/// <summary>
+/// Interaction logic for EditorBaseView.xaml
+/// </summary>
+public partial class EditorBaseView: UserControl
+{
+  public EditorBaseView()
+  {
+    InitializeComponent();
+  }
+
+  private void EditorBaseView_DataContextChanged(
+    object sender, DependencyPropertyChangedEventArgs e)
+  {
+    if(e.NewValue != e.OldValue)
     {
-      if(e.NewValue != e.OldValue)
+      if(e.NewValue == null && e.OldValue is EditorViewModelBase vmold)
       {
-        if(e.NewValue == null && e.OldValue is EditorViewModelBase vmold)
-        {
-          vmold.UpdateHost(null);
-        }
-        else if(e.NewValue is EditorViewModelBase vmnew)
-        {
-          vmnew.UpdateHost(this);
-        }
+        vmold.UpdateHost(null);
+      }
+      else if(e.NewValue is EditorViewModelBase vmnew)
+      {
+        vmnew.UpdateHost(this);
       }
     }
   }

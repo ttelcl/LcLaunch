@@ -46,4 +46,12 @@ public partial class MainWindow: MetroWindow
       vm.OnAppActiveChange(false);
     }
   }
+
+  private void RackList_DropDownOpened(object sender, System.EventArgs e)
+  {
+    if(DataContext is MainViewModel vm)
+    {
+      vm.RackList.OnDropDownOpened();
+    }
+  }
 }

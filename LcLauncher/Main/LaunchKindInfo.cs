@@ -13,6 +13,8 @@ using System.Windows;
 
 using LcLauncher.Models;
 
+using LcLauncher.DataModel.Utilities;
+
 namespace LcLauncher.Main;
 
 /// <summary>
