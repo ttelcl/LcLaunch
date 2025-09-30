@@ -11,17 +11,23 @@
     mc:Ignorable="d" 
     d:DataContext="{d:DesignInstance local:RackReferenceViewModel, IsDesignTimeCreatable=False}"
     d:DesignHeight="450" d:DesignWidth="800">
-    <Button
+    <!--<Button
         HorizontalContentAlignment="Left"
-        Command="{Binding SelectThisCommand}"
-        Margin="5,2">
+        Margin="5,2"
+        Command="{Binding SelectThisCommand}">
+    </Button>-->
+    <Border
+        Margin="0,2,5,0"
+        Padding="0,0,0,5"
+        BorderThickness="0,0,0,1"
+        BorderBrush="{DynamicResource MahApps.Brushes.Accent}">
         <DockPanel>
             <iconPacks:PackIconMaterial
                 Margin="25,0,10,0"
                 VerticalAlignment="Center"
                 Width="24" Height="24"
                 DockPanel.Dock="Left"
-                Kind="Bookshelf" />
+                Kind="Nas" />
             <TextBlock
                 Margin="20,0"
                 DockPanel.Dock="Left"
@@ -33,5 +39,5 @@
                 <Run Text=")" Foreground="{Binding ProviderColor}"/>
             </TextBlock>
         </DockPanel>
-    </Button>
+    </Border>
 </UserControl>

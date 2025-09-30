@@ -23,7 +23,8 @@ public class RackListViewModel: ViewModelBase
   {
     Host = host;
     NoRack = new RackReferenceViewModel(this, null);
-    _racks = [NoRack];
+    _racks = [];
+    _racksPlusManager = [NoRack];
     _selected = NoRack;
     Refresh();
     var defaultRack =
@@ -36,6 +37,9 @@ public class RackListViewModel: ViewModelBase
 
   public RackReferenceViewModel NoRack { get; }
 
+  /// <summary>
+  /// The racks - without the pseudo-entry for the rack manager
+  /// </summary>
   public List<RackReferenceViewModel> Racks {
     get => _racks;
     set {
@@ -46,10 +50,23 @@ public class RackListViewModel: ViewModelBase
   }
   private List<RackReferenceViewModel> _racks;
 
+  /// <summary>
+  /// The racks - including the pseudo-entry for the rack manager
+  /// </summary>
+  public List<RackReferenceViewModel> RacksPlusManager {
+    get => _racksPlusManager;
+    set {
+      if(SetInstanceProperty(ref _racksPlusManager, value))
+      {
+      }
+    }
+  }
+  private List<RackReferenceViewModel> _racksPlusManager;
+
   public RackReferenceViewModel Selected {
     get => _selected;
     set {
-      if(!Racks.Contains(value))
+      if(!RacksPlusManager.Contains(value))
       {
         Trace.TraceError(
           "Patching attempt to select unknown rack - to 'no rack'");
@@ -83,11 +100,12 @@ public class RackListViewModel: ViewModelBase
     {
       // try to preserve existing entry
       var vm =
-        _racks.FirstOrDefault(rrvm => rrvm.Key == key)
+        _racksPlusManager.FirstOrDefault(rrvm => rrvm.Key == key)
         ?? new RackReferenceViewModel(this, key);
       rackRefs.Add(vm);
     }
 
+    // Check ambiguous racks
     var grouped =
       from rack in rackRefs
       group rack by rack?.Key?.StoreName;
@@ -102,18 +120,22 @@ public class RackListViewModel: ViewModelBase
     }
 
     var newList = new List<RackReferenceViewModel> {
-      NoRack
     };
     newList.AddRange(
       from vm in rackRefs
       orderby vm.RackName, vm.ProviderName
       select vm);
+    var newListWithManager = new List<RackReferenceViewModel> {
+      NoRack
+    };
+    newListWithManager.AddRange(newList);
     Racks = newList;
+    RacksPlusManager = newListWithManager;
 
     var currentKey = _selected.Key;
     if(currentKey != null)
     {
-      if(!_racks.Any(vm => vm.Key == currentKey))
+      if(!_racksPlusManager.Any(vm => vm.Key == currentKey))
       {
         // the current rack no longer exists
         _selected = NoRack;
@@ -121,7 +143,7 @@ public class RackListViewModel: ViewModelBase
     }
 
     Trace.TraceInformation(
-      $"Available racks: {String.Join(", ", _racks.Select(r => r.RackName))}");
+      $"Available racks: {String.Join(", ", _racksPlusManager.Select(r => r.RackName))}");
   }
 
   /// <summary>
@@ -189,7 +211,7 @@ public class RackListViewModel: ViewModelBase
   public bool SelectFromRackName(string rackName)
   {
     var racks =
-      _racks
+      _racksPlusManager
       .Where(
         r => r.RackName.Equals(
           rackName, StringComparison.OrdinalIgnoreCase))
@@ -224,7 +246,7 @@ public class RackListViewModel: ViewModelBase
   public bool SelectFromStoreKey(StoreKey? key)
   {
     var rack =
-      _racks
+      _racksPlusManager
       .FirstOrDefault(r => r.Key == key);
     if(rack != null)
     {
