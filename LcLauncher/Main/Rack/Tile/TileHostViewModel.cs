@@ -211,7 +211,7 @@ public class TileHostViewModel:
 
   public override string ToString()
   {
-    return $"{TileList.Model.Id}[{GetTileIndex()}]";
+    return $"{TileList.Model.Id} [{GetTileIndex()}]";
   }
 
   public bool IsEmptyTile()

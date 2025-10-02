@@ -185,14 +185,6 @@
                 </Border>
                 <DockPanel
                     Grid.Column="1">
-                    <!--<Button
-                        DockPanel.Dock="Right"
-                        Command="{Binding TestVerbsCommand}"
-                        Margin="5,0,0,0"
-                        Width="30"
-                        Height="30">
-                        <iconPacks:PackIconMaterial Kind="HeadQuestion" Width="16" Height="16"/>
-                    </Button>-->
                     <ComboBox
                         DockPanel.Dock="Left"
                         MinWidth="150"
@@ -200,9 +192,6 @@
                         SelectedItem="{Binding Verb, Mode=TwoWay}"
                         IsReadOnly="True"
                         IsEditable="False"/>
-                    <!--<TextBlock
-                        Text="Editing the 'verb' not yet implemented. Edit the tiles-json file directly"
-                        FontStyle="Italic"/>-->
                     <Grid/>
                 </DockPanel>
             </Grid>
@@ -251,7 +240,7 @@
                 </DockPanel>
             </Grid>
             
-            <Grid MinHeight="10" Visibility="{Binding KindInfo.ArgumentsVisible}">
+            <Grid MinHeight="52" Visibility="{Binding KindInfo.ArgumentsVisible}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="150"/>
                     <ColumnDefinition Width="*"/>
@@ -276,7 +265,7 @@
                 </Border>
             </Grid>
             
-            <Grid MinHeight="10" Visibility="{Binding KindInfo.EnvironmentVisible}">
+            <Grid MinHeight="52" Visibility="{Binding KindInfo.EnvironmentVisible}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="150"/>
                     <ColumnDefinition Width="*"/>
@@ -301,7 +290,7 @@
                 </Border>
             </Grid>
 
-            <Grid MinHeight="10" Visibility="{Binding KindInfo.EnvironmentVisible}">
+            <Grid MinHeight="52" Visibility="{Binding KindInfo.EnvironmentVisible}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="150"/>
                     <ColumnDefinition Width="*"/>
