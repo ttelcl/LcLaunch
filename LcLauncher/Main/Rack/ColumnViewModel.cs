@@ -161,6 +161,13 @@ public class ColumnViewModel:
     {
       return false;
     }
+    if(sourceLocation.Value.Column == this)
+    {
+      // Counting is different for the marked shelf's own column;
+      // the net effect is that shelves cannot be moved to the end by
+      // clicking in the empty column space.
+      return false;
+    }
     if(Object.ReferenceEquals(this, sourceLocation.Value.Column))
     {
       // Same column, so we cannot move to the last shelf
