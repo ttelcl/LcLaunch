@@ -51,7 +51,7 @@
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem
-                Header="Edit ..."
+                Header="Properties (Edit) ..."
                 Command="{Binding EditCommandNew}">
                 <MenuItem.Icon>
                     <iconPacks:PackIconMaterial Kind="Cog" Width="20" Height="20"/>

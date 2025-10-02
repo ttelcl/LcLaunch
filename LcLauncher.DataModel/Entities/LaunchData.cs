@@ -31,6 +31,7 @@ public class LaunchData
   /// <summary>
   /// Deserialization constructor
   /// </summary>
+  [JsonConstructor]
   public LaunchData(
     string target,
     bool shellmode,
@@ -105,7 +106,7 @@ public class LaunchData
   /// The startup window style. Default is Normal. Other options are
   /// Hidden, Minimized, and Maximized.
   /// </summary>
-  [JsonProperty("windowStyle", DefaultValueHandling = DefaultValueHandling.Ignore)]
+  [JsonProperty("windowStyle", DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate)]
   [JsonConverter(typeof(StringEnumConverter))]
   [DefaultValue(ProcessWindowStyle.Normal)]
   public ProcessWindowStyle WindowStyle { get; set; }
@@ -140,10 +141,11 @@ public class LaunchData
   /// The verb to use when launching the target. Default is empty (default action).
   /// Only valid when ShellMode is true.
   /// </summary>
-  [JsonProperty("verb", DefaultValueHandling = DefaultValueHandling.Ignore,
+  [JsonProperty("verb",
+    DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
     NullValueHandling = NullValueHandling.Ignore)]
   [DefaultValue("")]
-  public string Verb { get; set; }
+  public string Verb { get; set; } = String.Empty;
 
   /// <summary>
   /// The working directory

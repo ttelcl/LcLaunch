@@ -69,6 +69,7 @@ public class LaunchKindInfo
       case LaunchKind.UriKind:
         if(target.StartsWith("http://") || target.StartsWith("https://"))
         {
+          VerbVisible = Visibility.Visible; // TBD: is that right?
           Icon = "Web";
           Text = "web link";
         }

@@ -25,6 +25,7 @@ using LcLauncher.Main.Rack.Tile;
 using LcLauncher.Models;
 using LcLauncher.ShellApps;
 using LcLauncher.WpfUtilities;
+using LcLauncher.Launching;
 
 namespace LcLauncher.Main.Rack.Editors;
 
@@ -75,7 +76,7 @@ public class LaunchEditViewModel: EditorViewModelBase
       Target = model.Target; // indirectly sets Classification
       Title = model.Title ?? String.Empty;
       Tooltip = model.Tooltip ?? String.Empty;
-      Verb = model.Verb;
+      Verb = model.Verb ?? String.Empty;
       IconSource = model.IconSource ?? String.Empty;
       WorkingDirectory = model.WorkingDirectory ?? String.Empty;
       model.Arguments.ForEach(arg => Arguments.Add(arg));
@@ -90,6 +91,7 @@ public class LaunchEditViewModel: EditorViewModelBase
           env.Value.Append);
         PathEnvironment.Add(env.Key, edit);
       }
+      InitVerbsList();
     }
     else
     {
@@ -120,6 +122,7 @@ public class LaunchEditViewModel: EditorViewModelBase
     Verb = model.Verb;
     IconSource = model.IconSource ?? String.Empty;
     WorkingDirectory = model.WorkingDirectory ?? String.Empty;
+    InitVerbsList();
     // Assume that the input model does not have any arguments,
     // environment variables, or path variable edits.
   }
@@ -570,6 +573,8 @@ public class LaunchEditViewModel: EditorViewModelBase
 
   public ICommand ClearWorkingDirectoryCommand { get; private set; } = null!;
 
+  public ICommand TestVerbsCommand { get; private set; } = null!;
+
   private void InitCommands()
   {
     PickIconCommand = new DelegateCommand(
@@ -581,6 +586,9 @@ public class LaunchEditViewModel: EditorViewModelBase
       p => AllowWorkingDirectory());
     ClearWorkingDirectoryCommand = new DelegateCommand(
       p => ClearWorkingDirectory());
+    TestVerbsCommand = new DelegateCommand(
+      p => TestVerbs(),
+      p => KindInfo.VerbVisible == Visibility.Visible);
   }
 
   public TileHostViewModel TileHost { get; }
@@ -677,6 +685,33 @@ public class LaunchEditViewModel: EditorViewModelBase
     }
   }
   private string _verb = string.Empty;
+
+  public ObservableCollection<string> VerbsList {
+    get => _verbsList;
+    set {
+      if(SetInstanceProperty(ref _verbsList, value))
+      {
+      }
+    }
+  }
+  private ObservableCollection<string> _verbsList = [String.Empty];
+
+  private void InitVerbsList()
+  {
+    if(IsShellMode && KindInfo.VerbVisible==Visibility.Visible)
+    {
+      var verbs = Launcher.GetVerbs(Target, IsShellMode);
+      if(!verbs.Contains(String.Empty))
+      {
+        verbs.Insert(0, String.Empty);
+      }
+      VerbsList = [ .. verbs ];
+    }
+    else
+    {
+      VerbsList = [ String.Empty ];
+    }
+  }
 
   public string WorkingDirectory {
     get => _workingDirectory;
@@ -885,5 +920,14 @@ public class LaunchEditViewModel: EditorViewModelBase
         MessageBoxButton.OK,
         MessageBoxImage.Error);
     }
+  }
+
+  private void TestVerbs()
+  {
+    var verbs = Launcher.GetVerbs(Target, IsShellMode);
+    var verbsText = "'" + String.Join("', '", verbs) + "'";
+    Trace.TraceWarning(
+      $"There are {verbs.Count} verbs for '{Target}' ({IsShellMode}): {verbsText}");
+
   }
 }

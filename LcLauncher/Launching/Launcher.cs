@@ -30,6 +30,15 @@ public static class Launcher
     }
   }
 
+  public static List<string> GetVerbs(string target, bool shellMode = true)
+  {
+    var startInfo = new ProcessStartInfo {
+      FileName = target,
+      UseShellExecute = shellMode,
+    };
+    return [..startInfo.Verbs];
+  }
+
   private static void LaunchRawMode(LaunchData rawLaunch)
   {
     if(rawLaunch.ShellMode)
