@@ -315,7 +315,7 @@
                 </Border>
             </Grid>
             
-            <Grid MinHeight="10">
+            <!--<Grid MinHeight="10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="150"/>
                     <ColumnDefinition Width="*"/>
@@ -340,7 +340,7 @@
                         Foreground="#FFFFAA"
                         FontStyle="Italic"/>
                 </Border>
-            </Grid>
+            </Grid>-->
 
         </StackPanel>
     </ScrollViewer>

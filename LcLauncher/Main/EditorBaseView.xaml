@@ -50,8 +50,20 @@
                     Command="{Binding CancelCommand}"/>
                 <StackPanel/> <!-- filler -->
             </DockPanel>
-            <GroupBox
-                Header="{Binding EditorTitle}">
+            <GroupBox>
+                <GroupBox.Header>
+                    <DockPanel>
+                        <TextBlock
+                            DockPanel.Dock="Left"
+                            Text="{Binding EditorTitle}"/>
+                        <TextBlock
+                            DockPanel.Dock="Right"
+                            Margin="0,0,20,0"
+                            FontStyle="Italic"
+                            Text="{Binding TargetTitle}"/>
+                        <Grid/>
+                    </DockPanel>
+                </GroupBox.Header>
                 <ContentControl Content="{Binding}" MinHeight="200">
                     <ContentControl.Resources>
                         <DataTemplate DataType="{x:Type edit:ShelfEditViewModel}">

@@ -591,6 +591,8 @@ public class LaunchEditViewModel: EditorViewModelBase
       p => KindInfo.VerbVisible == Visibility.Visible);
   }
 
+  public override string TargetTitle  => TileHost.ToString();
+
   public TileHostViewModel TileHost { get; }
 
   /// <summary>
