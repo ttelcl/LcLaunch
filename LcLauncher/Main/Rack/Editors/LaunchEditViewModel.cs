@@ -48,7 +48,6 @@ public class LaunchEditViewModel: EditorViewModelBase
         tileHost.Shelf.Theme)
   {
     TileHost = tileHost;
-    Arguments = [];
     Environment = [];
     PathEnvironment = [];
     InitCommands();
@@ -79,7 +78,7 @@ public class LaunchEditViewModel: EditorViewModelBase
       Verb = model.Verb ?? String.Empty;
       IconSource = model.IconSource ?? String.Empty;
       WorkingDirectory = model.WorkingDirectory ?? String.Empty;
-      model.Arguments.ForEach(arg => Arguments.Add(arg));
+      Arguments = new ArgumentEditViewModel(this, model.Arguments ?? []);
       foreach(var env in model.Environment)
       {
         Environment.Add(env.Key, env.Value);
@@ -109,7 +108,7 @@ public class LaunchEditViewModel: EditorViewModelBase
         tileHost.Shelf.Theme)
   {
     TileHost = tileHost;
-    Arguments = [];
+    Arguments = new ArgumentEditViewModel(this, []);
     Environment = [];
     PathEnvironment = [];
     InitCommands();
@@ -737,7 +736,7 @@ public class LaunchEditViewModel: EditorViewModelBase
   }
   private bool _isShellMode = false;
 
-  public ObservableCollection<string> Arguments { get; }
+  public ArgumentEditViewModel Arguments { get; }
 
   /// <summary>
   /// Edits to the environment variables. Just preserving the original for now.
@@ -888,7 +887,7 @@ public class LaunchEditViewModel: EditorViewModelBase
       model.IconSource = String.IsNullOrEmpty(IconSource) ? null : IconSource;
       model.Verb = Verb;
       model.Arguments.Clear();
-      model.Arguments.AddRange(Arguments);
+      model.Arguments.AddRange(Arguments.Arguments);
       model.Environment.Clear();
       foreach(var env in Environment)
       {

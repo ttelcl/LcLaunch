@@ -240,31 +240,10 @@
                 </DockPanel>
             </Grid>
             
-            <Grid MinHeight="52" Visibility="{Binding KindInfo.ArgumentsVisible}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="150"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Border
-                    Padding="10,5"
-                    BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                    BorderThickness="1">
-                    <TextBlock
-                        Text="Arguments"
-                        TextWrapping="Wrap"
-                        HorizontalAlignment="Right"/>
-                </Border>
-                <Border
-                    Grid.Column="1"
-                    Padding="10,5"
-                    BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                    BorderThickness="1">
-                    <TextBlock
-                        Text="Editing arguments not yet implemented. Edit the tiles-json file directly"
-                        FontStyle="Italic"/>
-                </Border>
+            <Grid Visibility="{Binding KindInfo.ArgumentsVisible}">
+                <local:ArgumentEditView DataContext="{Binding Arguments}"/>
             </Grid>
-            
+
             <Grid MinHeight="52" Visibility="{Binding KindInfo.EnvironmentVisible}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="150"/>
