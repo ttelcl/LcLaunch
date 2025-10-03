@@ -30,10 +30,12 @@ public class EditorViewModelBase: ViewModelBase, IHasTheme
   public EditorViewModelBase(
     MainViewModel owner,
     string editorTitle,
-    string? theme /*= owner.DefaultTheme*/)
+    string? theme, /*= owner.DefaultTheme*/
+    string? targetTitle = null)
   {
     Owner = owner;
     EditorTitle = editorTitle;
+    TargetTitle = targetTitle ?? String.Empty;
     Theme = theme ?? Owner.DefaultTheme;
     CancelCommand = new DelegateCommand(
       p => CancelEditor());
@@ -57,6 +59,8 @@ public class EditorViewModelBase: ViewModelBase, IHasTheme
   public MainViewModel Owner { get; }
 
   public string EditorTitle { get; }
+
+  public virtual string TargetTitle { get; }
 
   public string Theme {
     get => _theme;

@@ -286,16 +286,19 @@ public class LaunchTileViewModel:
     if(iconIds.Icon16 != IconIds.Icon16)
     {
       IconIds.Icon16 = iconIds.Icon16;
+      Model.Icon16 = iconIds.Icon16;
       MarkAsDirty();
     }
     if(iconIds.Icon32 != IconIds.Icon32)
     {
       IconIds.Icon32 = iconIds.Icon32;
+      Model.Icon32 = iconIds.Icon32;
       MarkAsDirty();
     }
     if(iconIds.Icon48 != IconIds.Icon48)
     {
       IconIds.Icon48 = iconIds.Icon48;
+      Model.Icon48 = iconIds.Icon48;
       MarkAsDirty();
     }
     if(icons.IconSmall != IconSmall)

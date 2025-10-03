@@ -38,7 +38,7 @@
                 </MenuItem>
             </Menu>
             <ComboBox
-                ItemsSource="{Binding RackList.Racks}"
+                ItemsSource="{Binding RackList.RacksPlusManager}"
                 DisplayMemberPath="Label"
                 HorizontalContentAlignment="Left"
                 HorizontalAlignment="Center"

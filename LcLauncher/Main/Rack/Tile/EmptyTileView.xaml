@@ -60,14 +60,14 @@
             </MenuItem>
             <Separator/>
             <MenuItem
-                Header="Convert to Group Tile"
+                Header="Hatch into Group Tile"
                 Command="{Binding CreateGroupTileCommand}">
                 <MenuItem.Icon>
                     <iconPacks:PackIconMaterial Kind="DotsGrid" Width="20" Height="20"/>
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem
-                Header="Convert Tile: Paste Clipboard..."
+                Header="Hatch: Paste Clipboard..."
                 ToolTip="(Try to paste your clipboard content as a launcher tile)"
                 ToolTipService.ShowOnDisabled="True"
                 Command="{Binding TryPasteAsTileCommand}">
@@ -76,7 +76,7 @@
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem
-                    Header="Convert Tile: Application Picker..."
+                    Header="Hatch using Application Picker..."
                     ToolTip="(select from your installed application list)"
                     ToolTipService.ShowOnDisabled="True"
                     Command="{Binding CreateAppTileCommand}">
@@ -85,9 +85,9 @@
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem
-                Header="Convert Tile: Browse">
+                Header="Hatch: Browse">
                 <MenuItem
-                    Header="Bind to Shortcut..."
+                    Header="Hatch into Shortcut tile..."
                     ToolTip="(select shortcut file from your Start Menu or elsewhere)"
                     ToolTipService.ShowOnDisabled="True"
                     Command="{Binding CreateShortcutTileCommand}">
@@ -96,7 +96,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
                 <MenuItem
-                    Header="Bind to Document..."
+                    Header="Hatch into Document tile..."
                     ToolTip="(select a file from your computer, allows any file type)"
                     ToolTipService.ShowOnDisabled="True"
                     Command="{Binding CreateDocumentTileCommand}">
@@ -105,7 +105,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
                 <MenuItem
-                    Header="Bind to Executable..."
+                    Header="Hatch into Executable tile..."
                     ToolTip="(select a *.exe file from your computer, allows for arguments and environment tweaks)"
                     ToolTipService.ShowOnDisabled="True"
                     Command="{Binding CreateExecutableTileCommand}">

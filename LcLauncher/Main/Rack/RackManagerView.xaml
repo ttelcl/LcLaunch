@@ -11,11 +11,11 @@
     mc:Ignorable="d" 
     d:DataContext="{d:DesignInstance local:RackManagerViewModel, IsDesignTimeCreatable=False}"
     d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Margin="30">
+    <Grid Margin="30,10,30,30">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" MinHeight="100"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -23,20 +23,53 @@
         </Grid.ColumnDefinitions>
         <Border
             Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
-            Margin="10"
+            Margin="10,0,10,10"
             BorderThickness="1"
             BorderBrush="{DynamicResource MahApps.Brushes.Accent}">
             <StackPanel Orientation="Vertical">
                 <TextBlock
-                    Margin="50,10"
+                    Margin="30,10"
                     FontSize="32"
                     HorizontalAlignment="Center"
                     Text="Rack Manager"/>
-                <TextBlock
-                    Margin="150,10"
-                    FontSize="16"
+                <BulletDecorator
+                    TextBlock.FontSize="16"
                     HorizontalAlignment="Left"
-                    Text="This is introductory text. (TBD)"/>
+                    Margin="30,5" Width="600">
+                    <BulletDecorator.Bullet>
+                        <!--<TextBlock Width="20" Text="&#x2022;"/>-->
+                        <TextBlock Width="20" Text="&#x25cf;"/>
+                    </BulletDecorator.Bullet>
+                    <TextBlock TextWrapping="Wrap">
+                        Use this page to select the rack you want to use (you can also use the
+                        drop-down in the title bar, of course).
+                    </TextBlock>
+                </BulletDecorator>
+                <BulletDecorator
+                    TextBlock.FontSize="16"
+                    HorizontalAlignment="Left"
+                    Margin="30,5" Width="600">
+                    <BulletDecorator.Bullet>
+                        <TextBlock Width="20" Text="&#x25cf;"/>
+                    </BulletDecorator.Bullet>
+                    <TextBlock TextWrapping="Wrap">
+                        This is also the place where you can create new, empty, racks.
+                    </TextBlock>
+                </BulletDecorator>
+                <BulletDecorator
+                    TextBlock.FontSize="16"
+                    HorizontalAlignment="Left"
+                    Margin="30,5,30,25" Width="600">
+                    <BulletDecorator.Bullet>
+                        <TextBlock Width="20" Text="&#x25cf;"/>
+                    </BulletDecorator.Bullet>
+                    <TextBlock TextWrapping="Wrap" FontStyle="Italic">
+                        Use separate racks to separate things that, to you, are unrelated. For
+                        example, have separate racks for work and leisure. Or just use one
+                        'default' rack for everything, and use the columns and shelves in the
+                        rack to separate contexts. It is your choice :).
+                    </TextBlock>
+                </BulletDecorator>
             </StackPanel>
         </Border>
 
@@ -44,27 +77,108 @@
             Grid.Row="1" Grid.Column="0"
             FontSize="20"
             HorizontalAlignment="Center"
-            Margin="30"
-            Text="Pick an existing Rack to display:"/>
+            Margin="30,10"
+            Text="Pick an existing Rack:"/>
         <Border
             Grid.Row="1" Grid.Column="1"
             Margin="10"
             BorderThickness="2"
             BorderBrush="{DynamicResource MahApps.Brushes.Accent}">
-            
+            <DockPanel>
+                <Border
+                    DockPanel.Dock="Bottom"
+                    BorderThickness="0"
+                    BorderBrush="{DynamicResource MahApps.Brushes.Accent}"
+                    Background="{DynamicResource MahApps.Brushes.Accent4}"
+                    MinHeight="20">
+                    <DockPanel>
+                        <Button
+                            DockPanel.Dock="Right"
+                            MinWidth="120"
+                            FontSize="20"
+                            Margin="10"
+                            Command="{Binding ShowSelectedRackCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconMaterial
+                                    Kind="Nas"
+                                    Margin="5,0"
+                                    VerticalAlignment="Center"
+                                    Height="24" Width="24"/>
+                                <TextBlock
+                                    Margin="5,0"
+                                    VerticalAlignment="Center"
+                                    Text="Show"/>
+                            </StackPanel>
+                        </Button>
+                        <Grid/> <!-- filler -->
+                    </DockPanel>
+                </Border>
+                <ListBox
+                    ItemsSource="{Binding RackList.Racks}"
+                    SelectedItem="{Binding Selection, Mode=TwoWay}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <local:RackRefItemView />
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </DockPanel>
         </Border>
+        
         <TextBlock
             Grid.Row="2" Grid.Column="0"
             FontSize="20"
-            Margin="30"
+            Margin="30,10"
             HorizontalAlignment="Center"
             Text="Or create a new rack:"/>
         <Border
             Grid.Row="2" Grid.Column="1"
-            Margin="10"
+            Margin="10" Padding="10,10"
             BorderThickness="2"
+            Background="{DynamicResource MahApps.Brushes.Accent4}"
             BorderBrush="{DynamicResource MahApps.Brushes.Accent}">
-
+            <DockPanel>
+                <Button
+                    DockPanel.Dock="Right"
+                    Command="{Binding CreateNewRackCommand}"
+                    FontSize="20"
+                    MinWidth="120"
+                    Margin="10,0,0,0">
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconMaterial
+                            Kind="CreationOutline"
+                            Margin="5,0"
+                            VerticalAlignment="Center"
+                            Height="24" Width="24"/>
+                        <TextBlock
+                            Margin="5,0"
+                            VerticalAlignment="Center"
+                            Text="Create"/>
+                    </StackPanel>
+                </Button>
+                <TextBlock
+                    DockPanel.Dock="Left"
+                    Text="New Rack Name:"/>
+                <TextBlock
+                    Foreground="DarkOrange"
+                    Margin="10,0,10,0"
+                    Text="{Binding NewRackNameError}"
+                    DockPanel.Dock="Bottom"/>
+                <ComboBox
+                    DockPanel.Dock="Right"
+                    ItemsSource="{Binding Providers}"
+                    SelectedItem="{Binding SelectedProvider, Mode=TwoWay}"
+                    ToolTip="Rack storage provider (depending on configuration there may be only one option)"
+                    IsReadOnly="True"
+                    IsEditable="False"/>
+                <TextBox
+                    Margin="10,0,10,0"
+                    Text="{Binding NewRackName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    mah:TextBoxHelper.ClearTextButton="True"
+                    mah:TextBoxHelper.Watermark="new-rack-name"/>
+            </DockPanel>
         </Border>
     </Grid>
 </UserControl>

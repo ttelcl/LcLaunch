@@ -25,13 +25,14 @@ using LcLauncher.Main.Rack.Tile;
 using LcLauncher.Models;
 using LcLauncher.ShellApps;
 using LcLauncher.WpfUtilities;
+using LcLauncher.Launching;
 
 namespace LcLauncher.Main.Rack.Editors;
 
 /// <summary>
 /// Launch tile editor ViewModel
 /// </summary>
-public class LaunchEditViewModel: EditorViewModelBase
+public class LaunchEditViewModel: EditorViewModelBase, ISubEditorHost
 {
   // This class merges the old <see cref="LaunchDocumentViewModel"/>
   // and <see cref="LaunchExeViewModel"/> together.
@@ -47,8 +48,6 @@ public class LaunchEditViewModel: EditorViewModelBase
         tileHost.Shelf.Theme)
   {
     TileHost = tileHost;
-    Arguments = [];
-    Environment = [];
     PathEnvironment = [];
     InitCommands();
     if(tileHost.Tile is LaunchTileViewModel launchTile)
@@ -75,14 +74,11 @@ public class LaunchEditViewModel: EditorViewModelBase
       Target = model.Target; // indirectly sets Classification
       Title = model.Title ?? String.Empty;
       Tooltip = model.Tooltip ?? String.Empty;
-      Verb = model.Verb;
+      Verb = model.Verb ?? String.Empty;
       IconSource = model.IconSource ?? String.Empty;
       WorkingDirectory = model.WorkingDirectory ?? String.Empty;
-      model.Arguments.ForEach(arg => Arguments.Add(arg));
-      foreach(var env in model.Environment)
-      {
-        Environment.Add(env.Key, env.Value);
-      }
+      Environment = new EnvironmentEditViewModel(this, Model.Environment);
+      Arguments = new ArgumentEditViewModel(this, model.Arguments ?? []);
       foreach(var env in model.PathEnvironment)
       {
         var edit = new PathEdit(
@@ -90,6 +86,7 @@ public class LaunchEditViewModel: EditorViewModelBase
           env.Value.Append);
         PathEnvironment.Add(env.Key, edit);
       }
+      InitVerbsList();
     }
     else
     {
@@ -107,8 +104,8 @@ public class LaunchEditViewModel: EditorViewModelBase
         tileHost.Shelf.Theme)
   {
     TileHost = tileHost;
-    Arguments = [];
-    Environment = [];
+    Arguments = new ArgumentEditViewModel(this, []);
+    Environment = new EnvironmentEditViewModel(this, []);
     PathEnvironment = [];
     InitCommands();
     Model = model;
@@ -120,6 +117,7 @@ public class LaunchEditViewModel: EditorViewModelBase
     Verb = model.Verb;
     IconSource = model.IconSource ?? String.Empty;
     WorkingDirectory = model.WorkingDirectory ?? String.Empty;
+    InitVerbsList();
     // Assume that the input model does not have any arguments,
     // environment variables, or path variable edits.
   }
@@ -583,6 +581,8 @@ public class LaunchEditViewModel: EditorViewModelBase
       p => ClearWorkingDirectory());
   }
 
+  public override string TargetTitle  => TileHost.ToString();
+
   public TileHostViewModel TileHost { get; }
 
   /// <summary>
@@ -678,6 +678,33 @@ public class LaunchEditViewModel: EditorViewModelBase
   }
   private string _verb = string.Empty;
 
+  public ObservableCollection<string> VerbsList {
+    get => _verbsList;
+    set {
+      if(SetInstanceProperty(ref _verbsList, value))
+      {
+      }
+    }
+  }
+  private ObservableCollection<string> _verbsList = [String.Empty];
+
+  private void InitVerbsList()
+  {
+    if(IsShellMode && KindInfo.VerbVisible==Visibility.Visible)
+    {
+      var verbs = Launcher.GetVerbs(Target, IsShellMode);
+      if(!verbs.Contains(String.Empty))
+      {
+        verbs.Insert(0, String.Empty);
+      }
+      VerbsList = [ .. verbs ];
+    }
+    else
+    {
+      VerbsList = [ String.Empty ];
+    }
+  }
+
   public string WorkingDirectory {
     get => _workingDirectory;
     set {
@@ -700,17 +727,36 @@ public class LaunchEditViewModel: EditorViewModelBase
   }
   private bool _isShellMode = false;
 
-  public ObservableCollection<string> Arguments { get; }
+  public ArgumentEditViewModel Arguments { get; }
 
   /// <summary>
   /// Edits to the environment variables. Just preserving the original for now.
   /// </summary>
-  public Dictionary<string, string?> Environment { get; }
+  public EnvironmentEditViewModel Environment { get; }
 
   /// <summary>
   /// Edits to PATH-like environment variables. Just preserving the original for now.
   /// </summary>
   public Dictionary<string, PathEdit> PathEnvironment { get; }
+
+  public ISubEditor? CurrentSubEditor {
+    get => _currentSubEditor;
+    set {
+      var existing = _currentSubEditor;
+      if(SetNullableInstanceProperty(ref _currentSubEditor, value))
+      {
+        if(existing != null)
+        {
+          existing.IsEditing = false;
+        }
+        if(_currentSubEditor != null)
+        {
+          _currentSubEditor.IsEditing = true;
+        }
+      }
+    }
+  }
+  private ISubEditor? _currentSubEditor;
 
   private void PickIconOverride()
   {
@@ -792,7 +838,7 @@ public class LaunchEditViewModel: EditorViewModelBase
       // some things are not allowed in shell mode
       if(
         !String.IsNullOrEmpty(WorkingDirectory)
-        || Environment.Count != 0
+        || !Environment.IsEmpty
         || PathEnvironment.Count != 0)
       {
         return "In shell mode, WorkingDirectory, Environment, and PathEnvironment are not allowed";
@@ -829,7 +875,12 @@ public class LaunchEditViewModel: EditorViewModelBase
         return "(internal error - non-raw in non-shell mode)";
       }
     }
-    // I probably missed something, but anyway :)
+    if(CurrentSubEditor != null)
+    {
+      return $"Subeditor '{CurrentSubEditor.SubEditorName}' is still open."+
+        " Close it to complete.";
+    }
+    // I probably missed something, but anyway...
     return null;
   }
 
@@ -840,6 +891,8 @@ public class LaunchEditViewModel: EditorViewModelBase
 
   public override void AcceptEditor()
   {
+    // First close any subeditors
+    CurrentSubEditor = null;
     var reason = WhyNotValid();
     if(reason == null)
     {
@@ -851,9 +904,9 @@ public class LaunchEditViewModel: EditorViewModelBase
       model.IconSource = String.IsNullOrEmpty(IconSource) ? null : IconSource;
       model.Verb = Verb;
       model.Arguments.Clear();
-      model.Arguments.AddRange(Arguments);
+      model.Arguments.AddRange(Arguments.Arguments);
       model.Environment.Clear();
-      foreach(var env in Environment)
+      foreach(var env in Environment.Environment)
       {
         model.Environment.Add(env.Key, env.Value);
       }
