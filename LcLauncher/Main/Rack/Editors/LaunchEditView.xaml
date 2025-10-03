@@ -244,29 +244,8 @@
                 <local:ArgumentEditView DataContext="{Binding Arguments}"/>
             </Grid>
 
-            <Grid MinHeight="52" Visibility="{Binding KindInfo.EnvironmentVisible}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="150"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Border
-                    Padding="10,5"
-                    BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                    BorderThickness="1">
-                    <TextBlock
-                        Text="Environment Variables"
-                        TextWrapping="Wrap"
-                        HorizontalAlignment="Right"/>
-                </Border>
-                <Border
-                    Grid.Column="1"
-                    Padding="10,5"
-                    BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-                    BorderThickness="1">
-                    <TextBlock
-                        Text="Editing not yet implemented. Edit the tiles-json file directly to add, remove, or replace environment variables"
-                        FontStyle="Italic"/>
-                </Border>
+            <Grid Visibility="{Binding KindInfo.EnvironmentVisible}">
+                <local:EnvironmentEditView DataContext="{Binding Environment}"/>
             </Grid>
 
             <Grid MinHeight="52" Visibility="{Binding KindInfo.EnvironmentVisible}">

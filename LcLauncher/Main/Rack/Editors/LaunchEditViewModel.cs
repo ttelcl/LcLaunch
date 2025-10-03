@@ -48,7 +48,6 @@ public class LaunchEditViewModel: EditorViewModelBase, ISubEditorHost
         tileHost.Shelf.Theme)
   {
     TileHost = tileHost;
-    Environment = [];
     PathEnvironment = [];
     InitCommands();
     if(tileHost.Tile is LaunchTileViewModel launchTile)
@@ -78,11 +77,8 @@ public class LaunchEditViewModel: EditorViewModelBase, ISubEditorHost
       Verb = model.Verb ?? String.Empty;
       IconSource = model.IconSource ?? String.Empty;
       WorkingDirectory = model.WorkingDirectory ?? String.Empty;
+      Environment = new EnvironmentEditViewModel(this, Model.Environment);
       Arguments = new ArgumentEditViewModel(this, model.Arguments ?? []);
-      foreach(var env in model.Environment)
-      {
-        Environment.Add(env.Key, env.Value);
-      }
       foreach(var env in model.PathEnvironment)
       {
         var edit = new PathEdit(
@@ -109,7 +105,7 @@ public class LaunchEditViewModel: EditorViewModelBase, ISubEditorHost
   {
     TileHost = tileHost;
     Arguments = new ArgumentEditViewModel(this, []);
-    Environment = [];
+    Environment = new EnvironmentEditViewModel(this, []);
     PathEnvironment = [];
     InitCommands();
     Model = model;
@@ -736,7 +732,7 @@ public class LaunchEditViewModel: EditorViewModelBase, ISubEditorHost
   /// <summary>
   /// Edits to the environment variables. Just preserving the original for now.
   /// </summary>
-  public Dictionary<string, string?> Environment { get; }
+  public EnvironmentEditViewModel Environment { get; }
 
   /// <summary>
   /// Edits to PATH-like environment variables. Just preserving the original for now.
@@ -842,7 +838,7 @@ public class LaunchEditViewModel: EditorViewModelBase, ISubEditorHost
       // some things are not allowed in shell mode
       if(
         !String.IsNullOrEmpty(WorkingDirectory)
-        || Environment.Count != 0
+        || !Environment.IsEmpty
         || PathEnvironment.Count != 0)
       {
         return "In shell mode, WorkingDirectory, Environment, and PathEnvironment are not allowed";
@@ -910,7 +906,7 @@ public class LaunchEditViewModel: EditorViewModelBase, ISubEditorHost
       model.Arguments.Clear();
       model.Arguments.AddRange(Arguments.Arguments);
       model.Environment.Clear();
-      foreach(var env in Environment)
+      foreach(var env in Environment.Environment)
       {
         model.Environment.Add(env.Key, env.Value);
       }
