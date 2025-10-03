@@ -18,6 +18,7 @@ using LcLauncher.DataModel.Entities;
 using LcLauncher.IconTools;
 using LcLauncher.DataModel.ChangeTracking;
 using LcLauncher.Main.AppPicker;
+using Newtonsoft.Json;
 
 namespace LcLauncher.Main.Rack.Tile;
 
@@ -350,6 +351,10 @@ public class TileHostViewModel:
       other.IsKeyTile = false;
     }
     var newData = other.Tile?.GetModel();
+    // We need to make a clone, as GetModel may return the original object!
+    // (This caused a surprising bug: editing one tile changing another)
+    var json = JsonConvert.SerializeObject(newData);
+    newData = JsonConvert.DeserializeObject<TileData>(json)!;
     return ReplaceTile(newData);
   }
 

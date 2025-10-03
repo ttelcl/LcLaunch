@@ -195,7 +195,9 @@ public class TileListViewModel:
     foreach(var tile in Tiles)
     {
       // GetModel() is exposed in the VM layer (although it could be reimplemented
-      // in the model layer)
+      // in the model layer).
+      // GetModel may return the existing model or create a new one. In this case
+      // either is fine.
       newTiles.Add(tile.Tile?.GetModel());
     }
     entity.Tiles.Clear();
