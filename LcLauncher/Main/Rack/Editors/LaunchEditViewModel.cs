@@ -32,7 +32,7 @@ namespace LcLauncher.Main.Rack.Editors;
 /// <summary>
 /// Launch tile editor ViewModel
 /// </summary>
-public class LaunchEditViewModel: EditorViewModelBase
+public class LaunchEditViewModel: EditorViewModelBase, ISubEditorHost
 {
   // This class merges the old <see cref="LaunchDocumentViewModel"/>
   // and <see cref="LaunchExeViewModel"/> together.
@@ -572,8 +572,6 @@ public class LaunchEditViewModel: EditorViewModelBase
 
   public ICommand ClearWorkingDirectoryCommand { get; private set; } = null!;
 
-  public ICommand TestVerbsCommand { get; private set; } = null!;
-
   private void InitCommands()
   {
     PickIconCommand = new DelegateCommand(
@@ -585,9 +583,6 @@ public class LaunchEditViewModel: EditorViewModelBase
       p => AllowWorkingDirectory());
     ClearWorkingDirectoryCommand = new DelegateCommand(
       p => ClearWorkingDirectory());
-    TestVerbsCommand = new DelegateCommand(
-      p => TestVerbs(),
-      p => KindInfo.VerbVisible == Visibility.Visible);
   }
 
   public override string TargetTitle  => TileHost.ToString();
@@ -748,6 +743,25 @@ public class LaunchEditViewModel: EditorViewModelBase
   /// </summary>
   public Dictionary<string, PathEdit> PathEnvironment { get; }
 
+  public ISubEditor? CurrentSubEditor {
+    get => _currentSubEditor;
+    set {
+      var existing = _currentSubEditor;
+      if(SetNullableInstanceProperty(ref _currentSubEditor, value))
+      {
+        if(existing != null)
+        {
+          existing.IsEditing = false;
+        }
+        if(_currentSubEditor != null)
+        {
+          _currentSubEditor.IsEditing = true;
+        }
+      }
+    }
+  }
+  private ISubEditor? _currentSubEditor;
+
   private void PickIconOverride()
   {
     var dialog = new OpenFileDialog();
@@ -865,7 +879,12 @@ public class LaunchEditViewModel: EditorViewModelBase
         return "(internal error - non-raw in non-shell mode)";
       }
     }
-    // I probably missed something, but anyway :)
+    if(CurrentSubEditor != null)
+    {
+      return $"Subeditor '{CurrentSubEditor.SubEditorName}' is still open."+
+        " Close it to complete.";
+    }
+    // I probably missed something, but anyway...
     return null;
   }
 
@@ -876,6 +895,8 @@ public class LaunchEditViewModel: EditorViewModelBase
 
   public override void AcceptEditor()
   {
+    // First close any subeditors
+    CurrentSubEditor = null;
     var reason = WhyNotValid();
     if(reason == null)
     {
@@ -921,14 +942,5 @@ public class LaunchEditViewModel: EditorViewModelBase
         MessageBoxButton.OK,
         MessageBoxImage.Error);
     }
-  }
-
-  private void TestVerbs()
-  {
-    var verbs = Launcher.GetVerbs(Target, IsShellMode);
-    var verbsText = "'" + String.Join("', '", verbs) + "'";
-    Trace.TraceWarning(
-      $"There are {verbs.Count} verbs for '{Target}' ({IsShellMode}): {verbsText}");
-
   }
 }

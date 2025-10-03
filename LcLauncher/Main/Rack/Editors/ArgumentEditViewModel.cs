@@ -14,7 +14,7 @@ using LcLauncher.WpfUtilities;
 
 namespace LcLauncher.Main.Rack.Editors;
 
-public class ArgumentEditViewModel: ViewModelBase
+public class ArgumentEditViewModel: ViewModelBase, ISubEditor
 {
   public ArgumentEditViewModel(
     LaunchEditViewModel owner,
@@ -24,6 +24,7 @@ public class ArgumentEditViewModel: ViewModelBase
     Arguments = [.. arguments];
     _argumentsAsLines = String.Empty; // to keep compiler happy
     ArgumentsToLines();
+    HasArguments = Arguments.Count > 0;
   }
 
   public LaunchEditViewModel Owner { get; }
@@ -51,7 +52,18 @@ public class ArgumentEditViewModel: ViewModelBase
         Arguments.Add(line);
       }
     }
+    HasArguments = Arguments.Count > 0;
   }
+
+  public bool HasArguments {
+    get => _hasArguments;
+    set {
+      if(SetValueProperty(ref _hasArguments, value))
+      {
+      }
+    }
+  }
+  private bool _hasArguments = false;
 
   public void ArgumentsToLines()
   {
@@ -65,14 +77,21 @@ public class ArgumentEditViewModel: ViewModelBase
       {
         if(value)
         {
+          Owner.CurrentSubEditor = this;
           ArgumentsToLines();
         }
         else
         {
+          if(Owner.CurrentSubEditor == this)
+          {
+            Owner.CurrentSubEditor = null;
+          }
           LinesToArguments();
         }
       }
     }
   }
   private bool _isEditing = false;
+
+  public string SubEditorName => "Arguments";
 }

@@ -42,41 +42,58 @@
             <Border
                 Visibility="{Binding IsEditing, Converter={StaticResource VisibleIfNot}}"
                 Grid.Column="1"
-                Padding="10,5"
                 BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
                 BorderThickness="1">
-                <ItemsControl ItemsSource="{Binding Arguments}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Border
-                                Background="{DynamicResource MahApps.Brushes.Accent3}"
-                                Height="18" MinWidth="18" CornerRadius="8"
-                                Padding="8,0" Margin="2,2">
-                                <TextBlock
-                                    Text="{Binding}"
-                                    FontSize="12" FontWeight="DemiBold"/>
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                <Grid>
+                    <ItemsControl
+                        Margin="10,5"
+                        Visibility="{Binding HasArguments, Converter={StaticResource VisibleIf}}"
+                        ItemsSource="{Binding Arguments}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border
+                                    Background="{DynamicResource MahApps.Brushes.Accent3}"
+                                    Height="18" MinWidth="18" CornerRadius="8"
+                                    Padding="8,0" Margin="2,2">
+                                    <TextBlock
+                                        Text="{Binding}"
+                                        FontSize="12" FontWeight="DemiBold"/>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <TextBlock
+                        Foreground="{DynamicResource MahApps.Brushes.Gray5}"
+                        Background="{DynamicResource MahApps.Brushes.Gray8}"
+                        Padding="5,5"
+                        FontStyle="Italic"
+                        TextAlignment="Right"
+                        Text="Click the Edit Arguments button to start adding arguments --> "
+                        Visibility="{Binding HasArguments, Converter={StaticResource VisibleIfNot}}"/>
+                </Grid>
             </Border>
             <Border
                 Visibility="{Binding IsEditing, Converter={StaticResource VisibleIf}}"
                 Grid.Column="1"
                 Padding="10,5"
-                MinHeight="75"
+                Background="{DynamicResource MahApps.Brushes.Accent3}"
                 BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
                 BorderThickness="1">
-                <TextBox
-                    MinLines="3"
-                    MaxLines="8"
-                    AcceptsReturn="True"
-                    Text="{Binding ArgumentsAsLines, Mode=TwoWay}"/>
+                <StackPanel Orientation="Vertical">
+                    <TextBlock
+                        Margin="0,0,0,5"
+                        Text="Enter arguments, one per line. Launchpad takes care of quoting if needed. Beware empty lines."/>
+                    <TextBox
+                        MinLines="4"
+                        MaxLines="10"
+                        AcceptsReturn="True"
+                        Text="{Binding ArgumentsAsLines, Mode=TwoWay}"/>
+                </StackPanel>
             </Border>
         </Grid>
     </DockPanel>
