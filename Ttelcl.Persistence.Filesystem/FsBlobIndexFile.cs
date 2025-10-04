@@ -89,7 +89,15 @@ public class FsBlobIndexFile
     while(fs.Read(buffer) == buffer.Length)
     {
       var descriptor = FsBlobDescriptor.FromBytes(buffer);
-      _entryMap.Add(descriptor.Id, descriptor);
+      if(_entryMap.TryGetValue(descriptor.Id, out var e))
+      {
+        Trace.TraceError(
+          $"Corruption in '{FileName}'. Duplicate entry {descriptor.Id}. Replacing earlier value");
+      }
+      // While this situation is bad and indicates an earlier error,
+      // it is not so bad that it should prevent LcLauncher from launching
+      // at all, with an obscure error (which it did)
+      _entryMap[descriptor.Id] = descriptor;
     }
   }
 
