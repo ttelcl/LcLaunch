@@ -19,7 +19,6 @@ namespace Ttelcl.Persistence.Filesystem;
 /// </summary>
 public class FsBlobIndexFile
 {
-  private readonly List<FsBlobDescriptor> _entries;
   private readonly Dictionary<HashId, FsBlobDescriptor> _entryMap;
 
   /// <summary>
@@ -28,7 +27,6 @@ public class FsBlobIndexFile
   public FsBlobIndexFile(
     FsBlobsFile target)
   {
-    _entries = new List<FsBlobDescriptor>();
     _entryMap = new Dictionary<HashId, FsBlobDescriptor>();
     Target = target;
     FileName = Path.ChangeExtension(target.FileName, ".blob-idx");
@@ -87,13 +85,19 @@ public class FsBlobIndexFile
   {
     using var fs = OpenRead();
     Span<byte> buffer = stackalloc byte[EntrySize];
-    _entries.Clear();
     _entryMap.Clear();
     while(fs.Read(buffer) == buffer.Length)
     {
       var descriptor = FsBlobDescriptor.FromBytes(buffer);
-      _entries.Add(descriptor);
-      _entryMap.Add(descriptor.Id, descriptor);
+      if(_entryMap.TryGetValue(descriptor.Id, out var e))
+      {
+        Trace.TraceError(
+          $"Corruption in '{FileName}'. Duplicate entry {descriptor.Id}. Replacing earlier value");
+      }
+      // While this situation is bad and indicates an earlier error,
+      // it is not so bad that it should prevent LcLauncher from launching
+      // at all, with an obscure error (which it did)
+      _entryMap[descriptor.Id] = descriptor;
     }
   }
 
@@ -113,7 +117,6 @@ public class FsBlobIndexFile
     var descriptor = new FsBlobDescriptor(offset, blob.Length, hash);
     entry = descriptor;
     descriptor.Write(blobAppendStream, indexAppendStream, blob);
-    _entries.Add(descriptor);
     _entryMap.Add(id, descriptor);
     return true;
   }
@@ -163,7 +166,6 @@ public class FsBlobIndexFile
       var bakName = FileName + ".bak";
       File.Move(FileName, bakName, true);
     }
-    _entries.Clear();
     _entryMap.Clear();
     InitFile();
   }
