@@ -19,7 +19,6 @@ namespace Ttelcl.Persistence.Filesystem;
 /// </summary>
 public class FsBlobIndexFile
 {
-  private readonly List<FsBlobDescriptor> _entries;
   private readonly Dictionary<HashId, FsBlobDescriptor> _entryMap;
 
   /// <summary>
@@ -28,7 +27,6 @@ public class FsBlobIndexFile
   public FsBlobIndexFile(
     FsBlobsFile target)
   {
-    _entries = new List<FsBlobDescriptor>();
     _entryMap = new Dictionary<HashId, FsBlobDescriptor>();
     Target = target;
     FileName = Path.ChangeExtension(target.FileName, ".blob-idx");
@@ -87,12 +85,10 @@ public class FsBlobIndexFile
   {
     using var fs = OpenRead();
     Span<byte> buffer = stackalloc byte[EntrySize];
-    _entries.Clear();
     _entryMap.Clear();
     while(fs.Read(buffer) == buffer.Length)
     {
       var descriptor = FsBlobDescriptor.FromBytes(buffer);
-      _entries.Add(descriptor);
       _entryMap.Add(descriptor.Id, descriptor);
     }
   }
@@ -113,7 +109,6 @@ public class FsBlobIndexFile
     var descriptor = new FsBlobDescriptor(offset, blob.Length, hash);
     entry = descriptor;
     descriptor.Write(blobAppendStream, indexAppendStream, blob);
-    _entries.Add(descriptor);
     _entryMap.Add(id, descriptor);
     return true;
   }
@@ -163,7 +158,6 @@ public class FsBlobIndexFile
       var bakName = FileName + ".bak";
       File.Move(FileName, bakName, true);
     }
-    _entries.Clear();
     _entryMap.Clear();
     InitFile();
   }
