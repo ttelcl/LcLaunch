@@ -31,7 +31,7 @@ public class ColumnData: IHasTickId
   {
     Id = id;
     Title =
-      String.IsNullOrEmpty(title)
+      title==null
       ? $"Column {id}"
       : title;
     Shelves = shelves.ToList();

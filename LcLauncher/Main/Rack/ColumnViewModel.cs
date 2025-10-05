@@ -36,12 +36,25 @@ public class ColumnViewModel:
     {
       Shelves.Add(new ShelfViewModel(Rack, shelf));
     }
+    CheckIsEmpty();
     MoveMarkedShelfHereCommand = new DelegateCommand(
       p => MoveMarkedShelfHere(),
       p => CanMoveMarkedShelfHere());
     CreateNewShelfHereCommand = new DelegateCommand(
       p => CreateNewShelfHere(),
       p => Rack.KeyShelf == null && Rack.KeyTile == null);
+    MoveLeftCommand = new DelegateCommand(
+      p => MoveLeft(),
+      p => !IsFirst);
+    MoveRightCommand = new DelegateCommand(
+      p => MoveRight(),
+      p => !IsLast);
+    DeleteColumnCommand = new DelegateCommand(
+      p => DeleteThisColumn(),
+      p => CanDelete);
+    AddNewColumnCommand = new DelegateCommand(
+      p => AddNewColumn(),
+      p => IsLast);
   }
 
   /// <summary>
@@ -51,7 +64,26 @@ public class ColumnViewModel:
 
   public ICommand CreateNewShelfHereCommand { get; }
 
+  public ICommand MoveLeftCommand { get; }
+
+  public ICommand MoveRightCommand { get; }
+
+  public ICommand DeleteColumnCommand { get; }
+
+  public ICommand AddNewColumnCommand { get; }
+
   public RackViewModel Rack { get; }
+
+  public string Title {
+    get => Model.ColumnTitle;
+    set {
+      var old = Model.ColumnTitle;
+      if(ValueChanged(old, value))
+      {
+        Model.ColumnTitle = value;
+      }
+    }
+  }
 
   internal ColumnModel Model { get; }
 
@@ -66,6 +98,82 @@ public class ColumnViewModel:
   }
 
   public IDirtyHost DirtyHost => Rack;
+
+  /// <summary>
+  /// This column index. This is set by the rack when columns
+  /// shuffle around (setting this does not affect the actual position)
+  /// </summary>
+  public int ColumnIndex {
+    get => _columnIndex;
+    set {
+      if(SetValueProperty(ref _columnIndex, value))
+      {
+        // Separate function, since it sometimes needs running
+        // manually:
+        FixColumnIndex();
+      }
+    }
+  }
+  private int _columnIndex;
+
+  internal void FixColumnIndex()
+  {
+    IsFirst = _columnIndex == 0;
+    IsLast = _columnIndex == Rack.Columns.Count - 1;
+    CheckCanDelete();
+  }
+
+  public bool IsFirst {
+    get => _isFirst;
+    private set {
+      if(SetValueProperty(ref _isFirst, value))
+      {
+      }
+    }
+  }
+  private bool _isFirst = true;
+
+  public bool IsLast {
+    get => _isLast;
+    private set {
+      if(SetValueProperty(ref _isLast, value))
+      {
+        CheckCanDelete();
+      }
+    }
+  }
+  private bool _isLast;
+
+  public bool IsEmpty {
+    get => _isEmpty;
+    private set {
+      if(SetValueProperty(ref _isEmpty, value))
+      {
+        CheckCanDelete();
+      }
+    }
+  }
+  private bool _isEmpty;
+
+  internal void CheckIsEmpty()
+  {
+    IsEmpty = Shelves.Count == 0;
+  }
+
+  public bool CanDelete {
+    get => _canDelete;
+    private set {
+      if(SetValueProperty(ref _canDelete, value))
+      {
+      }
+    }
+  }
+  private bool _canDelete;
+
+  internal void CheckCanDelete()
+  {
+    CanDelete = IsEmpty && Rack.Columns.Count > 1 && !Rack.HasMarkedItems;
+  }
 
   public void MarkAsDirty()
   {
@@ -141,6 +249,9 @@ public class ColumnViewModel:
       Model.Shelves.RemoveAt(indexSource);
       columnDestination.Model.Shelves.Insert(indexDestination, shelfModel);
 
+      CheckIsEmpty();
+      columnDestination.CheckIsEmpty();
+
       // Mark the container as dirty (logically you'd expect to mark both
       // source and destination column as dirty, but they both forward that
       // to the rack).
@@ -207,4 +318,48 @@ public class ColumnViewModel:
     ShelfEditViewModel.Show(shelf);
   }
 
+  private void MoveLeft()
+  {
+    Rack.MoveColumn(this, false);
+  }
+
+  private void MoveRight()
+  {
+    Rack.MoveColumn(this, true);
+  }
+
+  private void DeleteThisColumn()
+  {
+    if(!IsEmpty)
+    {
+      MessageBox.Show(
+        "Cannot delete a non-empty column",
+        "Error");
+      return;
+    }
+    if(Rack.Columns.Count <= 1)
+    {
+      MessageBox.Show(
+        "Cannot delete the last remaining column",
+        "Error");
+      return;
+    }
+    if(Rack.HasMarkedItems)
+    {
+      MessageBox.Show(
+        "Cannot columns while any shelf or tile is marked / selected",
+        "Error");
+      return;
+    }
+    Rack.DeleteColumn(this);
+  }
+
+  private void AddNewColumn()
+  {
+    if(IsLast)
+    {
+      Rack.AppendNewColumn();
+      FixColumnIndex();
+    }
+  }
 }

@@ -441,6 +441,7 @@ public class ShelfViewModel:
         // Remove the shelf model from the column
         columnVm.Model.Shelves.RemoveAt(sourceLocation.Value.ShelfIndex);
 
+        columnVm.CheckIsEmpty();
         Rack.MarkAsDirty();
         Rack.Save();
 
