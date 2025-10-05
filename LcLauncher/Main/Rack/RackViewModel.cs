@@ -44,6 +44,7 @@ public class RackViewModel:
       var columnVm = new ColumnViewModel(this, columnModel);
       Columns.Add(columnVm);
     }
+    FixColumnIndexes();
     //Model.TraceClaimStatus();
     Trace.TraceInformation(
       $"Constructing rack VM {Model.RackKey} with {Columns.Count} columns");
@@ -454,6 +455,44 @@ public class RackViewModel:
       return null;
     }
     return column.Shelves[location.ShelfIndex];
+  }
+
+  /// <summary>
+  /// Tell the columns what index they are at
+  /// </summary>
+  public void FixColumnIndexes()
+  {
+    for(var i=0; i<Columns.Count; i++)
+    {
+      var column = Columns[i];
+      column.ColumnIndex = i;
+    }
+  }
+
+  internal bool MoveColumn(ColumnViewModel column, bool right)
+  {
+    var index = Columns.IndexOf(column);
+    if(index < 0)
+    {
+      Trace.TraceError(
+        "Attempt to move a column that isn't in this rack");
+      return false;
+    }
+    var newIndex = index + (right ? 1 : -1);
+    if(newIndex < 0 || newIndex >= Columns.Count)
+    {
+      Trace.TraceWarning(
+        "Ignoring attempt to move a column before or after the rack");
+      return false;
+    }
+    Columns.Move(index, newIndex);
+    var columnModel = Model.Columns[index];
+    Model.Columns.RemoveAt(index);
+    Model.Columns.Insert(newIndex, columnModel);
+    FixColumnIndexes();
+    MarkAsDirty();
+    Save();
+    return true;
   }
 
   internal ShelfViewModel CreateNewShelf(

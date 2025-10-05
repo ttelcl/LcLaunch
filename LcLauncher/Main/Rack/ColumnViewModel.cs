@@ -42,6 +42,12 @@ public class ColumnViewModel:
     CreateNewShelfHereCommand = new DelegateCommand(
       p => CreateNewShelfHere(),
       p => Rack.KeyShelf == null && Rack.KeyTile == null);
+    MoveLeftCommand = new DelegateCommand(
+      p => MoveLeft(),
+      p => !IsFirst);
+    MoveRightCommand = new DelegateCommand(
+      p => MoveRight(),
+      p => !IsLast);
   }
 
   /// <summary>
@@ -51,7 +57,22 @@ public class ColumnViewModel:
 
   public ICommand CreateNewShelfHereCommand { get; }
 
+  public ICommand MoveLeftCommand { get; }
+
+  public ICommand MoveRightCommand { get; }
+
   public RackViewModel Rack { get; }
+
+  public string Title {
+    get => Model.ColumnTitle;
+    set {
+      var old = Model.ColumnTitle;
+      if(ValueChanged(old, value))
+      {
+        Model.ColumnTitle = value;
+      }
+    }
+  }
 
   internal ColumnModel Model { get; }
 
@@ -66,6 +87,42 @@ public class ColumnViewModel:
   }
 
   public IDirtyHost DirtyHost => Rack;
+
+  /// <summary>
+  /// This column index. This is set by the rack when columns
+  /// shuffle around (setting this does not affect the actual position)
+  /// </summary>
+  public int ColumnIndex {
+    get => _columnIndex;
+    set {
+      if(SetValueProperty(ref _columnIndex, value))
+      {
+        IsFirst = value == 0;
+        IsLast = value == Rack.Columns.Count - 1;
+      }
+    }
+  }
+  private int _columnIndex;
+
+  public bool IsFirst {
+    get => _isFirst;
+    private set {
+      if(SetValueProperty(ref _isFirst, value))
+      {
+      }
+    }
+  }
+  private bool _isFirst = true;
+
+  public bool IsLast {
+    get => _isLast;
+    private set {
+      if(SetValueProperty(ref _isLast, value))
+      {
+      }
+    }
+  }
+  private bool _isLast;
 
   public void MarkAsDirty()
   {
@@ -207,4 +264,13 @@ public class ColumnViewModel:
     ShelfEditViewModel.Show(shelf);
   }
 
+  private void MoveLeft()
+  {
+    Rack.MoveColumn(this, false);
+  }
+
+  private void MoveRight()
+  {
+    Rack.MoveColumn(this, true);
+  }
 }
