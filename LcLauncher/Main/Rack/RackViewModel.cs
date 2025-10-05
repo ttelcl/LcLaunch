@@ -249,6 +249,12 @@ public class RackViewModel:
             $"Key shelf cleared");
         }
         RaisePropertyChanged(nameof(HasMarkedItems));
+        if(Columns.Count > 0)
+        {
+          var lastColumn = Columns[Columns.Count - 1];
+          lastColumn.CheckIsEmpty();
+          lastColumn.CheckCanDelete();
+        }
       }
     }
   }
@@ -523,11 +529,56 @@ public class RackViewModel:
     // Insert model into the column
     columnVm.Model.Shelves.Insert(
       location.ShelfIndex, shelfModel);
+    columnVm.CheckIsEmpty();
     shelfVm.MarkAsDirty();
     shelfVm.Save();
     MarkAsDirty();
     Save();
     return shelfVm;
+  }
+
+  internal ColumnViewModel AppendNewColumn()
+  {
+    var columnData = new ColumnData(
+      TickId.New(),
+      [],
+      "");
+    var columnModel = new ColumnModel(Model, columnData);
+    var column = new ColumnViewModel(this, columnModel);
+    Model.Entity.Columns.Add(columnData);
+    Model.Columns.Add(columnModel);
+    Columns.Add(column);
+    FixColumnIndexes();
+    MarkAsDirty();
+    Save();
+    return column;
+  }
+
+  internal void DeleteColumn(ColumnViewModel column)
+  {
+    var index = Columns.IndexOf(column);
+    if(index < 0)
+    {
+      throw new InvalidOperationException(
+        "That column is not in this rack");
+    }
+    if(!column.IsEmpty)
+    {
+      throw new InvalidOperationException(
+        "That column is not empty");
+    }
+    if(Columns.Count <= 1)
+    {
+      throw new InvalidOperationException(
+        "That would delete the last column in this rack");
+    }
+    Columns.RemoveAt(index);
+    Model.Columns.RemoveAt(index);
+    Model.Entity.Columns.RemoveAt(index);
+    FixColumnIndexes();
+    Columns[Columns.Count-1].FixColumnIndex(); // "Last" flag may have changed
+    MarkAsDirty();
+    Save();
   }
 
 }
