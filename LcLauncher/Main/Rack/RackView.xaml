@@ -10,8 +10,9 @@
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     d:DataContext="{d:DesignInstance local:RackViewModel, IsDesignTimeCreatable=False}"
     d:DesignHeight="450" d:DesignWidth="800">
-    <StackPanel Orientation="Horizontal">
+    <DockPanel>
         <ItemsControl
+            DockPanel.Dock="Left"
             ItemsSource="{Binding Columns}"
             Background="{DynamicResource MahApps.Brushes.Gray10}">
             <ItemsControl.ItemsPanel>
@@ -22,12 +23,10 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <local:ColumnView
-                        Margin="4,3"
                         DataContext="{Binding}"/>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <!-- A small gap to the right to allow inserting new columns -->
-        <!--<Border Width="20"/>-->
-    </StackPanel>
+        <Grid/>
+    </DockPanel>
 </UserControl>

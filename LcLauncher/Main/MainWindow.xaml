@@ -17,6 +17,7 @@
     WindowStartupLocation="CenterScreen"
     ResizeMode="CanResizeWithGrip"
     Title="Luc's Application Launchpad"
+    MinHeight="500" MinWidth="900"
     Height="850" Width="1285"
     Activated="WindowActivated"
     Deactivated="WindowDeactivated"
@@ -62,7 +63,7 @@
         <Grid>
             <ScrollViewer
                 Visibility="{Binding CurrentRack, Converter={StaticResource VisibleIfNotNull}}"
-                VerticalScrollBarVisibility="Visible"
+                VerticalScrollBarVisibility="Hidden"
                 HorizontalScrollBarVisibility="Visible">
                 <ScrollViewer.Resources>
                     <!-- https://stackoverflow.com/a/50260778/271323 -->
@@ -70,7 +71,24 @@
                     <sys:Double x:Key="MahApps.Sizes.ScrollBar.Width">10</sys:Double>
                     <sys:Double x:Key="MahApps.Sizes.ScrollBar.Height">14</sys:Double>
                 </ScrollViewer.Resources>
-                <rack:RackView DataContext="{Binding CurrentRack}"/>
+                <!--
+                We are nesting scrollviewers here. This is the outer "horizontal"
+                ScrollViewer; RackView contains the inner "vertical" ScrollViewer (one
+                per column, in fact).
+                WPF doesn't have "HorizontalScrollViewer" or "VerticalScrollViewer",
+                only the combination. Without the "Height" trick below the outer
+                ScrollViewer tries to take care of both scrolling axes. Binding the
+                content's height to the scroll viewer's content presenter's actual
+                height does the trick.
+                Inspiration taken from https://stackoverflow.com/a/20889057/271323 ,
+                with my own adaptations based on the live property inspector
+                (especially figuring out that it is "ScrollContentPresenter" you want
+                the source height from)
+                -->
+                <Grid Height="{Binding ActualHeight,
+                    RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=ScrollContentPresenter}}">
+                    <rack:RackView DataContext="{Binding CurrentRack}"/>
+                </Grid>
             </ScrollViewer>
             <Border
                 Visibility="{Binding CurrentRack, Converter={StaticResource VisibleIfNull}}"
