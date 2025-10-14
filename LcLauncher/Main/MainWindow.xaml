@@ -24,7 +24,8 @@
     Closing="WindowClosing">
     <mah:MetroWindow.RightWindowCommands>
         <mah:WindowCommands>
-            <Menu>
+            <Menu
+                Visibility="{Binding ShowDevMenu, Converter={StaticResource VisibleIf}}">
                 <MenuItem
                     Foreground="{DynamicResource MahApps.Brushes.Gray6}"
                     Header="Dev">

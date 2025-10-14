@@ -30,6 +30,7 @@ public class MainViewModel: ViewModelBase
     Configuration = configuration;
     DefaultTheme = configuration["defaultTheme"] ?? DefaultDefaultTheme;
     ShowDevPane = configuration.GetValue<bool>("showDevPane", false);
+    ShowDevMenu = configuration.GetValue<bool>("showDevMenu", false);
     HyperStore = InitHyperStore();
     DefaultStore = HyperStore.Backing.GetStore("default");
 
@@ -119,6 +120,8 @@ public class MainViewModel: ViewModelBase
     }
   }
   private bool _showDevPane;
+
+  public bool ShowDevMenu { get; }
 
   public RackListViewModel RackList { get; }
 
