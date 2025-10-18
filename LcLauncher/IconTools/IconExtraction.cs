@@ -104,6 +104,12 @@ public static class IconExtraction
         $"IconForFile: Error probing icon source {source}: {ex}");
       return null;
     }
+    catch(FileNotFoundException ex)
+    {
+      Trace.TraceError(
+        $"IconForFile: Error probing icon source {source} (File Not Found) {ex}");
+      return null;
+    }
   }
 
   /// <summary>

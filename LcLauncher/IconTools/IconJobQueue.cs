@@ -16,6 +16,7 @@ namespace LcLauncher.IconTools;
 /// </summary>
 public class IconJobQueue
 {
+  private readonly object _lock = new(); // net8 compat: we don't have Lock class yet
   private readonly Dictionary<Guid, IconJob> _jobsPerTarget;
   private readonly Dictionary<string, Dictionary<Guid, IconJob>> _jobsPerSource;
 
@@ -35,6 +36,16 @@ public class IconJobQueue
   /// (or <see cref="Cleanup"/>) to make sure the value is right.
   /// </summary>
   public bool HasWork => _jobsPerSource.Count > 0;
+
+  private volatile  bool _isCurrent;
+  /// <summary>
+  /// Set by the owner. Setting this to causes the current batch
+  /// to be aborted at the next opportunity.
+  /// </summary>
+  public bool IsCurrent {
+    get => _isCurrent;
+    set => _isCurrent = value;
+  }
 
   public void Enqueue(
     IIconJobTarget target,

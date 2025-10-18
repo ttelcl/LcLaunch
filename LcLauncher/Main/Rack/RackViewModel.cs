@@ -62,7 +62,22 @@ public class RackViewModel:
 
   public string Name => Model.RackName;
 
-  public void Unload()
+  private bool _isCurrent;
+  public bool IsCurrent {
+    get => _isCurrent;
+    set {
+      if(SetValueProperty(ref _isCurrent, value))
+      {
+        IconQueue.IsCurrent = value;
+        if(!_isCurrent)
+        {
+          Unload();
+        }
+      }
+    }
+  }
+
+  private void Unload()
   {
     Trace.TraceWarning(
       $"Unloading rack '{Name}' (and saving what needs saving)");
