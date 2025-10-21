@@ -203,18 +203,7 @@ public class IconLoader
           }
           foreach(var job in jobGroup)
           {
-            foreach(var size in job.IconSizes.Unpack())
-            {
-              var icon = icons[size];
-              if(icon == null)
-              {
-                // should never happen
-                continue;
-              }
-              var hashId = writer.PutIcon(icon);
-              job.IconIdResult[size] = hashId;
-              job.IconResult[size] = icon;
-            }
+            PushToJob(job, icons, writer);
             //finishedJobs.Add(job);
             job.PushResult();
           }
@@ -237,6 +226,39 @@ public class IconLoader
         _busy = false;
       }
     }
+  }
 
+  private static void PushToJob(
+    IIconJob job,
+    IconSet icons,
+    IconCache.Writer writer)
+  {
+    foreach(var size in job.IconSizes.Unpack())
+    {
+      var icon = icons[size];
+      if(icon == null)
+      {
+        // should never happen
+        continue;
+      }
+      var hashId = writer.PutIcon(icon);
+      job.IconIdResult[size] = hashId;
+      job.IconResult[size] = icon;
+    }
+  }
+
+  /// <summary>
+  /// Pushes the retrieved icons to the Icon store and to the job.
+  /// This WILL open a new writer on the cache, so can not be executed
+  /// if another writer or a reader is active on it.
+  /// </summary>
+  /// <param name="job"></param>
+  /// <param name="icons"></param>
+  public void PushToJob(
+    IIconJob job,
+    IconSet icons)
+  {
+    using var writer = IconCache.StartWriter();
+    PushToJob(job, icons, writer);
   }
 }

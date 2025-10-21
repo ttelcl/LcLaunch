@@ -15,7 +15,7 @@ namespace LcLauncher.IconTools;
 /// Describes an icon to load from memory cache, disk cache,
 /// or system, plus what to do with the result of that operation.
 /// </summary>
-public class IconJob
+public class IconJob : IIconJob
 {
   /// <summary>
   /// Create a new <see cref="IconJob"/>
