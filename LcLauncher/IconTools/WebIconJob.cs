@@ -114,12 +114,15 @@ public class WebIconJob : IIconJob
     foreach(var size in IconSizes.Unpack())
     {
       var icon = await GetIcon(size);
-      icons[size] = icon;
+      if(icon != null)
+      {
+        icons[size] = icon;
+      }
     }
     await _dispatcher.InvokeAsync(() => CompleteAsync(icons));
   }
 
-  private static async Task<BitmapSource> GetIcon(IconSize iconSize)
+  private async Task<BitmapSource?> GetIcon(IconSize iconSize)
   {
     var size =
       iconSize switch {
@@ -131,10 +134,7 @@ public class WebIconJob : IIconJob
           $"Invalid icon size code {iconSize}")
       };
     
-    // TODO: create some 'web icon service' to perform the actual download
-    // Maybe use it for just this icon set, to simplify HttpClient management
-    throw new NotImplementedException(
-      "GetIcon");
+    return await WebIconService.GetWebIcon(Url, size);
   }
 
   private void CompleteAsync(IconSet icons)
