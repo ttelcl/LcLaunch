@@ -5,44 +5,39 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Media.Imaging;
-
-using Ttelcl.Persistence.API;
 
 namespace LcLauncher.IconTools;
+
 /// <summary>
-/// Carries a set of different size variants of an icon.
-/// Each variant is optional: it may be set to null if not used.
-/// You can get and set icons through each icon field or use the indexer.
+/// Similar to <see cref="IconSet"/>, but storing byte arrays instead
+/// of BitmapSource (since the latter is thread-bound)
 /// </summary>
-public class IconSet
+public class IconBytesSet
 {
-  // Unusual for this project: properties are publicly read/write
 
   /// <summary>
   /// The small icon (16x16), if present.
   /// </summary>
-  public BitmapSource? IconSmall { get; set; }
+  public byte[]? IconSmall { get; set; }
 
   /// <summary>
   /// The medium icon (32x32), if present.
   /// </summary>
-  public BitmapSource? IconMedium { get; set; }
+  public byte[]? IconMedium { get; set; }
 
   /// <summary>
   /// The large (normal) icon (48x48), if present.
   /// </summary>
-  public BitmapSource? IconLarge { get; set; }
+  public byte[]? IconLarge { get; set; }
 
   /// <summary>
   /// The extra large icon (256x256), if present. Currently not
   /// used.
   /// </summary>
-  public BitmapSource? IconExtraLarge { get; set; }
+  public byte[]? IconExtraLarge { get; set; }
 
   /// <summary>
   /// The <see cref="IconSize"/> flags combination indicating which
@@ -68,7 +63,7 @@ public class IconSet
   /// </param>
   /// <returns></returns>
   /// <exception cref="NotSupportedException"></exception>
-  public BitmapSource? this[IconSize size] {
+  public byte[]? this[IconSize size] {
     get {
       return size switch {
         IconSize.Small => IconSmall,
@@ -100,13 +95,20 @@ public class IconSet
     }
   }
 
-  public IconSet Clone()
+  /// <summary>
+  /// Convert to a normal <see cref="IconSet"/>.
+  /// This must be called on the UI thread
+  /// </summary>
+  /// <returns></returns>
+  public IconSet ConvertToIconSet()
   {
-    return new IconSet {
-      IconSmall = IconSmall,
-      IconMedium = IconMedium,
-      IconLarge = IconLarge,
-      IconExtraLarge = IconExtraLarge,
-    };
+    var iconSet = new IconSet();
+    foreach(var iconSize in IconsPresent.Unpack())
+    {
+      var iconBytes = this[iconSize];
+      var icon = IconExtraction.BlobToIcon(iconBytes);
+      iconSet[iconSize] = icon;
+    }
+    return iconSet;
   }
 }

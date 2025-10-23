@@ -543,10 +543,14 @@ public class LaunchEditViewModel: EditorViewModelBase, ISubEditorHost
     string html,
     bool silent)
   {
+    //var match =
+    //  Regex.Match(
+    //    html,
+    //    "<a\\s+[^>]*href=\"([^\"]+)\"[^>]*>([^<]*)</a\\s*>");
     var match =
       Regex.Match(
         html,
-        "<a\\s+[^>]*href=\"([^\"]+)\"[^>]*>([^<]*)</a\\s*>");
+        "<a\\s+[^>]*href=\"([^\"]+)\"[^>]*>(.*)</a\\s*>");
     if(match.Success)
     {
       var href = match.Groups[1].Value;

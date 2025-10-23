@@ -30,6 +30,7 @@ public class MainViewModel: ViewModelBase
     Configuration = configuration;
     DefaultTheme = configuration["defaultTheme"] ?? DefaultDefaultTheme;
     ShowDevPane = configuration.GetValue<bool>("showDevPane", false);
+    ShowDevMenu = configuration.GetValue<bool>("showDevMenu", false);
     HyperStore = InitHyperStore();
     DefaultStore = HyperStore.Backing.GetStore("default");
 
@@ -98,7 +99,11 @@ public class MainViewModel: ViewModelBase
           $"Switched to rack '{rackLabel}'");
         if(oldRack != null)
         {
-          oldRack.Unload();
+          oldRack.IsCurrent = false;
+        }
+        if(_currentRack != null)
+        {
+          _currentRack.IsCurrent = true;
         }
         ActivateRackIconQueue();
       }
@@ -120,6 +125,8 @@ public class MainViewModel: ViewModelBase
   }
   private bool _showDevPane;
 
+  public bool ShowDevMenu { get; }
+
   public RackListViewModel RackList { get; }
 
   public RackManagerViewModel RackManager { get; }
@@ -137,9 +144,19 @@ public class MainViewModel: ViewModelBase
     }
   }
 
+  /// <summary>
+  /// Start processing the next batch of icon load jobs.
+  /// Returns false if everything has been processed and the timer can be
+  /// stopped.
+  /// </summary>
+  /// <returns></returns>
   public bool ProcessNextIconJob()
   {
-    if(CurrentRack == null || !CurrentRack.IconQueue.HasWork)
+    if(CurrentRack == null)
+    {
+      return false;
+    }
+    if(!CurrentRack.IconQueue.HasWork)
     {
       return false;
     }
