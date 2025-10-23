@@ -56,22 +56,22 @@ public static class WebIconService
     }
   }
 
-  public static async Task<BitmapSource?> GetWebIcon(
-    Uri site,
-    int size)
-  {
-    // We will re-calculate the HashId later anyway, so no need to calculate it here
-    var bytes = await GetWebIconBytes(site, size);
-    if(bytes == null)
-    {
-      return null;
-    }
-    var icon = IconExtraction.BlobToIcon(bytes);
-    if(icon == null)
-    {
-      return null;
-    }
-    return icon;
-  }
+  //public static async Task<BitmapSource?> GetWebIcon(
+  //  Uri site,
+  //  int size)
+  //{
+  //  // We will re-calculate the HashId later anyway, so no need to calculate it here
+  //  var bytes = await GetWebIconBytes(site, size);
+  //  if(bytes == null)
+  //  {
+  //    return null;
+  //  }
+  //  var icon = IconExtraction.BlobToIcon(bytes);
+  //  if(icon == null)
+  //  {
+  //    return null;
+  //  }
+  //  return icon;
+  //}
 
 }

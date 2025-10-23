@@ -80,6 +80,13 @@
                         <iconPacks:PackIconMaterial Kind="ReloadAlert" Width="20" Height="20"/>
                     </MenuItem.Icon>
                 </MenuItem>
+                <MenuItem
+                    Header="Update Web Icon"
+                    Command="{Binding UpdateWebIconCommand}">
+                    <MenuItem.Icon>
+                        <iconPacks:PackIconMaterial Kind="Web" Width="20" Height="20"/>
+                    </MenuItem.Icon>
+                </MenuItem>
             </MenuItem>
             <MenuItem Header="Danger Zone">
                 <MenuItem.Icon>

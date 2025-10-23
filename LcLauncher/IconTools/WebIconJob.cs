@@ -51,6 +51,17 @@ public class WebIconJob : IIconJob
     IconIdResult = Target.IconIds.Clone();
     IconResult = Target.Icons.Clone();
     Phase = IconJobPhase.Pending;
+    Trace.TraceInformation(
+      $"Initializing web icon job '{Url}'");
+  }
+
+  public static bool FireAndForget(
+    RackViewModel rack,
+    IIconJobTarget target,
+    Uri url)
+  {
+    var job = new WebIconJob(rack, target, url);
+    return job.Start();
   }
 
   public Uri Url { get; }
@@ -85,7 +96,7 @@ public class WebIconJob : IIconJob
     if(Phase == IconJobPhase.Pending)
     {
       Phase = IconJobPhase.Running;
-      StartAsync();
+      _dispatcher.Invoke(StartAsync, DispatcherPriority.ApplicationIdle);
       return true;
     }
     else
@@ -110,19 +121,21 @@ public class WebIconJob : IIconJob
 
   private async Task RunAsync()
   {
-    var icons = new IconSet();
+    var icons = new IconBytesSet();
     foreach(var size in IconSizes.Unpack())
     {
-      var icon = await GetIcon(size);
+      var icon = await GetIconBytes(size).ConfigureAwait(false);
       if(icon != null)
       {
         icons[size] = icon;
       }
     }
-    await _dispatcher.InvokeAsync(() => CompleteAsync(icons));
+    await _dispatcher.InvokeAsync(() => Complete(icons));
+    Trace.TraceInformation(
+      $"Web icon retrieval completed for '{Url}'");
   }
 
-  private async Task<BitmapSource?> GetIcon(IconSize iconSize)
+  private async Task<byte[]?> GetIconBytes(IconSize iconSize)
   {
     var size =
       iconSize switch {
@@ -134,14 +147,15 @@ public class WebIconJob : IIconJob
           $"Invalid icon size code {iconSize}")
       };
     
-    return await WebIconService.GetWebIcon(Url, size);
+    return await WebIconService.GetWebIconBytes(Url, size);
   }
 
-  private void CompleteAsync(IconSet icons)
+  private void Complete(IconBytesSet iconsbytes)
   {
     // This is called on the main UI thread
     if(Rack.IsCurrent)
     {
+      var icons = iconsbytes.ConvertToIconSet();
       Phase = IconJobPhase.Completed;
       // PushToJob must be on main thread for now, to ensure
       // icon store can be turned writable

@@ -67,6 +67,10 @@ public class LaunchTileViewModel:
     RunCommand = new DelegateCommand(
       p => RunTile(),
       p => Host != null && !Host.Rack.HasMarkedItems);
+    UpdateWebIconCommand = new DelegateCommand(
+      p => UpdateWebIcon(),
+      p => CanUpdateWebIcon);
+
     ClickActionCommand = RunCommand;
 
     QueueIcons(false);
@@ -86,6 +90,8 @@ public class LaunchTileViewModel:
   public ICommand ForceIconCommand { get; }
 
   public ICommand RunCommand { get; }
+
+  public ICommand UpdateWebIconCommand { get; }
 
   /// <summary>
   /// The model for this tile.
@@ -314,6 +320,23 @@ public class LaunchTileViewModel:
       Icon = icons.IconLarge;
     }
 
+  }
+
+  public bool CanUpdateWebIcon =>
+    Classification == LaunchKind.UriKind &&
+    (Model.Target.StartsWith("http://") || Model.Target.StartsWith("https://"));
+
+  public void UpdateWebIcon()
+  {
+    if(CanUpdateWebIcon)
+    {
+      var url = new Uri(Model.Target);
+      WebIconJob.FireAndForget(Rack, this, url);
+    }
+    else
+    {
+      Trace.TraceWarning("Cannot update web icon: not a web tile");
+    }
   }
 
   private bool CanEditNew()
