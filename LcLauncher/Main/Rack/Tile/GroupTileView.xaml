@@ -94,16 +94,16 @@
         <Border
             Margin="2,2"
             Background="{DynamicResource MahApps.Brushes.Accent2}"
-            Width="100" Height="100"
+            Width="72" Height="72"
             Visibility="{Binding IsActive, Converter={StaticResource VisibleIf}}"/>
         <Border
             Margin="2,2"
             Background="{DynamicResource MahApps.Brushes.Accent3}"
-            Width="100" Height="100"
+            Width="72" Height="72"
             Visibility="{Binding IsPrimed, Converter={StaticResource VisibleIf}}"/>
         <ItemsControl
             ItemsSource="{Binding GroupIcons}"
-            Width="80" Height="80">
+            Width="68" Height="68">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <UniformGrid Columns="4" Rows="4"/>
@@ -145,10 +145,10 @@
             IsHitTestVisible="False"
             VerticalAlignment="Bottom"
             HorizontalAlignment="Center"
-            FontSize="11"
+            FontSize="10"
             Margin="0,0,0,5"
-            MaxWidth="96"
-            MaxHeight="35"
+            MaxWidth="72"
+            MaxHeight="40"
             TextWrapping="Wrap"
             TextTrimming="CharacterEllipsis"
             Text="{Binding Title}"/>
