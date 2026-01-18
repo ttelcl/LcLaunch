@@ -52,6 +52,11 @@
             "10" is the space for the vertical scrollbar.
             -->
             <sys:Double x:Key="Column.OuterWidth">338</sys:Double>
+            <!--
+            Initial window width: exactly enough for the 3 default columns
+            3 * (Column.OuterWidth + 2 /*column margin*/) + 2 /*rack border*/.            
+            -->
+            <sys:Double x:Key="Window.InitialWidth">1022</sys:Double>
             <sys:Double x:Key="Tile.Height">88</sys:Double>
             <sys:Double x:Key="TileIcon.Size">48</sys:Double>
             <sys:Double x:Key="TileIcon.Size.Jumbo">64</sys:Double>

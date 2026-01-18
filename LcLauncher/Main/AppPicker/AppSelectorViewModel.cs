@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Input;
 
 using LcLauncher.DataModel;
 using LcLauncher.IconTools;
@@ -56,8 +57,12 @@ public class AppSelectorViewModel: EditorViewModelBase
     }
     SelectedCategory = Categories[0];
     IconJobQueue = rack.IconQueue;
+    RefillCommand = new DelegateCommand(
+      p => Refill(TimeSpan.FromSeconds(15)));
     Refill();
   }
+
+  public ICommand RefillCommand { get; }
 
   public TileHostViewModel Target { get; }
 
@@ -212,23 +217,31 @@ public class AppSelectorViewModel: EditorViewModelBase
 
   public void Refill()
   {
-    Refill(TimeSpan.FromMinutes(30));
+    Refill(TimeSpan.FromMinutes(15));
   }
 
   public void Refill(TimeSpan minAge)
   {
-    AppCache.Refill(minAge);
-    Applications.Clear();
-    var descriptors =
-      from descriptor in AppCache.Descriptors
-      orderby descriptor.Label
-      select descriptor;
-    foreach(var descriptor in descriptors)
+    try
     {
-      var app = new AppViewModel(this, descriptor);
-      Applications.Add(app);
+      Mouse.OverrideCursor = Cursors.Wait;
+      AppCache.Refill(minAge);
+      Applications.Clear();
+      var descriptors =
+        from descriptor in AppCache.Descriptors
+        orderby descriptor.Label
+        select descriptor;
+      foreach(var descriptor in descriptors)
+      {
+        var app = new AppViewModel(this, descriptor);
+        Applications.Add(app);
+      }
+      RecountAll();
     }
-    RecountAll();
+    finally
+    {
+      Mouse.OverrideCursor = null;
+    }
   }
 
   public override bool CanAcceptEditor()
