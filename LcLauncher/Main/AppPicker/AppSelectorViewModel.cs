@@ -48,12 +48,12 @@ public class AppSelectorViewModel: EditorViewModelBase
     }
     ApplicationsView.Filter = AppCategory.NonFilter;
     Categories = [];
+    Categories.Add(new AppCategoryViewModel(this, null));
     foreach(var category in AppCategory.AppCategoryList)
     {
       var catVm = new AppCategoryViewModel(this, category);
       Categories.Add(catVm);
     }
-    Categories.Add(new AppCategoryViewModel(this, null));
     SelectedCategory = Categories[0];
     IconJobQueue = rack.IconQueue;
     Refill();
