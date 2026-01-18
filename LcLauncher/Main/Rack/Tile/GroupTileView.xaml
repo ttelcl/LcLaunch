@@ -144,15 +144,7 @@
                 VerticalAlignment="Center"/>
         </Border>-->
         <TextBlock
-            IsHitTestVisible="False"
-            VerticalAlignment="Bottom"
-            HorizontalAlignment="Center"
-            FontSize="{StaticResource TileTitle.FontSize}"
-            Margin="1,0,1,2"
-            MaxWidth="{StaticResource Tile.Width}"
-            MaxHeight="40"
-            TextWrapping="Wrap"
-            TextTrimming="CharacterEllipsis"
+            Style="{StaticResource TileTitle}"
             Text="{Binding Title}"/>
     </Grid>
 </UserControl>
