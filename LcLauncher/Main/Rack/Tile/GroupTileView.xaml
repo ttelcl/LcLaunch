@@ -94,15 +94,17 @@
         <Border
             Margin="2,2"
             Background="{DynamicResource MahApps.Brushes.Accent2}"
-            Width="72" Height="72"
+            Width="{StaticResource Tile.Width}" Height="{StaticResource Tile.Height}"
             Visibility="{Binding IsActive, Converter={StaticResource VisibleIf}}"/>
         <Border
             Margin="2,2"
             Background="{DynamicResource MahApps.Brushes.Accent3}"
-            Width="72" Height="72"
+            Width="{StaticResource Tile.Width}" Height="{StaticResource Tile.Height}"
             Visibility="{Binding IsPrimed, Converter={StaticResource VisibleIf}}"/>
         <ItemsControl
             ItemsSource="{Binding GroupIcons}"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Top"
             Width="68" Height="68">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -145,9 +147,9 @@
             IsHitTestVisible="False"
             VerticalAlignment="Bottom"
             HorizontalAlignment="Center"
-            FontSize="10"
-            Margin="0,0,0,5"
-            MaxWidth="72"
+            FontSize="{StaticResource TileTitle.FontSize}"
+            Margin="1,0,1,2"
+            MaxWidth="{StaticResource Tile.Width}"
             MaxHeight="40"
             TextWrapping="Wrap"
             TextTrimming="CharacterEllipsis"

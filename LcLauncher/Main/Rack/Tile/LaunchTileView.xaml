@@ -110,17 +110,18 @@
         <iconPacks:PackIconMaterial
             Kind="{Binding FallbackIcon}"
             Foreground="{DynamicResource MahApps.Brushes.AccentBase}"
-            Height="48" Width="48"
+            Height="{StaticResource TileIcon.Size}" Width="{StaticResource TileIcon.Size}"
             HorizontalAlignment="Center"
-            VerticalAlignment="Center"
+            VerticalAlignment="Top"
+            Margin="{StaticResource TileIcon.Margin}"
             Visibility="{Binding Icon, Converter={StaticResource VisibleIfNull}}"/>
         <Grid
             Visibility="{Binding Icon, Converter={StaticResource VisibleIfNotNull}}"
             HorizontalAlignment="Center"
             VerticalAlignment="Top"
+            Margin="{StaticResource TileIcon.Margin}"
             Background="Transparent"
-            Margin="0,3,0,0"
-            Height="48" Width="48">
+            Height="{StaticResource TileIcon.Size}" Width="{StaticResource TileIcon.Size}">
             <Image
                 Source="{Binding Icon}"
                 HorizontalAlignment="Center"
@@ -131,7 +132,7 @@
             Kind="{Binding KindInfo.Icon}"
             Visibility="{Binding Host.Hovering, Converter={StaticResource VisibleIf}}"
             Foreground="{DynamicResource MahApps.Brushes.AccentBase}"
-            Background="{DynamicResource MahApps.Brushes.Accent3}"
+            Background="{DynamicResource MahApps.Brushes.Control.Background}"
             ToolTip="{Binding KindInfo.Text}"
             Height="16" Width="16"
             Margin="2,2"
@@ -140,9 +141,9 @@
         <TextBlock
             VerticalAlignment="Bottom"
             HorizontalAlignment="Center"
-            FontSize="10"
-            Margin="0,0,0,2"
-            MaxWidth="72"
+            FontSize="{StaticResource TileTitle.FontSize}"
+            Margin="1,0,1,2"
+            MaxWidth="{StaticResource Tile.Width}"
             MaxHeight="40"
             TextWrapping="Wrap"
             TextTrimming="CharacterEllipsis"

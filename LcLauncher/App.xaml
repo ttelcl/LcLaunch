@@ -5,8 +5,13 @@
     xmlns:local="clr-namespace:LcLauncher.Main"
     xmlns:converters="clr-namespace:LcLauncher.Converters"
     xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     Startup="App_Startup"
     Exit="Application_Exit">
+    <!--
+    Technically that should be xmlns:sys="clr-namespace:System;assembly=System.Runtime",
+    but mscorlib is forwarded to System.Runtime in modern .net versions.
+    -->
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -28,6 +33,31 @@
             <Style TargetType="{x:Type TabItem}" BasedOn="{StaticResource MahApps.Styles.TabItem}">
                 <Setter Property="mah:HeaderedControlHelper.HeaderFontSize" Value="20"/>
             </Style>
+            <!-- Constants -->
+            <sys:Double x:Key="Tile.Width">80</sys:Double>
+            <!-- 
+            Column.InnerWidth is calculated as:
+            Column.InnerWidth = 4 * (Tile.Width + [tile margin]*2)
+            Tile.Width = 72 => 300 (using a 1.5*2 margin)
+            Tile.Width = 80 => 328 (using a 1*2 margin)
+            -->
+            <sys:Double x:Key="Column.InnerWidth">328</sys:Double>
+            <!--
+            Column.OuterWidth is calculated as:
+            Column.OuterWidth = Column.InnerWidth + 10.
+            "10" is the space for the vertical scrollbar.
+            -->
+            <sys:Double x:Key="Column.OuterWidth">338</sys:Double>
+            <sys:Double x:Key="Tile.Height">88</sys:Double>
+            <sys:Double x:Key="TileIcon.Size">48</sys:Double>
+            <sys:Double x:Key="TileIcon.Size.Jumbo">64</sys:Double>
+            <sys:Double x:Key="TileTitle.FontSize">10</sys:Double>
+            <Thickness x:Key="TileIcon.Margin">0,3,0,0</Thickness>
+            <!-- Must be 16 to match requested icon size in code: -->
+            <sys:Double x:Key="GroupTileIcon.Size.Inner">16</sys:Double>
+            <!-- Implies the spacing between the mini tiles: -->
+            <sys:Double x:Key="GroupTileIcon.Size.Outer">18</sys:Double>
+            <!-- Converters -->
             <converters:NullVisibilityConverter
                 x:Key="VisibleIfNotNull"/>
             <converters:NullVisibilityConverter
