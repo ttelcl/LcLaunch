@@ -5,8 +5,13 @@
     xmlns:local="clr-namespace:LcLauncher.Main"
     xmlns:converters="clr-namespace:LcLauncher.Converters"
     xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     Startup="App_Startup"
     Exit="Application_Exit">
+    <!--
+    Technically that should be xmlns:sys="clr-namespace:System;assembly=System.Runtime",
+    but mscorlib is forwarded to System.Runtime in modern .net versions.
+    -->
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -18,6 +23,8 @@
                 <!-- Theme setting -->
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Dark.Olive.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            
+            <!-- Styles for MahApps tweaking -->
             <!-- Instead of a mah:ControlsHelper.ContentCharacterCasing="Normal" on each groupbox -->
             <Style TargetType="{x:Type GroupBox}" BasedOn="{StaticResource MahApps.Styles.GroupBox}">
                 <Setter Property="mah:ControlsHelper.ContentCharacterCasing" Value="Normal" />
@@ -28,6 +35,50 @@
             <Style TargetType="{x:Type TabItem}" BasedOn="{StaticResource MahApps.Styles.TabItem}">
                 <Setter Property="mah:HeaderedControlHelper.HeaderFontSize" Value="20"/>
             </Style>
+            
+            <!-- Constants -->
+            <sys:Double x:Key="Tile.Width">80</sys:Double>
+            <sys:Double x:Key="Tile.MaxWidth.Inner">78</sys:Double>
+            <!-- 
+            Column.InnerWidth is calculated as:
+            Column.InnerWidth = 4 * (Tile.Width + [tile margin]*2)
+            Tile.Width = 72 => 300 (using a 1.5*2 margin)
+            Tile.Width = 80 => 328 (using a 1*2 margin)
+            -->
+            <sys:Double x:Key="Column.InnerWidth">328</sys:Double>
+            <!--
+            Column.OuterWidth is calculated as:
+            Column.OuterWidth = Column.InnerWidth + 10.
+            "10" is the space for the vertical scrollbar.
+            -->
+            <sys:Double x:Key="Column.OuterWidth">338</sys:Double>
+            <sys:Double x:Key="Tile.Height">88</sys:Double>
+            <sys:Double x:Key="TileIcon.Size">48</sys:Double>
+            <sys:Double x:Key="TileIcon.Size.Jumbo">64</sys:Double>
+            <sys:Double x:Key="TileTitle.FontSize">10</sys:Double>
+            <Thickness x:Key="TileIcon.Margin">0,3,0,0</Thickness>
+            <!-- Must be 16 to match requested icon size in code: -->
+            <sys:Double x:Key="GroupTileIcon.Size.Inner">16</sys:Double>
+            <!-- Implies the spacing between the mini tiles: -->
+            <sys:Double x:Key="GroupTileIcon.Size.Outer">18</sys:Double>
+            
+            <!-- styles for consistency -->
+            <Style
+                x:Key="TileTitle"
+                TargetType="{x:Type TextBlock}">
+                <Setter Property="IsHitTestVisible" Value="False"/>
+                <Setter Property="VerticalAlignment" Value="Bottom"/>
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="Margin" Value="1,0,1,2"/>
+                <Setter Property="MaxWidth" Value="{StaticResource Tile.MaxWidth.Inner}"/>
+                <Setter Property="MaxHeight" Value="40"/>
+                <Setter Property="TextWrapping" Value="Wrap"/>
+                <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                <Setter Property="FontSize" Value="{StaticResource TileTitle.FontSize}"/>
+                <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.Accent4}"/>
+            </Style>
+
+            <!-- Converters -->
             <converters:NullVisibilityConverter
                 x:Key="VisibleIfNotNull"/>
             <converters:NullVisibilityConverter

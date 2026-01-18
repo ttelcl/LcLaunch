@@ -134,18 +134,20 @@
         <iconPacks:PackIconMaterial
             Kind="{Binding Icon}"
             Foreground="{DynamicResource MahApps.Brushes.Accent4}"
-            Height="48" Width="48"
+            Height="{StaticResource TileIcon.Size}" Width="{StaticResource TileIcon.Size}"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"/>
         <Grid
             Visibility="{Binding Host.IsKeyTile, Converter={StaticResource VisibleIfNot}}"
+            Margin="{StaticResource TileIcon.Margin}"
             HorizontalAlignment="Center"
-            VerticalAlignment="Center">
+            VerticalAlignment="Top">
             <iconPacks:PackIconMaterial
                 Kind="TransferDown"
                 Visibility="{Binding Rack.KeyTile, Converter={StaticResource VisibleIfNotNull}}"
                 Foreground="{DynamicResource MahApps.Brushes.Accent2}"
-                Height="48" Width="48"/>
+                Height="{StaticResource TileIcon.Size.Jumbo}"
+                Width="{StaticResource TileIcon.Size.Jumbo}"/>
         </Grid>
     </Grid>
 </UserControl>

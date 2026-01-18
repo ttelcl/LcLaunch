@@ -83,8 +83,8 @@
         <!-- The background ensures that right clicks are caught here, not deeper -->
         <iconPacks:PackIconMaterial
             Kind="ViewGrid"
-            Foreground="{DynamicResource MahApps.Brushes.AccentBase}"
-            Height="48" Width="48"
+            Foreground="{DynamicResource MahApps.Brushes.Accent4}"
+            Height="{StaticResource TileIcon.Size}" Width="{StaticResource TileIcon.Size}"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"/>
     </Grid>

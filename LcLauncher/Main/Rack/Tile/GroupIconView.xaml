@@ -11,13 +11,14 @@
     d:DataContext="{d:DesignInstance local:GroupIconViewModel, IsDesignTimeCreatable=False}"
     d:DesignHeight="450" d:DesignWidth="800">
     <Grid
-        Width="20"
-        Height="20"
+        Width="{StaticResource GroupTileIcon.Size.Outer}"
+        Height="{StaticResource GroupTileIcon.Size.Outer}"
         >
         <iconPacks:PackIconMaterial
             Kind="{Binding PlainIcon}"
             Foreground="{DynamicResource MahApps.Brushes.Accent2}"
-            Height="16" Width="16"
+            Height="{StaticResource GroupTileIcon.Size.Inner}"
+            Width="{StaticResource GroupTileIcon.Size.Inner}"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             Visibility="{Binding IconAdapter.Icon, Converter={StaticResource VisibleIfNull}}"/>

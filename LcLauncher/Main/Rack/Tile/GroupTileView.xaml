@@ -94,16 +94,18 @@
         <Border
             Margin="2,2"
             Background="{DynamicResource MahApps.Brushes.Accent2}"
-            Width="100" Height="100"
+            Width="{StaticResource Tile.Width}" Height="{StaticResource Tile.Height}"
             Visibility="{Binding IsActive, Converter={StaticResource VisibleIf}}"/>
         <Border
             Margin="2,2"
             Background="{DynamicResource MahApps.Brushes.Accent3}"
-            Width="100" Height="100"
+            Width="{StaticResource Tile.Width}" Height="{StaticResource Tile.Height}"
             Visibility="{Binding IsPrimed, Converter={StaticResource VisibleIf}}"/>
         <ItemsControl
             ItemsSource="{Binding GroupIcons}"
-            Width="80" Height="80">
+            HorizontalAlignment="Center"
+            VerticalAlignment="Top"
+            Width="68" Height="68">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <UniformGrid Columns="4" Rows="4"/>
@@ -142,15 +144,7 @@
                 VerticalAlignment="Center"/>
         </Border>-->
         <TextBlock
-            IsHitTestVisible="False"
-            VerticalAlignment="Bottom"
-            HorizontalAlignment="Center"
-            FontSize="11"
-            Margin="0,0,0,5"
-            MaxWidth="96"
-            MaxHeight="35"
-            TextWrapping="Wrap"
-            TextTrimming="CharacterEllipsis"
+            Style="{StaticResource TileTitle}"
             Text="{Binding Title}"/>
     </Grid>
 </UserControl>

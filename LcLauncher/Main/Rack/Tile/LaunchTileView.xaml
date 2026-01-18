@@ -110,35 +110,36 @@
         <iconPacks:PackIconMaterial
             Kind="{Binding FallbackIcon}"
             Foreground="{DynamicResource MahApps.Brushes.AccentBase}"
-            Height="48" Width="48"
+            Height="{StaticResource TileIcon.Size}" Width="{StaticResource TileIcon.Size}"
             HorizontalAlignment="Center"
-            VerticalAlignment="Center"
+            VerticalAlignment="Top"
+            Margin="{StaticResource TileIcon.Margin}"
             Visibility="{Binding Icon, Converter={StaticResource VisibleIfNull}}"/>
+        <Grid
+            Visibility="{Binding Icon, Converter={StaticResource VisibleIfNotNull}}"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Top"
+            Margin="{StaticResource TileIcon.Margin}"
+            Background="Transparent"
+            Height="{StaticResource TileIcon.Size}" Width="{StaticResource TileIcon.Size}">
+            <Image
+                Source="{Binding Icon}"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Stretch="None"/>
+        </Grid>
         <iconPacks:PackIconMaterial
             Kind="{Binding KindInfo.Icon}"
             Visibility="{Binding Host.Hovering, Converter={StaticResource VisibleIf}}"
             Foreground="{DynamicResource MahApps.Brushes.AccentBase}"
-            Background="{DynamicResource MahApps.Brushes.Accent4}"
+            Background="{DynamicResource MahApps.Brushes.Control.Background}"
             ToolTip="{Binding KindInfo.Text}"
             Height="16" Width="16"
             Margin="2,2"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"/>
-        <Image
-            Visibility="{Binding Icon, Converter={StaticResource VisibleIfNotNull}}"
-            Source="{Binding Icon}"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Stretch="None"/>
         <TextBlock
-            VerticalAlignment="Bottom"
-            HorizontalAlignment="Center"
-            FontSize="11"
-            Margin="0,0,0,5"
-            MaxWidth="96"
-            MaxHeight="35"
-            TextWrapping="Wrap"
-            TextTrimming="CharacterEllipsis"
+            Style="{StaticResource TileTitle}"
             Text="{Binding Title}"/>
     </Grid>
 </UserControl>

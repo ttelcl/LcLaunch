@@ -90,7 +90,7 @@
                 Text="{Binding Title}"/>-->
         </DockPanel>
         <ScrollViewer
-            Width="425"
+            Width="{StaticResource Column.OuterWidth}"
             HorizontalScrollBarVisibility="Hidden"
             VerticalScrollBarVisibility="Visible">
             <ScrollViewer.Resources>
@@ -98,7 +98,7 @@
                 <!-- Plus checking the source for the right name. The default is 14. -->
                 <sys:Double x:Key="MahApps.Sizes.ScrollBar.Width">10</sys:Double>
             </ScrollViewer.Resources>
-            <StackPanel Orientation="Vertical" Width="415">
+            <StackPanel Orientation="Vertical" Width="{StaticResource Column.InnerWidth}">
                 <ItemsControl
                     ItemsSource="{Binding Shelves}">
                     <ItemsControl.ItemsPanel>

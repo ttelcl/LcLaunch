@@ -14,7 +14,7 @@
         Padding="0,2,0,2"
         BorderThickness="0,0,0,1"
         BorderBrush="{DynamicResource MahApps.Brushes.Accent}"
-        MinHeight="100">
+        MinHeight="{StaticResource Tile.Height}">
         <ItemsControl
             ItemsSource="{Binding Tiles}"
             >

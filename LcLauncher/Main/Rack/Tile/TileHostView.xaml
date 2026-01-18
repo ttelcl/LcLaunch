@@ -21,7 +21,7 @@
             BorderThickness="0"
             BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
             Background="{DynamicResource MahApps.Brushes.Accent4}"
-            Width="100" Height="100"
+            Width="{StaticResource Tile.Width}" Height="{StaticResource Tile.Height}"
             Visibility="{Binding Hovering, Converter={StaticResource VisibleIf}}">
             <!-- Visibility="{Binding Hovering, Converter={StaticResource VisibleIf}}" -->
         </Border>
@@ -30,7 +30,7 @@
             BorderThickness="0"
             BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
             Background="#00000000"
-            Width="100" Height="100"
+            Width="{StaticResource Tile.Width}" Height="{StaticResource Tile.Height}"
             >
             <!-- "#00000000" is transparent for display, but opaque for mouse -->
             <ContentControl
@@ -56,14 +56,14 @@
             Margin="1,1"
             BorderThickness="1"
             BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-            Width="100" Height="100"
+            Width="{StaticResource Tile.Width}" Height="{StaticResource Tile.Height}"
             Visibility="{Binding Hovering, Converter={StaticResource VisibleIf}}">
         </Border>
         <Border
             Margin="0,0"
             BorderThickness="2"
             BorderBrush="{DynamicResource MahApps.Brushes.AccentBase}"
-            Width="100" Height="100"
+            Width="{StaticResource Tile.Width}" Height="{StaticResource Tile.Height}"
             Visibility="{Binding Tile.IsPrimed, Converter={StaticResource VisibleIf}}">
         </Border>
         <!-- Indicate this is the key tile, but stay responsive -->
@@ -77,9 +77,10 @@
             <iconPacks:PackIconMaterial
                 Kind="TransferUp"
                 HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Width="64"
-                Height="64"
+                VerticalAlignment="Top"
+                Margin="{StaticResource TileIcon.Margin}"
+                Width="{StaticResource TileIcon.Size.Jumbo}"
+                Height="{StaticResource TileIcon.Size.Jumbo}"
                 Foreground="#FEEE"
                 IsHitTestVisible="False"/>
         </Border>
