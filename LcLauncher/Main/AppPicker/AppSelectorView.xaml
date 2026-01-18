@@ -23,7 +23,17 @@
                 FontStyle="Italic"
                 TextAlignment="Center"
                 Margin="0,10,0,0"
-                Text="{Binding SelectedCategory.Category.Description}"/>
+                Text="{Binding SelectedCategory.Description}"/>
+            <Button
+                Style="{DynamicResource MahApps.Styles.Button.Circle}"
+                BorderThickness="0"
+                Margin="5,1,0,1"
+                Command="{Binding RefillCommand}"
+                DockPanel.Dock="Right">
+                <iconPacks:PackIconMaterial
+                    Kind="Refresh"
+                    Height="24" Width="24"/>
+            </Button>
             <ItemsControl
                 DockPanel.Dock="Right"
                 ItemsSource="{Binding Categories}">
@@ -36,10 +46,12 @@
                     <DataTemplate>
                         <ToggleButton
                             DataContext="{Binding}"
+                            Margin="1,0"
+                            Padding="2,2"
                             IsChecked="{Binding IsSelected}">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{Binding Label}" Margin="2,0"/>
-                                <TextBlock Text="{Binding FilterCountText}" Width="24"/>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="{Binding Label}" HorizontalAlignment="Center"/>
+                                <TextBlock Text="{Binding FilterCountText}" HorizontalAlignment="Center"/>
                             </StackPanel>
                         </ToggleButton>
                     </DataTemplate>
@@ -48,6 +60,7 @@
             <TextBlock Text="Filter: " VerticalAlignment="Center"/>
             <TextBox
                 Text="{Binding FilterText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                VerticalAlignment="Center"
                 mah:TextBoxHelper.ClearTextButton="True"
                 mah:TextBoxHelper.Watermark="Filter"/>
         </DockPanel>

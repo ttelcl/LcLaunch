@@ -74,4 +74,6 @@ public class AppCategoryViewModel: ViewModelBase
   public string? Key { get => Category?.Key; }
 
   public string Label { get; }
+
+  public string Description => Category?.Description ?? "Applications of all types. Use the buttons above to be more selective.";
 }

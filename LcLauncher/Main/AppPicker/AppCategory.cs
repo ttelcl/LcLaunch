@@ -44,7 +44,7 @@ public class AppCategory
   }
 
   public static AppCategory ModernApp { get; } = new(
-    "Modern App",
+    "Store App",
     "Applications installed from the Windows App Store.",
     TileKind.ModernAppTile);
 
