@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -20,7 +21,7 @@ namespace LcLauncher.Main.Rack;
 /// <summary>
 /// Interaction logic for RackView.xaml
 /// </summary>
-public partial class RackView: UserControl
+public partial class RackView: UserControl /*, IScrollInfo */
 {
   public RackView()
   {
