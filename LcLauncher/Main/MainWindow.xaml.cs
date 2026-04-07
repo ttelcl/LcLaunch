@@ -11,6 +11,9 @@ using System.Windows.Shapes;
 
 using MahApps.Metro.Controls;
 
+using LcLauncher.WpfUtilities;
+using System.Diagnostics;
+
 namespace LcLauncher.Main;
 
 /// <summary>
@@ -52,6 +55,32 @@ public partial class MainWindow: MetroWindow
     if(DataContext is MainViewModel vm)
     {
       vm.RackList.OnDropDownOpened();
+    }
+  }
+
+  private void WindowLoaded(object sender, RoutedEventArgs e)
+  {
+    MouseHorizontalWheelEnabler.EnableMouseHorizontalWheelSupport(this);
+  }
+
+  private void RackView_PreviewMouseHorizontalWheel(object sender, RoutedEventArgs e)
+  {
+    if(e is MouseHorizontalWheelEventArgs mhwe)
+    {
+      var delta = mhwe.HorizontalDelta;
+      Trace.TraceInformation($"Rack horizontal scroll event {delta}");
+      if(horizontalScroller.IsVisible && delta != 0)
+      {
+        if(delta < 0)
+        {
+          horizontalScroller.LineLeft();
+        }
+        else
+        {
+          horizontalScroller.LineRight();
+        }
+      }
+      mhwe.Handled = true;
     }
   }
 }

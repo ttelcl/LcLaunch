@@ -21,6 +21,7 @@
     Height="850" Width="{StaticResource Window.InitialWidth}"
     Activated="WindowActivated"
     Deactivated="WindowDeactivated"
+    Loaded="WindowLoaded"
     Closing="WindowClosing">
     <mah:MetroWindow.RightWindowCommands>
         <mah:WindowCommands>
@@ -63,6 +64,7 @@
         </Grid>
         <Grid>
             <ScrollViewer
+                x:Name="horizontalScroller"
                 Visibility="{Binding CurrentRack, Converter={StaticResource VisibleIfNotNull}}"
                 VerticalScrollBarVisibility="Hidden"
                 HorizontalScrollBarVisibility="Visible">
@@ -88,7 +90,9 @@
                 -->
                 <Grid Height="{Binding ActualHeight,
                     RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=ScrollContentPresenter}}">
-                    <rack:RackView DataContext="{Binding CurrentRack}"/>
+                    <rack:RackView
+                        PreviewMouseHorizontalWheel="RackView_PreviewMouseHorizontalWheel"
+                        DataContext="{Binding CurrentRack}"/>
                 </Grid>
             </ScrollViewer>
             <Border
