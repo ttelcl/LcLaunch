@@ -317,10 +317,9 @@ public static class MouseHorizontalWheelEnabler
     var ev = new MouseHorizontalWheelEventArgs(Mouse.PrimaryDevice, Environment.TickCount, tilt) {
       RoutedEvent = PreviewMouseHorizontalWheelEvent,
       Source = element,
-      //Source = handledWindow
     };
 
-    Trace.TraceInformation($"Mouse Horizontal: {tilt} on {element.GetType()?.Name ?? "(none)"}");
+    // Trace.TraceInformation($"Mouse Horizontal: {tilt} on {element.GetType()?.Name ?? "(none)"}");
 
     // first raise preview
     element.RaiseEvent(ev);
