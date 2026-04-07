@@ -21,6 +21,7 @@
     Height="850" Width="{StaticResource Window.InitialWidth}"
     Activated="WindowActivated"
     Deactivated="WindowDeactivated"
+    Loaded="WindowLoaded"
     Closing="WindowClosing">
     <mah:MetroWindow.RightWindowCommands>
         <mah:WindowCommands>

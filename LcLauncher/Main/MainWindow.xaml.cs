@@ -11,6 +11,8 @@ using System.Windows.Shapes;
 
 using MahApps.Metro.Controls;
 
+using LcLauncher.WpfUtilities;
+
 namespace LcLauncher.Main;
 
 /// <summary>
@@ -53,5 +55,10 @@ public partial class MainWindow: MetroWindow
     {
       vm.RackList.OnDropDownOpened();
     }
+  }
+
+  private void WindowLoaded(object sender, RoutedEventArgs e)
+  {
+    MouseHorizontalWheelEnabler.EnableMouseHorizontalWheelSupport(this);
   }
 }
